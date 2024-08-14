@@ -3,6 +3,8 @@
 use App\Http\Controllers\CustomerCoctroller;
 use App\Http\Controllers\HomeCoctroller;
 use App\Http\Controllers\ProductCoctroller;
+use App\Http\Controllers\AccountCoctroller;
+use App\Http\Controllers\PaymentCoctroller;
 use App\Http\Controllers\SaleCoctroller;
 
  
@@ -17,6 +19,11 @@ Route::get('/', function () {
 Route::get('/sales', [SaleCoctroller::class, 'index'])->name('sales.index');
 Route::get('/products', [ProductCoctroller::class, 'index'])->name('products.index');
 Route::get('/Purchase', [PurchaseCoctroller::class, 'Purchase'])->name('Purchases.index');
+Route::get('/accounts', [AccountCoctroller::class, 'index'])->name('accounts.index');
+Route::get('/payments', [PaymentCoctroller::class, 'index'])->name('payments.index');
+
+
+
 
 
 Route::get('/customers', [CustomerCoctroller::class, 'index'])->name('customers.index');

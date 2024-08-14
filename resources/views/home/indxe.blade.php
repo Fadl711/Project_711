@@ -2,6 +2,11 @@
 
 @section('conm')
 <div class=" ">
+
+{{-- ________________________________jamal__________fjj_____________________ --}}
+
+{{-- ________________________________jamal__________fjj______________________ --}}
+
     <div class="mt-4 w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 p-20">
         <div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 ">
             <div class="flex items-center">

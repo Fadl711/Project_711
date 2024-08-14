@@ -2,3 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
+
+.btn{
+    @apply mb-1 block text-base font-medium text-[#07074D]
+}
+.textNav{
+   @apply ml-2 text-sm font-medium hidden md:block
+
+}
+.NavTagA{
+   @apply flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300
+}
+.labelSale{
+  @apply block mb-2 text-sm font-bold text-gray-700 dark:text-white
+}
+.inputSale{
+@apply w-full px-3 py-2 text-sm leading-tight text-gray-700 dark:text-white border rounded shadow appearance-none 
+}
+.divProducte {
+   @apply flex items-center w-full px-1 py-1 text-base  text-black bg-white border-t border-b border-l rounded-l-md hover:bg-gray-100 md:col-span-3
+}
+.btnSave{
+   @apply text-white bg-cyan-600 hover:bg-cyan-700 focus:ring-4 focus:ring-cyan-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center
+}
+.tagHt{
+   @apply p-1 text-left text-sm   text-gray-900 capitalize rounded-t-xl
+}
+.tagTd{
+   @apply p-1 whitespace-nowrap text-sm   text-gray-900
+}

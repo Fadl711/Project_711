@@ -1,119 +1,65 @@
-
 @extends('layout')
 @extends('accounts.layout')
 
+
+
 @section('conm')
 
-<div   id="acc" class="w-full sm:max-w-[650px]  px-2  bg-white shadow-md overflow-hidden sm:rounded-lg">
-   
- 
-    <div class=" ">
-        <div class="w-full ">
+    <div class="w-full  p-1">
+            <h1></h1>
+        <form>
+            
+            <div class="mb-4 md:flex md:justify-around">
 
-            <form class="">
-                
-                <div class="mb-4 md:flex md:justify-around">
-
-                    <div class="md:ml-2">
-                        <label class="labelSale" for="email">ق/الفاتورة</label>
-                        <input name="" class="inputSale" id="brand" type="text" placeholder="Email"/>
-                    </div>
-                                            {{-- focus:outline-none focus:shadow-outline --}}
-                    <div class="md:ml-2">
-                        <label class="labelSale" for="email">اسم العميل</label>
-                        <input name="" class="inputSale " id="" type="text" placeholder="Email"/>
-                    </div>
-
-                    <div class="md:ml-2">
-                        <label class="labelSale" for="lastName" >الإجمالي </label>
-                        <input name="" class="inputSale " id="" type="number" disabled placeholder="UserName"/>
-                    </div>
-
-                    <div class="md:ml-2 ">
-                      <label class="labelSale  " for="payment_type">نوع الدفع</label>
-                      <input   name="payment_type" list="datalist"   class="inputSale " id="payment_type">
-                      <datalist  class="inputSale "  id="datalist">
-                      <option value="اجل" > 
-                      <option  value="نقدا">
-                      </datalist >
-                    </div>
-
-                    <div class="md:mr-2">
-                        <label class="labelSale" for="password"> المدفوع </label>
-                        <input name="" class="inputSale"  id=""  type="number" placeholder="0"/>
-                    </div>
-
-                    <div class="md:mr-2 ">
-                        <label class="labelSale" for="password"> المتبقي </label>
-                        <input name="" class="inputSale"  id=""  type="number" placeholder="0"/>
-                    </div>
-
+                <div class="md:ml-2">
+                    <label class="labelSale" for="email">اسم الحساب</label>
+                    <input name="" class="inputSale" id="brand" type="text" placeholder="Email"/>
+                </div>
+               
+                <div class="md:ml-2 ">
+                    <label class="labelSale  " for="payment_type"> تصنيف الحساب</label>
+                    <input   name="payment_type" list="datalist"   class="inputSale " id="payment_type">
+                    <datalist  class="inputSale "  id="datalist">
+                    <option value="اجل" > 
+                    <option  value="نقدا">
+                    </datalist >
+                  </div>
+                                       
+                <div class="md:ml-2">
+                    <label class="labelSale" for="email">  رصيدافتتاحي مدين (اخذ)</label>
+                    <input name="" class="inputSale " id="" type="text" placeholder="Email"/>
                 </div>
 
-            </form>
-        </div>
-    </div>
-
-        </div>
-        
-
-        
-     <div class="flex items-center  ">
-
-        <form action="#">
-            <p class="flex">بيانات الصنف</p>
-            <div class="divProducte">
-                <div class="col-span-6 sm:col-span-3">
-                    <label for="product-name" class="labelSale ">اسم الصنف</label>
-                    <input type="text" name="product-name" id="product-name" class="inputSale" placeholder=" " required="">
-
-                </div>
-                <div class="col-span-6 sm:col-span-3">
-                    <label for="brand" class="labelSale"> الكمية</label>
-                    <input type="number" name="price" id="price" class=" inputSale " placeholder="0" required="">
+                <div class="md:ml-2">
+                    <label class="labelSale" for="lastName" >رصيدافتتاحي دائن (عاطي) </label>
+                    <input name="" class="inputSale " id="" type="number" disabled placeholder="UserName"/>
                 </div>
 
-                <div class="col-span-6 sm:col-span-3">
-                    <small for="brand" class="labelSale ">سعر الصنف</small>
-                    <input type="number" name="price" id="price" class=" inputSale" placeholder="0" required="">
+                <div class="md:mr-2 ">
+                    <label class="labelSale" for="password"> المتبقي </label>
+                    <input name="" class="inputSale"  id=""  type="number" placeholder="0"/>
                 </div>
 
-                <div class="col-span-6 sm:col-span-3">
-                    <small for="category" class="labelSale ">ارقم الصنف</small>
-                    <input type="number" name="price" id="price" class="inputSale " placeholder="0" required="">
+                <div class="p-1 border-t border-gray-200 rounded-b ">
+                    <button  class="btnSave" type="submit">Save </button>
                 </div>
-
-                <div class="col-span-6 sm:col-span-3">
-                    <small for="brand" class="labelSale "> الإجمالي </small>
-                    <input type="number" name="price" id="price" class="inputSale " placeholder="0" required="">
-                </div>
-
 
             </div>
+
         </form>
-    </div>
-    
-    <div class="p-1 border-t border-gray-200 rounded-b ">
-        <button  class="btnSave" type="submit">Save all</button>
-
-    </div>
-
-
-  
-
 
         <div class="flex flex-col sm:max-w-[650px]">
             <div class=" overflow-x-auto">
               <div class="min-w-full inline-block align-middle">
-    
+            <form>
                   <div class="overflow-hidden ">
                       <table class=" min-w-full rounded-xl">
                           <thead>
                               <tr class="bg-gray-50">
-                                  <th scope="col" class="leading-2 tagHt"> اسم الصنف </th>
-                                  <th scope="col" class="leading-2 tagHt ">السعر</th>
-                                  <th scope="col" class="leading-2 tagHt">الكمية</th>
-                                  <th scope="col" class="leading-2 tagHt"> الإجمالي </th>
+                                  <th scope="col" class="leading-2 tagHt"> اسم الحساب </th>
+                                  <th scope="col" class="leading-2 tagHt ">رقم الحساب</th>
+                                  <th scope="col" class="leading-2 tagHt">اخذ</th>
+                                  <th scope="col" class="leading-2 tagHt"> عاطي </th>
                                
     
                                 </tr>
@@ -146,23 +92,11 @@
                           </tbody>
                       </table>
                   </div>
+                </form>
               </div>
             </div>
             </div>
     </div>
-       
-
-       
-       
-  </div>
     
-   
-    
- </div> 
- 
 
-          
-
- 
- 
 @endsection
