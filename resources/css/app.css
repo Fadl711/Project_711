@@ -26,8 +26,21 @@
    @apply text-white bg-cyan-600 hover:bg-cyan-700 focus:ring-4 focus:ring-cyan-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center
 }
 .tagHt{
-   @apply p-1 text-left text-sm   text-gray-900 capitalize rounded-t-xl
+   @apply p-1  text-sm text-center   text-gray-900 capitalize rounded-t-xl
 }
 .tagTd{
-   @apply p-1 whitespace-nowrap text-sm   text-gray-900
+   @apply p-1 whitespace-nowrap text-sm text-center   text-gray-900
+}
+.tagTtbody{
+   @apply divide-y divide-gray-300
+}
+.tagTr{
+   @apply bg-white transition-all duration-500 hover:bg-gray-50
+}
+.buttonEdit{
+   @apply p-1  rounded-full  duration-500  
+
+}
+.tagTable{
+   @apply min-w-full rounded-xl
 }
