@@ -7,9 +7,10 @@ use App\Http\Controllers\AccountCoctroller;
 use App\Http\Controllers\PaymentCoctroller;
 use App\Http\Controllers\SaleCoctroller;
 
- 
+
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PurchaseCoctroller;
+use App\Http\Controllers\RefundController;
 use App\Http\Controllers\SupplierCoctroller;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +22,7 @@ Route::get('/products', [ProductCoctroller::class, 'index'])->name('products.ind
 Route::get('/Purchase', [PurchaseCoctroller::class, 'Purchase'])->name('Purchases.index');
 Route::get('/accounts', [AccountCoctroller::class, 'index'])->name('accounts.index');
 Route::get('/payments', [PaymentCoctroller::class, 'index'])->name('payments.index');
+Route::get('/refunds', [RefundController::class, 'index'])->name('refunds.index');
 
 
 
