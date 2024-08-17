@@ -44,3 +44,6 @@
 .tagTable{
    @apply min-w-full rounded-xl
 }
+.tagDivTable{
+   @apply flex flex-col sm:w-full
+}

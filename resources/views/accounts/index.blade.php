@@ -55,21 +55,19 @@
                   <div class="overflow-hidden ">
                       <table class=" min-w-full rounded-xl">
                           <thead>
-                              <tr class="bg-gray-50">
-                                  <th scope="col" class="leading-2 tagHt"> اسم الحساب </th>
+                               <tr class="bg-gray-50">
+                                  <th scope="col" class="leading-2 tagHt">اسم الحساب</th>
                                   <th scope="col" class="leading-2 tagHt ">رقم الحساب</th>
-                                  <th scope="col" class="leading-2 tagHt">اخذ</th>
-                                  <th scope="col" class="leading-2 tagHt"> عاطي </th>
-                               
-    
+                                  <th scope="col" class="leading-2 tagHt">مدين</th>
+                                  <th scope="col" class="leading-2 tagHt">دائن</th>
                                 </tr>
                           </thead>
                           <tbody class="divide-y divide-gray-300 ">
                               <tr class="bg-white transition-all duration-500 hover:bg-gray-50">
-                                  <td class="tagTd "> Louis Vuitton</td>
-                                  <td class="tagTd"> $2550 </td>
-                                  <td class="tagTd"> 20010510 </td>
-                                  <td class="tagTd"> Customer</td>
+                                  <td class="tagTd ">المشتريات</td>
+                                  <td class="tagTd"> 550 </td>
+                                  <td class="tagTd"> $505 </td>
+                                  <td class="tagTd"> $250</td>
                                   <td class="p-1 ">
                                       <div class="flex items-center gap-1">
                                           <button class="p-1  rounded-full  group transition-all duration-500  flex item-center">
