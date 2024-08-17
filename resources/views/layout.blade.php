@@ -24,7 +24,7 @@
     <body class="font-sans antialiased a">
    @include('includes.swip')
 
-          <div class="min-h-screen m-2 ">
+          <div class=" m-2 ">
             @yield('conm')
         </div>
 
