@@ -11,8 +11,6 @@
 <div class="border-b mb-5 flex justify-between text-sm">
     <div class="text-bro flex items-center pb-2 pr-2 border-b-2 border-[#6A64F1] uppercase">
 
-<p href="#" class="font-semibold inline-block ">بيانات المنتج</p>
-    <hr class=" rounded-lg   border border-black rounded-s-lg    bg-bro">
     <div class="mx-10  w-full max-w-full bg-white">
         <form>
 
