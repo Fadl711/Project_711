@@ -4,6 +4,7 @@ use App\Http\Controllers\CustomerCoctroller;
 use App\Http\Controllers\HomeCoctroller;
 use App\Http\Controllers\ProductCoctroller;
 use App\Http\Controllers\AccountCoctroller;
+use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\PaymentCoctroller;
 use App\Http\Controllers\SaleCoctroller;
 
@@ -12,6 +13,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PurchaseCoctroller;
 use App\Http\Controllers\RefundController;
 use App\Http\Controllers\SupplierCoctroller;
+use App\Http\Controllers\PDFReportController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -23,7 +25,9 @@ Route::get('/Purchase', [PurchaseCoctroller::class, 'Purchase'])->name('Purchase
 Route::get('/accounts', [AccountCoctroller::class, 'index'])->name('accounts.index');
 Route::get('/payments', [PaymentCoctroller::class, 'index'])->name('payments.index');
 Route::get('/refunds', [RefundController::class, 'index'])->name('refunds.index');
+Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
 
+Route::get('/reports/pdf', [PDFReportController::class, 'createPDF'])->name('donwload');
 
 
 
