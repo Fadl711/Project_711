@@ -17,7 +17,7 @@
   @apply block mb-2 text-sm font-bold text-gray-700 dark:text-white
 }
 .inputSale{
-@apply w-full px-3 py-2 text-sm leading-tight text-gray-700 dark:text-white border rounded shadow appearance-none 
+@apply w-full px-3 py-2 text-sm leading-tight text-gray-700 dark:text-white border rounded shadow appearance-none
 }
 .divProducte {
    @apply flex items-center w-full px-1 py-1 text-base  text-black bg-white border-t border-b border-l rounded-l-md hover:bg-gray-100 md:col-span-3
@@ -38,7 +38,7 @@
    @apply bg-white transition-all duration-500 hover:bg-gray-50
 }
 .buttonEdit{
-   @apply p-1  rounded-full  duration-500  
+   @apply p-1  rounded-full  duration-500
 
 }
 .tagTable{

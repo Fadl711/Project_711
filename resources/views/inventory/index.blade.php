@@ -21,7 +21,7 @@
     <table id="example" class="table-auto w-full">
         <thead>
             <tr>
-                <th class="px-4 py-2">Name</th>
+                <th class=" px-4 py-2">Name</th>
                 <th class="px-4 py-2">Position</th>
                 <th class="px-4 py-2">Office</th>
                 <th class="px-4 py-2">Age</th>
@@ -136,7 +136,7 @@
 </div>
 
 
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+{{-- <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
 
@@ -146,7 +146,7 @@
             // Add any customization options here
         });
     });
-</script>
+</script> --}}
 </body>
 </html>
 
