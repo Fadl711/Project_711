@@ -122,69 +122,89 @@
      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js"></script>
      <script>
         
-     // __________________الدائن______________________
-        document.getElementById('credit').addEventListener('input',function(){
-         var credits= document.getElementById('credit').value;
+     // __________________ debit مدين المستلم  _ _____________________
+        document.getElementById('debit').addEventListener('input',function(){
+            var debits= document.getElementById('debit').value;        
+            var credits= document.getElementById('credit').value;
+        var cutomers="العملاء";
 
+          var  purchases="المشتريات", expenses="المصروفات",bank="البنك",box="الصندوق",supplir="الموردين";
+         
+          if( debits==bank || debits==purchases || debits==expenses )
+                   {
+                    if(credits==box )
+                    {
+                        expensesBlock();
+                    }
+                    else if(debits==purchases || debits==expenses || debits==box )
+                    {
+                        if(credits==bank)
+                    {
+                        expensesBlock();
+                    }
+                   
+                    } 
+                   
+                   }  
+                   else {
+                    customersNone();
 
-          if(credits=="العملاء" || credits=="المبيعات" || credits=="العملاء" )
-         {
-                 customersBlock()
+                       }
+                     if(credits==bank ){
+                    if(debits==supplir){
+                        supplirsBlock();
+                    }
+                   
+                }
 
-         }
-         else if(credits=="الموردين" || credits=="المشتريات"  )
-         {
-            supplirsBlock();
-          }
-          else if(credits=="الموردين" || credits=="مسموحات المبيعات"  )
-         {
-            supplirsBlock();
-          }
-          else if(credits!="العملاء" || credits!="المصروفات" || credits!="المسحوبات")
-         {
-                 supplirsNone();
-          }  
-          
-         if(credits!="العملاء")
-         {
-                 supplirsNone();
-          }    
+                  
+
          });
            
-        // __________________ الدائن ______________________
-         document.getElementById('debit').addEventListener('input',function(){
+        // __________________  credit الدائن المرسل  ______________________
+         document.getElementById('credit').addEventListener('input',function(){
              var credits= document.getElementById('credit').value;
              var debits= document.getElementById('debit').value;        
+             var cutomers="العملاء";
+             var  purchases="المشتريات", expenses="المصروفات",bank="البنك",box="الصندوق",supplir="الموردين";
+                
+                 if(  credits==box   )
+              {
+                if(debits==purchases || debits==expenses || debits==bank )
+                {
+                    expensesBlock();
+                } 
 
+              }else  if( credits==bank   )
+                {
+                    if(debits==purchases || debits==expenses || debits==box )
+                {
+                    expensesBlock();
+                } 
+                // ----------------
+                
+                else   if(debits==supplir){
+                  
+                  
+                        supplirsBlock();
+                    }
+                    
+                    
+                   
+                
+            //    ________________
+                } 
 
-         if(debits=="المصروفات" )
-         {    
-                 expensesBlock();
-         } 
-         else if(debits=="العملاء"  )
-         {      
-                 customersBlock();
-         }else if(debits!="العملاء")
-         {
-            customersNone();
+               
+                  
 
-         }
-         else if(debits=="المشتريات"|| debits=="الموردين"|| debits=="مسموحات المشتريات" || displayTa=="المشتريات"  )
-         {
-                 supplirsBlock();
-          }
-         
-         else if( debits!="العملاء" || debits!="المصروفات" || debits!="المسحوبات" )
-         {
-            supplirsNone();
-            customersNone();
-          }  
-         
-          else if(debits=="المسحوبات")
-         {
-                 almashobatsBlock();
-         } 
-           
+              else {
+
+                customersNone();
+
+                         }
+
+    
            
          });
            // ____________________customers_______________________      
