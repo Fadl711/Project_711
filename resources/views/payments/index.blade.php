@@ -1,5 +1,5 @@
 @extends('layout')
-@extends('accounts.layout')
+{{-- @extends('accounts.layout') --}}
 @section('conm')
 <div class="mb-4 md:flex md:justify-around">
       <div class="md:ml-2 ">  
@@ -8,7 +8,9 @@
         <datalist class="inputSale" id="datalis">
              <option  value="العملاء">
              <option  value="الموردين"> 
+             <option  value="راس المال"> 
              <option  value="الصندوق">
+             <option  value="الإيرادات">
              <option  value="البنك">
              <option  value="المصروفات">
              <option  value="المسحوبات">
@@ -22,9 +24,11 @@
              <label class="labelSale" for="email">قسم المرسل</label>
              <input name="payment_type" list="datalist" class="inputSale" id="credit" placeholder="دائن">
              <datalist class="inputSale" id="datalist">
-                <option  value="العملاء">
+             <option  value="العملاء">
              <option  value="الموردين"> 
              <option  value="الصندوق">
+                <option  value="راس المال"> 
+             <option  value="الإيرادات">
              <option  value="البنك">
              <option  value="المسحوبات">
              <option  value="المشتريات">
@@ -58,7 +62,7 @@
                      <input name="numberphone" class="inputSale" type="number" placeholder="رقم التلفون"/>
                  </div>
                  <div class="md:mr-2">
-                     <label class="labelSale" for="">ملاحظة</label>
+                     <label class="labelSale" id="notice" for="">ملاحظة</label>
                      <input name="" class="inputSale" type="text" placeholder="ملاحظة"/>
                  </div>
                  <div class="p-1 border-t border-gray-200 rounded-b">
@@ -66,7 +70,6 @@
                  </div>
         </div>
         </form>
- 
         <form action="">
             <div class="overflow-hidden">
                 <table class="tagTable">
@@ -80,7 +83,6 @@
                             <th scope="col" class="leading-2 tagHt " id="thId"></th>
                             <th scope="col" class="leading-2 tagHt">المبلغ</th>
                             <th scope="col" class="leading-2 tagHt">ملاحظة</th>
-
                             <th scope="col" class="leading-2 tagHt">تعديل البيانات</th>
                          </tr>
                      </thead>
@@ -123,123 +125,152 @@
      <script>
         
      // __________________ debit مدين المستلم  _ _____________________
+     
         document.getElementById('debit').addEventListener('input',function(){
             var debits= document.getElementById('debit').value;        
             var credits= document.getElementById('credit').value;
-        var cutomers="العملاء";
+            var  purchases="المشتريات", expenses="المصروفات"
+             ,bank="البنك",box="الصندوق",supplir="الموردين",cutomers="العملاء"
+             ,sales="المبيعات",revenue="الإيرادات",capital="راس المال",
+             saleAllowed="مسموحات المبيعات",purchasingAllowed="مسموحات المشتريات";
+         if(debits==purchases)
+         { 
+            if(credits==box)
+             {
+                expensesBlock();
 
-          var  purchases="المشتريات", expenses="المصروفات",bank="البنك",box="الصندوق",supplir="الموردين";
-         
-          if( debits==bank || debits==purchases || debits==expenses )
-                   {
-                    if(credits==box )
-                    {
-                        expensesBlock();
-                    }
-                    else if(debits==purchases || debits==expenses || debits==box )
-                    {
-                        if(credits==bank)
-                    {
-                        expensesBlock();
-                    }
-                   
-                    } 
-                   
-                   }  
-                   else {
-                    customersNone();
+              } 
+                else if(credits==bank)
+                {
+                   expensesBlock();
 
-                       }
-                     if(credits==bank ){
-                    if(debits==supplir){
-                        supplirsBlock();
-                    }
-                   
                 }
+                else if(credits==supplir)
+                {
+                 supplirsBlock();
 
-                  
+                } else {supplirsNone();}
 
+         } 
+         else if(debits==expenses)
+         {
+            if(credits==box)
+             {
+                expensesBlock();
+
+              }  else if(credits==bank)
+                {
+                   expensesBlock();
+
+                } else {supplirsNone();}
+         }
+         else if(debits==box)
+         {
+            if(credits==bank)
+                {
+                   expensesBlock();
+
+                }else if(credits==cutomers)
+                {
+                    customersBlock();
+
+                }else if(credits==sales)
+                {
+                    customersBlock();
+
+                }else if(credits==revenue)
+                {
+                    expensesBlock();
+
+                }else if(credits==capital){expensesBlock();} else {supplirsNone();}
+
+
+         }
+         else if(debits==bank)
+         {
+             if(credits==box){expensesBlock();}
+                else if(credits==cutomers){customersBlock();}
+                else if(credits==sales){customersBlock();}
+                else if(credits==revenue){expensesBlock();}
+                else if(credits==capital){expensesBlock();} else {supplirsNone();}
+         }
+          else if(debits==supplir)
+         {
+           if(credits==box){supplirsBlock();}
+           else if(credits==bank){supplirsBlock();}
+           else if(credits==purchasingAllowed){supplirsBlock();} else {supplirsNone();}
+         }
+         else if(debits==cutomers)
+         {
+            if(credits==sales){customersBlock();}
+           else  if(credits==saleAllowed){customersBlock();} 
+           else  if(credits==box){customersBlock();}  
+           else if(credits==bank){customersBlock();}  else {supplirsNone();}
+         }
+         else {supplirsNone();}
          });
-           
         // __________________  credit الدائن المرسل  ______________________
          document.getElementById('credit').addEventListener('input',function(){
              var credits= document.getElementById('credit').value;
              var debits= document.getElementById('debit').value;        
-             var cutomers="العملاء";
-             var  purchases="المشتريات", expenses="المصروفات",bank="البنك",box="الصندوق",supplir="الموردين";
-                
-                 if(  credits==box   )
+             var  purchases="المشتريات", expenses="المصروفات",bank="البنك",box="الصندوق",supplir="الموردين",cutomers="العملاء",
+             sales="المبيعات",revenue="الإيرادات",capital="راس المال",saleAllowed="مسموحات المبيعات",purchasingAllowed="مسموحات المشتريات";
+
+             if(debits==purchases)
+             { 
+              if(credits==box){expensesBlock();} 
+                else if(credits==bank){expensesBlock();}
+                else if(credits==supplir){supplirsBlock();}else {supplirsNone();}
+             } 
+             else if(debits==expenses)
+             {
+              if(credits==box){expensesBlock();} 
+               else if(credits==bank){expensesBlock();}else {supplirsNone();}
+             }
+             else if(debits==box)
+             {
+               if(credits==bank){expensesBlock();}
+                else if(credits==cutomers){customersBlock();}
+                else if(credits==sales){customersBlock();}
+                else if(credits==revenue){expensesBlock();}
+                else if(credits==capital){expensesBlock();}else {supplirsNone();}
+             }
+             else if(debits==bank)
               {
-                if(debits==purchases || debits==expenses || debits==bank )
-                {
-                    expensesBlock();
-                } 
-
-              }else  if( credits==bank   )
-                {
-                    if(debits==purchases || debits==expenses || debits==box )
-                {
-                    expensesBlock();
-                } 
-                // ----------------
-                
-                else   if(debits==supplir){
-                  
-                  
-                        supplirsBlock();
-                    }
-                    
-                    
-                   
-                
-            //    ________________
-                } 
-
-               
-                  
-
-              else {
-
-                customersNone();
-
-                         }
-
-    
-           
-         });
-           // ____________________customers_______________________      
-
-         function customersBlock(){
+               if(credits==box){expensesBlock();}
+                else if(credits==cutomers){customersBlock();}
+                else if(credits==sales){customersBlock();}
+                else if(credits==revenue){expensesBlock();}
+                else if(credits==capital)
+                {expensesBlock();}else {supplirsNone();}
+              } 
+             else if(debits==supplir)
+              {
+                      if(credits==box){supplirsBlock();}
+                 else if(credits==bank){supplirsBlock();}
+                 else if(credits==purchasingAllowed){supplirsBlock();} else {supplirsNone();}
+             }
+             else if(debits==cutomers)
+             {
+                     if(credits==sales){customersBlock();}
+               else  if(credits==saleAllowed){customersBlock();}
+               else  if(credits==box){customersBlock();}
+               else  if(credits==bank){customersBlock();} else {supplirsNone();}
+             }
+         else {supplirsNone();}
+      });
+         function customersBlock(){   // ____________________ data customers _______________________      
          var custome=document.getElementById('supplirs');
          custome.style.display="block";
           document.getElementById('labelName').textContent='اسم العميل';
           document.getElementById('thName').textContent='اسم العميل';
           document.getElementById('labelId').textContent=' رقم العميل';
           document.getElementById('thId').textContent=' رقم العميل';
-
             }
-        
-         // ____________________expenses_______________________          
-         function expensesBlock(){
-            var custome=document.getElementById('supplirs');
-            custome.style.display="block";
-        //   document.getElementById('labelName').textContent='اسم العميل';
-        //   document.getElementById('thName').textContent='اسم العميل';
-        //   document.getElementById('labelId').textContent=' رقم العميل';
-        //   document.getElementById('thId').textContent=' رقم العميل';
-          }
-
-
-          // _____________________supplirs_______________________________    
-          function supplirsNone(){
+          function supplirsNone(){       // _____________________ data supplirs _______________________________    
           var supplir=document.getElementById('supplirs');
           supplir.style.display="none";
              }
-              function customersNone(){
-          var supplir=document.getElementById('supplirs');
-          supplir.style.display="none";
-             }
-
           function supplirsBlock(){
           var supplir=document.getElementById('supplirs');
           supplir.style.display="block";
@@ -247,21 +278,7 @@
           document.getElementById('thName').innerHTML='اسم المورد';
           document.getElementById('labelId').innerHTML=' رقم المورد';
           document.getElementById('thId').innerHTML=' رقم المورد';
-
                       }
-             // ____________________ almashobat _______________________      
-
-         function almashobatsBlock(){
-         var almashobats=document.getElementById('supplirs');
-         almashobats.style.display="block";
-         document.getElementById('labelName').textContent='اسم الموظف';
-          document.getElementById('thName').textContent='اسم الموظف';
-          document.getElementById('labelId').textContent=' رقم الموظف';
-          document.getElementById('thId').textContent=' رقم الموظف';
-          var NameAccount=document.getElementById('tagNameAccount');
-          NameAccount.style.display="none";
-            } 
-            
+//  paymentForCustomerFormBox
      </script>
-
 @endsection

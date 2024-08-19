@@ -5,78 +5,78 @@
 
 
 
-    <p href="#" class="font-semibold inline-block text-base">المورد</p>
+{{--     <p href="#" class="font-semibold inline-block text-base">المورد</p>
     <hr class="my-6 rounded-lg   border border-black rounded-s-lg mr-   bg-bro">
+ --}}
+<div class="mx-10  w-full min-w-full bg-white">
 
-<div class="mx-10  w-full max-w-full bg-white">
-
-<div class="-mx-3 grid  grid-cols-8 ">
+<div class="mb-4 md:flex md:justify-around  text-right">
     <div class=" px-1 ">
         <div class="mb-1">
-            <label for="name" class="mb-1 block text-base font-medium text-[#07074D]">
+            <label for="name" class="labelSale">
                 اسم المورد
             </label>
             <input type="text" name="name" id="contact_person _name" placeholder="name"
-                class="w-full rounded-md border border-[#e0e0e0] bg-white  text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" />
+                class="inputSale" />
         </div>
     </div>
     <div class=" px-1 ">
         <div class="mb-1">
-            <label for="name" class="mb-1 block text-base font-medium text-[#07074D]">
+            <label for="name" class="labelSale">
                  تلفون المورد
             </label>
             <input type="text" name="name" id="contact_person _name" placeholder="name"
-                class="w-full rounded-md border border-[#e0e0e0] bg-white  text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" />
+                class="inputSale" />
         </div>
     </div>
 
     <div class=" px-1 ">
         <div class="mb-1">
-            <label for="name" class="mb-1 block text-base font-medium text-[#07074D]">
+            <label for="name" class="labelSale">
                   رقم الإيصال
             </label>
             <input type="text" name="name" id="contact_person _name" placeholder="name"
-                class="w-full rounded-md border border-[#e0e0e0] bg-white  text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" />
+                class="inputSale" />
         </div>
     </div>
     <div class=" px-1 ">
         <div class="mb-1">
-            <label for="name" class="mb-1 block text-base font-medium text-[#07074D]">
+            <label for="name" class="labelSale">
 أجمالي الفاتورة                    </label>
             <input type="text" name="name" id="contact_person _name" placeholder="name"
-                class="w-full rounded-md border border-[#e0e0e0] bg-white  text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" />
+                class="inputSale" />
         </div>
     </div>
     <div class=" px-1 ">
         <div class="mb-1">
-            <label for="name" class="mb-1 block text-base font-medium text-[#07074D]">
+            <label for="name" class="labelSale">
 المدفوع                    </label>
             <input type="text" name="name" id="contact_person _name" placeholder="name"
-                class="w-full rounded-md border border-[#e0e0e0] bg-white  text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" />
+                class="inputSale" />
         </div>
     </div>
     <div class=" px-1 ">
         <div class="mb-1">
-            <label for="name" class="mb-1 block text-base font-medium text-[#07074D]">
+            <label for="name" class="labelSale">
 المتبقي                    </label>
             <input type="text" name="name" id="contact_person _name" placeholder="name"
-                class="w-full rounded-md border border-[#e0e0e0] bg-white  text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" />
+                class="inputSale" />
         </div>
     </div>
     <div class=" px-1 ">
         <div class="mb-1">
-            <label for="name" class="mb-1 block text-base font-medium text-[#07074D]">
+            <label for="name" class="labelSale">
 اجمالي التكلفة                   </label>
             <input type="text" name="name" id="contact_person _name" placeholder="name"
-                class="w-full rounded-md border border-[#e0e0e0] bg-white  text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" />
+                class="inputSale" />
         </div>
     </div>
     <div class=" px-1 ">
         <div class="mb-1">
-            <label for="name" class="mb-1 block text-base font-medium text-[#07074D]">
+            <label for="name" class="labelSale">
 نوع الدفع                    </label>
             <select type="text" name="name" id="contact_person _name" placeholder="name"
-                class="w-full rounded-md border border-[#e0e0e0] bg-white  text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" >
+                class="inputSale" >
             <option value="">دولار</option>
             <option value="">دولار</option>
             <option value="">دولار</option>
@@ -101,12 +101,12 @@
 
 
 
-    <p href="#" class="font-semibold inline-block ">بيانات المنتاج</p>
-    <hr class=" rounded-lg   border border-black rounded-s-lg    bg-bro">
+{{--     <p href="#" class="font-semibold inline-block ">بيانات المنتاج</p>
+    <hr class=" rounded-lg   border border-black rounded-s-lg    bg-bro"> --}}
     <div class="mx-10  w-full max-w-full bg-white">
         <form>
 
-         <div class="-mx-3 grid  grid-cols-5  ">
+         <div class="mb-4 md:flex md:justify-around   ">
 
 
 
@@ -116,7 +116,7 @@
                           اسم الصنف
                         </label>
                         <input type="text" name="name" id="contact_person _name" placeholder="name"
-                            class="w-full rounded-md border border-[#e0e0e0] bg-white  text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" />
+                            class="inputSale" />
                     </div>
                 </div>
 
@@ -126,7 +126,7 @@
                             الكمية
                         </label>
                         <input type="number" name="quantity" id="address" placeholder="quantity"
-                            class="w-full rounded-md border border-[#e0e0e0] bg-white  text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" />
+                            class="inputSale" />
                     </div>
                 </div>
                 <div class="max-md:w-52 px-1 ">
@@ -135,7 +135,7 @@
                             تكلفة الصنف
                         </label>
                         <input type="number" name="quantity" id="address" placeholder="quantity"
-                            class="w-full rounded-md border border-[#e0e0e0] bg-white  text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" />
+                            class="inputSale" />
                     </div>
                 </div>
 
@@ -145,7 +145,7 @@
                             سعر الشراء
                         </label>
                         <input type="number" name="price" id="price" placeholder="price"
-                            class="w-full rounded-md border border-[#e0e0e0] bg-white    text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" />
+                            class="inputSale" />
                     </div>
                 </div>
                 <div class="max-md:w-52 px-1 ">
@@ -154,7 +154,7 @@
                             سعر البيع
                         </label>
                         <input type="number" name="price" id="price" placeholder="price"
-                            class="w-full rounded-md border border-[#e0e0e0] bg-white    text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" />
+                            class="inputSale" />
                     </div>
                 </div>
 
@@ -165,7 +165,7 @@
                          الاجماليه
                         </label>
                         <input type="number" name="quantity" id="address" placeholder="quantity"
-                            class="w-full rounded-md border border-[#e0e0e0] bg-white  text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" />
+                            class="inputSale" />
                     </div>
                 </div>
                 <div class=" px-1  ">
@@ -174,7 +174,7 @@
                       الباركود
                       </label>
                         <input type="number" name="barcod" id="contact_person _name" placeholder="barcod  "
-                            class="w-full rounded-md border border-[#e0e0e0] bg-white  text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" />
+                            class="inputSale" />
                     </div>
                 </div>
 
@@ -184,7 +184,7 @@
                             التخفيض
                         </label>
                         <input type="number" name="discount" id="address" placeholder="discount"
-                            class="w-full rounded-md border border-[#e0e0e0] bg-white  text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" />
+                            class="inputSale" />
                     </div>
                 </div>
 
@@ -194,7 +194,7 @@
                               العلامة التجارية
                         </label>
                         <input type="number" name="address" id="address" placeholder="Contact Person Number Phone"
-                            class="w-full rounded-md border border-[#e0e0e0] bg-white  text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" />
+                            class="inputSale" />
                     </div>
                 </div>
                 <div class="max-md:w-52 px-1 ">
@@ -205,7 +205,7 @@
                             الوصف
                         </label>
                             <textarea  name="description" id=""  placeholder="description"
-                       class="w-full rounded-md border border-[#e0e0e0] bg-white  text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
+                       class="inputSale"
                ></textarea>
 
 
