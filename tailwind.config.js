@@ -10,11 +10,16 @@ export default {
     ],
 
     theme: {
-             extend: {},
+
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            colors:{
+
+
+                "bro":'#6A64F1',
+            }
         },
     },
 
