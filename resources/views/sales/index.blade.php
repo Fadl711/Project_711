@@ -9,9 +9,12 @@
                         <label class="labelSale" for="email">ق/الفاتورة</label>
                         <input name="" class="inputSale" id="brand" type="text" placeholder="Email"/>
                     </div>
-                    <div class="md:ml-2">
-                        <label class="labelSale" for="email">اسم العميل</label>
+                    <div class="md:ml-2 relative">
+                        <label class="labelSale text-right" for="email">اسم العميل</label>
                         <input name="" class="inputSale " id="" type="text" placeholder="Email"/>
+                        <button data-modal-target="crud-modal" data-modal-toggle="crud-modal" class=" w-10  absolute top-0 right-20 focus:outline-none " type="button">
+                            <svg fill="#000000" width="20px" height="20px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M2,21h8a1,1,0,0,0,0-2H3.071A7.011,7.011,0,0,1,10,13a5.044,5.044,0,1,0-3.377-1.337A9.01,9.01,0,0,0,1,20,1,1,0,0,0,2,21ZM10,5A3,3,0,1,1,7,8,3,3,0,0,1,10,5ZM23,16a1,1,0,0,1-1,1H19v3a1,1,0,0,1-2,0V17H14a1,1,0,0,1,0-2h3V12a1,1,0,0,1,2,0v3h3A1,1,0,0,1,23,16Z"></path></g></svg>
+                          </button>
                     </div>
                     <div class="md:ml-2">
                         <label class="labelSale" for="lastName" >الإجمالي </label>
@@ -38,9 +41,33 @@
         </div>
     </div>
 </div>
+{{-- alert --}}
+<div id="crud-modal" tabindex="-1" aria-hidden="true" class=" bg-black bg-opacity-50  hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0  h-full">
+    <div class="relative p-4 w-full max-w-md max-h-full">
+        <!-- Modal content -->
+        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <!-- Modal header -->
+            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                    اضافة عميل جديد
+                </h3>
+                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                    </svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </div>
+            <!-- Modal body -->
+            @include('includes.form')
+        </div>
+    </div>
+</div>
+{{-- alert --}}
+<br>
      <div class="flex items-center">
-        <form action="#">
-            <p class="flex">بيانات الصنف</p>
+        <form action="">
+            <h2 class="text-2xl font-bold  text-right my-3"> بيانات الصنف</h2>
             <div class="divProducte">
                 <div class="col-span-6 sm:col-span-3">
                     <label for="product-name" class="labelSale ">اسم الصنف</label>
@@ -62,28 +89,32 @@
                     <label for="brand" class="labelSale "> الإجمالي </label>
                     <input type="number" name="price" id="price" class="inputSale " placeholder="0" required="">
                 </div>
+                <div class="col-span-6 sm:col-span-3 w-10 mx-2">
+                    <label for="brand" class="labelSale "> المتبقي </label>
+                    <input value="0" name="price" id="price" class="inputSale bg-gray-200  cursor-not-allowedstatu" disabled >
+                </div>
+
+                    <button class="btnSave mt-4" type="submit">Save</button>
+
+
             </div>
-            <div class="p-1 border-t border-gray-200 rounded-b">
-                <button class="btnSave" type="submit">Save</button>
-            </div>
-                
-                
+
         </form>
     </div>
+<br>
 
-    
         <div class="flex flex-col sm:max-w-[650px]" id="table">
             <div class="flex justify-between flex-1 sm:hidden">
                 <button type="button" class="relative inline-flex items-center px-2 py-2 text-sm 5xl:text-xl font-medium text-gray-700 bg-white border border-gray-300 rounded-md sm:rounded-none hover:bg-gray-50 opacity-50 cursor-not-allowed" data-id="pagination-prev" disabled=""><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 20 20" class="w-5 h-5" aria-hidden="true" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Previous</button><button type="button" class="relative inline-flex items-center px-2 py-2 text-sm 5xl:text-xl   font-medium text-gray-700 bg-white border border-gray-300 rounded-md sm:rounded-none hover:bg-gray-50 " data-id="pagination-next">Next <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 20 20" class="w-5 h-5" aria-hidden="true" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg></button>
             </div>
-                
+
             <div class=" overflow-x-auto">
               <div class="min-w-full inline-block align-middle">
                   <div class="overflow-hidden ">
                       <table class=" min-w-full ">
                           <thead>
                               <tr class="bgcolor">
-                                <th scope="col" class="leading-2 tagHt"> 
+                                <th scope="col" class="leading-2 tagHt">
                                     <div class="relative z-0 flex justify-between w-full -space-x-px rounded-md" aria-label="Pagination">
                                     <button type="button" class="relative inline-flex items-center px-2 py-2 text-sm 5xl:text-xl font-medium text-gray-700 bg-white border border-gray-300 rounded-md sm:rounded-none hover:bg-gray-50 sm:rounded-l-md opacity-50 cursor-not-allowed" data-id="pagination-prev" disabled=""><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 20 20" class="w-5 h-5" aria-hidden="true" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Previous Page</button>
                                 </div>
@@ -93,7 +124,7 @@
                                   <th scope="col" class="leading-2 tagHt">الكمية</th>
                                   <th scope="col" class="leading-2 tagHt"> الإجمالي</th>
                                   <th scope="col" class="leading-2 tagHt"> تعديل</th>
-                                  <th scope="col" class="leading-2 tagHt">                               
+                                  <th scope="col" class="leading-2 tagHt">
                                           <div class="relative z-0 flex justify-between w-full -space-x-px rounded-md" aria-label="Pagination">
                                             <button type="button" class="relative inline-flex items-center px-2 py-2 text-sm 5xl:text-xl   font-medium text-gray-700 bg-white border border-gray-300 rounded-md sm:rounded-none hover:bg-gray-50 sm:rounded-r-md" data-id="pagination-next">Next Page <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 20 20" class="w-5 h-5" aria-hidden="true" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg></button>
                                           </div>
@@ -102,7 +133,7 @@
 
                                 </tr>
                           </thead>
-                          <tbody class="divide-y divide-gray-300">
+                          <tbody class="divide-y divide-gray-300 ">
                               <tr class="bg-white transition-all duration-500 hover:bg-gray-50">
                                 <td class="tagTd"></td>
                                   <td class="tagTd ">Louis Vuitton</td>
@@ -135,5 +166,5 @@
     </div>
  </div>
  </div>
- 
+
 @endsection
