@@ -129,7 +129,7 @@
                 <div
                   class="text-white shadow-xl flex items-center justify-center p-3 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 z-50 absolute  ">
             
-                  <svg class="w-6 h-6 group-hover:rotate-90 transition transition-all duration-[0.6s]" fill="#ffffff" height="80px"
+                  <svg class="w-6 h-6 group-hover:rotate-90  transition-all duration-[0.6s]" fill="#ffffff" height="80px"
                     width="80px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
                     xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 458.624 458.624" xml:space="preserve">
                     <g>
