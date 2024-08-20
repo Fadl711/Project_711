@@ -17,8 +17,8 @@
                 </div>
                
                 <div class="md:ml-2 ">
-                    <label class="labelSale  " for="payment_type"> تصنيف الحساب</label>
-                    <input   name="payment_type" list="datalist"   class="inputSale " id="payment_type">
+                    <label class="labelSale  " for="payment_type2"> تصنيف الحساب</label>
+                    <input   name="payment_type" list="datalist"   class="inputSale " id="payment_type2">
                     <datalist  class="inputSale "  id="datalist">
                     <option value="اجل" > 
                     <option  value="نقدا">
@@ -55,7 +55,7 @@
                   <div class="overflow-hidden ">
                       <table class=" min-w-full rounded-xl">
                           <thead>
-                               <tr class="bg-gray-50">
+                               <tr class="bgcolor">
                                   <th scope="col" class="leading-2 tagHt">اسم الحساب</th>
                                   <th scope="col" class="leading-2 tagHt ">رقم الحساب</th>
                                   <th scope="col" class="leading-2 tagHt">مدين</th>

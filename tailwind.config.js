@@ -18,7 +18,7 @@ export default {
             colors:{
 
 
-                "bro":'#6A64F1',
+                "bro":'#fbbf24',
             }
         },
     },

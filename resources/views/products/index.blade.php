@@ -19,21 +19,29 @@
                         {{ __('المنتجات') }}
                       
                 </div>
-         
-            <button onclick=" NewProducts()">
+           
+                
+            <button onclick=" NewProducts()" class="text-sm font-medium text-center text-gray-500 border-b border-gray-200 ">
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                         {{ __('اضافة منتج') }}
                       
                 </div>
-            </button>
-                <button onclick=" ">
+
+                   </button>
+              
+
+
+
+                   <button onclick="  " class="text-sm font-medium text-center text-gray-500 border-b border-gray-200 ">
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                         {{ __('التحليل') }}
-                      
+
+                       
+                        
                 </div>
             </button>
-               
-            </div>
+      
+        </div>
           
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
@@ -73,12 +81,13 @@
     </div>
 
     <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
+    <div  :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
         </div>
+      
        
         <button onclick=" ProductTable()">
             <div class="pt-2 pb-3 space-y-1">
@@ -122,7 +131,7 @@
 {{-- @extends('products.app') --}}
 @section('conm')
 <div class="border-b flex justify-between text-sm" id="newProducts" style="display: none">
-    <div class="text-bro flex items-center border-b-2 border-[#6A64F1] uppercase">
+    <div class="text-bro flex items-center">
     <div class=" max-w-full bg-white">
         <form>
          <div class="md:flex md:justify-around text-right">
@@ -155,16 +164,26 @@
             <div class="p-1 border-t border-gray-200 rounded-b ">
                 <button  class="btnSave bg-amber-400" type="submit">Save</button>
             </div>
+            
             </div>
         </form>
     </div>
 </div>
 </div>
+
 <div class="overflow-hidden " id="ProductsTable" style="display: block">
+    <div class="flex">
+        <input type="text" placeholder="ابحث عن الصنف   "
+            class="w-full md:w-80 px-3 h-10 rounded-r border-1 border-bro und focus:outline-none focus:border-bro/80"
+            >
+        <button type="submit" class="bgcolor text-white rounded-l  px-2 md:px-3 py-0 md:py-1 ">ابحث</button>
+    </div>
+    <br>
+   
     <table class=" min-w-full rounded-xl">
         <thead>
-            <tr class="bg-amber-400 ">
-                <th scope="col" class="leading-2 tagHt ">اسم الصنف</th>
+            <tr class=" bgcolor ">
+                <th scope="col" class="leading-2 tagHt  ">اسم الصنف</th>
                 <th scope="col" class="leading-2 tagHt ">الباركود</th>
                 <th scope="col" class="leading-2 tagHt ">الكمية</th>
                 <th scope="col" class="leading-2 tagHt ">السعر الشراء</th>
@@ -206,6 +225,7 @@
         </tbody>
     </table>
 </div>
+
  <script>
        function NewProducts()
     {

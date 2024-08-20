@@ -138,7 +138,7 @@
 <div class="overflow-hidden ">
     <table class=" min-w-full ">
         <thead>
-            <tr class="bg-amber-400">
+            <tr class="bgcolor">
                 <th scope="col" class="leading-2 tagHt">اسم الصنف</th>
                 <th scope="col" class="leading-2 tagHt ">الباركود</th>
                 <th scope="col" class="leading-2 tagHt ">الكمية</th>
@@ -152,11 +152,11 @@
 
             </tr>
         </thead>
-        <tbody class="divide-y divide-gray-300 ">
+        <tbody class="divide-y divide-gray-300">
             <tr class="bg-white transition-all duration-500 hover:bg-gray-50">
-                <td class="tagTd  ">رنج</td>
-                <td class="tagTd ">12002550</td>
-                <td class="tagTd ">500</td>
+                <td class="tagTd">رنج</td>
+                <td class="tagTd">12002550</td>
+                <td class="tagTd">500</td>
                 <td class="tagTd">5,000</td>
                 <td class="tagTd">5,500</td>
                 <td class="tagTd">500,000</td>
