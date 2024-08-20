@@ -1,13 +1,8 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body>
+@extends('layout')
+
+@section('conm')
+
+
 
 
 
@@ -17,126 +12,83 @@
 
 
 
-    <h2 class="text-2xl font-bold mb-4">Example Datatable</h2>
+    <h2 class="text-2xl font-bold  text-right my-3 underline underline-offset-4"> قائمة الجرد</h2>
+    <form class="flex flex-col md:flex-row gap-3 mb-5">
+        <div class="flex">
+            <input type="text" placeholder="ابحث عن الصنف الذي تريد جرده"
+                class="w-full md:w-80 px-3 h-10 rounded-r border-2 border-bro und focus:outline-none focus:border-bro/80"
+                >
+            <button type="submit" class="bg-bro text-white rounded-l  px-2 md:px-3 py-0 md:py-1 ">ابحث</button>
+        </div>
+        <select id="pricingType" name="pricingType"
+            class="text-left w-40 h-10 border-2 border-bro focus:outline-none focus:border-sky-500 text-bro rounded px-2 md:px-3 py-0 md:py-1 tracking-wider">
+            <option value="All" selected="">All</option>
+            <option value="Freemium">Freemium</option>
+            <option value="Free">Free</option>
+            <option value="Paid">Paid</option>
+        </select>
+    </form>
     <table id="example" class="table-auto w-full">
         <thead>
             <tr>
-                <th class=" px-4 py-2">Name</th>
-                <th class="px-4 py-2">Position</th>
-                <th class="px-4 py-2">Office</th>
-                <th class="px-4 py-2">Age</th>
-                <th class="px-4 py-2">Start date</th>
-                <th class="px-4 py-2">Salary</th>
+                <th class=" px-4 py-2">اسم الصنف</th>
+                <th class="px-4 py-2">المتبقي</th>
+                <th class="px-4 py-2">الناقص</th>
+                <th class="px-4 py-2">مردودات المشتريات</th>
+                <th class="px-4 py-2">مردودات المبيعات</th>
+                <th class="px-4 py-2">مسموحات المبيعات</th>
+                <th class="px-4 py-2">سعر الصنف</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td class="border px-4 py-2">Tiger Nixon</td>
-                <td class="border px-4 py-2">System Architect</td>
-                <td class="border px-4 py-2">Edinburgh</td>
-                <td class="border px-4 py-2">61</td>
-                <td class="border px-4 py-2">2011/04/25</td>
-                <td class="border px-4 py-2">$320,800</td>
+                <td class="border px-4 py-2">شلك الامير</td>
+                <td class="border px-4 py-2">30</td>
+                <td class="border px-4 py-2">5</td>
+                <td class="border px-4 py-2">2</td>
+                <td class="border px-4 py-2">500</td>
+                <td class="border px-4 py-2">500</td>
+                <td class="border px-4 py-2">500</td>
+
             </tr>
             <tr>
-                <td class="border px-4 py-2">Garrett Winters</td>
-                <td class="border px-4 py-2">Accountant</td>
-                <td class="border px-4 py-2">Tokyo</td>
-                <td class="border px-4 py-2">63</td>
-                <td class="border px-4 py-2">2011/07/25</td>
-                <td class="border px-4 py-2">$170,750</td>
+                <td class="border px-4 py-2">شلك الامير</td>
+                <td class="border px-4 py-2">30</td>
+                <td class="border px-4 py-2">5</td>
+                <td class="border px-4 py-2">2</td>
+                <td class="border px-4 py-2">500</td>
+                <td class="border px-4 py-2">500</td>
+                <td class="border px-4 py-2">500</td>
+
             </tr>
             <tr>
-                <td class="border px-4 py-2">Ashton Cox</td>
-                <td class="border px-4 py-2">Junior Technical Author</td>
-                <td class="border px-4 py-2">San Francisco</td>
-                <td class="border px-4 py-2">66</td>
-                <td class="border px-4 py-2">2009/01/12</td>
-                <td class="border px-4 py-2">$86,000</td>
+                <td class="border px-4 py-2">رنج </td>
+                <td class="border px-4 py-2">2</td>
+                <td class="border px-4 py-2">10</td>
+                <td class="border px-4 py-2">2</td>
+                <td class="border px-4 py-2">1000</td>
+                <td class="border px-4 py-2">1000</td>
+                <td class="border px-4 py-2">1000</td>
             </tr>
             <tr>
-                <td class="border px-4 py-2">Cedric Kelly</td>
-                <td class="border px-4 py-2">Senior Javascript Developer</td>
-                <td class="border px-4 py-2">Edinburgh</td>
-                <td class="border px-4 py-2">22</td>
-                <td class="border px-4 py-2">2012/03/29</td>
-                <td class="border px-4 py-2">$433,060</td>
-            </tr>
-            <tr>
-                <td class="border px-4 py-2">Airi Satou</td>
-                <td class="border px-4 py-2">Accountant</td>
-                <td class="border px-4 py-2">Tokyo</td>
-                <td class="border px-4 py-2">33</td>
-                <td class="border px-4 py-2">2008/11/28</td>
-                <td class="border px-4 py-2">$162,700</td>
-            </tr>
-            <tr>
-                <td class="border px-4 py-2">Brielle Williamson</td>
-                <td class="border px-4 py-2">Integration Specialist</td>
-                <td class="border px-4 py-2">New York</td>
-                <td class="border px-4 py-2">61</td>
-                <td class="border px-4 py-2">2012/12/02</td>
-                <td class="border px-4 py-2">$372,000</td>
-            </tr>
-            <tr>
-                <td class="border px-4 py-2">Herrod Chandler</td>
-                <td class="border px-4 py-2">Sales Assistant</td>
-                <td class="border px-4 py-2">San Francisco</td>
-                <td class="border px-4 py-2">59</td>
-                <td class="border px-4 py-2">2012/08/06</td>
-                <td class="border px-4 py-2">$137,500</td>
-            </tr>
-            <tr>
-                <td class="border px-4 py-2">Herrod Chandler</td>
-                <td class="border px-4 py-2">Sales Assistant</td>
-                <td class="border px-4 py-2">San Francisco</td>
-                <td class="border px-4 py-2">59</td>
-                <td class="border px-4 py-2">2012/08/06</td>
-                <td class="border px-4 py-2">$137,500</td>
-            </tr>
-            <tr>
-                <td class="border px-4 py-2">Ashton Cox</td>
-                <td class="border px-4 py-2">Junior Technical Author</td>
-                <td class="border px-4 py-2">San Francisco</td>
-                <td class="border px-4 py-2">66</td>
-                <td class="border px-4 py-2">2009/01/12</td>
-                <td class="border px-4 py-2">$86,000</td>
-            </tr>
-            <tr>
-                <td class="border px-4 py-2">Cedric Kelly</td>
-                <td class="border px-4 py-2">Senior Javascript Developer</td>
-                <td class="border px-4 py-2">Edinburgh</td>
-                <td class="border px-4 py-2">22</td>
-                <td class="border px-4 py-2">2012/03/29</td>
-                <td class="border px-4 py-2">$433,060</td>
-            </tr>
-            <tr>
-                <td class="border px-4 py-2">Airi Satou</td>
-                <td class="border px-4 py-2">Accountant</td>
-                <td class="border px-4 py-2">Tokyo</td>
-                <td class="border px-4 py-2">33</td>
-                <td class="border px-4 py-2">2008/11/28</td>
-                <td class="border px-4 py-2">$162,700</td>
-            </tr>
-            <tr>
-                <td class="border px-4 py-2">Brielle Williamson</td>
-                <td class="border px-4 py-2">Integration Specialist</td>
-                <td class="border px-4 py-2">New York</td>
-                <td class="border px-4 py-2">61</td>
-                <td class="border px-4 py-2">2012/12/02</td>
-                <td class="border px-4 py-2">$372,000</td>
+                <td class="border px-4 py-2">رنج </td>
+                <td class="border px-4 py-2">2</td>
+                <td class="border px-4 py-2">10</td>
+                <td class="border px-4 py-2">2</td>
+                <td class="border px-4 py-2">1000</td>
+                <td class="border px-4 py-2">1000</td>
+                <td class="border px-4 py-2">1000</td>
             </tr>
 
 
             <!-- Add more rows as needed -->
         </tbody>
     </table>
-
-    <a class=" hover:shadow-form w-full rounded-md bg-[#6A64F1] py-3 px-8 text-center text-base font-semibold text-white outline-none " href="{{route('donwload')}}">تنزيل التقرير</a>
 </div>
 
 
 {{-- <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+<a class=" hover:shadow-form w-full rounded-md bg-[#6A64F1] py-3 px-8 text-center text-base font-semibold text-white outline-none " href="{{route('donwload')}}">تنزيل التقرير</a>
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
 
@@ -147,6 +99,6 @@
         });
     });
 </script> --}}
-</body>
-</html>
 
+
+@endsection

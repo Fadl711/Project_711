@@ -4,6 +4,7 @@ use App\Http\Controllers\CustomerCoctroller;
 use App\Http\Controllers\HomeCoctroller;
 use App\Http\Controllers\ProductCoctroller;
 use App\Http\Controllers\AccountCoctroller;
+use App\Http\Controllers\FixedAssetsController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\PaymentCoctroller;
 use App\Http\Controllers\SaleCoctroller;
@@ -26,6 +27,7 @@ Route::get('/accounts', [AccountCoctroller::class, 'index'])->name('accounts.ind
 Route::get('/payments', [PaymentCoctroller::class, 'index'])->name('payments.index');
 Route::get('/refunds', [RefundController::class, 'index'])->name('refunds.index');
 Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
+Route::get('/fixedAssets', [FixedAssetsController::class, 'index'])->name('fixed.index');
 
 Route::get('/reports/pdf', [PDFReportController::class, 'createPDF'])->name('donwload');
 

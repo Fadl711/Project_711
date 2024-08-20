@@ -18,18 +18,29 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+{{-- fiex_assets --}}
+        <link rel="stylesheet" href="https://demos.creative-tim.com/notus-js/assets/styles/tailwind.css">
+        <link rel="stylesheet" href="https://demos.creative-tim.com/notus-js/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css">
+{{-- fiex_assets --}}
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased a">
-   @include('includes.swip')
+        <div class="flex ">
 
-          <div class=" m-2 ">
-            @yield('conm')
+
+            @include('includes.swip')
+
+
+            <div class="container mx-10 my-10 ">
+
+                @yield('conm')
+            </div>
         </div>
 
 
-      </div>
+
+
       <script>
          function disSection()
     {
