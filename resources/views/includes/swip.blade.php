@@ -1,7 +1,7 @@
 <div  class=" flex   ">
     <div class=" max-sm:w-15   ">
 
-        <div class="w-2/2 min-h-screen text-white sticky top-0 p-4 bg-[#6A64F1]  border-b border-gray-100 ">
+        <div class="w-2/2 min-h-screen text-white sticky top-0 p-4 bg-amber-400  border-r border-gray-100 ">
             <ul class="list-none ">
                 <li class="mb-2">
                     <a class="NavTagA" href="{{route('home.indxe')}}">
