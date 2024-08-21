@@ -21,17 +21,17 @@
                       <label class="labelSale" for="payment_type">نوع الدفع</label>
                       <input name="payment_type" list="datalist" class="inputSale" id="payment_type">
                       <datalist class="inputSale" id="datalist">
-                      <option value="اجل" >
-                      <option  value="نقدا">
-                      </datalist >
+                      <option value="اجل">
+                      <option value="نقدا">
+                      </datalist>
                     </div>
                     <div class="md:mr-2">
-                        <label class="labelSale" for="password"> المدفوع </label>
+                        <label class="labelSale" for="password">المدفوع</label>
                         <input name="" class="inputSale" id="" type="number" placeholder="0"/>
                     </div>
-                    <div class="md:mr-2 ">
-                        <label class="labelSale" for="password"> المتبقي </label>
-                        <input name="" class="inputSale"  id=""  type="number" placeholder="0"/>
+                    <div class="md:mr-2">
+                        <label class="labelSale" for="password">المتبقي</label>
+                        <input name="" class="inputSale" id="" type="number" placeholder="0"/>
                     </div>
                 </div>
             </form>
@@ -66,30 +66,50 @@
             <div class="p-1 border-t border-gray-200 rounded-b">
                 <button class="btnSave" type="submit">Save</button>
             </div>
+                
+                
         </form>
     </div>
 
     
         <div class="flex flex-col sm:max-w-[650px]" id="table">
+            <div class="flex justify-between flex-1 sm:hidden">
+                <button type="button" class="relative inline-flex items-center px-2 py-2 text-sm 5xl:text-xl font-medium text-gray-700 bg-white border border-gray-300 rounded-md sm:rounded-none hover:bg-gray-50 opacity-50 cursor-not-allowed" data-id="pagination-prev" disabled=""><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 20 20" class="w-5 h-5" aria-hidden="true" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Previous</button><button type="button" class="relative inline-flex items-center px-2 py-2 text-sm 5xl:text-xl   font-medium text-gray-700 bg-white border border-gray-300 rounded-md sm:rounded-none hover:bg-gray-50 " data-id="pagination-next">Next <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 20 20" class="w-5 h-5" aria-hidden="true" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg></button>
+            </div>
+                
             <div class=" overflow-x-auto">
               <div class="min-w-full inline-block align-middle">
                   <div class="overflow-hidden ">
-                      <table class=" min-w-full rounded-xl">
+                      <table class=" min-w-full ">
                           <thead>
-                              <tr class="bg-gray-50">
+                              <tr class="bgcolor">
+                                <th scope="col" class="leading-2 tagHt"> 
+                                    <div class="relative z-0 flex justify-between w-full -space-x-px rounded-md" aria-label="Pagination">
+                                    <button type="button" class="relative inline-flex items-center px-2 py-2 text-sm 5xl:text-xl font-medium text-gray-700 bg-white border border-gray-300 rounded-md sm:rounded-none hover:bg-gray-50 sm:rounded-l-md opacity-50 cursor-not-allowed" data-id="pagination-prev" disabled=""><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 20 20" class="w-5 h-5" aria-hidden="true" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Previous Page</button>
+                                </div>
+                            </th>
                                   <th scope="col" class="leading-2 tagHt">اسم الصنف</th>
                                   <th scope="col" class="leading-2 tagHt ">السعر</th>
                                   <th scope="col" class="leading-2 tagHt">الكمية</th>
                                   <th scope="col" class="leading-2 tagHt"> الإجمالي</th>
+                                  <th scope="col" class="leading-2 tagHt"> تعديل</th>
+                                  <th scope="col" class="leading-2 tagHt">                               
+                                          <div class="relative z-0 flex justify-between w-full -space-x-px rounded-md" aria-label="Pagination">
+                                            <button type="button" class="relative inline-flex items-center px-2 py-2 text-sm 5xl:text-xl   font-medium text-gray-700 bg-white border border-gray-300 rounded-md sm:rounded-none hover:bg-gray-50 sm:rounded-r-md" data-id="pagination-next">Next Page <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 20 20" class="w-5 h-5" aria-hidden="true" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg></button>
+                                          </div>
+                                          </th>
+
+
                                 </tr>
                           </thead>
-                          <tbody class="divide-y divide-gray-300 ">
+                          <tbody class="divide-y divide-gray-300">
                               <tr class="bg-white transition-all duration-500 hover:bg-gray-50">
-                                  <td class="tagTd "> Louis Vuitton</td>
+                                <td class="tagTd"></td>
+                                  <td class="tagTd ">Louis Vuitton</td>
                                   <td class="tagTd"> $2550 </td>
                                   <td class="tagTd"> 20010510 </td>
                                   <td class="tagTd"> Customer</td>
-                                  <td class="p-1 ">
+                                  <td class="tagTd">
                                       <div class="flex items-center gap-1">
                                           <button class="p-1  rounded-full  group transition-all duration-500  flex item-center">
                                               <svg class="cursor-pointer" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -103,6 +123,8 @@
                                           </button>
                                       </div>
                                   </td>
+                                  <td class="tagTd"> </td>
+
                               </tr>
                           </tbody>
                       </table>
@@ -113,5 +135,5 @@
     </div>
  </div>
  </div>
-
+ 
 @endsection
