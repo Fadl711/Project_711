@@ -39,12 +39,9 @@
          </div>
  </div>
      
-          {{-- ________________________ payment supplirs  ___________________________________ --}}
          <div id="supplirs" style="display:none">
             <form>
-                
              <div class="mb-4 md:flex md:justify-around">
-                
                  <div id="tagNameAccount" class="md:ml-2" style="display: block">
                      <label id="labelName" class="labelSale" for="email" >اسم المرسل</label>
                      <input name="" class="inputSale" type="text" placeholder="الاسم"/>
@@ -96,7 +93,6 @@
                                   <td class="tagTd">11</td>
                                   <td class="tagTd">22,000</td>
                                   <td scope="col" class="leading-2 tagHt">ملاحظة</td>
-
                                   <td class="tagTd">
                                        <div class="flex items-center gap-1">
                                            <button class="buttonEdit group transition-all flex item-center">

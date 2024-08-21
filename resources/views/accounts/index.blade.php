@@ -5,6 +5,49 @@
 
 @section('conm')
 
+<div class="bg-gray-200  w-full dark:bg-gray-700 flex justify-center items-center p-2">
+
+    <div class="max-w-7xl mx-auto ">
+      
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-4 ">
+            <div class="bg-white overflow-hidden shadow sm:rounded-lg dark:bg-gray-900">
+                <div class="px-4 py-5 sm:p-6">
+                    <dl>
+                        <dt class="text-sm leading-5 font-medium text-gray-500 truncate dark:text-gray-400">العملاء</dt>
+                        <dd class="mt-1 text-3xl leading-9 font-semibold text-indigo-600 dark:text-indigo-400">1.6M</dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="bg-white overflow-hidden shadow sm:rounded-lg dark:bg-gray-900">
+                <div class="px-4 py-5 sm:p-6">
+                    <dl>
+                        <dt class="text-sm leading-5 font-medium text-gray-500 truncate dark:text-gray-400">الموردين</dt>
+                        <dd class="mt-1 text-3xl leading-9 font-semibold text-indigo-600 dark:text-indigo-400">19.2K
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="bg-white overflow-hidden shadow sm:rounded-lg dark:bg-gray-900">
+                <div class="px-4 py-5 sm:p-6">
+                    <dl>
+                        <dt class="text-sm leading-5 font-medium text-gray-500 truncate dark:text-gray-400">الصندوق </dt>
+                        <dd class="mt-1 text-3xl leading-9 font-semibold text-indigo-600 dark:text-indigo-400">4.9K</dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="bg-white overflow-hidden shadow sm:rounded-lg dark:bg-gray-900">
+                <div class="px-4 py-5 sm:p-6">
+                    <dl>
+                        <dt class="text-sm leading-5 font-medium text-gray-500 truncate dark:text-gray-400">البنك</dt>
+                        <dd class="mt-1 text-3xl leading-9 font-semibold text-indigo-600 dark:text-indigo-400">166.7K
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
     <div class="w-full  p-1">
             <h1></h1>
         <form>
@@ -48,12 +91,12 @@
 
         </form>
 
-        <div class="flex flex-col sm:max-w-[650px]">
-            <div class=" overflow-x-auto">
+        <div class="flex flex-col sm:max-w-[650px] ">
+            <div class=" ">
               <div class="min-w-full inline-block align-middle">
-            <form>
+            <form >
                   <div class="overflow-hidden ">
-                      <table class=" min-w-full rounded-xl">
+                      <table class=" min-w-full rounded-xl ">
                           <thead>
                                <tr class="bgcolor">
                                   <th scope="col" class="leading-2 tagHt">اسم الحساب</th>
@@ -62,12 +105,12 @@
                                   <th scope="col" class="leading-2 tagHt">دائن</th>
                                 </tr>
                           </thead>
-                          <tbody class="divide-y divide-gray-300 ">
+                          <tbody class="h-20 divide-y divide-gray-300  ">
                               <tr class="bg-white transition-all duration-500 hover:bg-gray-50">
                                   <td class="tagTd ">المشتريات</td>
                                   <td class="tagTd"> 550 </td>
-                                  <td class="tagTd"> $505 </td>
-                                  <td class="tagTd"> $250</td>
+                                  <td class="tagTd"> $505</td>
+                                  <td class="tagTd">$250</td>
                                   <td class="p-1 ">
                                       <div class="flex items-center gap-1">
                                           <button class="p-1  rounded-full  group transition-all duration-500  flex item-center">
