@@ -7,12 +7,12 @@
             <form class="">
                 <div class="mb-4 md:flex md:justify-around">
                     <div class="md:ml-2">
-                        <label class="labelSale" for="email">رقم الجرد</label>
-                        <input name="" class="inputSale" id="brand" type="text" placeholder="Email"/>
+                        <label class="labelSale" for="">رقم الجرد</label>
+                        <input name="" class="inputSale" id="brand" type="text" placeholder=""/>
                     </div>
                     <div class="md:ml-2">
-                        <label class="labelSale" for="email"> جرد من تاريخ</label>
-                        <input name="" class="inputSale " id="" type="text" placeholder="Email"/>
+                        <label class="labelSale" for=""> جرد من تاريخ</label>
+                        <input name="" class="inputSale " id="" type="text" placeholder=""/>
                     </div>
                     <div class="md:ml-2">
                         <label class="labelSale" for="lastName" >الى تاريخ </label>
@@ -21,26 +21,31 @@
                       <div class="md:ml-2">
                           <form class="">
                             <label class="labelSale" for="lastName" >طريقة الجرد</label>
-
-                              <select id="pricingType" name="pricingType"
-                                  class=" border-1 border-bro  rounded ">
-                                  <option value="All" selected="">تلقائي</option>
-                                  <option value="Freemium">يدوي</option>
+                              <select  id="pricingType" name="pricingType" class=" inputSale ">
+                                  <option value="تلقائي">تلقائي</option>
+                                  <option value="يدوي">يدوي</option>
                               </select>
                           </form>
                       </div>
-                    <div class="md:ml-2 ">
+                     
+                    <div class="md:ml-2 " >
                       <label class="labelSale" for="payment_type">ملاحظة</label>
                       <input type="text" name="payment_type" class="inputSale" id="payment_type">
                     </div>
-                </div>
-
-                <div class="mb-4 md:flex md:justify-around">
-                    <div class="md:ml-2">
-                        <label class="labelSale " for="email"> اسم الصنف</label>
-                        <input name="" class="inputSale border-1 border-bro" id="brand" type="text" placeholder="Email"/>
+                    <div style="display: block"  id="buttonbill"  class="md:ml-2" >
+                    <button type="submit" onclick="saveinvi();" class="text-white inline-flex items-center bgcolor hover:bg-stone-400  font-medium rounded-lg text-sm px-3 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        <svg class="me-1 -ms-1 w-5 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
+                      حفظ البيانات
+                    </button>
                     </div>
-                    <div class="md:ml-2">
+                </div>
+                <div class="mb-4 md:flex md:justify-around" id="pricing" style="display: none">
+                <form>
+                    <div id="namecus" class="md:ml-2" >
+                        <label class="labelSale " for="email"> اسم الصنف</label>
+                        <input name="" class="inputSale " id="brand" type="text" placeholder="Email"/>
+                    </div>
+                    <div id="namecus"class="md:ml-2" >
                         <label class="labelSale" for="email"> الكميه المتوفره</label>
                         <input name="" class="inputSale " id="" type="text"/>
                     </div>
@@ -69,13 +74,42 @@
                         <input type="text" name="payment_type" class="inputSale" id="payment_type">
                       </div>
                 </div>
-
+             
+                <button type="submit" class="text-white inline-flex items-center bgcolor hover:bg-stone-400  font-medium rounded-lg text-sm px-3 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    <svg class="me-1 -ms-1 w-5 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
+                  حفظ البيانات
+                </button>
             </form>
         </div>
     </div>
 </div>
 
+<script>
+    document.getElementById('pricingType').addEventListener('input',function(){
+        var Pricing= document.getElementById('pricingType').value;
+        var displayPricing= document.getElementById('pricing') 
+        if(Pricing=="تلقائي")
+        {
+            displayPricing.style.display="none";
+        } else  if(Pricing=="يدوي")
+        {
+            displayPricing.style.display="flex";
+        }
+    
+    });
+    function saveinvi(){
+        var displayPricing= document.getElementById('buttonbill') 
+        ;
+        if(displayPricing.style.display="block")
+        {
+            displayPricing.style.display="none";
+        } else  
+        {
+            displayPricing.style.display="none";
+        }
 
+    }
+  </script>
 
 <br>
 

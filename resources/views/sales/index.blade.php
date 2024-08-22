@@ -1,10 +1,61 @@
 @extends('layout')
 @section('conm')
-<div id="acc" class="w-full sm:max-w-[650px]  px-2 bg-white shadow-md overflow-hidden sm:rounded-lg">
+<p class="text-right  " > بيانات الدفع</p>
+<div class=" md:flex md:justify-around" style="display: none">
+    
+
+    <div class="md:ml-2 ">  
+      <label class="labelSale" for="payment_type">قسم  المستلم</label>
+      <input name="nameC" list="datalis" id="debit" class="inputSale" placeholder="مدين">
+      <datalist class="inputSale" id="datalis">
+           <option  value="العملاء">
+           <option  value="الموردين"> 
+           <option  value="راس المال"> 
+           <option  value="الصندوق">
+           <option  value="الإيرادات">
+           <option  value="البنك">
+           <option  value="المصروفات">
+           <option  value="المسحوبات">
+           <option  value="المشتريات">
+           <option  value="مسموحات المشتريات">
+           <option  value="المبيعات">
+           <option  value="مسموحات المبيعات">
+      </datalist>
+    </div> 
+    
+    <div class="md:mr-2">
+        <label class="labelSale" for="password">المدفوع</label>
+        <input name="" class="inputSale" id="" type="number" placeholder="0"/>
+    </div>
+    <div class="md:mr-2">
+        <label class="labelSale" for="password">المتبقي</label>
+        <input name="" class="inputSale" id="" type="number" placeholder="0"/>
+    </div>
+       <div class="md:ml-2">
+           <label class="labelSale" for="email">قسم المرسل</label>
+           <input name="payment_type" list="datalist" class="inputSale" id="credit" placeholder="دائن">
+           <datalist class="inputSale" id="datalist">
+           <option  value="العملاء">
+           <option  value="الموردين"> 
+           <option  value="الصندوق">
+           <option  value="راس المال"> 
+           <option  value="الإيرادات">
+           <option  value="البنك">
+           <option  value="المسحوبات">
+           <option  value="المشتريات">
+           <option  value="مسموحات المشتريات">
+           <option  value="المبيعات">
+           <option  value="مسموحات المبيعات">
+           </datalist>
+       </div>
+       
+</div>
+<div  class="w-full   px-2   sm:rounded-lg">
     <div class=" ">
         <div class="w-full ">
+            <p class="text-right "> بيانات فاتورة العميل</p>
             <form class="">
-                <div class="mb-4 md:flex md:justify-around">
+                <div class="md:flex md:justify-around">
                     <div class="md:ml-2">
                         <label class="labelSale" for="email">ق/الفاتورة</label>
                         <input name="" class="inputSale" id="brand" type="text" placeholder="Email"/>
@@ -28,14 +79,7 @@
                       <option value="نقدا">
                       </datalist>
                     </div>
-                    <div class="md:mr-2">
-                        <label class="labelSale" for="password">المدفوع</label>
-                        <input name="" class="inputSale" id="" type="number" placeholder="0"/>
-                    </div>
-                    <div class="md:mr-2">
-                        <label class="labelSale" for="password">المتبقي</label>
-                        <input name="" class="inputSale" id="" type="number" placeholder="0"/>
-                    </div>
+                   
                 </div>
             </form>
         </div>
@@ -67,7 +111,7 @@
 <br>
      <div class="flex items-center">
         <form action="">
-            <h2 class="text-2xl font-bold  text-right my-3"> بيانات الصنف</h2>
+            <p class="text-right "> بيانات الصنف</p>
             <div class="divProducte">
                 <div class="col-span-6 sm:col-span-3">
                     <label for="product-name" class="labelSale ">اسم الصنف</label>
@@ -89,11 +133,7 @@
                     <label for="brand" class="labelSale "> الإجمالي </label>
                     <input type="number" name="price" id="price" class="inputSale " placeholder="0" required="">
                 </div>
-                <div class="col-span-6 sm:col-span-3 w-10 mx-2">
-                    <label for="brand" class="labelSale "> المتبقي </label>
-                    <input value="0" name="price" id="price" class="inputSale bg-gray-200  cursor-not-allowedstatu" disabled >
-                </div>
-
+              
                     <button class="btnSave mt-4" type="submit">Save</button>
 
 
@@ -114,32 +154,24 @@
                       <table class=" min-w-full ">
                           <thead>
                               <tr class="bgcolor">
-                                <th scope="col" class="leading-2 tagHt">
-                                    <div class="relative z-0 flex justify-between w-full -space-x-px rounded-md" aria-label="Pagination">
-                                    <button type="button" class="relative inline-flex items-center px-2 py-2 text-sm 5xl:text-xl font-medium text-gray-700 bg-white border border-gray-300 rounded-md sm:rounded-none hover:bg-gray-50 sm:rounded-l-md opacity-50 cursor-not-allowed" data-id="pagination-prev" disabled=""><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 20 20" class="w-5 h-5" aria-hidden="true" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Previous Page</button>
-                                </div>
-                            </th>
+                                
                                   <th scope="col" class="leading-2 tagHt">اسم الصنف</th>
                                   <th scope="col" class="leading-2 tagHt ">السعر</th>
                                   <th scope="col" class="leading-2 tagHt">الكمية</th>
                                   <th scope="col" class="leading-2 tagHt"> الإجمالي</th>
                                   <th scope="col" class="leading-2 tagHt"> تعديل</th>
-                                  <th scope="col" class="leading-2 tagHt">
-                                          <div class="relative z-0 flex justify-between w-full -space-x-px rounded-md" aria-label="Pagination">
-                                            <button type="button" class="relative inline-flex items-center px-2 py-2 text-sm 5xl:text-xl   font-medium text-gray-700 bg-white border border-gray-300 rounded-md sm:rounded-none hover:bg-gray-50 sm:rounded-r-md" data-id="pagination-next">Next Page <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 20 20" class="w-5 h-5" aria-hidden="true" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg></button>
-                                          </div>
-                                          </th>
+                               
 
 
                                 </tr>
                           </thead>
                           <tbody class="divide-y divide-gray-300 ">
                               <tr class="bg-white transition-all duration-500 hover:bg-gray-50">
-                                <td class="tagTd"></td>
+                               
                                   <td class="tagTd ">Louis Vuitton</td>
                                   <td class="tagTd"> $2550 </td>
+                                  <td class="tagTd"> 510 </td>
                                   <td class="tagTd"> 20010510 </td>
-                                  <td class="tagTd"> Customer</td>
                                   <td class="tagTd">
                                       <div class="flex items-center gap-1">
                                           <button class="p-1  rounded-full  group transition-all duration-500  flex item-center">
