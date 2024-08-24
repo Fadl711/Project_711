@@ -15,10 +15,11 @@ use App\Http\Controllers\PurchaseCoctroller;
 use App\Http\Controllers\RefundController;
 use App\Http\Controllers\SupplierCoctroller;
 use App\Http\Controllers\PDFReportController;
+use App\Http\Controllers\UsersController\UsersController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('home.indxe');
+    return view('home.index');
 });
 Route::get('/sales', [SaleCoctroller::class, 'index'])->name('sales.index');
 Route::get('/products', [ProductCoctroller::class, 'index'])->name('products.index');
@@ -28,6 +29,8 @@ Route::get('/payments', [PaymentCoctroller::class, 'index'])->name('payments.ind
 Route::get('/refunds', [RefundController::class, 'index'])->name('refunds.index');
 Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
 Route::get('/fixedAssets', [FixedAssetsController::class, 'index'])->name('fixed.index');
+Route::get('/usersControl', [UsersController::class, 'index'])->name('users.index');
+Route::get('/usersShow', [UsersController::class, 'show'])->name('users.details');
 
 Route::get('/reports/pdf', [PDFReportController::class, 'createPDF'])->name('donwload');
 
