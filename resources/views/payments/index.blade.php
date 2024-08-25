@@ -17,7 +17,7 @@
              <option  value="المشتريات">
              <option  value="مسموحات المشتريات">
              <option  value="المبيعات">
-             <option  value="مسموحات المبيعات">
+             <option  value=" مسموحات المبيعات">
         </datalist>
       </div> 
          <div class="md:ml-2">

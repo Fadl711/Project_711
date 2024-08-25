@@ -172,11 +172,20 @@
 </div>
 
 <div class="overflow-hidden " id="ProductsTable" style="display: block">
-    <div class="flex">
-        <input type="text" placeholder="ابحث عن الصنف   "
-            class="w-full md:w-80 px-3 h-10 rounded-r border-1 border-bro und focus:outline-none focus:border-bro/80"
-            >
-        <button type="submit" class="bgcolor text-white rounded-l  px-2 md:px-3 py-0 md:py-1 ">ابحث</button>
+    <div class="flex flex-col gap-4 justify-center items-center p-2">
+    
+        <div class="relative  border border-gray-200 rounded-lg w-full max-w-lg">
+            <input type="text" class="rounded-md w-full text-left" placeholder="Search MCQ | Topic | Course">
+    
+            <button type="submit" class="absolute right-6 top-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                    </svg>
+            </button>
+    
+        </div>
     </div>
     <br>
    
@@ -207,7 +216,7 @@
                 <td class="tagTd">50</td>
                 <td class="tagTd">150</td>
                 <td class="tagTd">لا يوجد</td>
-                <td class="p-1 ">
+                <td class="p-1 tagTd">
                     <div class="flex items-center gap-1">
                         <button class="p-1  rounded-full  group transition-all duration-500  flex item-center">
                             <svg class="cursor-pointer" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
