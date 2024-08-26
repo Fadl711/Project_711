@@ -45,11 +45,8 @@
             <span class="mr-2 text-xs font-medium">{{11}}%</span>
             <div class="relative w-full">
                 <div class="w-full bg-gray-200 rounded-sm h-2">
-<<<<<<< HEAD
-                    <div class="bg-cyan-600 h-2 rounded-sm" style="width: 5{{$x}}%"></div>
-=======
+                    <div class="bg-cyan-600 h-2 rounded-sm" style="width: 5{{$x=51}}%"></div>
                     <div class="bg-cyan-600 h-2 rounded-sm" style="width:11%"></div>
->>>>>>> 7c1d108d4512aa579c67a00ee056869b79982273
                 </div>
             </div>
         </div>

@@ -3,6 +3,8 @@
 @tailwind utilities;
 
 
+
+
 .btn{
     @apply mb-1 block text-base font-medium text-[#07074D]
 }

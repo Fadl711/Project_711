@@ -82,12 +82,12 @@
     <h1 class="text-center underline mt-2  text-2xl">مردودات العملاء</h1>
 
     <div class="border-b mb-5 flex justify-between text-sm mt-5">
-    <div class="text-bro flex items-center pb-2 pr-2 border-b-2 border-[#6A64F1] uppercase">
-
-    <div class="mx-10  w-full max-w-full bg-white">
+        <div class="text-bro flex items-center pb-2 pr-2 border-b-2 border-[#6A64F1] uppercase">
+    
+        <div class="mx-10  w-full max-w-full bg-white">
         <form>
 
-         <div class="mb-4 md:flex md:justify-around ">
+            <div class="mb-4 md:flex md:justify-around ">
             <div class=" px-1 ">
                 <div class="mb-1">
                     <label for="name" class="labelSale">

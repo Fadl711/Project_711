@@ -25,6 +25,8 @@ Route::get('/sales', [SaleCoctroller::class, 'index'])->name('sales.index');
 Route::get('/products', [ProductCoctroller::class, 'index'])->name('products.index');
 Route::get('/Purchase', [PurchaseCoctroller::class, 'Purchase'])->name('Purchases.index');
 Route::get('/accounts', [AccountCoctroller::class, 'index'])->name('accounts.index');
+Route::get('/balancing', [AccountCoctroller::class, 'balancing'])->name('accounts.balancing');
+
 Route::get('/payments', [PaymentCoctroller::class, 'index'])->name('payments.index');
 Route::get('/refunds', [RefundController::class, 'index'])->name('refunds.index');
 Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');

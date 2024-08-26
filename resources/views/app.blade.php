@@ -1,10 +1,7 @@
 
 <div   id="acc" class="w-full sm:max-w-[650px]  px-2  bg-white shadow-md overflow-hidden sm:rounded-lg">
-   
- 
     <div class=" bg-white rounded-lg   mx-auto">
         <div class="flex items-center justify-between mb-2">
-           
             <div class="text-gray-700 ">
                 <div class=""> <div class="col-span-6 sm:col-span-3 text-sm ">
                     <label for="brand" class="text-sm text-gray-900 block "> ق/الفاتورة</label>
