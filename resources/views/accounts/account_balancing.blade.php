@@ -1,22 +1,26 @@
 @extends('layout') 
 @section('conm')
-<h1 class="text-center  font-bold py-2">الصندوق</h1>
+<h1 class="text-center  font-bold py-2">ترصيد الحسابات</h1>
+
 <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 overflow-x-auto   p-1">
+    <h1> ترصيد حساب: ب  </h1>
     <div class="inline-block min-w-full shadow rounded-lg  max-h-[500px] ">
         <table id="myTable" class="min-w-full leading-normal ">
+
             <thead class="tracking-tight ">
+                
                 <tr class="bgcolor">
                     <th scope="col" class="leading-2 tagHt"> القم القيد</th>
                     <th scope="col" class="leading-2 tagHt ">اسم الحساب</th>
                     <th scope="col" class="leading-2 tagHt ">رقم الحساب</th>
 
-                    <th scope="col" class="leading-2 tagHt ">  المبالغ </th>
+                    <th scope="col" class="leading-2 tagHt ">  المبالغ المقبوض</th>
                     <th scope="col" class="leading-2 tagHt ">  اسم العميل</th>
                     <th scope="col" class="leading-2 tagHt"> القم القيد</th>
                     <th scope="col" class="leading-2 tagHt ">اسم الحساب</th>
                     <th scope="col" class="leading-2 tagHt ">رقم الحساب</th>
 
-                    <th scope="col" class="leading-2 tagHt ">  المبالغ </th>
+                    <th scope="col" class="leading-2 tagHt ">  المبالغ المدفوع</th>
                     <th scope="col" class="leading-2 tagHt ">  اسم العميل</th>
 
                     <th scope="col" class="leading-2 tagHt "> الرصيد الحالي </th>
