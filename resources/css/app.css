@@ -32,7 +32,7 @@
    @apply p-2  text-sm text-center    capitalize rounded-t-xl text-white
 }
 .tagTd{
-   @apply p-1 whitespace-nowrap text-sm text-center   text-gray-900  border-b border-b-orange-950 
+   @apply p-1 whitespace-nowrap text-sm text-center   text-gray-900  border-b border-b-orange-950
 }
 .tagTtbody{
    @apply divide-y divide-gray-300
@@ -52,4 +52,7 @@
 }
 .bgcolor{
    @apply bg-gradient-to-r from-stone-500 to-stone-700
+}
+.dropdown:hover > .dropdown-content {
+	 display: block;
 }

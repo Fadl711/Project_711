@@ -42,7 +42,7 @@ Route::get('/reports/pdf', [PDFReportController::class, 'createPDF'])->name('don
 Route::get('/customers', [CustomerCoctroller::class, 'index'])->name('customers.index');
 Route::get('/suppliers', [SupplierCoctroller::class, 'index'])->name('suppliers.index');
 
-Route::get('/home', [HomeCoctroller::class, 'indxe'])->name('home.indxe');
+Route::get('/home', [HomeCoctroller::class, 'indxe'])->name('home.index');
 
 
 
