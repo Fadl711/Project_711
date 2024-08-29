@@ -62,13 +62,16 @@
                     <div class="block justify-end mb-8">
                     <h2 class="text-1xl font-bold mb-">نوع الدفع :  <label for="" class=" text-indigo-700 ">نقدا</label></h2>
                   
-                        <div class="text-gray-700 mr-2">المجموع:   $450.50</div>
+                      
                      
                     </div>
                 </td>
+                <td>  <div class="text-gray-700 mr-2">المجموع:   $450.50</div>
+                    <div class="text-gray-700 mr-2"> المدفوع : $25.50</div>
+</td>
                
             </tr>
-            <tr class="border-b border-b-indigo-700 py-2">
+            <tr class="border-b border-b-indigo-700 py-2" style="display: none">
                 <th class="text-center text-indigo-700   py-2">وصف</th>
                 <th class="text-center text-indigo-700 py-2">	كمية</th>
                 <th class="text-center text-indigo-700  py-2">سعر</th>
@@ -76,34 +79,29 @@
             </tr>
         </thead>
         <tbody>
+            @for($i=0; $i<=10;$i++)
             <tr >
                 <td class="text-center text-gray-700  py-2">Product 1</td>
                 <td class="text-center text-gray-700  py-2 border-r border-r-indigo-700">1</td>
                 <td class="text-center text-gray-700  py-2">$100.00</td>
                 <td class="text-center text-gray-700  py-2 ">$100.00</td>
+
             </tr>
-            <tr>
-                <td class="text-center text-gray-700 border-b border-b-indigo-700 ">Product 2</td>
-                <td class="text-center text-gray-700 border-b border-b-indigo-700  border-r border-r-indigo-700">2</td>
-                <td class="text-center text-gray-700 border-b border-b-indigo-700 ">$50.00</td>
-                <td class="text-center text-gray-700 border-b border-b-indigo-700">$100.00</td>
-            </tr>
-            
+          
+            @endfor
+      
         </tbody>
     </table>
-    <div class="flex justify-end mb-8">
+    {{-- <div class="flex justify-end mb-8">
         <div class="text-gray-700 mr-2">Subtotal:</div>
         <div class="text-gray-700">$425.00</div>
-    </div>
+    </div> --}}
+    <hr   class="bg-indigo-700 w-full ">
     <div class="text-right mb-8">
-        <div class="text-gray-700 mr-2">Tax:</div>
-        <div class="text-gray-700">$25.50</div>
+        <div class="text-gray-700 mr-2"> المتبقي : $25.50</div>
 
     </div>
-    <div class="flex justify-end mb-8">
-        <div class="text-gray-700 mr-2">المجموع:</div>
-        <div class="text-gray-700 font-bold text-xl">$450.50</div>
-    </div>
+    
     <div class="border-t-2 border-gray-300 ">
 
         <div class="flex justify-between">

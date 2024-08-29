@@ -1,7 +1,7 @@
 
 <div class="max-w-80 ">
 <div class="max-sm:w-15">
-    <div class="c  min-h-screen text-white sticky top-0 p-4 bg-gradient-to-r from-stone-500 to-stone-700 border-b border-gray-100 rounded-l-xl">
+    <div class="c  min-h-screen text-white sticky top-0 p-4 bg-gradient-to-r from-indigo-900 to-indigo-600 border-b border-gray-100 rounded-l-xl">
         <ul class="list-none ">
             <li class="mb-2">
                 <a class="NavTagA" href="{{route('home.index')}}">

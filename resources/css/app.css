@@ -51,7 +51,7 @@
        @apply flex flex-col sm:w-full
 }
 .bgcolor{
-   @apply bg-gradient-to-r from-stone-500 to-stone-700
+   @apply bg-gradient-to-r from-stone-500 to-indigo-700
 }
 .dropdown:hover > .dropdown-content {
 	 display: block;
