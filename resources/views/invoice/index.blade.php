@@ -2,25 +2,7 @@
 @section('conm')
 
 <div class="bg-white rounded-lg shadow-lg  max-w-xl mx-auto">
-    {{-- <div class="flex items-center justify-between mb-8">
-        <div class="flex items-center">
-            <img class="h-8 w-8 mr-2" src="https://tailwindflex.com/public/images/logos/favicon-32x32.png"
-                alt="Logo" />
-            <div class="text-gray-700 font-semibold text-lg">محلات الريعاني</div>
-        </div>
-        <div class="text-gray-700">
-            <div class="font-bold text-xl mb-2">INVOICE</div>
-            <div class="text-sm">التاريخ: 01/05/2023</div>
-            <div class="text-sm">رقم الفاتورة #: 12345</div>
-        </div>
-    </div> --}}
-    {{-- <div class="border-b-2 border-gray-300 pb-8 mb-8">
-        <h2 class="text-2xl font-bold mb-4">Bill To:</h2>
-        <div class="text-gray-700 mb-2">John Doe</div>
-        <div class="text-gray-700 mb-2">123 Main St.</div>
-        <div class="text-gray-700 mb-2">Anytown, USA 12345</div>
-        <div class="text-gray-700">johndoe@example.com</div>
-    </div> --}}
+  
     <table class="w-full  mb-">
         <thead>
             <tr class="bg-indigo-700 text-white w-full border-x-4 border-x-indigo-700 border-y-4 border-y-indigo-700 ">
@@ -71,7 +53,7 @@
 </td>
                
             </tr>
-            <tr class="border-b border-b-indigo-700 py-2" style="display: none">
+            <tr class="border-b border-b-indigo-700 py-2 " style="display:">
                 <th class="text-center text-indigo-700   py-2">وصف</th>
                 <th class="text-center text-indigo-700 py-2">	كمية</th>
                 <th class="text-center text-indigo-700  py-2">سعر</th>
