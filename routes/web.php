@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductCoctroller;
 use App\Http\Controllers\AccountCoctroller;
 use App\Http\Controllers\FixedAssetsController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\invoicesController\AllBillsController;
 use App\Http\Controllers\invoicesController\InvoiceController;
 use App\Http\Controllers\PaymentCoctroller;
 use App\Http\Controllers\SaleCoctroller;
@@ -28,6 +29,8 @@ Route::get('/Purchase', [PurchaseCoctroller::class, 'Purchase'])->name('Purchase
 Route::get('/accounts', [AccountCoctroller::class, 'index'])->name('accounts.index');
 Route::get('/balancing', [AccountCoctroller::class, 'balancing'])->name('accounts.balancing');
 Route::get('/invoice', [InvoiceController::class, 'index'])->name('invoice.index');
+Route::get('/all_bills', [AllBillsController::class, 'all_bills'])->name('invoice.all_bills');
+
 Route::get('/payments', [PaymentCoctroller::class, 'index'])->name('payments.index');
 Route::get('/refunds', [RefundController::class, 'index'])->name('refunds.index');
 Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
