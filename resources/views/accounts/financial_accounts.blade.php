@@ -40,14 +40,15 @@
             </li>
         </ul>      
     </form>  
+    
 <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 overflow-x-auto   p-1">
     <div class="inline-block min-w-full shadow rounded-lg  max-h-[500px] ">
         <table id="myTable" class="min-w-full leading-normal ">
            <thead class="tracking-tight">
                 <tr class="bgcolor">
-                    <td colspan="2" class="tagHt  items-center f tagHt ">ميزان مراجعة بالمجاميع </td>
-                    <td colspan="2" class="tagHt  items-center font-bold tagHt ">ميزان مراجعة بالأرصدة </td>
-                    <td colspan="3" class="tagHt  items-center font-bold tagHt">  بيانات الحساب </td>
+                    <td colspan="2" class="  items-center font-bold tagHt ">ميزان مراجعة بالمجاميع </td>
+                    <td colspan="2" class="  items-center font-bold tagHt ">ميزان مراجعة بالأرصدة </td>
+                    <td colspan="3" class="  items-center font-bold tagHt">  بيانات الحساب </td>
                 </tr>
                 <tr class="bg-[#f8c21f]">
                     <th scope="col" class="leading-2 text-center text-white "> اجمالي المبالغ المقبوضة</th>

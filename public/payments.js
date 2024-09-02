@@ -1,6 +1,8 @@
 document.getElementById('debit').addEventListener('input',function(){
     var debits= document.getElementById('debit').value;        
     var credits= document.getElementById('credit').value;
+    var optionCuostomar= document.getElementById('optionCuostomar1');
+
     var  purchases="المشتريات", expenses="المصروفات"
      ,bank="البنك",box="الصندوق",supplir="الموردين",cutomers="العملاء"
      ,sales="المبيعات",revenue="الإيرادات",capital="راس المال",
@@ -37,12 +39,12 @@ document.getElementById('debit').addEventListener('input',function(){
         } else {supplirsNone();}
  }
  else if(debits==box)
- {
-    if(credits==bank)
-        {
-           expensesBlock();
+ { 
+   // optionCuostomar.style.display="none";
 
-        }else if(credits==cutomers)
+
+    if(credits==bank){expensesBlock();}
+        else if(credits==cutomers)
         {
             customersBlock();
 
@@ -101,7 +103,7 @@ document.getElementById('debit').addEventListener('input',function(){
      }
      else if(debits==box)
      {
-       if(credits==bank){expensesBlock();}
+       if(credits==bank){tBlock();}
         else if(credits==cutomers){customersBlock();}
         else if(credits==sales){customersBlock();}
         else if(credits==revenue){expensesBlock();}
@@ -109,7 +111,7 @@ document.getElementById('debit').addEventListener('input',function(){
      }
      else if(debits==bank)
       {
-       if(credits==box){expensesBlock();}
+       if(credits==box){tBlock();}
         else if(credits==cutomers){customersBlock();}
         else if(credits==sales){customersBlock();}
         else if(credits==revenue){expensesBlock();}
@@ -139,6 +141,7 @@ document.getElementById('debit').addEventListener('input',function(){
   document.getElementById('labelId').textContent=' رقم العميل';
   document.getElementById('thId').textContent=' رقم العميل';
     }
+
   function supplirsNone(){       // _____________________ data supplirs _______________________________    
   var supplir=document.getElementById('supplirs');
   supplir.style.display="none";
@@ -151,3 +154,30 @@ document.getElementById('debit').addEventListener('input',function(){
   document.getElementById('labelId').innerHTML=' رقم المورد';
   document.getElementById('thId').innerHTML=' رقم المورد';
               }
+              function expensesBlock(){   // ____________________ data customers _______________________      
+               var custome=document.getElementById('supplirs');
+               custome.style.display="block";
+               document.getElementById('labelName').textContent='اسم الحساب';
+               //  document.getElementById('thName').textContent='اسم العميل';
+              document.getElementById('labelId').textContent=' رقم الحساب';
+               //  document.getElementById('thId').textContent=' رقم العميل';
+               //  
+                 }
+                 function tBlock(){   // ____________________ data customers _______________________      
+                  var custome=document.getElementById('supplirs');
+                  custome.style.display="block";
+               //   var none= document.getElementById('labelName');
+               //   var accountName= document.getElementById('accountName');
+               //   var accountName= document.getElementById('accountName');
+
+
+               //  var none2 =document.getElementById('labelId');
+               //  none2.style.display="none";
+               //   none.style.display="none";
+               //   accountName.style.display="none";
+
+
+                  //  document.getElementById('thName').textContent='اسم العميل';
+                  //  document.getElementById('thId').textContent=' رقم العميل';
+                  //  
+                    }

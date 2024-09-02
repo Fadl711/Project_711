@@ -6,7 +6,7 @@
         <label class="labelSale" for="payment_type">قسم  المستلم</label>
         <input name="nameC" list="datalis" id="debit" class="inputSale" placeholder="مدين">
         <datalist class="inputSale" id="datalis">
-             <option  value="العملاء">
+             <option id="optionCuostomar"  value="العملاء">
              <option  value="الموردين"> 
              <option  value="راس المال"> 
              <option  value="الصندوق">
@@ -24,7 +24,7 @@
              <label class="labelSale" for="email">قسم المرسل</label>
              <input name="payment_type" list="datalist" class="inputSale" id="credit" placeholder="دائن">
              <datalist class="inputSale" id="datalist">
-             <option  value="العملاء">
+             <option id="optionCuostomar1" style="display: block"  value="العملاء">
              <option  value="الموردين"> 
              <option  value="الصندوق">
              <option  value="راس المال"> 
@@ -44,11 +44,11 @@
              <div class="mb-4 md:flex md:justify-around">
                  <div id="tagNameAccount" class="md:ml-2" style="display: block">
                      <label id="labelName" class="labelSale" for="email" >اسم المرسل</label>
-                     <input name="" class="inputSale" type="text" placeholder="الاسم"/>
+                     <input name="" id="accountName"  class="inputSale" type="text" placeholder="الاسم"/>
                  </div>
                  <div class="md:ml-2">
                      <label id="labelId" class="labelSale" for="id">رقم المرسل</label>
-                     <input name="" class="inputSale" type="number" placeholder="id"/>
+                     <input name="" id="accountNumber" class="inputSale" type="number" placeholder="id"/>
                  </div>
                  <div class="md:ml-2 ">
                      <label class="labelSale" for="payment_type">المبلغ المدفوع</label>
@@ -71,7 +71,7 @@
             <div class="overflow-hidden">
                 <table class="tagTable">
                     <thead>
-                         <tr class="bg-gray-50">
+                         <tr class="bgcolor">
                             <th scope="col" class="leading-2 tagHt">اسم المرسل</th>
                             <th scope="col" class="leading-2 tagHt ">رقم المرسل</th>
                             <th scope="col" class="leading-2 tagHt">اسم المستلم</th>

@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductCoctroller;
 use App\Http\Controllers\AccountCoctroller;
 use App\Http\Controllers\FixedAssetsController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\invoicepurchasessController\InvoicePurchaseController;
 use App\Http\Controllers\invoicesController\AllBillsController;
 use App\Http\Controllers\invoicesController\InvoiceController;
 use App\Http\Controllers\PaymentCoctroller;
@@ -28,8 +29,12 @@ Route::get('/products', [ProductCoctroller::class, 'index'])->name('products.ind
 Route::get('/Purchase', [PurchaseCoctroller::class, 'Purchase'])->name('Purchases.index');
 Route::get('/accounts', [AccountCoctroller::class, 'index'])->name('accounts.index');
 Route::get('/balancing', [AccountCoctroller::class, 'balancing'])->name('accounts.balancing');
-Route::get('/invoice', [InvoiceController::class, 'index'])->name('invoice.index');
-Route::get('/all_bills', [AllBillsController::class, 'all_bills'])->name('invoice.all_bills');
+Route::get('/invoice_sales', [AllBillsController::class, 'index'])->name('invoice_sales.index');
+Route::get('/all_bills_sale', [AllBillsController::class, 'all_bills_sale'])->name('invoice_sales.all_bills_sale');
+Route::get('/bills_sale_show', [AllBillsController::class, 'bills_sale_show'])->name('invoice_sales.bills_sale_show');
+Route::get('/invoice_purchases', [InvoicePurchaseController::class, 'index'])->name('invoice_purchase.index');
+
+
 
 Route::get('/payments', [PaymentCoctroller::class, 'index'])->name('payments.index');
 Route::get('/refunds', [RefundController::class, 'index'])->name('refunds.index');
