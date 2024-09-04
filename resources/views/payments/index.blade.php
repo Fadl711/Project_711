@@ -40,7 +40,11 @@
  </div>
      
          <div id="supplirs" style="display:none">
+            
+       
+            
             <form>
+                
              <div class="mb-4 md:flex md:justify-around">
                  <div id="tagNameAccount" class="md:ml-2" style="display: block">
                      <label id="labelName" class="labelSale" for="email" >اسم المرسل</label>
@@ -67,8 +71,26 @@
                  </div>
         </div>
         </form>
+        
         <form action="">
+            <div class="container mx-auto py-6 px-4" x-data="invoices()" >
+                <div class="relative mr-4 inline-block " id="js-print-template" x-ref="printTemplate" >
+                    
+                    <div class="text-gray-500 cursor-pointer w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-300 inline-flex items-center justify-center" @mouseenter="showTooltip = true" @mouseleave="showTooltip = false" @click="printInvoice()">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-printer" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="0" y="0" width="24" height="24" stroke="none"></rect>
+                            <path d="M17 17h2a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2h-14a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h2" />
+                            <path d="M17 9v-4a2 2 0 0 0 -2 -2h-6a2 2 0 0 0 -2 2v4" />
+                            <rect x="7" y="13" width="10" height="8" rx="2" />
+                        </svg>				  
+                    </div>
+                  
+                </div>
             <div class="overflow-hidden">
+                <!-- Print Template -->
+                <div id="js-print-template" x-ref="printTemplate" class="">
+
+                
                 <table class="tagTable">
                     <thead>
                          <tr class="bgcolor">
@@ -111,11 +133,265 @@
                          </tr>
                     </tbody>
                 </table>
+                </div>
+
             </div>
+            	<!-- /Print Template -->
+        </div>
           </form>
         </div>
+<!-- Print Template -->
+
+<!-- /Print Template -->
+        <script src="{{url('payments.js')}}">   </script>
+	{{-- <script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script> --}}
+	<script>
+     
+		function invoices() {
+			return {
+				printInvoice() {
+					const printContents = this.$refs.printTemplate.innerHTML;
+					const originalContents = document.body.innerHTML;
+
+					document.body.innerHTML = printContents;
+					window.print();
+                    location.reload();
+					document.body.innerHTML = originalContents;
+                  
+				}
+			}
+		}
+
+    function closs() {
+
+        const invo= document.getElementById('js-print-template');
+        var printContents = this.$refs.printTemplate.innerHTML;
+        document.body.innerHTML = printContents;
+
+
+//  moda.style.display="none";
+ window.print();
+
+ 
+        
+    }
+	</script>
+
+
+
+
+
+
      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js"></script>
-     <script src="{{url('payments.js')}}">   
-     </script>
+
+
+     
+	<script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
+	<script>
+        window.addEventListener('DOMContentLoaded', function() {
+			const today = new Date();
+		
+            var picker = new Pikaday({
+				keyboardInput: false,
+				field: document.querySelector('.js-datepicker'),
+				format: 'MMM D YYYY',
+				theme: 'date-input',
+				i18n: {
+					previousMonth: "Prev",
+					nextMonth: "Next",
+					months: [
+						"Jan",
+						"Feb",
+						"Mar",
+						"Apr",
+						"May",
+						"Jun",
+						"Jul",
+						"Aug",
+						"Sep",
+						"Oct",
+						"Nov",
+						"Dec"
+					],
+					weekdays: [
+						"Sunday",
+						"Monday",
+						"Tuesday",
+						"Wednesday",
+						"Thursday",
+						"Friday",
+						"Saturday"
+					],
+					weekdaysShort: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
+				}
+			});
+			picker.setDate(new Date());
+
+			var picker2 = new Pikaday({
+				keyboardInput: false,
+				field: document.querySelector('.js-datepicker-2'),
+				format: 'MMM D YYYY',
+				theme: 'date-input',
+				i18n: {
+					previousMonth: "Prev",
+					nextMonth: "Next",
+					months: [
+						"Jan",
+						"Feb",
+						"Mar",
+						"Apr",
+						"May",
+						"Jun",
+						"Jul",
+						"Aug",
+						"Sep",
+						"Oct",
+						"Nov",
+						"Dec"
+					],
+					weekdays: [
+						"Sunday",
+						"Monday",
+						"Tuesday",
+						"Wednesday",
+						"Thursday",
+						"Friday",
+						"Saturday"
+					],
+					weekdaysShort: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
+				}
+			});
+			picker2.setDate(new Date());
+		});
+
+		function invoices() {
+			return {
+				items: [],
+				invoiceNumber: 0,
+				invoiceDate: '',
+				invoiceDueDate: '',
+
+				totalGST: 0,
+				netTotal: 0,
+
+				item: {
+					id: '',
+					name: '',
+					qty: 0,
+					rate: 0,
+					total: 0,
+					gst: 18
+				},
+
+				billing: {
+					name: '',
+					address: '',
+					extra: ''
+				},
+				from: {
+					name: '',
+					address: '',
+					extra: ''
+				},
+
+				showTooltip: false,
+				showTooltip2: false,
+				openModal: false,
+
+				addItem() {
+					this.items.push({
+						id: this.generateUUID(),
+						name: this.item.name,
+						qty: this.item.qty,
+						rate: this.item.rate,
+						gst: this.calculateGST(this.item.gst, this.item.rate),
+						total: this.item.qty * this.item.rate
+					})
+
+					this.itemTotal();
+					this.itemTotalGST();
+
+					this.item.id = '';
+					this.item.name = '';
+					this.item.qty = 0;
+					this.item.rate = 0;
+					this.item.gst = 18;
+					this.item.total = 0;
+				},
+
+				deleteItem(uuid) {
+					this.items = this.items.filter(item => uuid !== item.id);
+
+					this.itemTotal();
+					this.itemTotalGST();
+				},
+
+				itemTotal() {
+					this.netTotal = this.numberFormat(this.items.length > 0 ? this.items.reduce((result, item) => {
+						return result + item.total;
+					}, 0) : 0);
+				},
+
+				itemTotalGST() {
+                    this.totalGST =  this.numberFormat(this.items.length > 0 ? this.items.reduce((result, item) => {
+						return result + (item.gst * item.qty);
+					}, 0) : 0);
+				},
+
+				calculateGST(GSTPercentage, itemRate) {
+					return this.numberFormat((itemRate - (itemRate * (100 / (100 + GSTPercentage)))).toFixed(2));
+				},
+
+				generateUUID() {
+					return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+						var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+						return v.toString(16);
+					});
+				},
+
+				generateInvoiceNumber(minimum, maximum) {
+					const randomNumber = Math.floor(Math.random() * (maximum - minimum)) + minimum;
+					this.invoiceNumber = '#INV-'+ randomNumber;
+				},
+
+				numberFormat(amount) {
+					return amount.toLocaleString("en-US", {
+						style: "currency",
+						currency: "INR"
+					});
+				},
+
+				printInvoice() {
+					var printContents = this.$refs.printTemplate.innerHTML;
+					var originalContents = document.body.innerHTML;
+
+					document.body.innerHTML = printContents;
+					window.print();
+					document.body.innerHTML = originalContents;
+				}
+			}
+		}
+	</script>
+                        <script>window.top.postMessage(JSON.parse(JSON.stringify({
+                    ours: 1,
+                    childHeight:
+                        document.querySelectorAll('body > *:not(script):not(link)').length > 1 ?
+                        document.documentElement.getBoundingClientRect().height :
+                            document.querySelector('body > *:not(script):not(link)').getBoundingClientRect().height +
+                            parseInt(window.getComputedStyle(document.querySelector('body > *:not(script):not(link)')).getPropertyValue('margin-top')) +
+                            parseInt(window.getComputedStyle(document.querySelector('body > *:not(script):not(link)')).getPropertyValue('margin-bottom')),
+
+                })), '*');</script><script>document.body.addEventListener("resize", () => {window.top.postMessage(JSON.parse(JSON.stringify({
+                    ours: 1,
+                    childHeight:
+                        document.querySelectorAll('body > *:not(script):not(link)').length > 1 ?
+                        document.documentElement.getBoundingClientRect().height :
+                            document.querySelector('body > *:not(script):not(link)').getBoundingClientRect().height +
+                            parseInt(window.getComputedStyle(document.querySelector('body > *:not(script):not(link)')).getPropertyValue('margin-top')) +
+                            parseInt(window.getComputedStyle(document.querySelector('body > *:not(script):not(link)')).getPropertyValue('margin-bottom')),
+
+                })), '*');});</script>
+                    
+                </div><div class="pika-single date-input is-hidden is-bound" style="position: static; left: auto; top: auto;"></div><div class="pika-single date-input is-hidden is-bound" style="position: static; left: auto; top: auto;"></div></body></html>
 @endsection

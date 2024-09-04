@@ -45,6 +45,9 @@ Route::get('/usersShow', [UsersController::class, 'show'])->name('users.details'
 
 Route::get('/reports/pdf', [PDFReportController::class, 'createPDF'])->name('donwload');
 
+Route::get('/controle',function(){
+return view('controle');
+});
 
 
 
