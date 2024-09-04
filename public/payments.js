@@ -103,7 +103,7 @@ document.getElementById('debit').addEventListener('input',function(){
      }
      else if(debits==box)
      {
-       if(credits==bank){tBlock();}
+       if(credits==bank){expensesBlock();}
         else if(credits==cutomers){customersBlock();}
         else if(credits==sales){customersBlock();}
         else if(credits==revenue){expensesBlock();}
@@ -111,7 +111,7 @@ document.getElementById('debit').addEventListener('input',function(){
      }
      else if(debits==bank)
       {
-       if(credits==box){tBlock();}
+       if(credits==box){expensesBlock();}
         else if(credits==cutomers){customersBlock();}
         else if(credits==sales){customersBlock();}
         else if(credits==revenue){expensesBlock();}
