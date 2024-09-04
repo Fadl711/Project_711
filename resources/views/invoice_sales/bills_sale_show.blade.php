@@ -14,10 +14,10 @@
             </svg>	 --}}
             
             <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <rect x="0" y="0" width="24" height="24" stroke="none"></rect>
+                {{-- <rect x="0" y="0" width="24" height="24" stroke="none"></rect> --}}
                 <path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M16.444 18H19a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h2.556M17 11V5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v6h10ZM7 15h10v4a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-4Z"/>
                 <path d="M17 9v-4a2 2 0 0 0 -2 -2h-6a2 2 0 0 0 -2 2v4" />
-                <rect x="7" y="13" width="10" height="8" rx="2" />
+                {{-- <rect x="7" y="13" width="10" height="8" rx="2" /> --}}
             </svg>
               
         </div>
@@ -48,7 +48,9 @@
 <div class="bg-white rounded-lg shadow-lg px-2 py-2 max-w-xl mx-auto " id="js-print-template" x-ref="printTemplate">
     <div class="flex items-center justify-between border-b border-[#6b571a]  ">
         <div class="text-gray-70 0">
-            <div class="font-bold  ml-5">  محلات الريعاني </div>
+            <div class="font-bold  ml-5">  محلات الريعاني للتجارة والمقاولات</div>
+            <div class="font-bold  ml-5">   مواد بناء-كهرباء ادوات صحية-معدات ورش -دهانات</div>
+            {{-- {{number_format(1234256)}}  --}}
 
             <div class=""><span  class="text-[#6b571a]  flex   ">   التلفون :-  <label class="text-black " for="">776327938</label> </span>
                 <div class=""><span  class="text-[#6b571a]  flex ">   رقم البريد :  <label class="text-black " for="">1055186</label> </span></div>
