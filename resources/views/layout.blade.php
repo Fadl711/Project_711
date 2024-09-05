@@ -29,7 +29,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased a">
-        <div class="flex ">
+        <div class="flex max-h-screen overflow-hidden ">
 
 
             @include('includes.swip')
