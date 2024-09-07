@@ -35,7 +35,7 @@
             @include('includes.swip')
 
 
-            <div class="container  ">
+            <div class="container relative ">
 
                 @yield('conm')
             </div>
