@@ -4,6 +4,7 @@ use App\Http\Controllers\CustomerCoctroller;
 use App\Http\Controllers\HomeCoctroller;
 use App\Http\Controllers\ProductCoctroller;
 use App\Http\Controllers\AccountCoctroller;
+use App\Http\Controllers\chartController\ChartController;
 use App\Http\Controllers\FixedAssetsController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\invoicepurchasessController\InvoicePurchaseController;
@@ -48,6 +49,9 @@ Route::get('/reports/pdf', [PDFReportController::class, 'createPDF'])->name('don
 Route::get('/controle',function(){
 return view('controle');
 });
+Route::get('/chart',[ChartController::class,'index'])->name('chart.index');
+Route::get('bar-chart-data',[ChartController::class, 'getBarChartDate']);
+
 
 
 

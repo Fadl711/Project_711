@@ -23,12 +23,17 @@
     <script src="{{url('public/build/assets/js/argon-dashboard-tailwind.js?v=1.0.1')}}">   </script>
     <!-- Main Styling -->
     <link href="./public/build/assets/css/argon-dashboard-tailwind.css?v=1.0.1" rel="stylesheet" />
+<<<<<<< HEAD
     @vite(['public/build/assets/css/nucleo-icons.css',
     'public/build/assets/css/nucleo-svg.css',
     'public/build/assets/css/argon-dashboard-tailwind.css?v=1.0.1',
      'public/build/assets/js/argon-dashboard-tailwind.js?v=1.0.1',
      'public/build/assets/js/plugins/chartjs.min.js'
      ,'public/build/assets/js/plugins/perfect-scrollbar.min.js',])
+=======
+    @vite(['public/build/assets/css/nucleo-icons.css','public/build/assets/css/nucleo-svg.css','public/build/assets/css/argon-dashboard-tailwind.css?v=1.0.1',
+     'public/build/assets/js/argon-dashboard-tailwind.js?v=1.0.1','public/build/assets/js/plugins/chartjs.min.js','public/build/assets/js/plugins/perfect-scrollbar.min.js'])
+>>>>>>> 722bbde655e846076fa81d97ebd37a72d3df55cc
 
   </head>
   

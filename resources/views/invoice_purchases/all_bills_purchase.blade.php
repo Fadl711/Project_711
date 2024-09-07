@@ -1,4 +1,7 @@
-<form  class="p-1  ">
+<div class="container max-h-screen">
+
+
+<form  class="p-1 shadow-md  ">
     {{-- <label class="labelSale" for="email">إعدادات عرض البيانات </label> --}}
         <ul class="items-center w-full  font-medium text-gray-900 bg-white border border-indigo-700 rounded-lg sm:flex dark:bg-gray-700 dark:border-indigo-700 dark:text-white">
             <li class="w-full text-center border-b border-indigo-700 sm:border-b-0 sm:border-r dark:border-indigo-700">
@@ -43,9 +46,9 @@
                     <input name="horizontal-list-radio-passpot" class="inputSale " id="" type="date" placeholder=""/>
                 </div>
             </li>
-        </ul> 
-             
-    </form>  
+        </ul>
+
+    </form>
 <div class="flex  gap-4 justify-center items-center  ">
     <div class="">
 
@@ -55,15 +58,15 @@
             <option value="" >اخر فاتوره</option>
         </select>
         </div>
-    
+
     <div class="border-gray-200 rounded-lg w-full max-w-lg">
         <input type="text" class="rounded-md w-full text-left" placeholder="Search" name="search" value="">
-       
+
     </div>
 </div>
- 
-<div class="flex  gap-4 justify-center items-center overflow-x-auto  ">
-    <div class=" min-w-full  rounded-lg  max-h-[500px] ">
+
+<div class="flex   justify-center items-center overflow-y-scroll  ">
+    <div class=" min-w-full  rounded-lg max-h-screen">
 
         <br>
         <div class="bg-white   shadow-lg  max-w-xl mx-auto  rounded-2xl p-1 " >
@@ -75,7 +78,7 @@
                             <td colspan="1" class=" text-right  p-1  bg-white text-black  ">
                                 <div class="flex items-center ">
                                     <div class="text-indigo-700 text-sm ">اسم المورد : <label class="text-black" for="">     جمال علي احمد</label> </div>
-                                </div>                   
+                                </div>
                                 <div class="text-indigo-700  text-sm"> التلفون: <label class="text-black" for="">775454554 </label></div>
                                 <div class="text-sm text-indigo-700">الرقم التعريفي :   <label class="text-black" for="">15 </label></div>
                             </td>
@@ -90,7 +93,7 @@
                                 <div class=""> <label class="text-white text-sm" for="">1345</label> :رقم الايصال  </div>
 
                             </td>
-                           
+
                         </tr>
                     </thead>
                 <tbody>
@@ -107,7 +110,7 @@
                         <td class=" text-center text-indigo-700 "> <button data-modal-target="crud-modal" data-modal-toggle="crud-modal" class="   focus:outline-none " type="button">
                           عرض المشتريات  الفاتورة   </button>
                        </td>
-                    </tr> 
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -125,7 +128,7 @@
         <div class=" bg-white rounded-lg shadow dark:bg-gray-700 container" x-data="invoices()" >
             <!-- Modal header -->
             <div class="flex items-center justify-between p-1 md:p-5 border-b rounded-t dark:border-gray-600">
-              
+
                 <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
                     <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
@@ -133,6 +136,7 @@
                     <span class="sr-only">Close modal</span>
                 </button>
 
+<<<<<<< HEAD
                 
             </div>
             
@@ -140,13 +144,30 @@
             <div  x-refs="printTemplate"  id="js-print-template" >
             @include('invoice_purchases.bills_purchase_show')
             
+=======
+
+            </div>
+
+            <!-- Modal body -->
+            <div  >
+
+                @include('invoice_purchases.bills_purchase_show')
+>>>>>>> 722bbde655e846076fa81d97ebd37a72d3df55cc
         </div>
         </div>
     </div>
 </div>
 {{-- alert --}}
 <br>
+</div>
+{{-- <script>
+     function invoices() {
+        return {
+            printInvoice() {
+                var printContents = this.$refs.printTemplate.innerHTML;
+                var originalContents = document.body.innerHTML;
 
+<<<<<<< HEAD
 <script>
      function invoices() {
         return {
@@ -154,6 +175,8 @@
                 var printContents = this.$refs.printTemplate.innerHTML;
                 var originalContents = document.body.innerHTML;
 
+=======
+>>>>>>> 722bbde655e846076fa81d97ebd37a72d3df55cc
                 document.body.innerHTML = printContents;
                 window.print();
                 document.body.innerHTML = originalContents;
@@ -161,5 +184,10 @@
         }
     }
 
+<<<<<<< HEAD
     
 </script>
+=======
+
+</script> --}}
+>>>>>>> 722bbde655e846076fa81d97ebd37a72d3df55cc
