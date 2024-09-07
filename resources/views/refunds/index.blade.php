@@ -47,15 +47,12 @@
                         <label for="name" class="labelSale">
                           اسم الصنف المردود
                         </label>
-                        <input type="text" name="name" id="contact_person _name" placeholder="name"
-                            class="inputSale" />
+                        <input type="text" name="name" id="contact_person _name" placeholder="name" class="inputSale" />
                     </div>
                 </div>
                 <div class="max-md:w-52 px-1 ">
                     <div class="mb-1">
-                        <label for="quantity" class="labelSale">
-                        الكمية المردوده
-                        </label>
+                        <label for="quantity" class="labelSale"> الكمية المردوده </label>
                         <input type="number" name="quantity" id="address" placeholder="quantity"
                             class="inputSale" />
                     </div>
@@ -69,7 +66,6 @@
                             class="inputSale" />
                     </div>
                 </div>
-
         </div>
      </div>
             </div>

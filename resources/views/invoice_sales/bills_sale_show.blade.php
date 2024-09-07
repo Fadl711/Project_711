@@ -43,91 +43,90 @@
 
       
     </div>
-    
       
 <div class="bg-white rounded-lg shadow-lg px-2 py-2 max-w-xl mx-auto " id="js-print-template" x-ref="printTemplate">
-    <div class="flex items-center justify-between border-b border-[#6b571a]  ">
-        <div class="text-gray-70 0">
-            <div class="font-bold  ml-5">  محلات الريعاني للتجارة والمقاولات</div>
-            <div class="font-bold  ml-5">   مواد بناء-كهرباء ادوات صحية-معدات ورش -دهانات</div>
-            {{-- {{number_format(1234256)}}  --}}
-
-            <div class=""><span  class="text-[#6b571a]  flex   ">   التلفون :-  <label class="text-black " for="">776327938</label> </span>
-                <div class=""><span  class="text-[#6b571a]  flex ">   رقم البريد :  <label class="text-black " for="">1055186</label> </span></div>
-
-            </div>
+    <div class="flex items-center  border-2 border-[#000] rounded  p-2">
+        <div class="w-[40%] mb-2">
+            <div class="font-bold  text-right">  محلات صادق الريعاني للتجارة والمقاولات</div>
+            <div class="font-bold   text-right">   مواد بناء-كهرباء ادوات صحية-معدات ورش -دهانات</div>
+            <div class="font-bold  text-right">     الصباحة خط الحديدة قبل مفرق  لؤلؤة </div>
+            <div class="font-bold  text-right">    776327938-776327938-776327938</div>
+           
         </div>
-        <div class="text-gray-700 px-4 ">
-            <div class="font-bold text-xl block"> 
+        <div class=" px-4 w-[20%]">
+            <div class=" block"> 
                 <img class="h-20 w-20 mr-2 " src="build/assets/img/theme/react.jpg"
                     alt="Logo" />
                   
                      </div>
-                     {{-- <div class="font-bold  ">  محلات الريعاني </div> --}}
+             
 
         </div>
-        <div class="text-gray-700 ">
-            <div class="font-bold  ">فاتورة المبيعات </div>
-
-            <div class="">  <span  class="text-[#6b571a]  flex "> التاريخ : <label class="text-black " for="">01/05/2024 </label>  </span></div>
-            <div class="">   <span class="text-[#6b571a]  flex ">   رقم الفاتورة:  <label class="text-black " for="">134555</label>   </span></div>
-        </div>
+        <div class=" w-[40%] ">
+            <div class="font-bold  text-left">   Sadiq AL-Rayani Stores for Trading and Contracting</div>
+            <div class="font-bold  text-left">Building materials-electricty-sanitary ware-equipment-end paint-workshops </div>
+            <div class="font-bold  text-left">   Swimming on AL-Hodeidah Street before the Pearl Junction
+            </div>
+            <div class="font-bold  text-left">    776327938-776327938-776327938
+            </div>
+        
+        </div> 
     </div>
-    <div class="flex items-center justify-between border-b border-[#6b571a]   ">
-        <div class="">
+    {{-- <br> --}}
+    <div class="flex items-center justify-between border-2 border-[#000] rounded  my-2  ">
+        <div class="p-2">
            
 
-            <div class=""><span  class="text-[#6b571a]  flex ">   اسم العميل :  <label class="text-black " for=""> جمال علي احمد</label> </span></div>
-            <div class=""><span  class="text-[#6b571a]  flex">   التلفون :  <label class="text-black " for="">776327938</label> </span></div>
+            <div class=""><span  class="text-[#6b571a]  flex font-bold">   اسم العميل :  <label class="text-black " for=""> جمال علي احمد 1236#</label> </span></div>
+            <div class=""><span  class="text-[#6b571a]  flex font-bold">   التلفون :  <label class="text-black " for="">776327938</label> </span></div>
         </div>
-        <div class="text-gray-700 px-4"> 
-          <div class=""><span  class="text-[#6b571a] ">  الدفع :  <label for="" class="text-black   ">نقدا</label> </span></div>
+        <div class="text-gray-700 p-2"> 
+          <div class=""><span  class="text-[#6b571a] font-bold">  فاتورة المبيعات  :  <label for="" class="text-black   ">نقدا</label> </span></div>
         </div>
-        <div class="text-gray-700">
+        <div class="text-gray-700 p-2">
             
-            <div class=" ">  <span  class="text-[#6b571a] flex "> التاريخ : <label class="text-black " for="">01/05/2024 </label>  </span></div>
-            <div class=" ">   <span class="text-[#6b571a]  flex ">   رقم القيد:  <label class="text-black" for="">134555</label>   </span></div>
+            <div class=" ">  <span  class="text-[#6b571a] flex  font-bold">  التاريخ الفاتورة: <label class="text-black " for="">01/05/2024 </label>  </span></div>
+            <div class=" ">   <span class="text-[#6b571a]  flex font-bold ">   رقم المرجع:  <label class="text-black" for="">134555</label>   </span></div>
         </div>
     </div>
-    <table class="w-full text-lef mb-8">
+    <table class="w-full text-lef mb-8  ">
         <thead>
         
-                <tr class="border-b border-b-[#6b571a]   " style="display:">
-                    <th class="text-center text-[#6b571a]    ">وصف</th>
-                   
-                    <th class="text-center text-[#6b571a]   "> سعر الصنف</th>
-                    <th class="text-center text-[#6b571a]  ">	كمية</th>
-                    <th class="text-center text-[#6b571a]   ">اجمالي السعر</th>
+                <tr class="  " style="display:">
+                    <th class="py-1  text-black  border-2 border-black  text-center">id#</th>
+
+                    <th class="text-center text-black border-2 border-black  ">اسم الصنف</th>
+                    <th class="text-center text-black border-2 border-black   "> سعر الصنف</th>
+                    <th class="text-center text-black border-2 border-black ">	كمية</th>
+                    <th class="text-center text-black border-2 border-black  ">اجمالي السعر</th>
 
           
             </tr>
         </thead>
         <tbody>
-            @for($i=0; $i<=20;$i++)
+            @for($i=1; $i<=20;$i++)
             <tr >
-             
-                <td class="py-1   text-center">رنج</td>
-                <td class="py-1   text-center">$100.00</td>
-                <td class="py-1   text-center">1</td>
-               
-                <td class="py-1   text-center">$100.00</td>
+                <td class="py-1  border-2 border-black  text-center">{{$i}}</td>
+                <td class="py-1 text-center border-2 border-black ">رنج</td>
+                <td class="py-1 text-center border-2 border-black ">$100.00</td>
+                <td class="py-1 text-center border-2 border-black ">1</td>
+                <td class="py-1   text-center border-2 border-black ">$100.00</td>
 
             </tr>
           
             @endfor
             <tr class="  " style="display:">
-                <th colspan="4" class="text-right   "> 
+                <th colspan="4" class="text-right py-4  "> 
                     <div class="block   mr-8 ">
-                   <div class=" text-sm">الجمالي الفاتورة:$450.50</div>
-                   <div class=" text-sm text-right "> الخصم:$</div>
+                   <div class=" text-sm ">المبلغ المستحق :{{number_format(120000)}} الفين ومائتين وخمسين .ريال يمني</div>
+                  
+
+                   <div class=" text-sm text-right "> رصيد سابق: {{number_format(100000)}}</div>
                    <div class="flex text-right ">
 
-                   <div class=" text-sm flex">صافي الفاتورة:$450.50</div>
-                   <div class=" text-sm px-3 flex">الفين ومائتين وخمسين .ريال يمني</div>
+                   <div class=" text-sm flex"> اجمالي الرصيد:  {{number_format(220000)}}</div>
                    </div>
-                   {{-- <div class=" text-sm px-3">الفين ومائتين وخمسين .ريال يمني</div> --}}
                </div> </th>
-                {{-- <th colspan="3"  class="text-right   mr-10 text-sm">الفين ومائتين وخمسين .ريال يمني </th> --}}
               
             
 
@@ -156,29 +155,10 @@
         </tbody>
         
     </table>
-    <div class="flex px-2 bg-[#6b571a]  rounded-lg">
-        <div class=" text-sm flex "> 
-           
-
-            <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.427 14.768 17.2 13.542a1.733 1.733 0 0 0-2.45 0l-.613.613a1.732 1.732 0 0 1-2.45 0l-1.838-1.84a1.735 1.735 0 0 1 0-2.452l.612-.613a1.735 1.735 0 0 0 0-2.452L9.237 5.572a1.6 1.6 0 0 0-2.45 0c-3.223 3.2-1.702 6.896 1.519 10.117 3.22 3.221 6.914 4.745 10.12 1.535a1.601 1.601 0 0 0 0-2.456Z"/>
-              </svg>
-              <span class="text-white px-2 " >967776327938+</span>
-              
-    </div>
-    <div class=" text-sm flex px-2"> 
-       
-
-        <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.8 13.938h-.011a7 7 0 1 0-11.464.144h-.016l.14.171c.1.127.2.251.3.371L12 21l5.13-6.248c.194-.209.374-.429.54-.659l.13-.155Z"/>
-          </svg>
-          
-          <span class="text-white px-2 " >الصباحة خط الحديدة قبل مفرق  لؤلؤة </span>
-</div>
     
-    </div>
 </div>
+</div>
+
 </div>
 
 

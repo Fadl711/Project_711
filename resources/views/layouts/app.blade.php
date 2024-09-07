@@ -17,6 +17,7 @@
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-white">
             @include('layouts.navigation')
+           
             <div class="flex flex-col  w-40 h-full overflow-hidden text-gray-700 bg-gray-100 rounded ">
          
                 <div class="w-full px-2">

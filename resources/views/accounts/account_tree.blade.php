@@ -1,7 +1,8 @@
 <h1 class="font-bold">شجرة الحسابات</h1> 
 <br>
+
 <ol class=" text-right space-y-4 text-black list-decimal list-inside dark:text-gray-400">
-    <li >
+    <li>
       <lable class="font-bold">الاصول#</lable> 
        <ul class=" ps-5 mt-2 space-y-1 list-disc list-inside">
           <li>الصندوق</li>

@@ -41,62 +41,68 @@
       
     </div>
 
-<div class="bg-white rounded-lg shadow-lg px-2 py-2 max-w-[70%] mx-auto " id="js-print-template" x-ref="printTemplate">
-    <div class="flex items-center justify-between border-b border-indigo-700 ">
-        <div class="text-gray-70 0">
-            <div class="font-bold  ml-5">  محلات الريعاني </div>
-
-            <div class=""><span  class="text-indigo-700 flex ">   العنوان :  <label class="text-black " for="">صنعاء</label> </span>
+<div class="bg-white rounded-lg shadow-lg px-2 py-2 max-w-[100%] mx-auto " id="js-print-template" x-ref="printTemplate">
+    <div class="flex items-center justify-between border-b border-[#6b571a]  ">
+        <div class="w-[40%]">
+            <div class="font-bold  text-right">  محلات صادق الريعاني للتجارة والمقاولات</div>
+            <div class="font-bold   text-right">   مواد بناء-كهرباء ادوات صحية-معدات ورش -دهانات</div>
+            <div class="font-bold  text-right">     الصباحة خط الحديدة قبل مفرق  لؤلؤة 
             </div>
-            <div class="">        <span  class="text-indigo-700 flex   ">   التلفون :  <label class="text-black " for="">776327938</label> </span>
+            <div class="font-bold  text-right">    776327938-776327938-776327938
             </div>
+           
         </div>
-        <div class="text-gray-700 px-4 ">
+        <div class="text-gray-700 px-4 w-[20%]">
             <div class="font-bold text-xl block"> 
                 <img class="h-20 w-20 mr-2 " src="build/assets/img/theme/react.jpg"
                     alt="Logo" />
                   
                      </div>
+             
 
         </div>
-        <div class="text-gray-700 ">
-            <div class="font-bold  ">فاتورة المشتريات </div>
-
-            <div class="">  <span  class="text-indigo-700 flex "> التاريخ : <label class="text-black " for="">01/05/2024 </label>  </span></div>
-            <div class="">   <span  class="text-indigo-700 flex ">   رقم الفاتورة:  <label class="text-black " for="">134555</label>   </span></div>
-        </div>
+        <div class="text-gray-700 w-[40%] ">
+            <div class="font-bold  text-left">   Sadiq AL-Rayani Stores for Trading and Contracting</div>
+            <div class="font-bold  text-left">Building materials-electricty-sanitary ware-equipment-end paint-workshops </div>
+            <div class="font-bold  text-left">   Swimming on AL-Hodeidah Street before the Pearl Junction
+            </div>
+            <div class="font-bold  text-left">    776327938-776327938-776327938
+            </div>
+        
+        </div> 
     </div>
+
     <div class="flex items-center justify-between border-b border-indigo-700  ">
         <div class="">
            
 
-            <div class=""><span  class="text-indigo-700 flex ">   اسم المورد :  <label class="text-black " for=""> جمال علي احمد</label> </span>
+            <div class=""><span  class="text-indigo-700 flex font-bold ">   اسم المورد :  <label class="text-black " for=""> جمال علي احمد</label> </span>
             </div>
-            <div class=""><span  class="text-indigo-700 flex">   التلفون :  <label class="text-black " for="">776327938</label> </span>
+            <div class=""><span class="text-indigo-700 flex font-bold">   التلفون :  <label class="text-black " for="">776327938</label> </span>
             </div>
         </div>
         <div class="text-gray-700 px-4"> 
-          <div class=""><span  class="text-indigo-700">  الدفع :  <label for="" class="text-black   ">نقدا</label> </span></div>
+          <div class=""><span class="text-indigo-700 font-bold">  الدفع :  <label for="" class="text-black   ">نقدا</label> </span></div>
         </div>
         <div class="text-gray-700">
             
-            <div class=" ">  <span  class="text-indigo-700 flex "> التاريخ : <label class="text-black " for="">01/05/2024 </label>  </span></div>
-            <div class=" ">   <span  class="text-indigo-700 flex ">   رقم الايصال:  <label class="text-black" for="">134555</label>   </span></div>
+            <div class=" ">  <span  class="text-indigo-700 flex font-bold"> التاريخ : <label class="text-black " for="">01/05/2024 </label>  </span></div>
+            <div class="">   <span  class="text-indigo-700 flex font-bold">   رقم الايصال:  <label class="text-black text-bold " for="">134555</label>   </span></div>
         </div>
     </div>
     <table class="w-full text-left mb-8">
         <thead>
         
-                <tr class="border-b border-b-indigo-700  " style="display:">
-                    <th scope="col" class="text-center text-indigo-700 ">اسم الصنف</th>
-                <th scope="col" class="text-center text-indigo-700   ">الباركود</th>
-                <th scope="col" class="text-center text-indigo-700  ">الكمية</th>
-                <th scope="col" class="text-center text-indigo-700  ">السعر الشراء</th>
-                <th scope="col" class="text-center text-indigo-700  ">السعر البيع</th>
-                <th scope="col" class="text-center text-indigo-700 "> الإجمالي</th>
-                <th scope="col" class="text-center text-indigo-700  ">التكلفة</th>
-                <th scope="col" class="text-center text-indigo-700 ">التخفيض</th>
-                <th scope="col" class="text-center text-indigo-700 ">العلامة التجارية</th>
+                <tr class="border-b border-b-indigo-700 bg-indigo-700 " style="display:">
+                <th scope="col" class="text-center  text-white ">اسم الصنف</th>
+                <th scope="col" class="text-center  text-white   ">الباركود</th>
+                <th scope="col" class="text-center  text-white  ">الكمية</th>
+                <th scope="col" class="text-center  text-white  ">السعر الشراء</th>
+                <th scope="col" class="text-center  text-white  ">السعر البيع</th>
+                <th scope="col" class="text-center  text-white "> الإجمالي</th>
+                <th scope="col" class="text-center  text-white  ">التكلفة</th>
+                <th scope="col" class="text-center  text-white ">التخفيض</th>
+                <th scope="col" class="text-center  text-white ">العلامة التجارية</th>
                 {{-- <th scope="col" class="text-center text-indigo-700 ">تعديل الشراء</th> --}}
 
           
