@@ -136,6 +136,15 @@
                     <span class="sr-only">Close modal</span>
                 </button>
 
+<<<<<<< HEAD
+                
+            </div>
+            
+            <!-- Modal body -->
+            <div  x-refs="printTemplate"  id="js-print-template" >
+            @include('invoice_purchases.bills_purchase_show')
+            
+=======
 
             </div>
 
@@ -143,6 +152,7 @@
             <div  >
 
                 @include('invoice_purchases.bills_purchase_show')
+>>>>>>> 722bbde655e846076fa81d97ebd37a72d3df55cc
         </div>
         </div>
     </div>
@@ -157,6 +167,16 @@
                 var printContents = this.$refs.printTemplate.innerHTML;
                 var originalContents = document.body.innerHTML;
 
+<<<<<<< HEAD
+<script>
+     function invoices() {
+        return {
+            printInvoice() {
+                var printContents = this.$refs.printTemplate.innerHTML;
+                var originalContents = document.body.innerHTML;
+
+=======
+>>>>>>> 722bbde655e846076fa81d97ebd37a72d3df55cc
                 document.body.innerHTML = printContents;
                 window.print();
                 document.body.innerHTML = originalContents;
@@ -164,5 +184,10 @@
         }
     }
 
+<<<<<<< HEAD
+    
+</script>
+=======
 
 </script> --}}
+>>>>>>> 722bbde655e846076fa81d97ebd37a72d3df55cc

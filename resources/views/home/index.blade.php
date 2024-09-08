@@ -1,12 +1,6 @@
 @extends('layout')
 
 @section('conm')
-<div class=" ">
-
-{{-- ________________________________jamal__________fjj_____________________ --}}
-
-{{-- ________________________________jamal__________fjj______________________ --}}
-
     <div class="mt-2 w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-2 p-2">
         <div class="bg-white shadow rounded-lg px-2 ">
             <div class="flex items-center">
@@ -25,48 +19,13 @@
         </div>
       
                   </div>
-    </div>
 
 
-
-    <div class="flex-grow bg-white rounded-xl shadow-md px-6 py-4 flex flex-col items-end">
-        <div class="text-xs font-semibold tracking-wide uppercase py-1 px-3 rounded-full"
-            style="background-color: rgb(123, 255, 253); color: rgb(0, 119, 117);">New</div>
-        <div class="grid grid-cols-7 gap-1 flex-grow self-stretch">
-            <div class="flex flex-col justify-end items-center">
-                <div class="w-4 h-4 mx-auto rounded-full" style="background-color: rgb(123, 255, 253);"></div>
-                <div class="text-center text-xs text-gray-400 font-semibold mt-2">M</div>
-            </div>
-            <div class="flex flex-col justify-end items-center">
-                <div class="w-4 h-16 mx-auto rounded-full" style="background-color: rgb(0, 255, 244);"></div>
-                <div class="text-center text-xs text-gray-400 font-semibold mt-2">T</div>
-            </div>
-            <div class="flex flex-col justify-end items-center">
-                <div class="w-4 h-24 mx-auto rounded-full" style="background-color: rgb(0, 255, 244);"></div>
-                <div class="text-center text-xs text-gray-400 font-semibold mt-2">W</div>
-            </div>
-            <div class="flex flex-col justify-end items-center">
-                <div class="w-4 h-32 mx-auto rounded-full" style="background-color: rgb(0, 237, 219);"></div>
-                <div class="text-center text-xs text-gray-400 font-semibold mt-2">T</div>
-            </div>
-            <div class="flex flex-col justify-end items-center">
-                <div class="w-4 h-20 mx-auto rounded-full" style="background-color: rgb(0, 255, 244);"></div>
-                <div class="text-center text-xs text-gray-400 font-semibold mt-2">F</div>
-            </div>
-            <div class="flex flex-col justify-end items-center">
-                <div class="w-4 h-10 mx-auto rounded-full" style="background-color: rgb(123, 255, 253);"></div>
-                <div class="text-center text-xs text-gray-400 font-semibold mt-2">S</div>
-            </div>
-            <div class="flex flex-col justify-end items-center">
-                <div class="w-4 h-10 mx-auto rounded-full" style="background-color: rgb(123, 255, 253);"></div>
-                <div class="text-center text-xs text-gray-400 font-semibold mt-2">S</div>
-            </div>
-        </div>
-    </div>
 
     {{-- ______________________________________________________________________ --}}
- {{-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+{{-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  --}}
+{{-- 
 <div class="container mx-auto px-4 py-8 mt-16">
     <canvas id="myChart"></canvas>
 </div>
@@ -95,7 +54,7 @@
           }
         }
       });
-</script>
+</script> --}}
 </div>
 {{-- ______________________________________________________________ --}}
 @endsection
