@@ -12,7 +12,7 @@
         {{-- <a href="{{route('accounts.balancing')}}" onclick="AccountBalancing()"  class="text-sm px-4 py-2 leading-none rounded-full hover:bg-gray-700" > ترصيد الحسابات</a> --}}
     </div>
 </nav>
-    <div class="  border-x border-y border-orange-950 rounded-xl p-2 mt-2" id="new_account" style="display:none">
+    <div class="  shadow p-2 mt-2" id="new_account" style="display:none">
         @include('accounts.add_account')
     </div>
     <div class="  border-x border-y border-orange-950 rounded-xl p-2 mt-2 " id="account_tree" style="display:none">
@@ -117,6 +117,7 @@
 // });
 
 // ----------------------------
+
 function AccountTree(){
     
     

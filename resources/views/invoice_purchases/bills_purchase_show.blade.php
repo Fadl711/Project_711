@@ -1,16 +1,10 @@
 
 
-
+{{-- 
 <div class="" x-data="invoices()" >
     <div class="relative mr-4 inline-block " >
         <div class="text-gray-500 cursor-pointer w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-300 inline-flex items-center justify-center" @mouseenter="showTooltip = true" @mouseleave="showTooltip = false" @click="printInvoice()">
-            {{-- <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-printer" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="0" y="0" width="24" height="24" stroke="none"></rect>
-                <path d="M17 17h2a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2h-14a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h2" />
-                <path d="M17 9v-4a2 2 0 0 0 -2 -2h-6a2 2 0 0 0 -2 2v4" />
-                <rect x="7" y="13" width="10" height="8" rx="2" />
-
-            </svg>	 --}}
+         
             
             <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <rect x="0" y="0" width="24" height="24" stroke="none"></rect>
@@ -44,7 +38,7 @@
 <div class="bg-white rounded-lg shadow-lg px-2 py-2 max-w-[100%] mx-auto " id="js-print-template" x-ref="printTemplate">
     <div class="flex items-center justify-between border-b border-[#6b571a]  ">
         <div class="w-[40%]">
-            <div class="font-bold  text-right">  محلات صادق الريعاني للتجارة والمقاولات</div>
+            <div class="font-bold  text-right">  محلات صادق الريعاني للتجارة والمقاولات </div>
             <div class="font-bold   text-right">   مواد بناء-كهرباء ادوات صحية-معدات ورش -دهانات</div>
             <div class="font-bold  text-right">     الصباحة خط الحديدة قبل مفرق  لؤلؤة 
             </div>
@@ -105,7 +99,7 @@
                 <th scope="col" class="text-center  text-white ">العلامة التجارية</th>
                 {{-- <th scope="col" class="text-center text-indigo-700 ">تعديل الشراء</th> --}}
 
-          
+{{--           
             </tr>
         </thead>
         <tbody>
@@ -120,7 +114,7 @@
                 <td class="py-1 text-gray-700 text-center">20,000</td>
                 <td class="py-1 text-gray-700 text-center">50</td>
                 <td class="py-1 text-gray-700 text-center">250</td>
-                <td class="py-1 text-gray-700 text-center">لا يوجد</td>
+                <td class="py-1 text-gray-700 text-center">لا يوجد</td> --}}
                 {{-- <td class="p-1 ">
                     <div class="flex items-center gap-1">
                         <button class="p-1  rounded-full  group transition-all duration-500  flex item-center">
@@ -137,7 +131,7 @@
                 </td> --}}
               
 
-            </tr>
+            {{-- </tr>
           
             @endfor
             <tr class="  " style="display:">
@@ -151,18 +145,18 @@
                    <div class=" text-sm px-3 flex">الفين ومائتين وخمسين .ريال يمني</div>
                    </div>
                    {{-- <div class=" text-sm px-3">الفين ومائتين وخمسين .ريال يمني</div> --}}
-               </div> </th>
+               {{-- </div> </th> --}}
                 {{-- <th colspan="3"  class="text-right   mr-10 text-sm">الفين ومائتين وخمسين .ريال يمني </th> --}}
               
             
 
-      
+{{--       
         </tr>
           
         </tbody>
     </table>
    
-</div>
+</div> --}} 
 
 
 
@@ -183,7 +177,8 @@
     //     }
     // }
 </script>
-<div class="text-gray-500 cursor-pointer w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-300 inline-flex items-center justify-center" @mouseenter="showTooltip = true" @mouseleave="showTooltip = false" @click="printInvoice()">
+
+{{-- <div class="text-gray-500 cursor-pointer w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-300 inline-flex items-center justify-center" @mouseenter="showTooltip = true" @mouseleave="showTooltip = false" @click="printInvoice()"> --}}
     {{-- <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-printer" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <rect x="0" y="0" width="24" height="24" stroke="none"></rect>
         <path d="M17 17h2a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2h-14a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h2" />
@@ -191,14 +186,12 @@
         <rect x="7" y="13" width="10" height="8" rx="2" />
 
     </svg>	 --}}
-
+{{-- 
     <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" >
-        {{-- <rect x="0" y="0" width="24" height="24" stroke="none"></rect> --}}
         <path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M16.444 18H19a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h2.556M17 11V5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v6h10ZM7 15h10v4a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-4Z"/>
         <path d="M17 9v-4a2 2 0 0 0 -2 -2h-6a2 2 0 0 0 -2 2v4" />
-        {{-- <rect x="7" y="13" width="10" height="8" rx="2" /> --}}
-    </svg>
-
+    </svg> --}}
+{{-- 
 </div>
 <div class="text-gray-500 cursor-pointer w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-300 inline-flex items-center justify-center" @click="()">
     <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -217,19 +210,28 @@
 
 
 
-</div>
-
+</div> --}} 
 
 <div class="" x-data="invoices()" >
-
+   
+<div class="text-gray-500 cursor-pointer w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-300 inline-flex items-center justify-center" @mouseenter="showTooltip = true" @mouseleave="showTooltip = false" @click="printInvoice()">
+         
+            
+    <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+        <rect x="0" y="0" width="24" height="24" stroke="none"></rect>
+        <path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M16.444 18H19a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h2.556M17 11V5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v6h10ZM7 15h10v4a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-4Z"/>
+        <path d="M17 9v-4a2 2 0 0 0 -2 -2h-6a2 2 0 0 0 -2 2v4" />
+        <rect x="7" y="13" width="10" height="8" rx="2" />
+    </svg>
+      
+</div>
 
     <div class="container w-full " id="js-print-template" x-ref="printTemplate">
 
-{{-- header --}}
         <div class=" border-2 border-black rounded-b-lg my-2 ">
             <div class="bg-gray-200 p-8 rounded-lg  flex justify-between w-full ">
                 <div class="text-right">
-                    <h2 class="text-xl font-bold mb-2">الريعاني للمواد البناء</h2>
+                    <h2 class="text-xl font-bold mb-2">    محلات صادق الريعاني للتجارة والمقاولات </h2>
                     <p>مواد بناء <strong>-</strong> ادوات كهربائية <strong>-</strong> دهانات</p>
                     <p> الصباحة السوق الاعلئ بعد سوق القات </p>
                     <p> 772020232-77774633-123456789</p>
@@ -269,6 +271,7 @@
             </div>
         </div>
         {{-- end header --}}
+{{--         
 @php
         function convertNumberToWords($number)
     {
@@ -278,15 +281,15 @@
 
     $number = 505550 ;
     $oo = convertNumberToWords($number) . ' ريال  يمني';
-@endphp
+@endphp --}}
 
 
         {{-- body srart --}}
         <div class="w-full p-3 relative space-y-2  text-base bg-gray-200 border-black  rounded-lg  my-2 text-right font-bold">
             <div class="flex justify-between">
-
+                {{-- {{"(".$oo.")"}}  --}}
                 <p class="">أستلمنا من الأخ / جمال علي احمد سعد المغربي</p>
-                <p class="">مبلغ وقدره <span class="text-lg">:</span> <span class="font-bold text-base">{{number_format(505550)}}</span> ر.ي {{"(".$oo.")"}}  </p>
+                <p class="">مبلغ وقدره <span class="text-lg">:</span> <span class="font-bold text-base">{{number_format(505550)}}</span> ر.ي  </p>
             </div>
             <br>
             <p>تقيد المبلغ لحساب /الدائن</p>
@@ -317,7 +320,7 @@
                 <br>
                 <div class="flex justify-between mx-10">
 
-                    <p >الدائن............................ </p>
+                   
                     <p >المحاسب............................ </p>
                 </div>
             </div>
@@ -325,6 +328,7 @@
                 {{-- body --}}
 
     </div>
+</div>
 </div>
 
 
