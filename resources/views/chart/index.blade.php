@@ -16,8 +16,8 @@
     <button class="focus:border-b-2 border-white focus:outline-none"onclick="showSection(1)">تحليل المنتجات</button>
     <button class="focus:border-b-2 border-white focus:outline-none"onclick="showSection(2)">تحليل المبيعات</button>
     <button class="focus:border-b-2 border-white focus:outline-none"onclick="showSection(3)">تحليل المشتريات</button>
-    <button class="focus:border-b-2 border-white focus:outline-none"onclick="showSection(4)">تحليل المدفوعات</button>
-    <button class="focus:border-b-2 border-white focus:outline-none"onclick="showSection(5)">تحليل المردوات</button>
+    <button class="focus:border-b-2 border-white focus:outline-none"onclick="showSection(4)">تحليل الأصول </button>
+    <button class="focus:border-b-2 border-white focus:outline-none"onclick="showSection(5)">تحليل المدفوعات</button>
 
   </div>
 
@@ -41,13 +41,15 @@
             <x-filters />
         </div>
     </div>
-    
+
     @include('chart.line')
    </div>
    <div id="section-4" class="section">
+       @include('chart.assets')
 
    </div>
    <div id="section-5" class="section">
+    </div>
 
 
 

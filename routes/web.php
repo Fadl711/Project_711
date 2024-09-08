@@ -19,7 +19,8 @@ use App\Http\Controllers\PurchaseCoctroller;
 use App\Http\Controllers\RefundController;
 use App\Http\Controllers\SupplierCoctroller;
 use App\Http\Controllers\PDFReportController;
-use App\Http\Controllers\SettingController;
+use App\Http\Controllers\reportsConreoller;
+use App\Http\Controllers\settingController\SettingController;
 use App\Http\Controllers\UsersController\UsersController;
 use Illuminate\Support\Facades\Route;
 
@@ -54,6 +55,8 @@ Route::get('/chart',[ChartController::class,'index'])->name('chart.index');
 Route::get('bar-chart-data',[ChartController::class, 'getBarChartDate']);
 
 Route::get('/settings',[SettingController::class,'index'])->name('settings.index');
+
+Route::get('/report',[reportsConreoller::class,'index'])->name('report.index');
 
 
 

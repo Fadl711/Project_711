@@ -86,14 +86,14 @@
                                     d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
                                 </svg>
                                     <span class="textNav mr-1 text-white ">قائمة الجرد </span></a></li>
-                                <li><a class=" rounded-t  border border-white hover:bg-indigo-400  py-2 px-4 flex whitespace-no-wrap none " href="{{route('fixed.index')}}">                            <svg class="w-6 h-6" viewBox="0 0 48 48" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M46 44.438H2a1 1 0 1 1 0-2h44a1 1 0 1 1 0 2zm-30-10a1 1 0 1 1 0 2H8a1 1 0 1 1 0-2h1v-13H8a1 1 0 1 1 0-2h8a1 1 0 1 1 0 2h-1v13h1zm-3-13h-2v13h2v-13zm15 13a1 1 0 1 1 0 2h-8a1 1 0 1 1 0-2h1v-13h-1a1 1 0 1 1 0-2h8a1 1 0 1 1 0 2h-1v13h1zm-3-13h-2v13h2v-13zm19 18a1 1 0 0 1-1 1H5a1 1 0 1 1 0-2h38a1 1 0 0 1 1 1zm-4-5a1 1 0 1 1 0 2h-8a1 1 0 1 1 0-2h1v-13h-1a1 1 0 1 1 0-2h8a1 1 0 1 1 0 2h-1v13h1zm-3-13h-2v13h2v-13zm-34-6L24 4l21 11.438v2H3v-2zm37.541 0L24 6.886 7.396 15.438h33.145z" fill-rule="evenodd" fill="#ffffff" class="fill-000000"></path></svg>
-                                    <span class="textNav mr-1 text-white ">الأصول الثابتة  </span></a></li>
-                            </ul>
-                        </div>
+                                    <li><a class=" rounded-t  border border-white hover:bg-indigo-400  py-2 px-4 flex whitespace-no-wrap none " href="{{route('fixed.index')}}">                            <svg class="w-6 h-6" viewBox="0 0 48 48" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M46 44.438H2a1 1 0 1 1 0-2h44a1 1 0 1 1 0 2zm-30-10a1 1 0 1 1 0 2H8a1 1 0 1 1 0-2h1v-13H8a1 1 0 1 1 0-2h8a1 1 0 1 1 0 2h-1v13h1zm-3-13h-2v13h2v-13zm15 13a1 1 0 1 1 0 2h-8a1 1 0 1 1 0-2h1v-13h-1a1 1 0 1 1 0-2h8a1 1 0 1 1 0 2h-1v13h1zm-3-13h-2v13h2v-13zm19 18a1 1 0 0 1-1 1H5a1 1 0 1 1 0-2h38a1 1 0 0 1 1 1zm-4-5a1 1 0 1 1 0 2h-8a1 1 0 1 1 0-2h1v-13h-1a1 1 0 1 1 0-2h8a1 1 0 1 1 0 2h-1v13h1zm-3-13h-2v13h2v-13zm-34-6L24 4l21 11.438v2H3v-2zm37.541 0L24 6.886 7.396 15.438h33.145z" fill-rule="evenodd" fill="#ffffff" class="fill-000000"></path></svg>
+                                        <span class="textNav mr-1 text-white ">الأصول الثابتة  </span></a></li>
+                                    </ul>
+                                </div>
 
 
 
-                {{--  --}}
+                                {{--  --}}
                     </li>
                     <li class="mb-2  ">
                         {{--  --}}
@@ -124,7 +124,7 @@
 
 
                     {{--  --}}
-                    </li>
+                </li>
                 <li class="mb-2">
                     <a class="NavTagA" href="">
                     <svg class="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -134,9 +134,17 @@
                     </svg>
                     <span class="textNav">الرسائل</span>
                     <span class="absolute top-0 left-0 w-2 h-2 mt-2 ml-2 bg-indigo-500 rounded-full"></span>
-                    </a>
+                </a>
                 </li>
                 <li class="mb-2">
+                    <a class="NavTagA" href="{{route('report.index')}}">
+                        <svg class="w-6 h-6 text-white" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><svg class="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
+                        </svg>
+                    <span class="textNav">التقارير</span>
+                    </a></li>
                 <li class="mb-2">
                     <a class="NavTagA" href="{{route('settings.index')}}">
                     <svg class="w-6 h-6  text-white stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"stroke="currentColor">
