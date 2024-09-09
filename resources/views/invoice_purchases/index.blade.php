@@ -1,7 +1,5 @@
 @extends('layout')
 @section('conm')
-<div class="bg-white rounded-lg shadow-lg " id="bills_purchase" style="display: ">
-  
 <div class="bg-white w-full  " id="bills_purchase" style="display: ">
 
   @include('invoice_purchases.all_bills_purchase')

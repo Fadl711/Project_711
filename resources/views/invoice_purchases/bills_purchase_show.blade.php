@@ -1,5 +1,6 @@
 
 
+
 {{-- 
 <div class="" x-data="invoices()" >
     <div class="relative mr-4 inline-block " >
@@ -162,22 +163,6 @@
 
 
 
-<script>
-     
-    // function invoices() {
-    //     return {
-    //         printInvoice() {
-    //             var printContents = this.$refs.printTemplate.innerHTML;
-    //             var originalContents = document.body.innerHTML;
-
-    //             document.body.innerHTML = printContents;
-    //             window.print();
-    //             document.body.innerHTML = originalContents;
-    //         }
-    //     }
-    // }
-</script>
-
 {{-- <div class="text-gray-500 cursor-pointer w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-300 inline-flex items-center justify-center" @mouseenter="showTooltip = true" @mouseleave="showTooltip = false" @click="printInvoice()"> --}}
     {{-- <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-printer" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <rect x="0" y="0" width="24" height="24" stroke="none"></rect>
@@ -225,6 +210,7 @@
     </svg>
       
 </div>
+
 
     <div class="container w-full " id="js-print-template" x-ref="printTemplate">
 
@@ -330,6 +316,8 @@
     </div>
 </div>
 </div>
+</div>
+
 
 
 

@@ -14,7 +14,7 @@
 
 }
 .NavTagA{
-   @apply flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300
+   @apply flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-200
 }
 .labelSale{
   @apply block mb-2 text-sm font-bold text-gray-700 dark:text-white text-center

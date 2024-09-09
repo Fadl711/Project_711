@@ -4,6 +4,7 @@ use App\Http\Controllers\CustomerCoctroller;
 use App\Http\Controllers\HomeCoctroller;
 use App\Http\Controllers\ProductCoctroller;
 use App\Http\Controllers\AccountCoctroller;
+use App\Http\Controllers\bondController\BondController;
 use App\Http\Controllers\chartController\ChartController;
 use App\Http\Controllers\FixedAssetsController;
 use App\Http\Controllers\InventoryController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\PurchaseCoctroller;
 use App\Http\Controllers\RefundController;
 use App\Http\Controllers\SupplierCoctroller;
 use App\Http\Controllers\PDFReportController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UsersController\UsersController;
 use Illuminate\Support\Facades\Route;
 
@@ -34,6 +36,8 @@ Route::get('/invoice_sales', [AllBillsController::class, 'index'])->name('invoic
 Route::get('/all_bills_sale', [AllBillsController::class, 'all_bills_sale'])->name('invoice_sales.all_bills_sale');
 Route::get('/bills_sale_show', [AllBillsController::class, 'bills_sale_show'])->name('invoice_sales.bills_sale_show');
 Route::get('/invoice_purchases', [InvoicePurchaseController::class, 'index'])->name('invoice_purchase.index');
+Route::get('/bonds', [BondController::class, 'bonds'])->name('bonds.index');
+
 
 
 
@@ -51,6 +55,8 @@ return view('controle');
 });
 Route::get('/chart',[ChartController::class,'index'])->name('chart.index');
 Route::get('bar-chart-data',[ChartController::class, 'getBarChartDate']);
+
+Route::get('/settings',[SettingController::class,'index'])->name('settings.index');
 
 
 
