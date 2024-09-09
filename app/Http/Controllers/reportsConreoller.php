@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class SettingController extends Controller
+class reportsConreoller extends Controller
 {
     public function index(){
-        return view('settings.index');
+        return view('report.index');
     }
 }
