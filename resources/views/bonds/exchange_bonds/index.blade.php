@@ -1,36 +1,62 @@
+@extends('bonds.index')
+@section('bonds')
+
+<br>
+{{-- <button onclick="window.history.back()">رجوع</button> --}}
 <form action="">
-    <div class="flex items-center shadow-md p-4 bg-white">
-          <div class="w-[40%]">
-              <div class="font-bold  text-center">    <label for="" class="border-b-2 border-black font-bold ">التاريخ </label>
+
+    <div class="flex container  shadow-md py-4 px-2 bg-white">
+       
+        <div class="w-[40%] max-sm:w-[30%]">
+            <div class=" text-center">    
+                <label for="b" class="text-center">   سند صرف </label>
+                <select   dir="ltr" id="accountty"  class="inputSale "  required>
+                <option value="CA" selected>  </option>
+                <option value="US" > الصندوق </option>
+                <option value="DE">البنك</option>
+              </select>  
+            </div>
+              <div class="text-center">    <label for="" class="text-center">التاريخ </label>
                   <input type="date" class="inputSale" placeholder="505,550"> 
               </div>
          </div>
-          <div class="text-gray-700 px-4 w-[20%]">
-              <div class="font-bold  text-center">    
-                  <label for="b" class="text-center ">   سند صرف </label>
-                  <select   dir="ltr" id="accountty"  class="inputSale " style="display:block" required>
-                  <option value="CA" selected>  </option>
-                  <option value="US" > الصندوق </option>
-                  <option value="DE">البنك</option>
-                </select>  
-              </div>
+          <div class="text-gray-700  px-2">
+              
           </div>
-          <div class="text-gray-700 w-[40%] ">
-              <div class="font-bold  text-center ">   
-                  <span class="">  
-                  <label for="" class="border-b-2 border-black font-bold text-base " >المبلغ </label>
-                  <input id="maont" type="number" class="inputSale" placeholder="505,550" required> 
-                  </span>
-              </div>
-              <div class="font-bold  text-center">
+          <div class="text-gray-700 w-[50%] max-sm:w-[70%] ">
+            <div class="   ">  
+                <div class="flex  " role=""> 
+                    <div  class="  text-center">  
+                        <label for="" class=" text-center" >العمله </label>
+                        <select   dir="ltr" id="accountty" class="inputSale "  required>
+                            <option value="CA" selected>  </option>
+                            <option value="US" >حساب رئيسي </option>
+                            <option value="DE">فرعي</option>
+                          </select>             
+                       </div>
+                       <div  class="text-center  ">  
+                        <label for="" class=" text-center" >الصرف </label>
+                        <input id="maont" type="number" class="inputSale px-1" placeholder="505,550" required> 
+                       </div>
+                
+                <div class="text-center">  
+                <label for="" class="text-center " >المبلغ </label>
+                <input id="maont" type="number" class="inputSale px-1" placeholder="505,550" required> 
+                </div>
+                
+                </div>
+
+            </div>
+            
+              <div class="  text-center">
                   <label for="b" class="text-center ">  جهة الدفع </label>
-                  <select   dir="ltr" id="accountty" class="inputSale " style="display:block" required>
+                  <select   dir="ltr" id="accountty" class="inputSale "  required>
                   <option value="CA" selected>  </option>
                   <option value="US" >حساب رئيسي </option>
                   <option value="DE">فرعي</option>
                 </select>           
               </div>
-              <div class="font-bold  text-center">   <label for="b" class="text-center ">    تقيد المبلغ لحساب /الدائن</label> 
+              <div class="  text-center">   <label for="b" class="text-center ">    تقيد المبلغ لحساب /الدائن</label> 
                   <select   dir="ltr" id="accountty" class="inputSale " style="display:block">
                       <option value="CA" selected>  </option>
                       <option value="US" >حساب رئيسي </option>
@@ -44,24 +70,26 @@
       <ul class="space-y-2  ">
           <li>
               <ul class="grid grid-cols-3 w-full ">
-                  <li class="border-2 border-black py-2 text-center  rounded "> جهة المستفيد </li>
-                  <li class="border-2 border-black py-2 text-center  rounded p ">إيداع في حساب</li>
-                  <li class="border-2 border-black py-2 text-center  rounded ">البيان</li>
+                  <li class="px-1 text-center"> جهة المستفيد </li>
+                  <li class="px-1 text-center">إيداع في حساب</li>
+                  <li class="px-1 text-center">البيان</li>
               </ul>
               <ul class="grid grid-cols-3  w-full py-1">
-                  <li class="text-center"> <select   dir="ltr" id="accountty" class="inputSale " style="display:block">
+                  <li class="text-center px-1"> 
+                    <select dir="ltr" id="accountty" class="inputSale " >
                           <option value="CA" selected>  </option>
                           <option value="US" >حساب رئيسي </option>
                           <option value="DE">فرعي</option>
                         </select>  
                       </li>
-                  <li class=" text-center">
-                        <select   dir="ltr" id="accou" class="inputSale " style="display:block">
-                      <option value="CA" selected>  </option>
+                  <li class=" text-center px-1">
+                    <select   dir="ltr" id="accou" class="inputSale " >
+                      <option value="CA" selected> </option>
                       <option value="US" >حساب رئيسي </option>
                       <option value="DE">فرعي</option>
-                    </select>   </li>
-                  <li class=" text-center">             
+                    </select>
+                   </li>
+                  <li class=" text-center px-1">             
                          <textarea class="inputSale" name="" id="" cols="30" rows="1"></textarea>
                   </li>
               </ul>
@@ -257,3 +285,4 @@
            }
        }
       </script>
+      @endsection

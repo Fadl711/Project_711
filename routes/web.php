@@ -5,7 +5,11 @@ use App\Http\Controllers\HomeCoctroller;
 use App\Http\Controllers\ProductCoctroller;
 use App\Http\Controllers\AccountCoctroller;
 use App\Http\Controllers\bondController\BondController;
+use App\Http\Controllers\bondController\exchangeController\ExchangeController;
+use App\Http\Controllers\bondController\receipController\All_Receipt_BondController;
+use App\Http\Controllers\bondController\receipController\ReceipController;
 use App\Http\Controllers\chartController\ChartController;
+use App\Http\Controllers\DailyRestrictionController\RestrictionController;
 use App\Http\Controllers\FixedAssetsController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\invoicepurchasessController\InvoicePurchaseController;
@@ -37,7 +41,29 @@ Route::get('/invoice_sales', [AllBillsController::class, 'index'])->name('invoic
 Route::get('/all_bills_sale', [AllBillsController::class, 'all_bills_sale'])->name('invoice_sales.all_bills_sale');
 Route::get('/bills_sale_show', [AllBillsController::class, 'bills_sale_show'])->name('invoice_sales.bills_sale_show');
 Route::get('/invoice_purchases', [InvoicePurchaseController::class, 'index'])->name('invoice_purchase.index');
+
+
 Route::get('/bonds', [BondController::class, 'bonds'])->name('bonds.index');
+Route::get('/Receip/create', [ReceipController::class, 'create'])->name('create.index');
+Route::get('/Receip/show_all_receipt', [All_Receipt_BondController::class, 'show_all_receipt'])->name('show_all_receipt');
+Route::get('/Receip/show', [ReceipController::class, 'show'])->name('receip.show'); 
+Route::get('/Receip/edit', [ReceipController::class, 'edit'])->name('receip.edit');
+
+Route::get('/exchange/index', [ExchangeController::class, 'index'])->name('exchange.index');
+Route::get('/exchange/all_exchange_bonds', [ExchangeController::class, 'all_exchange_bonds'])->name('all_exchange_bonds');
+Route::get('/exchange/show', [ExchangeController::class, 'show'])->name('exchange.show');
+Route::get('/exchange/edit', [ExchangeController::class, 'edit'])->name('exchange.edit');
+
+Route::get('/restrictions/create', [RestrictionController::class, 'create'])->name('restrictions.create');
+Route::get('/restrictions/index', [RestrictionController::class, 'index'])->name('restrictions.index');
+
+
+
+
+
+
+
+
 
 
 

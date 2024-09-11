@@ -20,7 +20,7 @@
   @apply block mb-2 text-sm font-bold text-gray-700 dark:text-white text-center
 }
 .inputSale{
-@apply w-full px-3 py-2 text-sm leading-tight text-gray-700 dark:text-white border rounded shadow appearance-none
+@apply w-full px-3 py-2 text-sm leading-tight text-gray-700 dark:text-white border rounded shadow-md appearance-none 
 }
 .divProducte {
    @apply flex items-center w-full px-1 py-1 text-base  text-black bg-white  rounded-l-md  md:col-span-3
