@@ -21,6 +21,14 @@ class PDFReportController extends Controller
 
 
     }
+    public function sales()
+    {
+        return view('invoice_sales.bills_sale_show');
+    }
+    public function purchase()
+    {
+        return view('invoice_purchases.bills_purchase_show');
+    }
 
 }
 

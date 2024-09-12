@@ -107,8 +107,8 @@
                         <td class=" text-center  ">$442</td>
                         <td class=" text-center">$442</td>
                         <td class=" text-center  ">$442</td>
-                        <td class=" text-center text-indigo-700 "> <button data-modal-target="crud-modal" data-modal-toggle="crud-modal" class="   focus:outline-none " type="button">
-                          عرض المشتريات  الفاتورة   </button>
+                        <td class=" text-center text-indigo-700 "> <a href="{{route('print.purchase')}} " target="_blank" data-modal-target="crud-modal" data-modal-toggle="crud-modal" class="   focus:outline-none " type="button">
+                          طباعة فاتوة      </a>
                        </td>
                     </tr>
                 </tbody>
@@ -122,7 +122,7 @@
 
 {{-- alert --}}
 
-<div  id="crud-modal"    tabindex="-1" aria-hidden="true" class=" bg-black bg-opacity-50  hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0  h-full">
+{{-- <div  id="crud-modal"    tabindex="-1" aria-hidden="true" class=" bg-black bg-opacity-50  hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0  h-full">
     <div class="  relative p-2 w-full max-h-full">
         <!-- Modal content -->
         <div class=" bg-white rounded-lg shadow dark:bg-gray-700 container" x-data="invoices()" >
@@ -137,21 +137,21 @@
                 </button>
 
 
-                
+
             </div>
-            
+
             <!-- Modal body -->
             <div  x-refs="printTemplate"  id="js-print-template" >
             @include('invoice_purchases.bills_purchase_show')
-            
+
 
             </div>
 
             <!-- Modal body -->
-         
+
         </div>
     </div>
-</div>
+</div> --}}
 {{-- alert --}}
 <br>
 </div>
