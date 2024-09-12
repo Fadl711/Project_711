@@ -104,9 +104,9 @@
 
                     </tr>
                     <tr class="">
-                        <td class=" text-center  text-[#1ff823] ">$442</td>
+                        <td class=" text-center  ">$442</td>
                         <td class=" text-center">$442</td>
-                        <td class=" text-center  text-[rgb(193,44,44)]">$442</td>
+                        <td class=" text-center  ">$442</td>
                         <td class=" text-center text-indigo-700 "> <button data-modal-target="crud-modal" data-modal-toggle="crud-modal" class="   focus:outline-none " type="button">
                           عرض المشتريات  الفاتورة   </button>
                        </td>

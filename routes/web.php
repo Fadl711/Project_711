@@ -24,6 +24,9 @@ use App\Http\Controllers\PurchaseCoctroller;
 use App\Http\Controllers\RefundController;
 use App\Http\Controllers\SupplierCoctroller;
 use App\Http\Controllers\PDFReportController;
+use App\Http\Controllers\refundsController\purchasesController\Purchase_RefundController;
+use App\Http\Controllers\refundsController\saleController\RefundController as SaleControllerRefundController;
+use App\Http\Controllers\refundsController\salesController\Sale_RefundController;
 use App\Http\Controllers\reportsConreoller;
 use App\Http\Controllers\settingController\SettingController;
 use App\Http\Controllers\UsersController\UsersController;
@@ -56,6 +59,19 @@ Route::get('/exchange/edit', [ExchangeController::class, 'edit'])->name('exchang
 
 Route::get('/restrictions/create', [RestrictionController::class, 'create'])->name('restrictions.create');
 Route::get('/restrictions/index', [RestrictionController::class, 'index'])->name('restrictions.index');
+Route::get('/restrictions/all_restrictions_show', [RestrictionController::class, 'all_restrictions_show'])->name('all_restrictions_show');
+Route::get('/restrictions/edit', [RestrictionController::class, 'edit'])->name('restrictions.edit');
+Route::get('/restrictions/show', [RestrictionController::class, 'show'])->name('restrictions.show');
+Route::get('/refunds/index', [Sale_RefundController::class, 'index'])->name('refunds.index');
+Route::get('/refunds/create/sale', [Sale_RefundController::class, 'create'])->name('sale_refunds.create');
+
+Route::get('/refunds/create/purchase', [Purchase_RefundController::class, 'create'])->name('purchase_refunds.create');
+
+
+
+
+
+
 
 
 
@@ -69,7 +85,7 @@ Route::get('/restrictions/index', [RestrictionController::class, 'index'])->name
 
 
 Route::get('/payments', [PaymentCoctroller::class, 'index'])->name('payments.index');
-Route::get('/refunds', [RefundController::class, 'index'])->name('refunds.index');
+// Route::get('/refunds', [RefundController::class, 'index'])->name('refunds.index');
 Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
 Route::get('/fixedAssets', [FixedAssetsController::class, 'index'])->name('fixed.index');
 Route::get('/usersControl', [UsersController::class, 'index'])->name('users.index');
