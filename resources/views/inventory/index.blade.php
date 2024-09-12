@@ -1,6 +1,11 @@
 @extends('layout')
 
 @section('conm')
+<style>
+    body {
+        font-family: 'Arial Unicode MS', sans-serif;
+    }
+</style>
 <div id="acc" class="w-full px-2 bg-white shadow-md overflow-hidden sm:rounded-lg">
     <div class=" ">
         <div class="w-full ">
@@ -27,7 +32,7 @@
                               </select>
                           </form>
                       </div>
-                     
+
                     <div class="md:ml-2 " >
                       <label class="labelSale" for="payment_type">ملاحظة</label>
                       <input type="text" name="payment_type" class="inputSale" id="payment_type">
@@ -74,7 +79,7 @@
                         <input type="text" name="payment_type" class="inputSale" id="payment_type">
                       </div>
                 </div>
-             
+
                 <button type="submit" class="text-white inline-flex items-center bgcolor hover:bg-stone-400  font-medium rounded-lg text-sm px-3 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                     <svg class="me-1 -ms-1 w-5 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
                   حفظ البيانات
@@ -87,7 +92,7 @@
 <script>
     document.getElementById('pricingType').addEventListener('input',function(){
         var Pricing= document.getElementById('pricingType').value;
-        var displayPricing= document.getElementById('pricing') 
+        var displayPricing= document.getElementById('pricing')
         if(Pricing=="تلقائي")
         {
             displayPricing.style.display="none";
@@ -95,15 +100,15 @@
         {
             displayPricing.style.display="flex";
         }
-    
+
     });
     function saveinvi(){
-        var displayPricing= document.getElementById('buttonbill') 
+        var displayPricing= document.getElementById('buttonbill')
         ;
         if(displayPricing.style.display="block")
         {
             displayPricing.style.display="none";
-        } else  
+        } else
         {
             displayPricing.style.display="none";
         }
@@ -120,7 +125,7 @@
               <th scope="col" class="leading-2 tagHt">اسم الصنف</th>
                 <th scope="col" class="leading-2 tagHt" >ك/ المتوفره</th>
                 <th scope="col" class="leading-2 tagHt">المشتريات</th>
-                <th scope="col" class="leading-2 tagHt">م/ المشتريات</th>  
+                <th scope="col" class="leading-2 tagHt">م/ المشتريات</th>
                 <th scope="col" class="leading-2 tagHt"> المبيعات</th>
                 <th scope="col" class="leading-2 tagHt">م/ المبيعات</th>
                 <th scope="col" class="leading-2 tagHt">مسموحات المبيعات</th>
@@ -188,7 +193,7 @@
 
 
             </tr>
-           
+
 
 
             <!-- Add more rows as needed -->
