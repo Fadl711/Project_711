@@ -14,6 +14,15 @@ class RestrictionController extends Controller
     public function index(){
         return view('daily_restrictions.index');
     }
-    
+    public function   all_restrictions_show(){
+        return view('daily_restrictions.all_restrictions_show');
+    }
+
+    public function   edit(){
+        return view('daily_restrictions.edit');
+    }
+    public function   show(){
+        return view('daily_restrictions.show');
+    }
     
 }

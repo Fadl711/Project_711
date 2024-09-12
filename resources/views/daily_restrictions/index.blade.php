@@ -8,7 +8,7 @@
                 <a href="{{route('restrictions.create')}}"  class="text-sm  py-2   px-2   leading-none rounded-md hover:bg-gray-100" >   قيد جديد </a>
             </li>
             <li class="   rounded ">
-                <a href="{{route('show_all_receipt')}}"  class="text-sm py-2 px-2  leading-none rounded-md hover:bg-gray-100" > القيود</a>
+                <a href="{{route('all_restrictions_show')}}"  class="text-sm py-2 px-2  leading-none rounded-md hover:bg-gray-100" > القيود</a>
 
             </li>
             <li class="  rounded "> 
