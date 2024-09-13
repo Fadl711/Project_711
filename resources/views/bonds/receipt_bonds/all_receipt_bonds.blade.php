@@ -63,7 +63,7 @@
                 <td class=" border text-right">21</td>
                 <th class=" border text-right "> عبدالهادي</th>
                 <td class=" border text-right flex">  
-                    <a href="{{route('receip.show')}}"  class="text-sm py-2  leading-none rounded-md hover:bg-gray-100" >                        <svg class="w-6 h-6 text-[#2430d3] dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                    <a href="{{route('receip.show')}}"  class="text-sm py-2  leading-none rounded-md hover:bg-gray-100" >  
 
                     <svg class="w-6 h-6 text-[#2430d3] dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-width="2" d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"/>

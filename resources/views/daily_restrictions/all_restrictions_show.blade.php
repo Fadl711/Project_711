@@ -18,7 +18,7 @@
     
         </div>
     </div>
-    <div class=" min-w-full shadow rounded-lg   max-h-screen overflow-x-auto  ">
+    <div class=" min-w-full shadow rounded-lg   max-h-screen overflow-x-auto text-sm ">
     <table class="min-w-full bg-white  text-sm " >
         <thead class="bg-[#2430d3] text-white  ">
            <tr>

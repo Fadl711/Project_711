@@ -1,4 +1,5 @@
-
+@extends('refunds.index')
+@section('refunds')
 
 
 
@@ -200,3 +201,4 @@ function invoices() {
  }
 </script>
 
+@endsection
