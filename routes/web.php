@@ -44,11 +44,8 @@ Route::get('/invoice_sales', [AllBillsController::class, 'index'])->name('invoic
 Route::get('/all_bills_sale', [AllBillsController::class, 'all_bills_sale'])->name('invoice_sales.all_bills_sale');
 Route::get('/bills_sale_show', [AllBillsController::class, 'bills_sale_show'])->name('invoice_sales.bills_sale_show');
 Route::get('/invoice_purchases', [InvoicePurchaseController::class, 'index'])->name('invoice_purchase.index');
+Route::get('/PDF', [PDFReportController::class, 'createPDF']);
 
-// Print PDF
-Route::get('/PDF1', [PDFReportController::class, 'sales'])->name('print.sales');
-Route::get('/PDF2', [PDFReportController::class, 'purchase'])->name('print.purchase');
-// Print PDF
 
 Route::get('/bonds', [BondController::class, 'bonds'])->name('bonds.index');
 Route::get('/Receip/create', [ReceipController::class, 'create'])->name('create.index');
