@@ -1,6 +1,28 @@
-@extends('layout')
 
+@extends('layout')
 @section('conm')
+<<<<<<< HEAD
+
+        <ul class="grid grid-cols-4 text-right container relative navIndex">
+            <li class="  rounded "> 
+                <a href="{{route('inventory.create')}}"  class="text-sm  py-2   px-2   leading-none rounded-md hover:bg-gray-100" >  انشاء جرد </a>
+            </li>
+            <li class="   rounded ">
+                <a href="{{route('show_inventory')}}"  class="text-sm  py-2   px-2   leading-none rounded-md hover:bg-gray-100" >   قائمة الجرد </a>
+            </li>
+            {{-- <li class="  rounded "> 
+                <a href="{{route('all_sale_refund')}}"  class="text-sm py-2 px-2  leading-none rounded-md hover:bg-gray-100" > تسوية المخزن </a>
+            </li>
+            <li class="    rounded ">  
+                <a href="{{route('purchase_refunds.create')}}"  class="text-sm  py-2   px-2   leading-none rounded-md hover:bg-gray-100" >   قائمة  تسويات الجرد </a>
+            </li> --}}
+        </ul>
+    
+        <div class=" container relative  ">
+            <button onclick="window.history.back()">رجوع</button>
+     
+    @yield('inventory')
+=======
 <style>
     body {
         font-family: 'Arial Unicode MS', sans-serif;
@@ -199,21 +221,10 @@
             <!-- Add more rows as needed -->
         </tbody>
     </table>
+>>>>>>> 1f7de61e2e64bfe89421b0333f948b7fac7290e3
 </div>
 
-
-{{-- <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
-<a class=" hover:shadow-form w-full rounded-md bg-[#6A64F1] py-3 px-8 text-center text-base font-semibold text-white outline-none " href="{{route('donwload')}}">تنزيل التقرير</a>
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
-
 <script>
-    $(document).ready(function() {
-        $('#example').DataTable({
-            // Add any customization options here
-        });
-    });
-</script> --}}
-
-
+  
+</script>
 @endsection

@@ -14,4 +14,10 @@ class Sale_RefundController extends Controller
     public function index(){
         return view('refunds.index');
     }
+    public function show_sale_refund(){
+        return view('refunds.sales_refunds.show_sale_refund');
+    }
+    public function show(){
+        return view('refunds.sales_refunds.show');
+    }
 }

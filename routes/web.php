@@ -28,6 +28,8 @@ use App\Http\Controllers\refundsController\purchasesController\Purchase_RefundCo
 use App\Http\Controllers\refundsController\saleController\RefundController as SaleControllerRefundController;
 use App\Http\Controllers\refundsController\salesController\Sale_RefundController;
 use App\Http\Controllers\reportsConreoller;
+use App\Http\Controllers\settingController\company_dataController\Company_DataController;
+use App\Http\Controllers\settingController\currenciesController\CurrencieController;
 use App\Http\Controllers\settingController\SettingController;
 use App\Http\Controllers\UsersController\UsersController;
 use Illuminate\Support\Facades\Route;
@@ -44,11 +46,8 @@ Route::get('/invoice_sales', [AllBillsController::class, 'index'])->name('invoic
 Route::get('/all_bills_sale', [AllBillsController::class, 'all_bills_sale'])->name('invoice_sales.all_bills_sale');
 Route::get('/bills_sale_show', [AllBillsController::class, 'bills_sale_show'])->name('invoice_sales.bills_sale_show');
 Route::get('/invoice_purchases', [InvoicePurchaseController::class, 'index'])->name('invoice_purchase.index');
+Route::get('/PDF', [PDFReportController::class, 'createPDF']);
 
-// Print PDF
-Route::get('/PDF1', [PDFReportController::class, 'sales'])->name('print.sales');
-Route::get('/PDF2', [PDFReportController::class, 'purchase'])->name('print.purchase');
-// Print PDF
 
 Route::get('/bonds', [BondController::class, 'bonds'])->name('bonds.index');
 Route::get('/Receip/create', [ReceipController::class, 'create'])->name('create.index');
@@ -68,29 +67,23 @@ Route::get('/restrictions/edit', [RestrictionController::class, 'edit'])->name('
 Route::get('/restrictions/show', [RestrictionController::class, 'show'])->name('restrictions.show');
 Route::get('/refunds/index', [Sale_RefundController::class, 'index'])->name('refunds.index');
 Route::get('/refunds/create/sale', [Sale_RefundController::class, 'create'])->name('sale_refunds.create');
+Route::get('/refunds/show_purchase_refund', [Purchase_RefundController::class, 'show_purchase_refund'])->name('show_purchase_refund');
+Route::get('/refunds/purchase/show', [Purchase_RefundController::class, 'show'])->name('purchase_refund.show');
 
 Route::get('/refunds/create/purchase', [Purchase_RefundController::class, 'create'])->name('purchase_refunds.create');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Route::get('/refunds/show/all', [Sale_RefundController::class, 'show_sale_refund'])->name('all_sale_refund');
+Route::get('/refunds/sale/show', [Sale_RefundController::class, 'show'])->name('sale_refunds.show');
+// ------------------------------------------------
 Route::get('/payments', [PaymentCoctroller::class, 'index'])->name('payments.index');
 // Route::get('/refunds', [RefundController::class, 'index'])->name('refunds.index');
-Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
+Route::get('/inventory/index', [InventoryController::class, 'index'])->name('inventory.index');
+Route::get('/inventory/create', [InventoryController::class, 'create'])->name('inventory.create');
+Route::get('/inventory/show_inventory', [InventoryController::class, 'show_inventory'])->name('show_inventory');
+Route::get('/inventory/show', [InventoryController::class, 'show'])->name('inventory.show');
+
+
+
+
 Route::get('/fixedAssets', [FixedAssetsController::class, 'index'])->name('fixed.index');
 Route::get('/usersControl', [UsersController::class, 'index'])->name('users.index');
 Route::get('/usersShow', [UsersController::class, 'show'])->name('users.details');
@@ -104,6 +97,9 @@ Route::get('/chart',[ChartController::class,'index'])->name('chart.index');
 Route::get('bar-chart-data',[ChartController::class, 'getBarChartDate']);
 
 Route::get('/settings',[SettingController::class,'index'])->name('settings.index');
+Route::get('/settings/company_data/create',[Company_DataController::class,'create'])->name('company_data.settings.create');
+Route::get('/settings/currencies/index',[CurrencieController::class,'index'])->name('settings.currencies.index');
+
 
 Route::get('/summary',[reportsConreoller::class,'summary'])->name('report.summary');
 Route::get('/inventoryReport',[reportsConreoller::class,'inventoryReport'])->name('report.inventoryReport');

@@ -42,17 +42,6 @@
 
 
 
-      <script>
-         function disSection()
-    {
 
-var mc=document.getElementById("acc");
-    if(mc.style.display=="block"){
-
-    mc.style.display="none";
-    }
-  }
-
-      </script>
     </body>
 </html>

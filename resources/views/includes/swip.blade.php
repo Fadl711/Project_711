@@ -1,9 +1,9 @@
 
-<div class="max-w-80 min-h-screen">
-<div class="max-sm:w-15">
-    <div class="  text-white sticky top-0  bg-gradient-to-r from-indigo-900 to-indigo-600 border-b border-gray-100 rounded-l-xl">
+<div class="">
+<div class="">
+    <div class=" divNav">
         <ul class="list-none ">
-            <li class="mb-2">
+            <li class="">
                 <a class="NavTagA" href="{{route('home.index')}}">
                     <svg class="w-6 h-6 stroke-current " xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -13,7 +13,7 @@
                 <span class="textNav"> الرئسية</span>
                     </a>
                 </li>
-                    <li class="mb-2">
+                    <li class="">
                     <a class=" NavTagA"  href="{{route('accounts.index')}}">
                     <svg class="w-6 h-6 stroke-current " xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -21,7 +21,7 @@
                     <span class="textNav"> الحسابات</span>
                     </a>
                 </li>
-                <li class="mb-2">
+                <li class="">
                     <a class="NavTagA" href="{{route('restrictions.index')}}">
                         <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 20V10m0 10-3-3m3 3 3-3m5-13v10m0-10 3 3m-3-3-3 3"/>

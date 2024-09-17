@@ -1,4 +1,5 @@
-
+@extends('refunds.index')
+@section('refunds')
 
 
 
@@ -66,11 +67,8 @@
         
         </div> 
     </div>
-
     <div class="flex items-center bg-gray-100 justify-between my-2 px-2 border-2  border-black rounded  ">
         <div class="max-sm:text-sm">
-           
-
             <div class="flex text-right"><span class="  ">    اسم المورد:   جمال علي احمد</span>
             </div>
             <div class="flex text-right"><span class="  ">   التلفون :  776327938 </span>
@@ -78,7 +76,7 @@
         </div>
               <div class="max-sm:text-sm flex text-right ">
 
-        <span class="">  الدفع :نقدا </span>
+        <span class="">  مردود المبيعات /نقدا </span>
         </div>
         <div class="max-sm:text-sm text-right">
 
@@ -100,30 +98,24 @@
                 <th scope="col" class="text-right border-x  border-y border-black w-[20%] ">اسم الصنف</th>
                 <th scope="col" class="text-right  border-x  border-y border-black  ">الباركود</th>
                 <th scope="col" class="text-center border-x  border-y border-black ">الكمية</th>
-                <th scope="col" class="text-right  border-x  border-y border-black ">السعر الشراء</th>
-                <th scope="col" class="text-right  border-x  border-y border-black w-[] ">السعر البيع</th>
+                <th scope="col" class="text-right  border-x  border-y border-black ">السعر </th>
                 <th scope="col" class="text-right  border-x  border-y border-black w-[]"> الإجمالي</th>
-                <th scope="col" class="text-right  border-x  border-y border-black w-[] ">التكلفة</th>
-                <th scope="col" class="text-right  border-x  border-y border-black w-[]">التخفيض</th>
-                <th scope="col" class="text-right  border-x  border-y border-black w-[]">العلامة التجارية</th>
+                <th scope="col" class="text-right  border-x  border-y border-black w-[]">الخصم</th>
                 <th scope="col" class="text-center border-x  border-y border-black w-[]">تعديل الشراء</th>
 
          
             </tr>
         </thead>
         <tbody>
-            @for($i=0; $i<=20;$i++)
+            @for($i=0; $i<=2;$i++)
             <tr class="border">
              
                 <td class="py-1 bg-white text-right border-x  border-y  border-black w-[20%]   "> علب بلاستيك ابو اثنين جافي</td>
                 <td class="py-1 bg-white text-right  border-x  border-y border-black  ">154650565</td>
                 <td class="py-1 bg-white text-center border-x  border-y border-black ">5</td>
-                <td class="py-1 bg-white text-right  border-x  border-y border-black">4,000</td>
                 <td class="py-1 bg-white text-right  border-x  border-y border-black">4,500</td>
                 <td class="py-1 bg-white text-right  border-x  border-y border-black">20,000</td>
-                <td class="py-1 bg-white text-right  border-x  border-y border-black">50</td>
                 <td class="py-1 bg-white text-right  border-x  border-y border-black">250</td>
-                <td class="py-1 bg-white text-right  border-x  border-y border-black">لا يوجد</td> 
          <td class="p-1 bg-white border-x  border-y border-black">
                     <div class="flex items-center gap-1">
                         <button class="p-1  rounded-full  group transition-all duration-500  flex item-center">
@@ -148,7 +140,7 @@
     </div>
 <tbody >
 <table>
-    <br>
+  
             <tr class="   ">
                 <th colspan="" class="text-right  border-x  border-y border-black  p-2"> الجمالي الفاتورة</th>
                    <th class=" text-sm text-right  border-x  border-y border-black p-2"> 100,000</th>
@@ -200,3 +192,4 @@ function invoices() {
  }
 </script>
 
+@endsection

@@ -3,7 +3,18 @@
 @tailwind utilities;
 
 
-
+.divNav{
+   @apply  min-h-screen  text-white sticky top-0  bg-gradient-to-r from-indigo-900 to-indigo-600 border-b border-gray-100 rounded-l-xl
+}
+.buttNav{
+   @apply text-white font-semibold py-2 px-2 rounded inline-flex items-center hover:bg-gray-400
+}
+.ulNav{
+   @apply  dropdown-content absolute hidden text-gray-700  bg-gradient-to-r from-indigo-700 to-indigo-500 -right-3  
+}
+.aNav{
+   @apply  rounded-t  border border-white hover:bg-indigo-400  py-2 px-4 flex 
+}
 
 .btn{
     @apply mb-1 block text-base font-medium text-[#07074D]
@@ -16,11 +27,14 @@
 .NavTagA{
    @apply flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-200
 }
+.navIndex{
+   @apply shadow-md py-1  rounded  flex items-center justify-between
+}
 .labelSale{
-  @apply block mb-2 text-sm font-bold text-gray-700 dark:text-white text-center
+  @apply block mb-2 text-sm  text-gray-700 dark:text-white text-center font-bold
 }
 .inputSale{
-@apply w-full px-3 py-2 text-sm leading-tight text-gray-700 dark:text-white border rounded shadow-md appearance-none 
+@apply w-full rounded-md border border-[#d2d0d0] bg-white py-2 px-2 text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md 
 }
 .divProducte {
    @apply flex items-center w-full px-1 py-1 text-base  text-black bg-white  rounded-l-md  md:col-span-3
@@ -29,16 +43,16 @@
    @apply text-white bg-gradient-to-r from-stone-500 to-stone-700 hover:bg-cyan-700 focus:ring-4 focus:ring-cyan-200 font-medium rounded-lg text-sm px-5 py-2  text-center
 }
 .tagHt{
-   @apply p-2  text-sm text-center    capitalize rounded-t-xl text-white
+   @apply p-2  text-sm text-right     rounded bg-gray-50   border-x  border-y border-[#d2d0d0] 
 }
 .tagTd{
-   @apply p-1 whitespace-nowrap text-sm text-center   text-gray-900  border-b border-b-orange-950
+   @apply py-1 px-1   border-x  border-y border-[#d2d0d0] text-right  hover:bg-gray-50
 }
 .tagTtbody{
    @apply divide-y divide-gray-300
 }
 .tagTr{
-   @apply bg-white transition-all duration-500 hover:bg-gray-50
+   @apply   border-x  border-y border-[#d2d0d0] 
 }
 .buttonEdit{
    @apply p-1  rounded-full  duration-500
