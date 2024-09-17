@@ -1,76 +1,116 @@
 @extends('layout')
 @section('conm')
-<div class="  shadow my-2 ">
-<form action="">
-
-            <div class="bg-white p-8 rounded-lg  flex justify-between w-full ">
-                <div class="text-right space-y-2  ">
-                    <label class="text-lg text-black font-bold ">أسم المحل</label>
-                    <h2 class="text-xl font-bold "><input class="  p-1  bg-transparent rounded-lg" type="text" placeholder="ادخل أسم المحل"></h2>
-                    <label class="text-lg text-black font-bold ">المحل لأبيع...</label>
-                    <p><input class="w-20 bg-transparent rounded-lg p-1" type="text" placeholder="......."></p>
-                    <label class="text-lg text-black font-bold ">عنوان المحل</label>
-                    <p><input class="w-60 bg-transparent rounded-lg p-1 placeholder:text-sm" type="text" placeholder=" العنوان:مثال..شارع 22 أمام بنك اليمن"></p>
-                    <label class="text-lg text-black font-bold ">ارقام المحل</label>
-                    <p> <input class="w-60 bg-transparent rounded-lg p-1" type="text" placeholder="التلفون:777777-777777-7777777"></p>
-                </div>
-                <div class="flex items-center justify-center">
-                    <div class="w-24 h-20  flex items-center justify-center translate-x-10 relative">
-
-                        <span class="absolute -top-20 text-xl  text-nowrap">أضافة شعار للمحل</span>
-                        <br>
-                       <div class="w-32 h-32 mb-1 border rounded-lg overflow-hidden relative bg-gray-100">
-    <img id="image" class="object-cover w-full h-32" src="https://placehold.co/300x300/e2e8f0/e2e8f0" />
-    
-    <div class="absolute top-0 left-0 right-0 bottom-0 w-full block cursor-pointer flex items-center justify-center" onClick="document.getElementById('fileInput').click()">
-        <button type="button"
-            style="background-color: rgba(255, 255, 255, 0.65)"
-            class="hover:bg-gray-100 text-gray-700 font-semibold py-2 px-4 text-sm border border-gray-300 rounded-lg shadow-sm"
-        >
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-camera" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="0" y="0" width="24" height="24" stroke="none"></rect>
-                <path d="M5 7h1a2 2 0 0 0 2 -2a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2" />
-                <circle cx="12" cy="13" r="3" />
-            </svg>							  
-        </button>
+<!-- FOR DEMO PURPOSE -->
+<!-- component -->
+<aside class=" bg-white h-screen shadow-md flex flex-col justify-between">
+    <div class="p-6">
+        <h1 class="text-xl font-bold mb-4">الإعدادات الإفتراضية</h1>
+        <nav class="space-y-2">
+            <a href="{{route('company_data.settings.create')}}" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+                <span class="mr-3">
+                    <!-- Home Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9.5L12 3l9 6.5v9.5a2 2 0 01-2 2h-4a2 2 0 01-2-2v-4H9v4a2 2 0 01-2 2H3a2 2 0 01-2-2V9.5z" />
+                    </svg>
+                </span>
+                <span> بيانات العمل التجاري </span>
+            </a>
+            <a href="{{route('settings.currencies.index')}}" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+                <span class="mr-3">
+                    <!-- View Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12l-3-3m0 0l-3 3m3-3v12M5 12a7 7 0 0114 0v4a2 2 0 01-2 2H7a2 2 0 01-2-2v-4z" />
+                    </svg>
+                </span>
+                <span>العملات  </span>
+            </a>
+            <a href="#" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+                <span class="mr-3">
+                    <!-- Analytics Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3a8 8 0 0116 0v7a8 8 0 01-16 0V3zm5 15h-4v7h4v-7zm-9 3h4v-3H7v3zm-4 3h4v-5H3v5z" />
+                    </svg>
+                </span>
+                <span>اعدادات الجرد</span>
+            </a>
+            <a href="#" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+                <span class="mr-3">
+                    <!-- Messages Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a3 3 0 013-3h12a3 3 0 013 3v10a3 3 0 01-3 3H9l-6 3V5z" />
+                    </svg>
+                </span>
+                <span>الإقفال السنوي</span>
+            </a>
+            <a href="#" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+                <span class="mr-3">
+                    <!-- Leads Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354c-4.418 0-8 1.79-8 4v7.99a3 3 0 003 3h2m3 0h6a3 3 0 003-3V8.354c0-2.21-3.582-4-8-4zM12 1v3M9.879 5.879l-2.121 2.122M4 9h3M20 9h-3M14.121 5.879l2.122 2.122" />
+                    </svg>
+                </span>
+                <span>Leads</span>
+            </a>
+            <hr class="my-2 border-gray-300">
+            <a href="#" class="flex items-center p-2 text-gray-700 bg-gray-100 rounded">
+                <span class="mr-3">
+                    <!-- Training Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20h10M12 4v16m0 0H8m4 0h4" />
+                    </svg>
+                </span>
+                <span>Training Sources</span>
+            </a>
+            <a href="#" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+                <span class="mr-3">
+                    <!-- Visual Look Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12h4m-4-2h6m-6 4h6m-6 4h4M6 12H2m0-2h6m-6 4h6M8 6h8M8 18h8m-5 0v4m-2-4v4M8 3v4m0 12v4" />
+                    </svg>
+                </span>
+                <span>Visual Look</span>
+            </a>
+            <a href="#" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+                <span class="mr-3">
+                    <!-- Embed Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M4 7h.01M12 3v4M3 12h18M16 7h.01M12 20v-4m-8 5h16" />
+                    </svg>
+                </span>
+                <span>Embed on Site</span>
+            </a>
+            <a href="#" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+                <span class="mr-3">
+                    <!-- Add-ons Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h-6v7h6V5zm0 7h6V5h-6v7zm-1 6h8M8 17h-3m8-6h1v1m-3 0h1v1m-2-2h1v1m-3 0h1v1m-2-2h1v1m-1 5h5" />
+                    </svg>
+                </span>
+                <span>Add-ons</span>
+            </a>
+            <hr class="my-2 border-gray-300">
+            <a href="#" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+                <span class="mr-3">
+                    <!-- Settings Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 1v3M8.5 2.5l2 2M1 12h3m16 0h3m-9 7l2 2M6.5 21.5l2-2M21 12l2-2M6 9h12v6H6V9z" />
+                    </svg>
+                </span>
+                <span>Settings</span>
+            </a>
+            <a href="#" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+                <span class="mr-3">
+                    <!-- Integrations Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 1v22M5 12h14M9 5l6 6-6 6" />
+                    </svg>
+                </span>
+                <span>Integrations - Soon</span>
+            </a>
+        </nav>
     </div>
-</div>
-<input name="photo" id="fileInput" accept="image/*" class="hidden" type="file" onChange="let file = this.files[0]; 
-    var reader = new FileReader();
 
-    reader.onload = function (e) {
-        document.getElementById('image').src = e.target.result;
-        document.getElementById('image2').src = e.target.result;
-    };
-
-    reader.readAsDataURL(file);
-">
-                    </div>
-                </div>
-                <div class="text-right space-y-2  ">
-                    <label class="text-lg text-black font-bold "> أسم المحل بالإنجليزي</label>
-                    <h2 class="text-xl font-bold "><input class="  p-1  bg-transparent rounded-lg" type="text" placeholder=" ادخل أسم المحل بالإنجليزي"></h2>
-                    <label class="text-lg text-black font-bold "> المحل لأبيع ...</label>
-                    <p><input class="w-20 bg-transparent rounded-lg p-1" type="text" placeholder="......."><strong>-</strong><input class="w-20 bg-transparent rounded-lg p-1" type="text" placeholder="......"><strong>-</strong><input class="w-20 bg-transparent rounded-lg p-1" type="text" placeholder="......"></p>
-                    <label class="text-lg text-black font-bold ">عنوان المحل بالإنجليزي</label>
-                    <p><input class="w-60 bg-transparent rounded-lg p-1 placeholder:text-sm" type="text" placeholder=" Address:Street 22 "></p>
-                    <label class="text-lg text-black font-bold ">ارقام المحل بالإنجليزي</label>
-                    <p> <input class="w-60 bg-transparent rounded-lg p-1" type="text" placeholder="Phones:77777-77777-77777"></p>
-                </div>
-            </div>
-            <div class="text-right space-y-2 px-8  ">
-<button class="px-8 py-2 border rounded shadow">
-    save
-  </button>
-  <button class="px-8 py-2 border rounded shadow">
- close
-  </button>
-            </div>
-  <br>
-</form>
-
-</div>
-
-
-
+    <!-- Footer Note -->
+   
+</aside>
 @endsection

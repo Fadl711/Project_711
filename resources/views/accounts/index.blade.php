@@ -1,13 +1,13 @@
 @extends('layout')
 @section('conm')
-<nav class="bg-gray-800 text-white py-1 border-x border-y border-gray-900 rounded-xl  flex items-center justify-between ">
+<nav class="navIndex ">
     <a class="font-bold  tracking-tight px-2" href="#" >محلاتي</a>
     <div class="flex items-center">
-        <button onclick="NewAccount()" type="button" class="text-sm px-4 py-2 leading-none rounded-full hover:bg-gray-700" >اضافة حساب</button>
-        <button onclick="AccountTree()" type="button" class="text-sm px-4 py-2 leading-none rounded-full hover:bg-gray-700" >شجرة الحسابات</button>
-        <button onclick="FinancialAccounts()" type="button" class="text-sm px-4 py-2 leading-none rounded-full hover:bg-gray-700" >  مراجعة الحسابات </button>
+        <button onclick="NewAccount()" type="button" class="text-sm px-4 py-2 leading-none rounded hover:bg-gray-50" >اضافة حساب</button>
+        <button onclick="AccountTree()" type="button" class="text-sm px-4 py-2 leading-none rounded hover:bg-gray-50" >شجرة الحسابات</button>
+        <button onclick="FinancialAccounts()" type="button" class="text-sm px-4 py-2 leading-none rounded hover:bg-gray-50" >  مراجعة الحسابات </button>
        {{-- <form action="{{route('accounts.balancing')}}" method="GET"> --}}
-            <button onclick="AccountBalancing()"  id="Accountbalancing"  type="submit"  class="text-sm px-4 py-2 leading-none rounded-full hover:bg-gray-700" > ترصيد الحسابات</button>
+            <button onclick="AccountBalancing()"  id="Accountbalancing"  type="submit"  class="text-sm px-4 py-2 leading-none rounded hover:bg-gray-50" > ترصيد الحسابات</button>
         {{-- </form>  --}}
         {{-- <a href="{{route('accounts.balancing')}}" onclick="AccountBalancing()"  class="text-sm px-4 py-2 leading-none rounded-full hover:bg-gray-700" > ترصيد الحسابات</a> --}}
     </div>

@@ -1,5 +1,5 @@
-@extends('refunds.index')
-@section('refunds')
+@extends('inventory.index')
+@section('inventory')
 
 
 
@@ -57,7 +57,7 @@
              
 
         </div>
-        <div class=" w-[40%]  max-sm:text-sm  ">
+        <div class=" w-[40%]  max-sm:text-sm">
             <div class="font-bold  text-left">   Sadiq AL-Rayani Stores for Trading and Contracting</div>
             <div class="  text-left">Building materials-electricty-sanitary ware-equipment-end paint-workshops </div>
             <div class="  text-left">   Swimming on AL-Hodeidah Street before the Pearl Junction
@@ -72,54 +72,74 @@
         <div class="max-sm:text-sm">
            
 
-            <div class="flex text-right"><span class="  ">    اسم العميل:   جمال علي احمد</span>
+            <div class="flex text-right"><span class="  ">    عنوان الجرد : جرد الاصناف ل2024</span>
             </div>
             <div class="flex text-right"><span class="  ">   التلفون :  776327938 </span>
             </div>
         </div>
               <div class="max-sm:text-sm flex text-right ">
 
-        <span class="">  مردود المبيعات /نقدا </span>
+        <span class="">   فاتورت / جرد الاصناف  </span>
         </div>
         <div class="max-sm:text-sm text-right">
 
             
             <div class="flex  align-text-top">
-                <span  class=" align-text-top"> التاريخ : 01/05/2024 </span>
+                <span  class=" align-text-top"> التاريخ الجرد: 01/05/2024 </span>
             </div>
             <div class="flex text-right">
-                   <span  class="  ">   رقم الايصال:  134555  </span>
+                   <span  class="  ">  رقم الجرد : 1 </span>
             </div>
         </div>
     </div>
     <div class="w-full text-left max-h-screen overflow-x-auto">
 
-    <table class="w-full text-left max-h-screen overflow-x-auto">
-        <thead>
-        
-                <tr class=" bg-[#6992f875]" >
-                <th scope="col" class="text-right border-x  border-y border-black w-[20%] ">اسم الصنف</th>
-                <th scope="col" class="text-right  border-x  border-y border-black  ">الباركود</th>
-                <th scope="col" class="text-center border-x  border-y border-black ">الكمية</th>
-                <th scope="col" class="text-right  border-x  border-y border-black ">السعر </th>
-                <th scope="col" class="text-right  border-x  border-y border-black w-[]"> الإجمالي</th>
-                <th scope="col" class="text-right  border-x  border-y border-black w-[]">الخصم</th>
-                <th scope="col" class="text-center border-x  border-y border-black w-[]">تعديل الشراء</th>
+        <div class="w-full text-left max-h-screen overflow-x-auto">
 
-         
-            </tr>
+            <table class="w-full text-left max-h-screen overflow-x-auto">
+                <thead>
+                
+                        <tr class=" bg-[#6992f875]" >
+                            <th scope="col" class="text-right border-x  border-y border-black"> رقم الجرد</th>
+        
+                        <th scope="col" class="text-right border-x  border-y border-black w-[20%] ">اسم الصنف</th>
+                        <th scope="col" class="text-right  border-x  border-y border-black  ">الباركود</th>
+                        <th scope="col" class="text-right border-x  border-y border-black ">المخزن</th>
+                        <th scope="col" class="text-right  border-x  border-y border-black ">الكمية الواردة </th>
+                        <th scope="col" class="text-right  border-x  border-y border-black "> الكمية المجرودة</th>
+                        <th scope="col" class="text-right  border-x  border-y border-black ">(النقص-) او (زيادة+)</th>
+                        <th scope="col" class="text-right  border-x  border-y border-black ">التكفة(النقص-) او (زيادة+)</th>
+        
+        
+                        <th scope="col" class="text-center border-x  border-y border-black "> تسوية الصنف</th>
+                        <th scope="col" class="text-center border-x  border-y border-black ">  </th>
+        
+        
+                 
+                    </tr>
         </thead>
         <tbody>
-            @for($i=0; $i<=2;$i++)
+           
+            @for($i=1; $i<=1;$i++)
             <tr class="border">
-             
-                <td class="py-1 bg-white text-right border-x  border-y  border-black w-[20%]   "> علب بلاستيك ابو اثنين جافي</td>
-                <td class="py-1 bg-white text-right  border-x  border-y border-black  ">154650565</td>
-                <td class="py-1 bg-white text-center border-x  border-y border-black ">5</td>
-                <td class="py-1 bg-white text-right  border-x  border-y border-black">4,500</td>
-                <td class="py-1 bg-white text-right  border-x  border-y border-black">20,000</td>
-                <td class="py-1 bg-white text-right  border-x  border-y border-black">250</td>
-         <td class="p-1 bg-white border-x  border-y border-black">
+                <td class="tagTd ">1</td>
+
+                <td class="tagTd w-[20%]   "> #154650565علب بلاستيك ابو اثنين جافي</td>
+                <td class="tagTd">المخرن الرئيسي</td>
+                <td class="tagTd">400</td>
+                <td class="tagTd">390</td>
+                <td class="tagTd">10</td>
+                <td class="tagTd">10</td>
+                <td class="tagTd">10,000-</td>
+
+                <td class="tagTd">                     
+                       <button class="p-1  rounded ">
+                    تسوية 
+                </button>
+            </td>
+
+ 
+         <td class="tagTd">
                     <div class="flex items-center gap-1">
                         <button class="p-1  rounded-full  group transition-all duration-500  flex item-center">
                             <svg class="cursor-pointer" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -132,10 +152,11 @@
                             </svg>
                         </button>
                     </div>
-                </td> 
+                </td>  
               
 
             </tr>
+          
           
             @endfor
         </tbody>
@@ -380,7 +401,9 @@
 </div>
 {{-- alert --}}
 <script>
-
+function mas(){
+    alert("gamal");
+}
 function invoices() {
      return {
          printInvoice() {
