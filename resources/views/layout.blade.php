@@ -31,9 +31,7 @@
     <body class="font-sans antialiased a">
         <div class="flex max-h-screen    ">
 
-
-            @include('includes.swip')
-
+                @include('includes.swip')
 
             <div class="container relative ">
 

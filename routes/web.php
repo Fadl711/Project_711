@@ -105,7 +105,14 @@ Route::get('bar-chart-data',[ChartController::class, 'getBarChartDate']);
 
 Route::get('/settings',[SettingController::class,'index'])->name('settings.index');
 
-Route::get('/report',[reportsConreoller::class,'index'])->name('report.index');
+Route::get('/summary',[reportsConreoller::class,'summary'])->name('report.summary');
+Route::get('/inventoryReport',[reportsConreoller::class,'inventoryReport'])->name('report.inventoryReport');
+Route::get('/earningsReports',[reportsConreoller::class,'earningsReports'])->name('report.earningsReports');
+Route::get('/salesReport',[reportsConreoller::class,'salesReport'])->name('report.salesReport');
+Route::get('/summaryPdf',[reportsConreoller::class,'summaryPdf'])->name('summaryPdf');
+Route::get('/salesReportPdf',[reportsConreoller::class,'salesReportPdf'])->name('salesReportPdf');
+Route::get('/inventoryReportPdf',[reportsConreoller::class,'inventoryReportPdf'])->name('inventoryReportPdf');
+Route::get('/earningsReportsPdf',[reportsConreoller::class,'earningsReportsPdf'])->name('earningsReportsPdf');
 
 
 
