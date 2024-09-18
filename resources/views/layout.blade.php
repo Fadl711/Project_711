@@ -132,14 +132,18 @@
                                 <ul class="ulNav">
                                     <li><a class="aNav " href="{{route('chart.index')}}"><svg class="w-6 h-6" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M28 25V10a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v15h-2V6a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v19h-2V15a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v10H4V5H2v21a1 1 0 0 0 1 1h27v-2Zm-4-14h2v14h-2Zm-8-4h2v18h-2Zm-8 9h2v9H8Z" data-name="2" fill="#ffffff" class="fill-000000"></path></svg>
                                         <span class="textNav  text-white ">تحليل البيانات</span></a></li>
-                                    <li><a class=" aNav " href="{{route('inventory.index')}}"><svg class="w-6 h-6 text-white" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">                             <svg class="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke="currentColor">
+                                    <li><a class=" aNav " href="{{route('inventory.index')}}">
+                                                            <svg class="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
                                     </svg>
-                                        <span class="textNav mr-1 text-white ">قائمة الجرد </span></a></li>
-                                        <li><a class="aNav" href="{{route('fixed.index')}}">                            <svg class="w-6 h-6" viewBox="0 0 48 48" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M46 44.438H2a1 1 0 1 1 0-2h44a1 1 0 1 1 0 2zm-30-10a1 1 0 1 1 0 2H8a1 1 0 1 1 0-2h1v-13H8a1 1 0 1 1 0-2h8a1 1 0 1 1 0 2h-1v13h1zm-3-13h-2v13h2v-13zm15 13a1 1 0 1 1 0 2h-8a1 1 0 1 1 0-2h1v-13h-1a1 1 0 1 1 0-2h8a1 1 0 1 1 0 2h-1v13h1zm-3-13h-2v13h2v-13zm19 18a1 1 0 0 1-1 1H5a1 1 0 1 1 0-2h38a1 1 0 0 1 1 1zm-4-5a1 1 0 1 1 0 2h-8a1 1 0 1 1 0-2h1v-13h-1a1 1 0 1 1 0-2h8a1 1 0 1 1 0 2h-1v13h1zm-3-13h-2v13h2v-13zm-34-6L24 4l21 11.438v2H3v-2zm37.541 0L24 6.886 7.396 15.438h33.145z" fill-rule="evenodd" fill="#ffffff" class="fill-000000"></path></svg>
-                                            <span class="textNav mr-1 text-white ">الأصول الثابتة  </span></a></li>
+                                        <span class="textNav mr-1 text-white ">قائمة الجرد </span>
+                                    </a></li>
+                                        <li>
+                                            <a class="aNav" href="{{route('fixed.index')}}">                            <svg class="w-6 h-6" viewBox="0 0 48 48" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M46 44.438H2a1 1 0 1 1 0-2h44a1 1 0 1 1 0 2zm-30-10a1 1 0 1 1 0 2H8a1 1 0 1 1 0-2h1v-13H8a1 1 0 1 1 0-2h8a1 1 0 1 1 0 2h-1v13h1zm-3-13h-2v13h2v-13zm15 13a1 1 0 1 1 0 2h-8a1 1 0 1 1 0-2h1v-13h-1a1 1 0 1 1 0-2h8a1 1 0 1 1 0 2h-1v13h1zm-3-13h-2v13h2v-13zm19 18a1 1 0 0 1-1 1H5a1 1 0 1 1 0-2h38a1 1 0 0 1 1 1zm-4-5a1 1 0 1 1 0 2h-8a1 1 0 1 1 0-2h1v-13h-1a1 1 0 1 1 0-2h8a1 1 0 1 1 0 2h-1v13h1zm-3-13h-2v13h2v-13zm-34-6L24 4l21 11.438v2H3v-2zm37.541 0L24 6.886 7.396 15.438h33.145z" fill-rule="evenodd" fill="#ffffff" class="fill-000000"></path></svg>
+                                            <span class="textNav mr-1 text-white ">الأصول الثابتة  </span>
+                                        </a>
+                                    </li>
                                         </ul>
                                     </div>
     
@@ -194,7 +198,7 @@
                     </li>
                     <li class="mb-2">
                         <a class="NavTagA" href="{{route('report.index')}}">
-                            <svg class="w-6 h-6 text-white" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><svg class="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                <svg class="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
