@@ -7,7 +7,7 @@
         <div class="flex-grow bg-white dark:bg-gray-900 overflow-y-auto">
           <div class="sm:px-7 sm:pt-7  pt-4 flex flex-col sm:w-full border-b border-gray-200 bg-white dark:bg-gray-900 dark:text-white dark:border-gray-800 sticky top-0">
             <div class="flex items-center space-x-3 sm:mt-7 mt-4  sm:text-lg">
-              <a href="{{route('report.summary')}}" class="sm:px-3 border-b-2 {{ Request::is('summary') ? 'text-blue-700 border-blue-700' : 'text-gray-600' }}   border-transparent  dark:text-white dark:border-white pb-1.5">كشف حساب</a>
+              <a href="{{route('report.summary')}}" class="sm:px-3 border-b-2 {{ Request::is('summary') ? 'dark:alert("gamal")  text-blue-700 border-blue-700 ' : 'text-gray-600' }}   border-transparent  dark:text-white dark:border-white pb-1.5 ">كشف حساب</a>
               <a href="{{route('report.inventoryReport')}}" class="sm:px-3 border-b-2 border-transparent {{ Request::is('inventoryReport') ? 'text-blue-700 border-blue-700' : 'text-gray-600' }} dark:text-gray-400 pb-1.5"> تقارير المخازن </a>
               <a href="{{route('report.earningsReports')}}" class="sm:px-3 border-b-2 {{ Request::is('earningsReports') ? 'text-blue-700 border-blue-700' : 'text-gray-600' }} border-transparent   dark:text-gray-400 pb-1.5">تقارير ارباح وخسائر الاصناف</a>
               <a href="{{route('report.salesReport')}}" class="sm:px-3 border-b-2 {{ Request::is('salesReport') ? 'text-blue-700 border-blue-700' : 'text-gray-600' }} border-transparent dark:text-gray-400 pb-1.5">تقارير المبيعات</a>
@@ -17,8 +17,9 @@
                    aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                       <path stroke="currentColor" stroke-linejoin="round"
                        stroke-width="2" d="M16.444 18H19a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h2.556M17 11V5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v6h10ZM7 15h10v4a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-4Z"/>
-                      <span class=" mr-1">طباعة التقرير</span>
-                  </svg>
+                    </svg>
+                       <span class=" mr-1">طباعة التقرير</span>
+               
                 </a>
             </div>
           </div>
@@ -85,6 +86,7 @@
 
         if (window.location.href.includes('/summary')){
             window.open("summaryPdf", "_blank", "download");
+        
         }
         else if(window.location.href.includes('/inventoryReport')){
             window.open("inventoryReportPdf", "_blank", "download");
