@@ -98,6 +98,7 @@ Route::get('bar-chart-data',[ChartController::class, 'getBarChartDate']);
 
 Route::get('/settings',[SettingController::class,'index'])->name('settings.index');
 Route::get('/settings/company_data/create',[Company_DataController::class,'create'])->name('company_data.settings.create');
+Route::post('/settings/company_data/{data}',[Company_DataController::class,'store'])->name('company_data.store');
 Route::get('/settings/currencies/index',[CurrencieController::class,'index'])->name('settings.currencies.index');
 
 

@@ -11,27 +11,7 @@
 
 <div class=" container  min-w-full ">
 
-    <div class=" border-[1px] border-black rounded-b-lg my-2  ">
-        <div class="bg-gray-200 p-2 rounded-b-lg  flex justify-between w-full ">
-            <div class="text-right text-[10px] items-center">
-                <h2 class=" font-bold ">الريعاني للمواد البناء</h2>
-                <p>مواد بناء <strong>-</strong> ادوات كهربائية <strong>-</strong> دهانات</p>
-                <p> الصباحة السوق الاعلئ بعد سوق القات </p>
-                <p> 772020232-77774633-123456789</p>
-            </div>
-            <div class="flex items-center justify-center">
-                <div class="w-16 h-16 bg-gray-300 flex items-center justify-center translate-x-8 ">
-                    <img class="" src="{{url('img/bnaa.png')}}" alt="">
-                </div>
-            </div>
-            <div class="text-left text-[10px] items-center">
-                <h2 class=" font-bold ">Company Name</h2>
-                <p>To constract - Elcetric - Funtret</p>
-                <p>Address: 123 Example St</p>
-                <p>Phone: 123456789</p>
-            </div>
-        </div>
-    </div>
+    @include('includes.header')
     <div class="w-full p-3 bg-gray-100 border-black border-[1px] rounded-lg text-[10px]  my-2 text-center font-bold">
         <p > تقارير المبيعات من 2024/5/10 الى 2023/4/5</p>
     </div>

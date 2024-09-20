@@ -5,71 +5,43 @@
 <div class="" x-data="invoices()" >
     <div class="relative mr-4 inline-block " >
         <div class="text-gray-500 cursor-pointer w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-300 inline-flex items-center justify-center" @mouseenter="showTooltip = true" @mouseleave="showTooltip = false" @click="printInvoice()">
-         
-            
+
+
             <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <rect x="0" y="0" width="24" height="24" stroke="none"></rect>
                 <path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M16.444 18H19a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h2.556M17 11V5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v6h10ZM7 15h10v4a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-4Z"/>
                 <path d="M17 9v-4a2 2 0 0 0 -2 -2h-6a2 2 0 0 0 -2 2v4" />
                 <rect x="7" y="13" width="10" height="8" rx="2" />
             </svg>
-              
+
         </div>
         <div class="text-gray-500 cursor-pointer w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-300 inline-flex items-center justify-center" @click="()">
             <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M7.926 10.898 15 7.727m-7.074 5.39L15 16.29M8 12a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm12 5.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm0-11a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"/>
               </svg>
-              
-            
-           
-              
+
+
+
+
         </div>
         <div class="text-gray-500 cursor-pointer w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-300 inline-flex items-center justify-center" @click="()">
             <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
               </svg>
-              
-            
-           
-              
+
+
+
+
         </div>
-      
+
     </div>
 
 <div class=" rounded-lg shadow-lg px-2 py-2 max-w-[100%] mx-auto  " id="js-print-template  " x-ref="printTemplate">
-    <div class="flex items-center justify-between border-2 p-2  border-black rounded bg-gray-100 ">
-        <div class="w-[40%] max-sm:text-sm">
-            <div class="font-bold  text-right">  محلات صادق الريعاني للتجارة والمقاولات </div>
-            <div class="  text-right">   مواد بناء-كهرباء ادوات صحية-معدات ورش -دهانات</div>
-            <div class=" text-right">     الصباحة خط الحديدة قبل مفرق  لؤلؤة 
-            </div>
-            <div class=" text-right">    776327938-776327938-776327938
-            </div>
-           
-        </div>
-        <div class="text-gray-700 px-4 w-[20%]">
-            <div class="font-bold t block"> 
-                <img class="rounded-full" src="{{url('img/bnaa.png')}}" alt="">
- 
-                  
-                     </div>
-             
-
-        </div>
-        <div class=" w-[40%]  max-sm:text-sm">
-            <div class="font-bold  text-left">   Sadiq AL-Rayani Stores for Trading and Contracting</div>
-            <div class="  text-left">Building materials-electricty-sanitary ware-equipment-end paint-workshops </div>
-            <div class="  text-left">   Swimming on AL-Hodeidah Street before the Pearl Junction
-            </div>
-            <div class="  text-left">    776327938-776327938-776327938
-            </div>
-        
-        </div> 
-    </div>
+    @include('includes.header2')
 
     <div class="flex items-center bg-gray-100 justify-between my-2 px-2 border-2  border-black rounded  ">
         <div class="max-sm:text-sm">
-           
+
 
             <div class="flex text-right"><span class="  ">    اسم المورد:   جمال علي احمد</span>
             </div>
@@ -82,7 +54,7 @@
         </div>
         <div class="max-sm:text-sm text-right">
 
-            
+
             <div class="flex  align-text-top">
                 <span  class=" align-text-top"> التاريخ : 01/05/2024 </span>
             </div>
@@ -95,7 +67,7 @@
 
     <table class="w-full text-left max-h-screen overflow-x-auto">
         <thead>
-        
+
                 <tr class=" bg-[#6992f875]" >
                 <th scope="col" class="text-right border-x  border-y border-black w-[20%] ">اسم الصنف</th>
                 <th scope="col" class="text-right  border-x  border-y border-black  ">الباركود</th>
@@ -108,13 +80,13 @@
                 <th scope="col" class="text-right  border-x  border-y border-black w-[]">العلامة التجارية</th>
                 <th scope="col" class="text-center border-x  border-y border-black w-[]">تعديل الشراء</th>
 
-         
+
             </tr>
         </thead>
         <tbody>
             @for($i=0; $i<=20;$i++)
             <tr class="border">
-             
+
                 <td class="py-1 bg-white text-right border-x  border-y  border-black w-[20%]   "> علب بلاستيك ابو اثنين جافي</td>
                 <td class="py-1 bg-white text-right  border-x  border-y border-black  ">154650565</td>
                 <td class="py-1 bg-white text-center border-x  border-y border-black ">5</td>
@@ -123,7 +95,7 @@
                 <td class="py-1 bg-white text-right  border-x  border-y border-black">20,000</td>
                 <td class="py-1 bg-white text-right  border-x  border-y border-black">50</td>
                 <td class="py-1 bg-white text-right  border-x  border-y border-black">250</td>
-                <td class="py-1 bg-white text-right  border-x  border-y border-black">لا يوجد</td> 
+                <td class="py-1 bg-white text-right  border-x  border-y border-black">لا يوجد</td>
          <td class="p-1 bg-white border-x  border-y border-black">
                     <div class="flex items-center gap-1">
                         <button class="p-1  rounded-full  group transition-all duration-500  flex item-center">
@@ -137,11 +109,11 @@
                             </svg>
                         </button>
                     </div>
-                </td> 
-              
+                </td>
+
 
             </tr>
-          
+
             @endfor
         </tbody>
     </table>
@@ -159,20 +131,20 @@
                         <th class=" text-sm text-right   border-x  border-y border-black p-2"> الخصم</th>
                         <th colspan="" class="text-right border-x  border-y border-black  p-2">1,000</th>
                         <th class=" text-sm text-right   border-x  border-y border-black p-2"> </th>
-        
+
                             </tr>
                   <tr class="  " style="display:">
-           
+
                <th class=" text-sm text-right   border-x  border-y border-black  p-2">صافي الفاتورة</th>
                <th class=" text-sm  text-right  border-x  border-y border-black p-2">  99,000</th>
                <th class=" text-sm  text-right  border-x  border-y border-black p-2">  الفين ومائتين وخمسين .ريال يمني</th>
-  
+
                </tr>
-          
+
         </tbody>
     </table>
-   
-</div> 
+
+</div>
 
 
 
