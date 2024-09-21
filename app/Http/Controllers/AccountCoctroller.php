@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\MainAccount;
 use Illuminate\Http\Request;
 
 class AccountCoctroller extends Controller
@@ -24,8 +25,9 @@ class AccountCoctroller extends Controller
 
 
             ];
+            $post=MainAccount::all();
 // return response()->json( $data);
-      return view('accounts.index',['posts'=>$data]);
+      return view('accounts.index',['posts'=>$data,'pos'=> $post]);
         // return view('accounts.index');
     }
     public function balancing( ){

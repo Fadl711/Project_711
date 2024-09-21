@@ -32,6 +32,7 @@ use App\Http\Controllers\settingController\company_dataController\Company_DataCo
 use App\Http\Controllers\settingController\currenciesController\CurrencieController;
 use App\Http\Controllers\settingController\SettingController;
 use App\Http\Controllers\UsersController\UsersController;
+use App\Models\SubAccount;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -110,6 +111,9 @@ Route::get('/salesReportPdf',[reportsConreoller::class,'salesReportPdf'])->name(
 Route::get('/inventoryReportPdf',[reportsConreoller::class,'inventoryReportPdf'])->name('inventoryReportPdf');
 Route::get('/earningsReportsPdf',[reportsConreoller::class,'earningsReportsPdf'])->name('earningsReportsPdf');
 
+
+Route::post('/invoice/items', [SubAccount::class, 'storeItem']);
+Route::get('/invoice/{account_id}/items', [SubAccount::class, 'getItems']);
 
 
 
