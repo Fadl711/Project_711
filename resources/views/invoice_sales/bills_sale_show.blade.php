@@ -2,8 +2,8 @@
 
 
 
-<div class="" x-data="invoices()" >              
-         
+<div class="" x-data="invoices()" >
+
 
     <div class="relative mr-4 inline-block " >
 
@@ -24,7 +24,7 @@
             </svg>
 
         </div>
-        
+
         <div class="text-gray-500 cursor-pointer w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-300 inline-flex items-center justify-center" @click="()">
             <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M7.926 10.898 15 7.727m-7.074 5.39L15 16.29M8 12a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm12 5.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm0-11a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"/>
@@ -50,27 +50,7 @@
     <div class="container w-full" id="js-print-template" x-ref="printTemplate">
 
 {{--  --}}
-        <div class=" border-2 border-black rounded-b-lg my-2 ">
-            <div class="bg-gray-200 p-8 rounded-lg  flex justify-between w-full ">
-                <div class="text-right">
-                    <h2 class="text-xl font-bold mb-2">الريعاني للمواد البناء</h2>
-                    <p>مواد بناء <strong>-</strong> ادوات كهربائية <strong>-</strong> دهانات</p>
-                    <p> الصباحة السوق الاعلئ بعد سوق القات </p>
-                    <p> 772020232-77774633-123456789</p>
-                </div>
-                <div class="flex items-center justify-center">
-                    <div class="w-24 h-20 bg-gray-300 flex items-center justify-center translate-x-10 ">
-                        <img class="" src="{{url('img/bnaa.png')}}" alt="">
-                    </div>
-                </div>
-                <div class="text-left">
-                    <h2 class="text-xl font-bold mb-2">Company Name</h2>
-                    <p>To constract - Elcetric - Funtret</p>
-                    <p>Address: 123 Example St</p>
-                    <p>Phone: 123456789</p>
-                </div>
-            </div>
-        </div>
+@include('includes.header2')
 
 
         <div class="w-full p-3 bg-gray-100 border-black border-2 rounded-lg  my-2 text-center font-bold">
@@ -155,7 +135,7 @@
 
 
 
-   
+
 
 <script>
 
