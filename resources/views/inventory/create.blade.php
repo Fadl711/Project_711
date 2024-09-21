@@ -125,7 +125,7 @@
                 <th scope="col" class="tagHt ">الكمية الواردة </th>
                 <th scope="col" class="tagHt "> الكمية المجرودة</th>
                 <th scope="col" class="tagHt ">(النقص-) او (زيادة+)</th>
-                <th scope="col" class="tagHt ">التكفة(النقص-) او (زيادة+)</th>
+                <th scope="col" class="tagHt ">التكلفة(النقص-) او (زيادة+)</th>
 
 
                 <th scope="col" class=" tagHt "> تسوية الصنف</th>
@@ -185,28 +185,7 @@
 
 
 </div>
-{{-- 
-<script>
 
-function invoices() {
-     return {
-         printInvoice() {
-             var printContents = document.getElementById('js-print-template').innerHTML;
-             var originalContents = document.body.innerHTML;
-             document.body.innerHTML = printContents;
-             window.onafterprint = function() {
-                 document.body.innerHTML = originalContents;
-                 window.focus();
-                 window.location.reload(); // reload the page after printing
-
-                 // Add this line to close the modal window
-                 document.getElementById('crud-modal').classList.add('hidden');
-             };
-             window.print();
-         }
-     }
- }
-</script> --}}
 
 
 
