@@ -15,12 +15,13 @@ return new class extends Migration
             $table->increments('main_account_id')->unsigned();
             $table->string('Nature_account');
             $table->string('account_name');
-            $table->integer('Type_account_id')->unsigned();
+            $table->integer('typeAccount')->unsigned();
+            $table->integer('Type_migration');
             $table->integer('User_id')->unsigned();
+
             $table->timestamps();
 
-            $table->foreign('Type_account_id')->references('type_account_id')->on('type_accounts');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('User_id')->references('id')->on('users');
         });
     }
 

@@ -1,9 +1,13 @@
 @extends('layout')
 @section('conm')
+
+<div class=" container  shadow p-2 mt-2" id="new_account" style="">
+
 <nav class="navIndex ">
-    <a class="font-bold  tracking-tight px-2" href="#" >محلاتي</a>
     <div class="flex items-center">
-        <button onclick="NewAccount()" type="button" class="text-sm px-4 py-2 leading-none rounded hover:bg-gray-50" >اضافة حساب</button>
+ <a href="{{route('Main_Account.create')}}"  class="text-sm px-4 py-2 leading-none rounded hover:bg-gray-50" >اضافة حساب رئيسي</a> 
+        <a href="{{route('Sub_Account.create')}}"  class="text-sm px-4 py-2 leading-none rounded hover:bg-gray-50" > اضافة حساب فرعي</a>
+
         <button onclick="AccountTree()" type="button" class="text-sm px-4 py-2 leading-none rounded hover:bg-gray-50" >شجرة الحسابات</button>
         <button onclick="FinancialAccounts()" type="button" class="text-sm px-4 py-2 leading-none rounded hover:bg-gray-50" >  مراجعة الحسابات </button>
        {{-- <form action="{{route('accounts.balancing')}}" method="GET"> --}}
@@ -12,10 +16,9 @@
         {{-- <a href="{{route('accounts.balancing')}}" onclick="AccountBalancing()"  class="text-sm px-4 py-2 leading-none rounded-full hover:bg-gray-700" > ترصيد الحسابات</a> --}}
     </div>
 </nav>
-    <div class="  shadow p-2 mt-2" id="new_account" style="display:none">
-        @include('accounts.add_account')
+        @yield('accounts')
     </div>
-    <div class="  border-x border-y border-orange-950 rounded-xl p-2 mt-2 " id="account_tree" style="display:none">
+    {{-- <div class="  border-x border-y border-orange-950 rounded-xl p-2 mt-2 " id="account_tree" style="display:none">
             @include('accounts.account_tree')
     </div>
     <div class="  border-x border-y border-orange-950 rounded-xl p-2 mt-2 " id="financial_account" style="display:none">
@@ -24,7 +27,7 @@
 </div>
 <div class="  border-x border-y border-orange-950 rounded-xl p-2 mt-2 " id="chart" style="display:block">
     @include('accounts.chart')
-</div>
+</div> --}}
 {{-- <div id="account_balancing" style="display:"></div> --}}
 
 
@@ -36,10 +39,8 @@
 
 
 
-<div class="  border-x border-y border-orange-950 rounded-xl p-2 mt-2 " id="account_balancing" style="display:none">
    
-    {{-- @include('accounts.account_balancing')  --}}
-    
+{{--     
 <h1 class="text-center  font-bold py-2">ترصيد الحسابات</h1>
 <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 overflow-x-auto   p-1">
     <h1> ترصيد حساب: ب  </h1>
@@ -87,7 +88,7 @@
         </table>
     </div>
 </div>
-</div>  
+</div>   --}}
 
 
 <script> 

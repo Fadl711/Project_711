@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('sales', function (Blueprint $table) {
             $table->increments('sale_id');
             $table->string('Product_name');
+            
             $table->string('Barcode');
             $table->integer('Quantity');
             $table->decimal('Selling_price', 8, 2); // Adjust precision as needed

@@ -19,5 +19,23 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+<<<<<<< HEAD
+=======
+        // $buss=BusinessData::all()->first();
+        // if(isset($buss)){
+
+        //     View::share([
+        //         'com_name'=> $buss->Company_Name,
+        //         'com_nameE'=> $buss->Company_NameE,
+        //         'com_for'=> $buss->Services,
+        //         'com_forE'=> $buss->ServicesE,
+        //         'com_phones'=> $buss->Phone_Number,
+        //         'com_address'=> $buss->Company_Address,
+        //         'com_addressE'=> $buss->Company_AddressE,
+        //         'com_photo'=>$buss->Company_Logo,
+
+        // ]);
+        // }
+>>>>>>> cf21c1f63f314bf5ff679fffbd7593b24c3447d0
     }
 }

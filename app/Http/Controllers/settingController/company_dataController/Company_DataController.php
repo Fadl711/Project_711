@@ -15,10 +15,10 @@ class Company_DataController extends Controller
     public function store(Request $request){
 
         $request->validate(
-            [
-                'com_photo'=>'required|image|mimes:jpeg,png,jpg|
-                max:2048',
-            ]);
+                [
+                                'com_photo'=>'required|image|mimes:jpeg,png,jpg|
+                        max:2048',
+                ]);
         $imageName = time().'.'. $request->com_photo->extension();
         $request->com_photo->move(public_path('images'),$imageName);
 
