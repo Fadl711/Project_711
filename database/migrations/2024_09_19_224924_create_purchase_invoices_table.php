@@ -27,7 +27,7 @@ return new class extends Migration
             $table->foreign('Supplier_id')->references('id')->on('users');
             $table->foreign('User_id')->references('id')->on('users');
             $table->foreign('Payment_type_id')->references('payment_types_id')->on('payment_types');
-            $table->foreign('Currency_id')->references('currencie_id')->on('currencies');
+            $table->foreign('Currency_id')->references('currency_id')->on('currencies');
         });
     }
 

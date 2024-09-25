@@ -15,7 +15,7 @@ return new class extends Migration
             $table->increments('currency_settings_id');
             $table->integer('Currency_id')->unsigned();
             $table->timestamps();
-            $table->foreign('Currency_id')->references('currencie_id')->on('currencies');
+            $table->foreign('Currency_id')->references('currency_id')->on('currencies');
         });
     }
 

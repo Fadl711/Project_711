@@ -49,7 +49,7 @@ Route::post('/products/store', [ProductCoctroller::class, 'store'])->name('produ
 Route::get('/products/{product}/edit',[ProductCoctroller::class,'edit'])->name('products.edit');
 Route::put('/products/{product}',[ProductCoctroller::class,'update'])->name('products.update');
 Route::delete('/products/{product}',[ProductCoctroller::class,'destroy'])->name('products.destroy');
-Route::post('/search', [ProductCoctroller::class,'search'])->name('search.perform');
+Route::get('/search', [ProductCoctroller::class,'search'])->name('search.products');
 
 Route::get('/products/Category', [CategoryController::class, 'create'])->name('Category.create');
 Route::post('/Category/store',[CategoryController::class,'store'])->name('Category.store');
@@ -120,6 +120,11 @@ Route::get('/settings',[SettingController::class,'index'])->name('settings.index
 Route::get('/settings/company_data/create',[Company_DataController::class,'create'])->name('company_data.settings.create');
 Route::post('/settings/company_data/{data}',[Company_DataController::class,'store'])->name('company_data.store');
 Route::get('/settings/currencies/index',[CurrencieController::class,'index'])->name('settings.currencies.index');
+Route::get('/settings/currencies/create',[CurrencieController::class,'create'])->name('settings.currencies.create');
+Route::post('/settings/currencies/store',[CurrencieController::class,'store'])->name('settings.currencies.store');
+Route::get('/settings/{currency}/edit',[CurrencieController::class,'edit'])->name('settings.currencies.edit');
+Route::put('/settings/{currency}/',[CurrencieController::class,'update'])->name('settings.currencies.update');
+Route::delete('/settings/{currency}',[CurrencieController::class,'destroy'])->name('settings.currencies.destroy');
 
 
 Route::get('/summary',[reportsConreoller::class,'summary'])->name('report.summary');

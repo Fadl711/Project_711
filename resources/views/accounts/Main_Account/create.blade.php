@@ -24,9 +24,9 @@
             maximumSelectionLength: 1
 
         });
-       
- 
-    
+
+
+
     $('.select2').select2({
             ajax: {
                 url: '/get-options',
@@ -64,7 +64,7 @@
 
   <div class="flex ">
     <label class="" for="">طبيعة الحساب</label>
-    
+
     <div class="flex px-4" >
     <label class="labelSale">مدين</label>
       <input  type="radio" required value="مدين" name="Nature_account" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
@@ -89,7 +89,7 @@
         <option value="{{$Deportatton['id']}}" >{{$Deportatton['Deportatton']}} </option>
         @endforeach
 
-       
+
     </select>
 
     </div>
@@ -108,9 +108,9 @@
         @foreach ($Deportattons as $Deportatton)
         <option value="{{$Deportatton['id']}}" >{{$Deportatton['Deportatton']}} </option>
         @endforeach
-       
+
       </select>
-    </div> 
+    </div>
     <div class="mb-2">
       <label for="Phone " class="labelSale" >   رقم التلفون الحساب</label>
       <input name="Phone" class="inputSale english-numbers" id="Phone" type="number" autocomplete="off"  placeholder="0"/>
@@ -131,17 +131,17 @@
   <div class="mb-2">
       <label for="Known_phone"  class="labelSale ">رقم تلفون/ معرف العميل</label>
         <input type="number"  autocomplete="off" name="Known_phone" id="Known_phone"  class="inputSale  english-numbers" />
-        
+
       </div>
 
  </div>
  <input type="text" name="User_id" required id="User_id" value="{{Auth::user()->id}}">
 
 
-     
+
 
   <button type="submit" id="submit" class="text-white inline-flex items-center bgcolor hover:bg-stone-400  font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-     
+
     حفظ البيانات
   </button>
 </form>
@@ -176,20 +176,20 @@
 </style>
 <div id="results" class="results"></div>
 
-<script src="jquery-3.7.1.min.js"></script>
+{{-- <script src="jquery-3.7.1.min.js"></script> --}}
 
 {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js"></script> --}}
- 
+
 <script type="text/javascript">
   // تحميل الأصناف الحالية عند تحميل الصفحة
   $(document).ready(function() {
     $('#addItemForm').on('submit', function(event) {
                 event.preventDefault();
-             
+
                 let formData = {
-               
-                 
-                  Nature_account: $('input[name="Nature_account"]:checked').val(),               
+
+
+                  Nature_account: $('input[name="Nature_account"]:checked').val(),
                   account_name: $('#account_name').val(),
                   Type_migration: $('#Type_migration').val(),
                   typeAccount: $('#typeAccount').val(),
@@ -199,7 +199,7 @@
                   debtor: $('#debtor').val(),
                   creditor: $('#creditor').val(),
                   Phone: $('#Phone').val(),
-                  // Type_account: $('input[name="Type_account"]').val(),               
+                  // Type_account: $('input[name="Type_account"]').val(),
 
 
                   User_id: $('#User_id').val(),
@@ -223,13 +223,13 @@
                     success: function(response) {
                         // عرض رسالة النجاح
                         $('#successMessage').text(response.message).show();
-                         $('#Main_id').text(response.post.main_account_id).show();
+                         $('#Main_id').text(response.posts.main_account_id).show();
                         // $('#debtor1').text(response.posts.debtor).show();
                         // $('#creditor1').text(response.posts.creditor).show();
                         // $('#successMessage').text(response.posts.message).show();
-                      
-              
-                         
+
+
+
                         // إخفاء الرسالة بعد 3 ثوانٍ
                         setTimeout(function() {
                             $('#successMessage').fadeOut('slow');
@@ -239,15 +239,15 @@
                         // $('#account_name').val('');
                         // $('#Nature_account').val('');
                         // $('#creditor').val('');
-                  
+
                         // ��ضافة الحساب ��لى الجدول
                         $('#invoiceItemsTable tbody').append('<tr><td>' + response.post.main_account_id + '</td><td>' + response.post.account_name + '</td><td>' + response.post.debtor + '</td><td>' + response.post.creditor + '</td><td>' + response.post.Phone + '</td></tr>');
                     },
                     error: function(response) {
                         alert('Error adding account');
                     }
-                   
-                   
+
+
                 });
             });
         });

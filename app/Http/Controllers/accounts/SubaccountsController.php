@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 
 class SubaccountsController extends Controller
 {
-    
+
     public function create(){
         $post=MainAccount::all();
         $dataDeportattons=[
@@ -24,9 +24,9 @@ class SubaccountsController extends Controller
             ['TypesAccount'=> (Deportatton::LIABILITIES_OPPONENTS),'id'=>(IntOrderStatus::LIABILITIES_OPPONENTS)],
             ['TypesAccount'=> (Deportatton::EXPENSES ),'id'=>(IntOrderStatus::EXPENSES )],
             ['TypesAccount'=> (Deportatton::REVENUE ),'id'=>(IntOrderStatus::REVENUE )],
-            
+
  ];
- 
+
  return view('accounts.Sub_Account.create',['pos'=> $post,'TypesAccounts'=> $dataTypesAccounts,'Deportattons'=> $dataDeportattons]);
          }
     public function convertArabicToEnglish($number)
@@ -36,12 +36,12 @@ class SubaccountsController extends Controller
         $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
         return str_replace($arabicNumbers, $englishNumbers, $number);
     }
-    
+
     public function store(Request $request)
     {
         // قم بالتحقق من صحة البيانات'
         // $request->validate([
-        //     // 'Main_id' => 'required|exists:Main_id', 
+        //     // 'Main_id' => 'required|exists:Main_id',
 
         //     'sub_name' => 'required|string|max:255',
         //     'debtor' => 'required|integer|min:1',
@@ -68,8 +68,8 @@ class SubaccountsController extends Controller
         'name_The_known' => $name_The_known,//+
         'Known_phone' => $Known_phone]);
            // $DataSubAccount->save();main_account_id
-           return  response()->json(['message'=>'تمت العملية بنجاح"' ,'post'=>$DataSubAccount ]);
-   
+           return  response()->json(['message'=>'تمت العملية بنجاح' ,'post'=>$DataSubAccount ]);
+
         $post=MainAccount::all();
      return response()->json(['message'=>'تمت العملية بنجاح"' ,'posts'=>$DataSubAccount]);
     }
