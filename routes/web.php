@@ -44,7 +44,23 @@ Route::get('/', function () {
 Route::get('/sales', [SaleCoctroller::class, 'index'])->name('sales.index');
 
 Route::get('/products', [ProductCoctroller::class, 'index'])->name('products.index');
+Route::get('/products/create', [ProductCoctroller::class, 'create'])->name('products.create');
+Route::post('/products/store', [ProductCoctroller::class, 'store'])->name('products.store');
+Route::get('/products/{product}/edit',[ProductCoctroller::class,'edit'])->name('products.edit');
+Route::put('/products/{product}',[ProductCoctroller::class,'update'])->name('products.update');
+Route::delete('/products/{product}',[ProductCoctroller::class,'destroy'])->name('products.destroy');
+Route::post('/search', [ProductCoctroller::class,'search'])->name('search.perform');
+
+Route::get('/products/Category', [CategoryController::class, 'create'])->name('Category.create');
+Route::post('/Category/store',[CategoryController::class,'store'])->name('Category.store');
+Route::get('/Category/{Category}/edit', [CategoryController::class, 'edit'])->name('Category.edit');
+Route::put('/Category/{Category}', [CategoryController::class, 'update'])->name('Category.update');
+Route::delete('/Category/{Category}',[CategoryController::class,'destroy'])->name('Category.destroy');
+
+
+
 Route::get('/Purchase', [PurchaseCoctroller::class, 'Purchase'])->name('Purchases.index');
+
 Route::get('/balancing', [AccountCoctroller::class, 'balancing'])->name('accounts.balancing');
 Route::get('/invoice_sales', [AllBillsController::class, 'index'])->name('invoice_sales.index');
 Route::get('/all_bills_sale', [AllBillsController::class, 'all_bills_sale'])->name('invoice_sales.all_bills_sale');
@@ -151,4 +167,3 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
- 
