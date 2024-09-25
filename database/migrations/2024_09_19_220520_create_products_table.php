@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('product_name');
             $table->integer('Categorie_id')->unsigned();
             $table->decimal('Product_price', 8, 2);
+            $table->integer('quantity');
             $table->decimal('Regular_discount', 8, 2);
             $table->decimal('Special_discount', 8, 2);
             $table->integer('user_id')->unsigned();
@@ -24,7 +25,7 @@ return new class extends Migration
             $table->decimal('Total_price', 8, 2);
             $table->timestamps();
 
-            $table->foreign('Categorie_id')->references('categorie_id')->on('categories');
+            $table->foreign('Categorie_id')->references('categorie_id')->on('categories')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('Currency_id')->references('currencie_id')->on('currencies');
         });

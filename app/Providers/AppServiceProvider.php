@@ -19,8 +19,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-<<<<<<< HEAD
-=======
         // $buss=BusinessData::all()->first();
         // if(isset($buss)){
 
@@ -36,6 +34,5 @@ class AppServiceProvider extends ServiceProvider
 
         // ]);
         // }
->>>>>>> cf21c1f63f314bf5ff679fffbd7593b24c3447d0
     }
 }

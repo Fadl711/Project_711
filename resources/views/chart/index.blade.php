@@ -91,7 +91,7 @@ function showSection(id) {
             }
 
             if (f1Pressed && event.key === 'f') {
-                event.preventDefault(); // منع السلوك الافتراضي لـ F1
+                event.preventDefault();
                 window.location.href = '/home';
             }
         });
