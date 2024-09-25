@@ -4,6 +4,8 @@ use App\Http\Controllers\CustomerCoctroller;
 use App\Http\Controllers\HomeCoctroller;
 use App\Http\Controllers\ProductCoctroller;
 use App\Http\Controllers\AccountCoctroller;
+use App\Http\Controllers\Accounts\main_accounts\MainaccountController;
+use App\Http\Controllers\Accounts\SubaccountsController;
 use App\Http\Controllers\bondController\BondController;
 use App\Http\Controllers\bondController\exchangeController\ExchangeController;
 use App\Http\Controllers\bondController\receipController\All_Receipt_BondController;
@@ -32,7 +34,7 @@ use App\Http\Controllers\settingController\company_dataController\Company_DataCo
 use App\Http\Controllers\settingController\currenciesController\CurrencieController;
 use App\Http\Controllers\settingController\SettingController;
 use App\Http\Controllers\UsersController\UsersController;
-use App\Models\SubAccount;
+use App\Models\Sub_Account;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -41,7 +43,6 @@ Route::get('/', function () {
 Route::get('/sales', [SaleCoctroller::class, 'index'])->name('sales.index');
 Route::get('/products', [ProductCoctroller::class, 'index'])->name('products.index');
 Route::get('/Purchase', [PurchaseCoctroller::class, 'Purchase'])->name('Purchases.index');
-Route::get('/accounts', [AccountCoctroller::class, 'index'])->name('accounts.index');
 Route::get('/balancing', [AccountCoctroller::class, 'balancing'])->name('accounts.balancing');
 Route::get('/invoice_sales', [AllBillsController::class, 'index'])->name('invoice_sales.index');
 Route::get('/all_bills_sale', [AllBillsController::class, 'all_bills_sale'])->name('invoice_sales.all_bills_sale');
@@ -113,8 +114,20 @@ Route::get('/inventoryReportPdf',[reportsConreoller::class,'inventoryReportPdf']
 Route::get('/earningsReportsPdf',[reportsConreoller::class,'earningsReportsPdf'])->name('earningsReportsPdf');
 
 
-Route::post('/invoice/items', [SubAccount::class, 'storeItem']);
-Route::get('/invoice/{account_id}/items', [SubAccount::class, 'getItems']);
+Route::post('/add_account/store', [SubaccountsController::class, 'store'])->name('add_account.store');
+Route::get('/accounts', [AccountCoctroller::class, 'index'])->name('accounts.index');
+Route::get('/accounts/Sub_Account/create', [SubaccountsController::class, 'create'])->name('Sub_Account.create');
+Route::post('/accounts/Sub_Account/store', [SubaccountsController::class, 'store'])->name('Sub_Account.store');
+
+Route::get('/accounts/Main_Account/create', [MainaccountController::class, 'create'])->name('Main_Account.create');
+Route::post('/accounts/Main_Account/store', [MainaccountController::class, 'store'])->name('Main_Account.store');
+// Route::post('/accounts/Main_Account/storc', [MainaccountController::class, 'storc'])->name('Main_Account.storc');
+
+// Route::get('/search', [MainaccountController::class, 'search']);
+Route::get('/get-options', [AccountCoctroller::class, 'show_all_accounts']);
+
+
+
 
 
 
@@ -136,3 +149,4 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+ 
