@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\CustomerCoctroller;
 use App\Http\Controllers\HomeCoctroller;
-use App\Http\Controllers\ProductCoctroller;
 use App\Http\Controllers\AccountCoctroller;
 use App\Http\Controllers\bondController\BondController;
 use App\Http\Controllers\bondController\exchangeController\ExchangeController;
@@ -24,6 +23,8 @@ use App\Http\Controllers\PurchaseCoctroller;
 use App\Http\Controllers\RefundController;
 use App\Http\Controllers\SupplierCoctroller;
 use App\Http\Controllers\PDFReportController;
+use App\Http\Controllers\productController\CategoryController;
+use App\Http\Controllers\productController\ProductCoctroller;
 use App\Http\Controllers\refundsController\purchasesController\Purchase_RefundController;
 use App\Http\Controllers\refundsController\saleController\RefundController as SaleControllerRefundController;
 use App\Http\Controllers\refundsController\salesController\Sale_RefundController;
@@ -39,6 +40,7 @@ Route::get('/', function () {
     return view('home.index');
 });
 Route::get('/sales', [SaleCoctroller::class, 'index'])->name('sales.index');
+
 Route::get('/products', [ProductCoctroller::class, 'index'])->name('products.index');
 Route::get('/Purchase', [PurchaseCoctroller::class, 'Purchase'])->name('Purchases.index');
 Route::get('/accounts', [AccountCoctroller::class, 'index'])->name('accounts.index');
