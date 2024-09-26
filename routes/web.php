@@ -124,6 +124,8 @@ Route::post('/settings/currencies/store',[CurrencieController::class,'store'])->
 Route::get('/settings/{currency}/edit',[CurrencieController::class,'edit'])->name('settings.currencies.edit');
 Route::put('/settings/{currency}/',[CurrencieController::class,'update'])->name('settings.currencies.update');
 Route::delete('/settings/{currency}',[CurrencieController::class,'destroy'])->name('settings.currencies.destroy');
+Route::post('set-default-currency',[CurrencieController::class,'setDefaultCurrency'])->name('set-default-currency');
+
 
 
 Route::get('/summary',[reportsConreoller::class,'summary'])->name('report.summary');

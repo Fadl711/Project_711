@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\BusinessData;
 use App\Models\Category;
+use App\Models\CurrencySetting;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -25,8 +26,10 @@ class AppServiceProvider extends ServiceProvider
 
         $cate=Category::all();
         $buss=BusinessData::all()->first();
+        $cu=CurrencySetting::first();
         View::share([
             'cate'=>$cate,
+            'cu'=>$cu,
         ]);
         if(isset($buss)){
 

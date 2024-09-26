@@ -58,11 +58,13 @@
         <div class="flex flex-col bg-gray-200">
             <label for="cr" class="btn">العملة</label>
             <select style="background-image: none ;" name="cr" id="cr" class="inputSale appearance-auto" required>
-                @forelse ($curr as $cur)
-                <option value="{{$cur->currency_id}}">{{$cur->currency_name}}</option>
-                @empty
-                    <div>لايوجد بيانات حالية</div>
-                @endforelse
+                <option value=""></option>
+                @foreach ($curr as $cur)
+                <option @isset($cu)
+                @selected($cur->currency_id==$cu->Currency_id)
+                @endisset
+                value="{{$cur->currency_id}}">{{$cur->currency_name}}</option>
+                 @endforeach
 
             </select>
         </div>
@@ -114,6 +116,7 @@
                 setTimeout(function() {
                     $('#successAlert').addClass('hidden');
                 }, 3000);
+            
 
                 console.log('تمت الإضافة بنجاح');
             },

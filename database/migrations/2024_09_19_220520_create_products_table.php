@@ -13,16 +13,16 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->increments('product_id')->unsigned();
-            $table->integer('barcod')->unsigned()->unique();
-            $table->string('product_name');
-            $table->integer('Categorie_id')->unsigned();
-            $table->decimal('Product_price', 8, 2);
-            $table->integer('quantity');
-            $table->decimal('Regular_discount', 8, 2);
-            $table->decimal('Special_discount', 8, 2);
-            $table->integer('user_id')->unsigned();
-            $table->integer('Currency_id')->unsigned();
-            $table->decimal('Total_price', 8, 2);
+            $table->integer('barcod')->unsigned()->unique()->nullable();
+            $table->string('product_name')->unique();
+            $table->integer('Categorie_id')->unsigned()->nullable();
+            $table->decimal('Product_price', 8, 2)->unsigned();
+            $table->integer('quantity')->unsigned()->nullable();
+            $table->decimal('Regular_discount', 8, 2)->nullable()->unsigned();
+            $table->decimal('Special_discount', 8, 2)->nullable()->unsigned();
+            $table->integer('user_id')->unsigned()->nullable();
+            $table->integer('Currency_id')->unsigned()->nullable();
+            $table->decimal('Total_price', 8, 2)->unsigned()->nullable();
             $table->timestamps();
 
             $table->foreign('Categorie_id')->references('categorie_id')->on('categories')->onDelete('cascade');

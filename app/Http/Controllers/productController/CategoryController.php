@@ -14,7 +14,7 @@ class CategoryController extends Controller
     public function store(Request $request){
     $Post = new Category;
     $Post->Categorie_name=$request->cate;
-    $Post->user_id=1;
+    $Post->user_id=$request->user_id;
     $Post->save();
 /*         Category::createOrFirst([
             'Categorie_name' => ,

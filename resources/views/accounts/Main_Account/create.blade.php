@@ -135,7 +135,7 @@
       </div>
 
  </div>
- 
+
  @auth
  <input type="text" name="User_id" required id="User_id" value="{{Auth::user()->id}}">
 
@@ -193,15 +193,9 @@
                 event.preventDefault();
 
                 let formData = {
-<<<<<<< HEAD
-               
-                //  
-                  Nature_account: $('input[name="Nature_account"]:checked').val(),               
-=======
 
-
+                //
                   Nature_account: $('input[name="Nature_account"]:checked').val(),
->>>>>>> ab6519eca698e75c3adcbc8e76dd0b916da1206f
                   account_name: $('#account_name').val(),
                   Type_migration: $('#Type_migration').val(),
                   typeAccount: $('#typeAccount').val(),
@@ -235,24 +229,14 @@
                     success: function(response) {
                         // عرض رسالة النجاح
                         $('#successMessage').text(response.message).show();
-<<<<<<< HEAD
                          $('#sub_name1').text(response.DataSubAccount.sub_name).show();
                         $('#debtor1').text(response.DataSubAccount.debtor).show();
                         $('#creditor1').text(response.DataSubAccount.creditor).show();
                         $('#Phone1').text(response.DataSubAccount.Phone).show();
                         // $('#successMessage').text(response.post.message).show();
-                      
-              
-                         
-=======
-                         $('#Main_id').text(response.posts.main_account_id).show();
-                        // $('#debtor1').text(response.posts.debtor).show();
-                        // $('#creditor1').text(response.posts.creditor).show();
-                        // $('#successMessage').text(response.posts.message).show();
 
 
 
->>>>>>> ab6519eca698e75c3adcbc8e76dd0b916da1206f
                         // إخفاء الرسالة بعد 3 ثوانٍ
                         setTimeout(function() {
                             $('#successMessage').fadeOut('slow');
@@ -266,19 +250,11 @@
                         // ��ضافة الحساب ��لى الجدول
                         $('#invoiceItemsTable tbody').append('<tr><td>' + response.post.main_account_id + '</td><td>' + response.post.account_name + '</td><td>' + response.post.debtor + '</td><td>' + response.post.creditor + '</td><td>' + response.post.Phone + '</td></tr>');
                     },
-<<<<<<< HEAD
                     // error: function(response) {
                     //     alert('Error adding account');
                     // }
-                   
-                   
-=======
-                    error: function(response) {
-                        alert('Error adding account');
-                    }
 
 
->>>>>>> ab6519eca698e75c3adcbc8e76dd0b916da1206f
                 });
             });
         });

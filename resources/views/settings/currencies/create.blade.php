@@ -3,22 +3,28 @@
 
 
 
-<div id="successAlert" class="hidden fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
-    <p class="font-bold">تم بنجاح!</p>
-    <p>تمت إضافة العملة بنجاح.</p>
-  </div>
 <div class="-translate-x-[40%] w-1/2">
-
+    <div id="successAlert" class="hidden fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
+        <p class="font-bold">تم بنجاح!</p>
+        <p>تمت إضافة العملة بنجاح.</p>
+      </div>
     <form action="{{route('settings.currencies.store')}}" method="POST">
         @csrf
             <div class="border-b flex justify-between text-sm">
                 <div class="w-full border-x border-y border-orange-950 rounded-xl">
-                    <div class="px-1">
-                    <label for="namecurr" class="btn">اسم العملة</label>
-                    <input  id="namecurr" name="namecurr" type="text"  class="inputSale" />
+                    <div class="px-1 flex justify-evenly">
+                        <div >
+
+                            <label for="namecurr" class="btn">اسم العملة</label>
+                            <input  id="namecurr" name="namecurr" type="text"  class="inputSale" />
+                        </div>
+                        <div>
+                            <label for="namecurr" class="btn">رمز العملة</label>
+                        <input  id="namecurr" name="symbol" type="text"  class="inputSale" />
+                        </div>
                     </div>
-                <div class="py-2 mr-1 flex justify-between ml-1">
-                    <button class="flex bg-green-500 hover:bg-green-700 text-white font-bold  py-2 px-4 rounded">
+                <div id="newProduc" class="py-2 mr-1 flex justify-between ml-1">
+                    <button  class="flex bg-green-500 hover:bg-green-700 text-white font-bold  py-2 px-4 rounded">
                         <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                             <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -43,6 +49,7 @@
                 <tr class=" ">
                     <th scope="col" class="leading-2   ">#</th>
                     <th scope="col" class="leading-2  text-center ">اسم العملة</th>
+                    <th scope="col" class="leading-2  text-center ">رمز العملة</th>
                     <th scope="col" class="leading-2   text-right">تعديل العملة</th>
                 </tr>
             </thead>
@@ -55,6 +62,7 @@
                 <tr class="bg-white transition-all duration-500 hover:bg-gray-50 border-b-2">
                     <td>{{$loop->iteration}}</td>
                     <td class="text-center">{{$cur->currency_name}}</td>
+                    <td class="text-center">{{$cur->currency_symbol}}</td>
                     <td class=" ">
                             <div class="flex items-center gap-1">
 
@@ -87,6 +95,39 @@
 </div>
 
 
+<script>
+    $(document).ready(function() {
+     $('#newProduc button').click(function(e) {
+         e.preventDefault();
+         var formData = new FormData($('form')[0]);
+         $.ajax({
+             type: 'POST',
+             url: "{{ route('settings.currencies.store') }}",
+             data: formData,
+             processData: false,
+             contentType: false,
+             success: function(data) {
+                 // إعادة تعيين الحقول
+                 $('input').val('');
+                 $('select').val('');
+
+                 // إظهار التنبيه
+                 $('#successAlert').removeClass('hidden');
+
+                 // إخفاء التنبيه بعد 3 ثوانٍ
+                 setTimeout(function() {
+                     $('#successAlert').addClass('hidden');
+                 }, 3000);
+
+                 console.log('تمت الإضافة بنجاح');
+             },
+             error: function(xhr, status, error) {
+                 console.log('حدث خطأ');
+             }
+         });
+     });
+ });
+ </script>
 
 
 @endsection

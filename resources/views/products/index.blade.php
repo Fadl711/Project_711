@@ -45,21 +45,34 @@
                 <td class="tagTd  ">{{$pro->product_name}}</td>
                 <td class="tagTd ">{{$pro->barcod}}</td>
                 <td class="tagTd ">{{$pro->quantity}}</td>
+                @if(isset($pro->Categorie_id) && !empty($pro->Categorie_id))
                 @foreach ($cate as $cat)
                 @if ($cat->categorie_id==$pro->Categorie_id)
                 <td class="tagTd ">{{$cat->Categorie_name}}</td>
 
                 @endif
                 @endforeach
+                @else
+                <td class="tagTd "></td>
+
+                @endif
                 <td class="tagTd ">{{$pro->Product_price}}</td>
                 <td class="tagTd">{{$pro->Regular_discount}}</td>
                 <td class="tagTd">{{$pro->Special_discount}}</td>
                 <td class="tagTd">{{$pro->Total_price}}</td>
+                @if(isset($pro->Currency_id) && !empty($pro->Currency_id))
                 @foreach ($curr as $cur)
                 @if ($cur->currency_id==$pro->Currency_id)
                 <td class="tagTd">{{$cur->currency_name}}</td>
                 @endif
                 @endforeach
+
+                @else
+                <td class="tagTd"></td>
+
+                @endif
+
+
                 <td class="p-1 tagTd">
                     <div class="flex items-center gap-1">
                             <a  href="{{route('products.edit',$pro->product_id)}}"  class="p-1  rounded-full  group transition-all duration-500  flex item-center">

@@ -4,8 +4,11 @@
 <x-nav-products/>
 
 
+<div id="successAlert" class="hidden fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
+    <p class="font-bold">تم بنجاح!</p>
+    <p>تمت إضافة الوحدة بنجاح.</p>
+  </div>
 <div class="-translate-x-[40%] w-1/2">
-
     <form action="{{route('Category.store')}}" method="POST">
         @csrf
             <div class="border-b flex justify-between text-sm">
@@ -78,4 +81,39 @@
 
 
 </div>
+
+<script>
+     $(document).ready(function() {
+    $('#newProduc button').click(function(e) {
+        e.preventDefault();
+        var formData = new FormData($('form')[0]);
+        $.ajax({
+            type: 'POST',
+            url: "{{ route('Category.store') }}",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(data) {
+                // إعادة تعيين الحقول
+                $('input').val('');
+                $('select').val('');
+
+                // إظهار التنبيه
+                $('#successAlert').removeClass('hidden');
+
+                // إخفاء التنبيه بعد 3 ثوانٍ
+                setTimeout(function() {
+                    $('#successAlert').addClass('hidden');
+                }, 3000);
+
+
+                console.log('تمت الإضافة بنجاح');
+            },
+            error: function(xhr, status, error) {
+                console.log('حدث خطأ');
+            }
+        });
+    });
+});
+</script>
 @endsection
