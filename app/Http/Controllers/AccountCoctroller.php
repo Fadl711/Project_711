@@ -6,6 +6,7 @@ use App\Enum\Deportatton;
 use App\Enum\IntOrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\MainAccount;
+use App\Models\SubAccount;
 use Illuminate\Http\Request;
 
 class AccountCoctroller extends Controller
@@ -69,8 +70,14 @@ class AccountCoctroller extends Controller
             ];
             $data=MainAccount::all();
 return response()->json( $data);
-// return response()->json($options);
     //   return view('accounts.account_balancing',['posts'=>$data]);
+    }
+    public function index_account_tree()
+    {
+        $MainAccounts=MainAccount::all();
+        $SubAccount=SubAccount::all();
+        return view('accounts.account_tree',['MainAccounts'=> $MainAccounts,'SubAccount'=> $SubAccount]);
+        // return view('accounts.account_tree',['MainAccounts'=> $MainAccounts]);
     }
    
 }

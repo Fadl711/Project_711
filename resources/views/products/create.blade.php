@@ -72,7 +72,7 @@
 
     @auth
     <div class="flex flex-col">
-      <input type="hidden" name="user_id" value="{{Auth::user()->id}}"/>
+      <input type="hidden" name="User_id" value="{{Auth::user()->id}}"/>
     </div>
     @endauth
               <div id="newProduc" class="py-2">

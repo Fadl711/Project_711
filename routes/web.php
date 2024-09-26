@@ -141,12 +141,13 @@ Route::get('/earningsReportsPdf',[reportsConreoller::class,'earningsReportsPdf']
 // Route::post('/add_account/store', [SubaccountController::class, 'store'])->name('add_account.store');
 Route::get('/accounts', [AccountCoctroller::class, 'index'])->name('accounts.index');
 Route::get('/accounts/Main_Account/create-sub-account', [SubaccountController::class, 'create'])->name('Main_Account.create-sub-account');
-// Route::post('/accounts/Sub_Account/stor', [SubaccountController::class, 'stor'])->name('Sub_Account.stor');
+Route::get('/accounts/account_tree/index_account_tree', [AccountCoctroller::class, 'index_account_tree'])->name('index_account_tree');
 // Route::get('/accounts/Sub_Account/create', [AccountCoctroller::class, 'create'])->name('Sub_Account.create1');
 
 Route::get('/accounts/Main_Account/create', [MainaccountController::class, 'create'])->name('Main_Account.create');
 Route::post('/accounts/Main_Account/store', [MainaccountController::class, 'store'])->name('Main_Account.store');
 Route::post('/accounts/Main_Account/storc', [MainaccountController::class, 'storc'])->name('Main_Account.storc');
+Route::get('/home', [HomeCoctroller::class, 'indxe'])->name('home.index');
 
 
 // Route::get('/search', [MainaccountController::class, 'search']);
@@ -160,7 +161,6 @@ Route::get('/get-options', [AccountCoctroller::class, 'show_all_accounts']);
 Route::get('/customers', [CustomerCoctroller::class, 'index'])->name('customers.index');
 Route::get('/suppliers', [SupplierCoctroller::class, 'index'])->name('suppliers.index');
 
-Route::get('/home', [HomeCoctroller::class, 'indxe'])->name('home.index');
 
 
 
@@ -169,6 +169,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

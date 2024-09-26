@@ -94,12 +94,12 @@
 
     </div>
     <div class="mb-2">
-        <label class="labelSale" for="debtor">  رصيدافتتاحي مدين (علية)</label>
-        <input name="debtor" class="inputSale english-numbers " id="debtor" type="number" autocomplete="off" placeholder="0"/>
+        <label class="labelSale" for="debtor_amount">  رصيدافتتاحي مدين (علية)</label>
+        <input name="debtor_amount" class="inputSale english-numbers " id="debtor_amount" type="number" autocomplete="off" placeholder="0"/>
     </div>
     <div class="mb-2">
-      <label class="labelSale" for="creditor" >رصيدافتتاحي دائن (لة) </label>
-      <input name="creditor" class="inputSale english-numbers" id="creditor" type="number" autocomplete="off"  placeholder="0"/>
+      <label class="labelSale" for="creditor_amount" >رصيدافتتاحي دائن (لة) </label>
+      <input name="creditor_amount" class="inputSale english-numbers" id="creditor_amount" type="number" autocomplete="off"  placeholder="0"/>
   </div>
   <div class="mb-2">
     <label class="labelSale  " required for="Type_migration"> يرحل الى </label>
@@ -135,41 +135,26 @@
       </div>
 
  </div>
-
  @auth
  <input type="text" name="User_id" required id="User_id" value="{{Auth::user()->id}}">
-
  @endauth
-
-
-
-
   <button type="submit" id="submit" class="text-white inline-flex items-center bgcolor hover:bg-stone-400  font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
 
     حفظ البيانات
   </button>
 </form>
-
-<table class=" min-w-[85%]  " id="invoiceItemsTable">
+<table class="min-w-[85%]" id="invoiceItemsTable">
   <thead>
       <tr class="bgcolor">
-          <th scope="col" class="leading-2 tagHt "> رقم الحساب</th>
-          <th scope="col" class="leading-2 tagHt ">اسم الحساب</th>
-          <th scope="col" class="leading-2 tagHt">الرصيد مدين</th>
-          <th scope="col" class="leading-2 tagHt">الرصيد دائن</th>
-          <th scope="col" class="leading-2 tagHt"> التلفون</th>
-          {{-- <th scope="col" class="leading-2 tagHt"> تعديل</th> --}}
+          <th class="text-right">رقم الحساب</th>
+          <th class="text-right">اسم الحساب</th>
+          <th class="text-right">الرصيد مدين</th>
+          <th class="text-right">الرصيد دائن</th>
+          <th class="text-right">التلفون</th>
       </tr>
   </thead>
-  <tbody class="divide-y divide-gray-300 ">
-  <!-- الأصناف سيتم إضافتها هنا ديناميكياً -->
-  <td id="sub_name1"></td>
-  <td id="debtor1"></td>
-  <td id="creditor1"></td>
-  <td id="Phone1"></td>
-
-
-</tbody>
+  <tbody>
+  </tbody>
 </table>
 </div>
 
@@ -193,6 +178,13 @@
                 event.preventDefault();
 
                 let formData = {
+<<<<<<< HEAD
+=======
+
+                //
+                  Nature_account: $('input[name="Nature_account"]:checked').val(),
+
+>>>>>>> d4604c10b53cb4c98d5ac8d850c2e785c9af3fd7
 
                 //
                   Nature_account: $('input[name="Nature_account"]:checked').val(),
@@ -202,24 +194,12 @@
 
                   name_The_known: $('#name_The_known').val(),
                   Known_phone: $('#Known_phone').val(),
-                  debtor: $('#debtor').val(),
-                  creditor: $('#creditor').val(),
+                  debtor_amount: $('#debtor_amount').val(),
+                  creditor_amount: $('#creditor_amount').val(),
                   Phone: $('#Phone').val(),
                   // Type_account: $('input[name="Type_account"]').val(),
-
-
                   User_id: $('#User_id').val(),
-
-                 //name_The_known: $('#name_The_known').val(),
-                 //Known_phone: $('#Known_phone').val(),
-                 //Phone:   $('#Phone').val(),
-                 //email:   $('#email').val(),
-                 //address: $('#address').val(),
-                 //supplier: $('#supplier').val(),
-                 //customer: $('#customer').val(),
-                 //debtor:   $('#debtor').val(),
-                 //creditor: $('#creditor').val(),
-                    _token: '{{ csrf_token() }}' // CSRF token
+                    _token: '{{ csrf_token() }}'
                 };
 
                 $.ajax({
@@ -229,11 +209,24 @@
                     success: function(response) {
                         // عرض رسالة النجاح
                         $('#successMessage').text(response.message).show();
+<<<<<<< HEAD
                          $('#sub_name1').text(response.DataSubAccount.sub_name).show();
                         $('#debtor1').text(response.DataSubAccount.debtor).show();
                         $('#creditor1').text(response.DataSubAccount.creditor).show();
                         $('#Phone1').text(response.DataSubAccount.Phone).show();
                         // $('#successMessage').text(response.post.message).show();
+=======
+                        $('#invoiceItemsTable tbody').append(
+        '<tr>' +
+        '<td class="text-right">' + response.DataSubAccount.Main_id + '</td>' +
+        '<td class="text-right">' + response.DataSubAccount.sub_name + '</td>' +
+        '<td class="text-right">' + response.DataSubAccount.debtor_amount + '</td>' +
+        '<td class="text-right">' + response.DataSubAccount.creditor_amount + '</td>' +
+        '<td class="text-right">' + response.DataSubAccount.Phone + '</td>' +
+        '</tr>'
+    );
+
+>>>>>>> d4604c10b53cb4c98d5ac8d850c2e785c9af3fd7
 
 
 
@@ -242,6 +235,8 @@
                             $('#successMessage').fadeOut('slow');
                         }, 100);
 
+    // تفريغ الحقول بعد الإضافة
+    $('#addItemForm')[0].reset();
                         // تفريغ الحقول بعد الإضافة
                         // $('#account_name').val('');
                         // $('#Nature_account').val('');
@@ -253,6 +248,14 @@
                     // error: function(response) {
                     //     alert('Error adding account');
                     // }
+<<<<<<< HEAD
+=======
+
+
+                    error: function(response) {
+                        alert('Error adding account');
+                    }
+>>>>>>> d4604c10b53cb4c98d5ac8d850c2e785c9af3fd7
 
 
                 });

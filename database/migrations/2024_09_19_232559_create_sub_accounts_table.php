@@ -15,8 +15,10 @@ return new class extends Migration
             $table->increments('sub_account_id')->unsigned();
             $table->string('sub_name');
             $table->integer('Main_id')->unsigned();
-            $table->decimal('debtor', 8, 2)->nullable();
-            $table->decimal('creditor', 8, 2)->nullable();
+       
+            $table->double('debtor_amount')->nullable();
+            $table->double('creditor_amount')->nullable();
+
             $table->string('name_The_known')->nullable();
             $table->string('Known_phone')->nullable();
             $table->integer('User_id')->unsigned();

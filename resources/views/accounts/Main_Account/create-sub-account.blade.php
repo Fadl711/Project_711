@@ -70,12 +70,12 @@ $('.select2').select2({
       </div>
   
       <div class="mb-2">
-          <label class="labelSale" for="debtor">  رصيدافتتاحي مدين (اخذ)</label>
-          <input name="debtor" class="inputSale " id="debtor" type="number" placeholder="0"/>
+          <label class="labelSale" for="debtor_amount">  رصيدافتتاحي مدين (اخذ)</label>
+          <input name="debtor_amount" class="inputSale " id="debtor_amount" type="number" placeholder="0"/>
       </div>
       <div class="mb-2">
-        <label class="labelSale" for="creditor" >رصيدافتتاحي دائن (عاطي) </label>
-        <input name="creditor" class="inputSale " id="creditor" type="number"  placeholder="0"/>
+        <label class="labelSale" for="creditor_amount" >رصيدافتتاحي دائن (عاطي) </label>
+        <input name="creditor_amount" class="inputSale " id="creditor_amount" type="number"  placeholder="0"/>
     </div>
       <div class="mb-2">
           <label for="Phone" class="labelSale">رقم التلفون</label>
@@ -110,25 +110,19 @@ $('.select2').select2({
     </button>
   </form>
   
-  <table class=" min-w-[85%]  " id="invoiceItemsTable">
+  <table class="min-w-[85%]" id="invoiceItemsTable">
     <thead>
         <tr class="bgcolor">
-            <th scope="col" class="leading-2 tagHt "> رقم الحساب</th>
-            <th scope="col" class="leading-2 tagHt ">اسم الحساب</th>
-            <th scope="col" class="leading-2 tagHt">الرصيد مدين</th>
-            <th scope="col" class="leading-2 tagHt">الرصيد دائن</th>
-            <th scope="col" class="leading-2 tagHt"> التلفون</th>
-            {{-- <th scope="col" class="leading-2 tagHt"> تعديل</th> --}}
+            <th class="text-right">رقم الحساب</th>
+            <th class="text-right">اسم الحساب</th>
+            <th class="text-right">الرصيد مدين</th>
+            <th class="text-right">الرصيد دائن</th>
+            <th class="text-right">التلفون</th>
         </tr>
     </thead>
-    <tbody class="divide-y divide-gray-300 ">
-    <!-- الأصناف سيتم إضافتها هنا ديناميكياً -->
-    <td id="sub_name1"></td>
-    <td id="debtor1"></td>
-    <td id="creditor1"></td>
-
-</tbody>
-</table>
+    <tbody>
+    </tbody>
+  </table>
   </div>
 
 
@@ -154,23 +148,13 @@ $('.select2').select2({
                
                 
                 Main_id: $('#Main_id').val(),
-                User_id: $('#User_id').val(),
-
                 sub_name: $('#sub_name').val(),
-
-
                 name_The_known: $('#name_The_known').val(),
                 Known_phone: $('#Known_phone').val(),
-                debtor: $('#debtor').val(),
-                creditor: $('#creditor').val(),
+                debtor_amount: $('#debtor_amount').val(),
+                creditor_amount: $('#creditor_amount').val(),
                 Phone: $('#Phone').val(),
-
-
                   User_id: $('#User_id').val(),
-                 
-                 //address: $('#address').val(),
-                 //supplier: $('#supplier').val(),
-                 //customer: $('#customer').val(),
                 
                     _token: '{{ csrf_token() }}' // CSRF token
                 };
@@ -182,18 +166,25 @@ $('.select2').select2({
                     success: function(response) {
                         // عرض رسالة النجاح
                         $('#successMessage').text(response.message).show();
-                         $('#sub_name1').text(response.DataSubAccount.sub_name).show();
-                        $('#debtor1').text(response.DataSubAccount.debtor).show();
-                        $('#creditor1').text(response.DataSubAccount.creditor).show();
-                        $('#Phone1').text(response.DataSubAccount.Phone).show();
-                        // $('#successMessage').text(response.post.message).show();
+                        $('#invoiceItemsTable tbody').append(
+        '<tr>' +
+        '<td class="text-right">' + response.DataSubAccount.Main_id + '</td>' +
+        '<td class="text-right">' + response.DataSubAccount.sub_name + '</td>' +
+        '<td class="text-right">' + response.DataSubAccount.debtor_amount + '</td>' +
+        '<td class="text-right">' + response.DataSubAccount.creditor_amount + '</td>' +
+        '<td class="text-right">' + response.DataSubAccount.Phone + '</td>' +
+        '</tr>'
+    );
+
                       
               
                          
                         // إخفاء الرسالة بعد 3 ثوانٍ
                         setTimeout(function() {
-                            $('#successMessage').fadeOut('slow');
-                        }, 100);
+                        $('#successMessage').fadeOut('slow');
+                    }, 1000);
+                         // تفريغ الحقول بعد الإضافة
+    $('#addItemForm')[0].reset();
 
                         // تفريغ الحقول بعد الإضافة
                         // $('#account_name').val('');
@@ -203,12 +194,9 @@ $('.select2').select2({
                         // ��ضافة الحساب ��لى الجدول
                         $('#invoiceItemsTable tbody').append('<tr><td>' + response.post.main_account_id + '</td><td>' + response.post.account_name + '</td><td>' + response.post.debtor + '</td><td>' + response.post.creditor + '</td><td>' + response.post.Phone + '</td></tr>');
                     },
-                    setTimeout(function() {   error:function(response) {
-                        $('#successMessage').text('Error adding account').fadeOut('slow');
-                       
-                            $('#successMessage').fadeOut('slow');
-                     
-                    };   }, 100);
+                    error: function(response) {
+                        alert('Error adding account');
+                    }
                    
                    
                 });
