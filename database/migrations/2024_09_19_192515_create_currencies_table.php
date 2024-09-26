@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('currencies', function (Blueprint $table) {
-            $table->increments('currencie_id')->unsigned();
+            $table->increments('currency_id')->unsigned();
             $table->string('currency_name');
             $table->timestamps();
         });

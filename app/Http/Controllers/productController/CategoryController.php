@@ -21,7 +21,7 @@ class CategoryController extends Controller
             'created_at' => now(),
             'updated_at' => now(),
         ]);*/
-        return redirect()->back();
+        return back();
     }
     public function edit($id){
         $prod=Category::where('categorie_id',$id)->first();

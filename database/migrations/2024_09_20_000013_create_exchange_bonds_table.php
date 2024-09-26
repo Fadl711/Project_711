@@ -28,7 +28,7 @@ return new class extends Migration
             $table->foreign('Debit_sub_account_id')->references('sub_account_id')->on('sub_accounts');
             $table->foreign('Main_Credit_account_id')->references('main_account_id')->on('main_accounts');
             $table->foreign('Credit_sub_account_id')->references('sub_account_id')->on('sub_accounts');
-            $table->foreign('Currency_id')->references('currencie_id')->on('currencies');
+            $table->foreign('Currency_id')->references('currency_id')->on('currencies');
             $table->foreign('User_id')->references('id')->on('users');
             $table->foreign('Payment_type_id')->references('payment_types_id')->on('payment_types');
         });

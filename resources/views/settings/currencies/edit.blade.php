@@ -1,18 +1,18 @@
 @extends('layout')
 @section('conm')
-<x-nav-products/>
+
 <div class="-translate-x-[40%] w-1/2">
 
-    <form action="{{route('Category.update',$prod->categorie_id)}}" method="POST">
+    <form action="{{route('settings.currencies.update',$curr->currency_id)}}" method="POST">
         @csrf
         @method('PUT')
             <div class="border-b flex justify-between text-sm">
                 <div class="w-full border-x border-y border-orange-950 rounded-xl">
                     <div class="px-1">
-                    <label for="barcod" class="btn">اسم الوحدة</label>
-                    <input name="cate" type="text" value="{{$prod->Categorie_name}}" class="inputSale" />
+                    <label for="namecurr" class="btn">اسم العملة</label>
+                    <input  id="namecurr" name="namecurr" type="text"  class="inputSale" value="{{$curr->currency_name}}" required />
                     </div>
-                <div id="newProduc" class="py-2 mr-1 flex justify-between ml-1">
+                <div class="py-2 mr-1 flex justify-between ml-1">
                     <button class="flex bg-green-500 hover:bg-green-700 text-white font-bold  py-2 px-4 rounded">
                         <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -23,7 +23,7 @@
                                 </g>
                             </g>
                         </svg>
-                         تعديل
+                        تعديل العملة
                     </button>
                 </div>
                 </div>
@@ -31,8 +31,4 @@
 
     </form>
 
-
-</div>
-
-
-@endsection
+    @endsection

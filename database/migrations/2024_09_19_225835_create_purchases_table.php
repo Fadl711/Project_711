@@ -31,7 +31,7 @@ return new class extends Migration
             $table->integer('Supplier_id')->unsigned();
             $table->timestamps();
 
-            $table->foreign('Currency_id')->references('currencie_id')->on('currencies');
+            $table->foreign('Currency_id')->references('currency_id')->on('currencies');
             $table->foreign('Store_id')->references('warehouse_id')->on('warehouses');
             $table->foreign('User_id')->references('id')->on('users');
             $table->foreign('Supplier_id')->references('id')->on('users');

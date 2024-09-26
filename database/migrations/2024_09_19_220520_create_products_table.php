@@ -27,7 +27,7 @@ return new class extends Migration
 
             $table->foreign('Categorie_id')->references('categorie_id')->on('categories')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('Currency_id')->references('currencie_id')->on('currencies');
+            $table->foreign('Currency_id')->references('currency_id')->on('currencies');
         });
     }
 
