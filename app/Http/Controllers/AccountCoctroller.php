@@ -11,7 +11,9 @@ use Illuminate\Http\Request;
 class AccountCoctroller extends Controller
 {
     public function create(){
-        $pos=MainAccount::all();
+        
+        $MainAccounts=MainAccount::all();
+        // dd( $MainAccounts);
         $dataDeportattons=[
             ['Deportatton'=> (Deportatton::FINANCAL_CENTER_LIST ),'id'=>(IntOrderStatus::FINANCAL_CENTER_LIST )],
             ['Deportatton'=> (Deportatton::INCOME_STATEMENT),'id'=>(IntOrderStatus::INCOME_STATEMENT)],
@@ -23,8 +25,9 @@ class AccountCoctroller extends Controller
             ['TypesAccount'=> (Deportatton::REVENUE ),'id'=>(IntOrderStatus::REVENUE )],
             
  ];
- 
- return view('accounts.Sub_Account.create',['pos'=> $pos,'TypesAccounts'=> $dataTypesAccounts,'Deportattons'=> $dataDeportattons]);
+
+
+ return view(['MainAccounts'=> $MainAccounts,'TypesAccounts'=> $dataTypesAccounts,'Deportattons'=> $dataDeportattons]);
          }
 
     public function index(){
@@ -65,9 +68,9 @@ class AccountCoctroller extends Controller
 
             ];
             $data=MainAccount::all();
-// return response()->json( $data);
+return response()->json( $data);
 // return response()->json($options);
-      return view('accounts.account_balancing',['posts'=>$data]);
+    //   return view('accounts.account_balancing',['posts'=>$data]);
     }
    
 }

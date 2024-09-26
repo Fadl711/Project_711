@@ -6,7 +6,7 @@
 <nav class="navIndex ">
     <div class="flex items-center">
  <a href="{{route('Main_Account.create')}}"  class="text-sm px-4 py-2 leading-none rounded hover:bg-gray-50" >اضافة حساب رئيسي</a> 
-        <a href="{{route('Sub_Account.create')}}"  class="text-sm px-4 py-2 leading-none rounded hover:bg-gray-50" > اضافة حساب فرعي</a>
+        <a href="{{route('Main_Account.create-sub-account')}}"  class="text-sm px-4 py-2 leading-none rounded hover:bg-gray-50" > اضافة حساب فرعي</a>
 
         <button onclick="AccountTree()" type="button" class="text-sm px-4 py-2 leading-none rounded hover:bg-gray-50" >شجرة الحسابات</button>
         <button onclick="FinancialAccounts()" type="button" class="text-sm px-4 py-2 leading-none rounded hover:bg-gray-50" >  مراجعة الحسابات </button>

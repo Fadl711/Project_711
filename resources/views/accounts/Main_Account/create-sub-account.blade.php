@@ -81,14 +81,14 @@ $('.select2').select2({
           <label for="Phone" class="labelSale">رقم التلفون</label>
           <input type="number" name="Phone" id="Phone" placeholder=" Phone Number" class="inputSale" />
       </div>
-      <div class="mb-2">
+      {{-- <div class="mb-2">
           <label for="email" class="labelSale">البريد الإلكتروني</label>
           <input type="email" name="email" id="email" placeholder="Email" class="inputSale" />
-      </div>
-      <div class="mb-2">
+      </div> --}}
+      {{-- <div class="mb-2">
           <label for="address" class="labelSale">العنوان</label>
             <input type="text" name="address" id="address" placeholder="Address" class="inputSale" />
-          </div>
+          </div> --}}
       <div class="mb-2">
           <label for="name_The_known" class="labelSale">اسم/ معرف العميل</label>
             <input type="text" name="name_The_known" id="name_The_known" placeholder="Address" class="inputSale" />
@@ -153,31 +153,30 @@ $('.select2').select2({
                 let formData = {
                
                 
-              //  Main_id: $('#Main_id').val(),
+                Main_id: $('#Main_id').val(),
+                User_id: $('#User_id').val(),
 
-              //     name_The_known: $('#name_The_known').val(),
-              //     Known_phone: $('#Known_phone').val(),
-              //     debtor: $('#debtor').val(),
-              //     creditor: $('#creditor').val(),
-              //     Phone: $('#Phone').val(),
+                sub_name: $('#sub_name').val(),
 
 
-                  // User_id: $('#User_id').val(),
+                name_The_known: $('#name_The_known').val(),
+                Known_phone: $('#Known_phone').val(),
+                debtor: $('#debtor').val(),
+                creditor: $('#creditor').val(),
+                Phone: $('#Phone').val(),
 
-                 //name_The_known: $('#name_The_known').val(),
-                 //Known_phone: $('#Known_phone').val(),
-                 //Phone:   $('#Phone').val(),
-                 //email:   $('#email').val(),
+
+                  User_id: $('#User_id').val(),
+                 
                  //address: $('#address').val(),
                  //supplier: $('#supplier').val(),
                  //customer: $('#customer').val(),
-                 //debtor:   $('#debtor').val(),
-                 //creditor: $('#creditor').val(),
+                
                     _token: '{{ csrf_token() }}' // CSRF token
                 };
 
                 $.ajax({
-                    url: 'accounts/Sub_Account/store',
+                    url: '/accounts/Main_Account/storc',
                     type: 'POST',
                     data: formData,
                     success: function(response) {
@@ -204,9 +203,12 @@ $('.select2').select2({
                         // ��ضافة الحساب ��لى الجدول
                         $('#invoiceItemsTable tbody').append('<tr><td>' + response.post.main_account_id + '</td><td>' + response.post.account_name + '</td><td>' + response.post.debtor + '</td><td>' + response.post.creditor + '</td><td>' + response.post.Phone + '</td></tr>');
                     },
-                    // error: function(response) {
-                    //     alert('Error adding account');
-                    // }
+                    setTimeout(function() {   error:function(response) {
+                        $('#successMessage').text('Error adding account').fadeOut('slow');
+                       
+                            $('#successMessage').fadeOut('slow');
+                     
+                    };   }, 100);
                    
                    
                 });
