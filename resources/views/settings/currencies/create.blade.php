@@ -4,6 +4,10 @@
 
 
 <div class="-translate-x-[40%] w-1/2">
+    <div id="successAlert1" class="hidden fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
+        <p class="font-bold">هناك خطاء</p>
+        <p>يرجاء التاكد من القيم انه صحيحه ولسيت موجود مسبقاً.</p>
+      </div>
     <div id="successAlert" class="hidden fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
         <p class="font-bold">تم بنجاح!</p>
         <p>تمت إضافة العملة بنجاح.</p>
@@ -96,6 +100,7 @@
 
 
 <script>
+
     $(document).ready(function() {
      $('#newProduc button').click(function(e) {
          e.preventDefault();
@@ -122,7 +127,11 @@
                  console.log('تمت الإضافة بنجاح');
              },
              error: function(xhr, status, error) {
-                 console.log('حدث خطأ');
+                                $('#successAlert1').removeClass('hidden');
+                // إخفاء التنبيه بعد 3 ثوانٍ
+                setTimeout(function() {
+                    $('#successAlert1').addClass('hidden');
+                }, 3000);
              }
          });
      });

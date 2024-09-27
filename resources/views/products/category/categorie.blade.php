@@ -8,6 +8,10 @@
     <p class="font-bold">تم بنجاح!</p>
     <p>تمت إضافة الوحدة بنجاح.</p>
   </div>
+  <div id="successAlert1" class="hidden fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
+    <p class="font-bold">هناك خطاء</p>
+    <p id="re"></p>
+  </div>
 <div class="-translate-x-[40%] w-1/2">
     <form action="{{route('Category.store')}}" method="POST">
         @csrf
@@ -110,8 +114,15 @@
                 console.log('تمت الإضافة بنجاح');
             },
             error: function(xhr, status, error) {
-                console.log('حدث خطأ');
-            }
+                                $('#successAlert1').removeClass('hidden');
+                                var errorMessage = JSON.parse(xhr.responseText).error;
+                                $('#re').text(errorMessage)
+
+                // إخفاء التنبيه بعد 3 ثوانٍ
+                setTimeout(function() {
+                    $('#successAlert1').addClass('hidden');
+                }, 3000);
+             }
         });
     });
 });

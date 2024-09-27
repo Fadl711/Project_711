@@ -63,6 +63,7 @@ $('#default-currency').on('change', function() {
         success: function(data) {
             // Update the default currency in the UI if needed
         }
+
     });
 });
 </script>

@@ -6,6 +6,10 @@
     <p class="font-bold">تم بنجاح!</p>
     <p>تمت إضافة المنتج بنجاح.</p>
   </div>
+  <div id="successAlert1" class="hidden fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
+    <p class="font-bold">هناك خطاء</p>
+    <p>يرجاء التاكد من القيام انه صحيحه ولسيت موجود مسبقاً.</p>
+  </div>
 <form action="{{route('products.store')}}" method="POST" class="border-b text-sm  ">
     @csrf
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -116,13 +120,17 @@
                 setTimeout(function() {
                     $('#successAlert').addClass('hidden');
                 }, 3000);
-            
+
 
                 console.log('تمت الإضافة بنجاح');
             },
             error: function(xhr, status, error) {
-                console.log('حدث خطأ');
-            }
+                                $('#successAlert1').removeClass('hidden');
+                // إخفاء التنبيه بعد 3 ثوانٍ
+                setTimeout(function() {
+                    $('#successAlert1').addClass('hidden');
+                }, 3000);
+             }
         });
     });
 });
