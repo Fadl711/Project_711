@@ -8,7 +8,7 @@
  <a href="{{route('Main_Account.create')}}"  class="text-sm px-4 py-2 leading-none rounded hover:bg-gray-50" >اضافة حساب رئيسي</a> 
         <a href="{{route('Main_Account.create-sub-account')}}"  class="text-sm px-4 py-2 leading-none rounded hover:bg-gray-50" > اضافة حساب فرعي</a>
 
-        <button onclick="AccountTree()" type="button" class="text-sm px-4 py-2 leading-none rounded hover:bg-gray-50" >شجرة الحسابات</button>
+        <a href=" {{route('index_account_tree')}}"  class="text-sm px-4 py-2 leading-none rounded hover:bg-gray-50" >شجرة الحسابات</a>
         <button onclick="FinancialAccounts()" type="button" class="text-sm px-4 py-2 leading-none rounded hover:bg-gray-50" >  مراجعة الحسابات </button>
        {{-- <form action="{{route('accounts.balancing')}}" method="GET"> --}}
             <button onclick="AccountBalancing()"  id="Accountbalancing"  type="submit"  class="text-sm px-4 py-2 leading-none rounded hover:bg-gray-50" > ترصيد الحسابات</button>

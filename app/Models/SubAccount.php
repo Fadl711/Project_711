@@ -11,8 +11,8 @@ class SubAccount extends Model
     protected $fillable = [
         'sub_name', 
         'Main_id',
-        'debtor' , 
-        'creditor',
+        'debtor_amount' , 
+        'creditor_amount',
         'name_The_known' ,
         'Known_phone' ,
         'User_id',

@@ -21,7 +21,7 @@
   </div>
 </div>
 <br>
-<div id="SubAccount" style="display:none">
+<div id="SubAccount" style="display:">
   {{-- id="addItemForm"  --}}
   <form  id="addItemForm" class="p-4 md:p-5 " >
     {{-- method="POST" action="{{route('add_account.store')}}" --}}
