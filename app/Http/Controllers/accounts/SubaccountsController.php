@@ -15,19 +15,9 @@ class SubaccountsController extends Controller
 
     public function create(){
         $post=MainAccount::all();
-        $dataDeportattons=[
-            ['Deportatton'=> (Deportatton::FINANCAL_CENTER_LIST ),'id'=>(IntOrderStatus::FINANCAL_CENTER_LIST )],
-            ['Deportatton'=> (Deportatton::INCOME_STATEMENT),'id'=>(IntOrderStatus::INCOME_STATEMENT)],
- ];
- $dataTypesAccounts=[
-            ['TypesAccount'=> (Deportatton::ASSETS ),'id'=>(IntOrderStatus::ASSETS )],
-            ['TypesAccount'=> (Deportatton::LIABILITIES_OPPONENTS),'id'=>(IntOrderStatus::LIABILITIES_OPPONENTS)],
-            ['TypesAccount'=> (Deportatton::EXPENSES ),'id'=>(IntOrderStatus::EXPENSES )],
-            ['TypesAccount'=> (Deportatton::REVENUE ),'id'=>(IntOrderStatus::REVENUE )],
 
- ];
 
- return view('accounts.Sub_Account.create',['pos'=> $post,'TypesAccounts'=> $dataTypesAccounts,'Deportattons'=> $dataDeportattons]);
+ return view('accounts.Sub_Account.create',['pos'=> $post]);
          }
     public function convertArabicToEnglish($number)
     {
@@ -38,16 +28,7 @@ class SubaccountsController extends Controller
     }
 
     public function store(Request $request)
-    {
-        // قم بالتحقق من صحة البيانات'
-        // $request->validate([
-        //     // 'Main_id' => 'required|exists:Main_id',
-
-        //     'sub_name' => 'required|string|max:255',
-        //     'debtor' => 'required|integer|min:1',
-        //     'creditor' => 'required|integer|min:0',
-        // ]);
-
+    {    
         $debtor1 = $request->input('debtor', '٠١٢٣٤٥٦٧٨٩');
         $creditor1 = $request->input('creditor', '٠١٢٣٤٥٦٧٨٩');
         $Phone1 = $request->input('Phone', '٠١٢٣٤٥٦٧٨٩');
@@ -58,7 +39,6 @@ class SubaccountsController extends Controller
         $debtor=$this->convertArabicToEnglish($debtor1);
         $Main_id= $request->Main_id;
         $sub_name= $request->sub_name;
-
         $DataSubAccount= SubAccount::create(['Main_id' =>$Main_id, // Assuming $post is a collection of MainAccount models//+
         'sub_name' => $sub_name,//+
         'User_id' => $User_id,//+
@@ -67,10 +47,8 @@ class SubaccountsController extends Controller
         'Phone' => $Phone1,//+
         'name_The_known' => $name_The_known,//+
         'Known_phone' => $Known_phone]);
-           // $DataSubAccount->save();main_account_id
+
            return  response()->json(['message'=>'تمت العملية بنجاح' ,'post'=>$DataSubAccount ]);
 
-        $post=MainAccount::all();
-     return response()->json(['message'=>'تمت العملية بنجاح"' ,'posts'=>$DataSubAccount]);
     }
 }

@@ -85,8 +85,8 @@
     <label class="labelSale  "   for="typeAccount"> تصنيف الحساب</label>
       <select class=" inputSale text-left " required  name="typeAccount" id="typeAccount">
         <option selected></option>
-        @foreach ($IntOrderStatus as $Deportatton)
-        <option value="{{$Deportatton['id']}}" >{{$Deportatton['Deportatton']}} </option>
+        @foreach ($TypesAccount as $Deportatton)
+        <option value="{{$Deportatton['id']}}" >{{$Deportatton['TypesAccount']}} </option>
         @endforeach
 
 

@@ -16,19 +16,8 @@ class MainaccountController extends Controller
     
     public function create(){
         $post=MainAccount::all();//-
-     
-        $dataDeportattons=[
-            ['Deportatton'=> (Deportatton::FINANCAL_CENTER_LIST ),'id'=>(IntOrderStatus::FINANCAL_CENTER_LIST )],
-            ['Deportatton'=> (Deportatton::INCOME_STATEMENT),'id'=>(IntOrderStatus::INCOME_STATEMENT)],
- ];
- $dataIntOrderStatus=[
-            ['Deportatton'=> (Deportatton::ASSETS),'id'=>(IntOrderStatus::ASSETS )],
-            ['Deportatton'=> (Deportatton::LIABILITIES_OPPONENTS),'id'=>(IntOrderStatus::LIABILITIES_OPPONENTS)],
-            ['Deportatton'=> (Deportatton::EXPENSES),'id'=>(IntOrderStatus::EXPENSES )],
-            ['Deportatton'=> (Deportatton::REVENUE),'id'=>(IntOrderStatus::REVENUE )],
-            
- ];
-        return view('accounts.Main_Account.create',['pos'=> $post,'IntOrderStatus'=> $dataIntOrderStatus,'Deportattons'=> $dataDeportattons]);
+
+        return view('accounts.Main_Account.create',['pos'=> $post]);
   }  
     
     public function convertArabicToEnglish($number)

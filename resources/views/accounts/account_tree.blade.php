@@ -2,59 +2,44 @@
 @section('accounts')
 <h1 class="font-bold">شجرة الحسابات</h1> 
 <br>
- <ul id="myUL">
-      <li>
-        <span class="caret">الاصول#</span> 
-      <ul class="nested">
-          <li>الصندوق</li>
-          <li>البنك</li>
-          <li>المخزون</li>
-          <li>العملاء</li>
-          <li >
-            <span class="caret">الاصول الثابتة#</span> 
-            <ul class="nested">
-              <li>المباني</li>
-                <li>الاراضي</li>
-                <li>الاثاث</li>
-             </ul>
-          </li>
-       </ul>
-    </li>
-    <li>
-      <span class="caret">الايرادات#</span> 
-      <ul class="nested">
-        <li>ايرادات المبيعات</li>
-          <li>ايرادات الخدمات</li>
-          <li>خصم مكتسب</li>
-          <li>مردودات المشتريات</li>
-       </ul>
-    </li>
-    <li>
-      <span class="caret">حقوق الملكية#</span> 
-      <ul class="nested">
-        <li>راس المال المدفوع</li>
-           </ul>
-    </li>
-    <li>
-      <span class="caret">الإلتزامات#</span> 
-      <ul class="nested">
-        <li>الموردين</li>
-          <li>القروض</li>
 
-           </ul>
-    </li>
-    <li>
-      <span class="caret">  المصروفات#</span> 
-      <ul class="nested">
-        <li> مسموحات المبيعات</li>
-              <li>المشتريات</li>
-              <li>ايجار</li>
-              <li>الاكهرباء</li>
 
-           </ul>
-        </li>
-      </ul>
- 
+<h1>أنواع الحسابات والحسابات الرئيسية لكل نوع</h1>
+
+@foreach($accountTypes as $accountType)
+    <div class="account-type">
+      @if($accountsByType[$accountType->value]->isEmpty())
+                          
+        {{-- <h2>نوع الحساب: {{ $accountType->value }}</h2> --}}
+   @endif
+    <h2>نوع الحساب: {{ $accountType->value }}</h2>
+        @if($accountsByType[$accountType->value]->isEmpty())
+            {{-- <p>لا توجد حسابات رئيسية لهذا النوع.</p> --}}
+        @else
+            <ul>
+                @foreach($accountsByType[$accountType->value] as $mainAccount)
+                    <li>
+                    
+                  
+                        <h3>الحساب الرئيسي: {{ $mainAccount->account_name }}</h3>
+                        {{-- <p>طبيعة الحساب: {{ $mainAccount->Nature_account }}</p> --}}
+                     
+                        {{-- <h4>الحسابات الفرعية:</h4> --}}
+                        <ul>
+                            {{--
+                             @foreach($mainAccount->subAccounts as $subAccount)
+                                <li>
+                                    {{ $subAccount->sub_name }} - مدين: {{ $subAccount->debtor }} - دائن: {{ $subAccount->creditor }}
+                                </li>
+                            @endforeach 
+                            --}}
+                        </ul>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
+    </div>
+@endforeach
 <style>
    ul, #myUL {
      list-style-type: none;
@@ -94,6 +79,40 @@
      display: block;
    }
    </style>
+
+<ol id="myUL">
+  @foreach ($TypesAccount as $TypesAccounts)
+      
+       <li>
+          <span class="caret">{{$TypesAccounts['TypesAccount']}}</span> 
+        <ul class="nested">
+            <li>الصندوق</li>
+            <li>البنك</li>
+            <li>المخزون</li>
+            <li>
+              <span class="caret">العملاء</span> 
+  
+              <ul class="nested">
+                <li>المبيعات</li>
+                <li>المشتريات</li>
+              </ul>
+            </li>
+            </li>
+            <li >
+              <span class="caret">الاصول الثابتة#</span> 
+              <ul class="nested">
+                <li>المباني</li>
+                  <li>الاراضي</li>
+                  <li>الاثاث</li>
+               </ul>
+            </li>
+         </ul>
+      </li>
+      @endforeach 
+    
+   
+      
+        </ol>
 
 <script>
 var toggler = document.getElementsByClassName("caret");

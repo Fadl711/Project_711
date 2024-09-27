@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enum\AccountType;
 use App\Enum\Deportatton;
 use App\Enum\IntOrderStatus;
 use App\Http\Controllers\Controller;
@@ -14,21 +15,9 @@ class AccountCoctroller extends Controller
     public function create(){
         
         $MainAccounts=MainAccount::all();
-        // dd( $MainAccounts);
-        $dataDeportattons=[
-            ['Deportatton'=> (Deportatton::FINANCAL_CENTER_LIST ),'id'=>(IntOrderStatus::FINANCAL_CENTER_LIST )],
-            ['Deportatton'=> (Deportatton::INCOME_STATEMENT),'id'=>(IntOrderStatus::INCOME_STATEMENT)],
- ];
- $dataTypesAccounts=[
-            ['TypesAccount'=> (Deportatton::ASSETS ),'id'=>(IntOrderStatus::ASSETS )],
-            ['TypesAccount'=> (Deportatton::LIABILITIES_OPPONENTS),'id'=>(IntOrderStatus::LIABILITIES_OPPONENTS)],
-            ['TypesAccount'=> (Deportatton::EXPENSES ),'id'=>(IntOrderStatus::EXPENSES )],
-            ['TypesAccount'=> (Deportatton::REVENUE ),'id'=>(IntOrderStatus::REVENUE )],
-            
- ];
+     
 
-
- return view(['MainAccounts'=> $MainAccounts,'TypesAccounts'=> $dataTypesAccounts,'Deportattons'=> $dataDeportattons]);
+ return view(['MainAccounts'=> $MainAccounts]);
          }
 
     public function index(){
@@ -76,8 +65,21 @@ return response()->json( $data);
     {
         $MainAccounts=MainAccount::all();
         $SubAccount=SubAccount::all();
-        return view('accounts.account_tree',['MainAccounts'=> $MainAccounts,'SubAccount'=> $SubAccount]);
-        // return view('accounts.account_tree',['MainAccounts'=> $MainAccounts]);
+        $accountTypes = AccountType::cases(); // استرجاع كل القيم في Enum
+
+        $accountsByType = [];
+
+        // التكرار على كل نوع حساب واسترجاع الحسابات الرئيسية المرتبطة به
+        foreach ($accountTypes as $accountType) {
+            $accountsByType[$accountType->value] = MainAccount::where('typeAccount', $accountType->value)
+                ->with('subAccounts')
+                ->get();
+        }
+
+        return view('accounts.account_tree', compact('accountsByType', 'accountTypes'));
+    
+        // return view('accounts.account_tree',['MainAccounts'=> $MainAccounts,'SubAccount'=> $SubAccount]);
+        // // return view('accounts.account_tree',['MainAccounts'=> $MainAccounts]);
     }
    
 }
