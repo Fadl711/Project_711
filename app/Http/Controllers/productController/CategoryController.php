@@ -12,15 +12,21 @@ class CategoryController extends Controller
         return view('products.category.categorie');
     }
     public function store(Request $request){
+        if (Category::where('Categorie_name', $request->input('cate'))->exists()) {
+            // Record already exists
+            return response()->json(['error' => 'الاسم موجود مسبقاً'], 422);
+        }
+
     $Post = new Category;
     $Post->Categorie_name=$request->cate;
-    $Post->user_id=1;
+    $Post->user_id=$request->user_id;
     $Post->save();
 /*         Category::createOrFirst([
             'Categorie_name' => ,
             'created_at' => now(),
             'updated_at' => now(),
         ]);*/
+
         return back();
     }
     public function edit($id){
@@ -30,6 +36,11 @@ class CategoryController extends Controller
         return view('products.category.edit',['prod'=>$prod]);
     }
     public function update(Request $request,$id){
+        if (Category::where('Categorie_name', $request->input('cate'))->exists()) {
+            // Record already exists
+            return response()->json(['error' => 'الاسم موجود مسبقاً'], 422);
+        }
+
         Category::where('categorie_id',$id)
         ->update([
             'Categorie_name'=>$request->cate,

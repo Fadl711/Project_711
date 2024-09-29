@@ -30,7 +30,7 @@ class ProductCoctroller extends Controller
             'quantity'=>$request->quni,
             'Regular_discount'=>$request->pricesa,
             'Special_discount'=>$request->pricesp,
-            'user_id'=>1,
+            'user_id'=>$request->user_id,
             'Currency_id'=>$request->cr,
             'Total_price'=>$request->allpri,
         ]);
@@ -39,8 +39,9 @@ class ProductCoctroller extends Controller
     public function edit($id){
        $prod= Product::where('product_id',$id)->first();
 
+       $curr=Currency::all();
 
-        return view('products.edit',['prod'=>$prod]);
+        return view('products.edit',['prod'=>$prod,'curr'=>$curr]);
     }
     public function update(Request $request,$id){
         Product::where('product_id',$id)->update([
@@ -51,11 +52,11 @@ class ProductCoctroller extends Controller
             'quantity'=>$request->quni,
             'Regular_discount'=>$request->pricesa,
             'Special_discount'=>$request->pricesp,
-            'user_id'=>1,
+            'user_id'=>$request->user_id,
             'Currency_id'=>$request->cr,
             'Total_price'=>$request->allpri,
         ]);
-         return response()->json('massage','yes');
+         return back();
     }
 
     public function destroy($id){
@@ -93,15 +94,15 @@ class ProductCoctroller extends Controller
                             }
                         }
                         $output .= '<tr class="bg-white transition-all duration-500 hover:bg-gray-50 text-right"">'.
-                        '<td>'.$product->product_name.'</td>'.
-                        '<td>'.$product->barcod.'</td>'.
-                        '<td>'.$product->quantity.'</td>'.
-                        '<td>'.$categoryName.'</td>'.
-                        '<td>'.$product->Product_price.'</td>'.
-                        '<td>'.$product->Regular_discount.'</td>'.
-                        '<td>'.$product->Special_discount.'</td>'.
-                        '<td>'.$product->Total_price.'</td>'.
-                        '<td>'.$currName.'</td>'.
+                        '<td class="tagTd">'.$product->product_name.'</td>'.
+                        '<td class="tagTd">'.$product->barcod.'</td>'.
+                        '<td class="tagTd">'.$product->quantity.'</td>'.
+                        '<td class="tagTd">'.$categoryName.'</td>'.
+                        '<td class="tagTd">'.$product->Product_price.'</td>'.
+                        '<td class="tagTd">'.$product->Regular_discount.'</td>'.
+                        '<td class="tagTd">'.$product->Special_discount.'</td>'.
+                        '<td class="tagTd">'.$product->Total_price.'</td>'.
+                        '<td class="tagTd">'.$currName.'</td>'.
                         '<td class="p-1 tagTd">'.
                             '<div class="flex items-center gap-1">'.
                             '<a href="'.route('products.edit', $product->product_id).'" class="p-1 rounded-full group transition-all duration-500 flex item-center">'.                                    '<svg class="cursor-pointer" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">'.

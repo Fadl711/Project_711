@@ -8,9 +8,16 @@
         @method('PUT')
             <div class="border-b flex justify-between text-sm">
                 <div class="w-full border-x border-y border-orange-950 rounded-xl">
-                    <div class="px-1">
-                    <label for="namecurr" class="btn">اسم العملة</label>
-                    <input  id="namecurr" name="namecurr" type="text"  class="inputSale" value="{{$curr->currency_name}}" required />
+                    <div class="px-1 flex justify-evenly">
+                        <div >
+
+                            <label for="namecurr" class="btn">اسم العملة</label>
+                            <input  id="namecurr" name="namecurr" type="text"  class="inputSale" value="{{$curr->currency_name}}" />
+                        </div>
+                        <div>
+                            <label for="namecurr" class="btn">رمز العملة</label>
+                        <input  id="namecurr" name="symbol" type="text"  class="inputSale" value="{{$curr->currency_symbol}}" />
+                        </div>
                     </div>
                 <div class="py-2 mr-1 flex justify-between ml-1">
                     <button class="flex bg-green-500 hover:bg-green-700 text-white font-bold  py-2 px-4 rounded">
