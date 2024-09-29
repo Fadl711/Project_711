@@ -22,10 +22,17 @@
         <div class="flex flex-col bg-gray-200 ">
           <label for="Catog" class="btn">وحدة الصنف</label>
           <select style="background-image: none ;" name="Catog" id="Catog" class="inputSale appearance-auto" required>
+          
             <option selected value=""></option>
+            @auth
             @foreach ($cate as $cat)
+       
+                
             <option value="{{$cat->categorie_id}}">{{$cat->Categorie_name}}</option>
+
             @endforeach
+            @endauth
+
           </select>
         </div>
 

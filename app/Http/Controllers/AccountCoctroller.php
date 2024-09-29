@@ -38,9 +38,7 @@ class AccountCoctroller extends Controller
             $post=MainAccount::all();
 
 
-// return response()->json( $data);
       return  view('accounts.index',['posts'=>$data,'post'=> $post]);
-        // return view('accounts.index');
     }
     public function getOptions( ){
         $options=[
@@ -54,8 +52,6 @@ class AccountCoctroller extends Controller
             ['idsec'=>'10','id'=>'7','sec'=>'العملاء','name'=>'علي','pric'=>'$1155'],
             ['idsec'=>'10','id'=>'7','sec'=>'العملاء','name'=>'علي','pric'=>'$1155'],
 
-
-
             ];
             $data=MainAccount::all();
 return response()->json( $data);
@@ -65,21 +61,27 @@ return response()->json( $data);
     {
         $MainAccounts=MainAccount::all();
         $SubAccount=SubAccount::all();
-        $accountTypes = AccountType::cases(); // استرجاع كل القيم في Enum
+        
+        $ASSETS=AccountType::FIXED_ASSETS;
 
-        $accountsByType = [];
+        $LIABILITIES_OPPONENTS=AccountType::LIABILITIES_OPPONENTS;
+        $EXPENSES=AccountType::EXPENSES;
+        $REVENUE=AccountType::REVENUE;
+        $Assets=MainAccount::where('typeAccount',$ASSETS)->get();
+        $LIABILITIES_OPPONENTS=MainAccount::where('typeAccount',$LIABILITIES_OPPONENTS)->get();
 
-        // التكرار على كل نوع حساب واسترجاع الحسابات الرئيسية المرتبطة به
-        foreach ($accountTypes as $accountType) {
-            $accountsByType[$accountType->value] = MainAccount::where('typeAccount', $accountType->value)
-                ->with('subAccounts')
-                ->get();
-        }
+        $TypesAccountName = [
 
-        return view('accounts.account_tree', compact('accountsByType', 'accountTypes'));
+            ['TypesAccountName' => Deportatton::FIXED_ASSETS, 'id' => AccountType::FIXED_ASSETS],
+            ['TypesAccountName' => Deportatton::CURRENT_ASSETS, 'id' => AccountType::CURRENT_ASSETS],
+            ['TypesAccountName' => Deportatton::LIABILITIES_OPPONENTS, 'id' => AccountType::LIABILITIES_OPPONENTS],
+            ['TypesAccountName' => Deportatton::EXPENSES, 'id' => AccountType::EXPENSES],
+            ['TypesAccountName' => Deportatton::REVENUE, 'id' => AccountType::REVENUE],
+         ];
+
+       
+        return view('accounts.account_tree', ['Assets'=>$Assets,'TypesAccounts'=> $TypesAccountName,]);
     
-        // return view('accounts.account_tree',['MainAccounts'=> $MainAccounts,'SubAccount'=> $SubAccount]);
-        // // return view('accounts.account_tree',['MainAccounts'=> $MainAccounts]);
     }
    
 }

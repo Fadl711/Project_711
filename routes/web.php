@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeCoctroller;
 use App\Http\Controllers\AccountCoctroller;
 use App\Http\Controllers\Accounts\main_accounts\MainaccountController;
 use App\Http\Controllers\Accounts\sub_accounts\SubaccountController;
+use App\Http\Controllers\accounts\TreeAccountController;
 use App\Http\Controllers\bondController\BondController;
 use App\Http\Controllers\bondController\exchangeController\ExchangeController;
 use App\Http\Controllers\bondController\receipController\All_Receipt_BondController;
@@ -136,10 +137,12 @@ Route::get('/inventoryReportPdf',[reportsConreoller::class,'inventoryReportPdf']
 Route::get('/earningsReportsPdf',[reportsConreoller::class,'earningsReportsPdf'])->name('earningsReportsPdf');
 
 
-// Route::post('/add_account/store', [SubaccountController::class, 'store'])->name('add_account.store');
+Route::get('/accounts/large-main-accounts/{largeAccountType}', [TreeAccountController::class, 'getMainAccountsByLargeAccountType'])->name('getMainAccountsByLargeAccountType');
+Route::get('/accounts/main-accounts/{mainAccountId}/sub-accounts', [TreeAccountController::class, 'getSubAccountsByMainAccount'])->name('getSubAccountsByMainAccount');
 Route::get('/accounts', [AccountCoctroller::class, 'index'])->name('accounts.index');
 Route::get('/accounts/Main_Account/create-sub-account', [SubaccountController::class, 'create'])->name('Main_Account.create-sub-account');
 Route::get('/accounts/account_tree/index_account_tree', [AccountCoctroller::class, 'index_account_tree'])->name('index_account_tree');
+// Route::get('/accounts/{type}/main-accounts', [TreeAccountController::class, 'getMainAccounts'])->name('getMainAccounts');
 // Route::get('/accounts/Sub_Account/create', [AccountCoctroller::class, 'create'])->name('Sub_Account.create1');
 
 Route::get('/accounts/Main_Account/create', [MainaccountController::class, 'create'])->name('Main_Account.create');

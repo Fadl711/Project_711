@@ -59,7 +59,7 @@
 <div class="" id="mainaccount" >
   <div id="successMessage" class="alert-success" style="display: none;"></div>
 
-  <form id="addItemForm"  class="p-4 md:p-5 "  >
+  <form id="ajaxForm"  class="p-4 md:p-5 " method="POST"  >
     @csrf
 
   <div class="flex ">
@@ -67,26 +67,26 @@
 
     <div class="flex px-4" >
     <label class="labelSale">مدين</label>
-      <input  type="radio" required value="مدين" name="Nature_account" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+      <input  type="radio" required value="مدين" name="Nature_account" class="input-field w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
     </div>
     <div class="flex ">
     <label  class="labelSale">دائن</label>
-      <input type="radio" required  value="دائن"  name="Nature_account" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+      <input type="radio" required  value="دائن"  name="Nature_account" class="input-field w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
     </div>
     </div>
   <div class="grid gap-4 mb-4 grid-cols-2">
 
     <div class="mb-2">
       <label class="labelSale" for="account_name">اسم الحساب</label>
-      <input name="account_name" class="inputSale" id="account_name" type="text" required placeholder="اسم الحساب الجديد"/>
+      <input name="account_name" class="inputSale input-field" id="account_name" type="text" required placeholder="اسم الحساب الجديد"/>
   </div>
 
   <div class="mb-2">
     <label class="labelSale  "   for="typeAccount"> تصنيف الحساب</label>
-      <select class=" inputSale text-left " required  name="typeAccount" id="typeAccount">
+      <select class=" input-field inputSale text-left " required  name="typeAccount" id="typeAccount">
         <option selected></option>
-        @foreach ($TypesAccount as $Deportatton)
-        <option value="{{$Deportatton['id']}}" >{{$Deportatton['TypesAccount']}} </option>
+        @foreach ($TypesAccounts as $TypesAccount)
+        <option value="{{$TypesAccount['id']}}" >{{$TypesAccount['TypesAccountName']}} </option>
         @endforeach
 
 
@@ -95,15 +95,15 @@
     </div>
     <div class="mb-2">
         <label class="labelSale" for="debtor_amount">  رصيدافتتاحي مدين (علية)</label>
-        <input name="debtor_amount" class="inputSale english-numbers " id="debtor_amount" type="number" autocomplete="off" placeholder="0"/>
+        <input name="debtor_amount" class="inputSale input-field english-numbers " id="debtor_amount" type="number" autocomplete="off" placeholder="0"/>
     </div>
     <div class="mb-2">
       <label class="labelSale" for="creditor_amount" >رصيدافتتاحي دائن (لة) </label>
-      <input name="creditor_amount" class="inputSale english-numbers" id="creditor_amount" type="number" autocomplete="off"  placeholder="0"/>
+      <input name="creditor_amount" class="inputSale input-field english-numbers" id="creditor_amount" type="number" autocomplete="off"  placeholder="0"/>
   </div>
   <div class="mb-2">
     <label class="labelSale  " required for="Type_migration"> يرحل الى </label>
-      <select id="Type_migration" class=" text-left inputSale" name="Type_migration">
+      <select id="Type_migration" class=" text-left input-field inputSale" name="Type_migration">
         <option selected></option>
         @foreach ($Deportattons as $Deportatton)
         <option value="{{$Deportatton['id']}}" >{{$Deportatton['Deportatton']}} </option>
@@ -113,32 +113,21 @@
     </div>
     <div class="mb-2">
       <label for="Phone " class="labelSale" >   رقم التلفون الحساب</label>
-      <input name="Phone" class="inputSale english-numbers" id="Phone" type="number" autocomplete="off"  placeholder="0"/>
-
+      <input name="Phone" class="inputSale input-field english-numbers" id="Phone" type="number" autocomplete="off"  placeholder="0"/>
   </div>
-  {{-- <div class="mb-2">
-      <label for="email" class="labelSale">البريد الإلكتروني</label>
-      <input type="email" name="email" id="email" placeholder="Email" class="inputSale" />
-  </div>
-  <div class="mb-2">
-      <label for="address" class="labelSale">العنوان</label>
-        <input type="text" name="address" id="address" placeholder="العنوان العميل" class="inputSale" />
-      </div> --}}
   <div class="mb-2">
       <label for="name_The_known" class="labelSale">اسم/ معرف العميل</label>
-        <input type="text" name="name_The_known" id="name_The_known" placeholder="" class="inputSale" />
+        <input type="text" name="name_The_known" id="name_The_known" placeholder="" class="input-field inputSale" />
       </div>
   <div class="mb-2">
       <label for="Known_phone"  class="labelSale ">رقم تلفون/ معرف العميل</label>
-        <input type="number"  autocomplete="off" name="Known_phone" id="Known_phone"  class="inputSale  english-numbers" />
-
+        <input type="number"  autocomplete="off" name="Known_phone" id="Known_phone"  class="inputSale input-field english-numbers" />
       </div>
-
  </div>
  @auth
  <input type="text" name="User_id" required id="User_id" value="{{Auth::user()->id}}">
  @endauth
-  <button type="submit" id="submit" class="text-white inline-flex items-center bgcolor hover:bg-stone-400  font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+  <button type="submit" id="submit" class="input-field text-white inline-flex items-center bgcolor hover:bg-stone-400  font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
 
     حفظ البيانات
   </button>
@@ -157,7 +146,15 @@
   </tbody>
 </table>
 </div>
+<div id="successMessage" style="display: none;">
+  <p>تم الحفظ بنجاح!</p>
+</div>
+<div id="errorMessage" style="display: none; color: red;">
+  <p>حدث خطأ أثناء الحفظ.</p>
+</div>
 
+<!-- منطقة طباعة البيانات المحفوظة -->
+<div id="results" class="results"></div>
 <script src={{url('node_modules/jquery/dist/')}}></script>
 <style>
     .alert-success {
@@ -165,90 +162,119 @@
         font-weight: bold;
     }
 </style>
-<div id="results" class="results"></div>
-
-{{-- <script src="jquery-3.7.1.min.js"></script> --}}
-
-{{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js"></script> --}}
-
 <script type="text/javascript">
-  // تحميل الأصناف الحالية عند تحميل الصفحة
-  $(document).ready(function() {
-    $('#addItemForm').on('submit', function(event) {
-                event.preventDefault();
-
-                let formData = {
-               
-                //  
-                  Nature_account: $('input[name="Nature_account"]:checked').val(),               
-
-
-                  Nature_account: $('input[name="Nature_account"]:checked').val(),
-                  account_name: $('#account_name').val(),
-                  Type_migration: $('#Type_migration').val(),
-                  typeAccount: $('#typeAccount').val(),
-
-                  name_The_known: $('#name_The_known').val(),
-                  Known_phone: $('#Known_phone').val(),
-                  debtor_amount: $('#debtor_amount').val(),
-                  creditor_amount: $('#creditor_amount').val(),
-                  Phone: $('#Phone').val(),
-                  // Type_account: $('input[name="Type_account"]').val(),
-                  User_id: $('#User_id').val(),
-                    _token: '{{ csrf_token() }}' 
-                };
-
-                $.ajax({
-                    url: '/accounts/Main_Account/store',
-                    type: 'POST',
-                    data: formData,
-                    success: function(response) {
-                        // عرض رسالة النجاح
-                        $('#successMessage').text(response.message).show();
-                        $('#invoiceItemsTable tbody').append(
-        '<tr>' +
-        '<td class="text-right">' + response.DataSubAccount.Main_id + '</td>' +
-        '<td class="text-right">' + response.DataSubAccount.sub_name + '</td>' +
-        '<td class="text-right">' + response.DataSubAccount.debtor_amount + '</td>' +
-        '<td class="text-right">' + response.DataSubAccount.creditor_amount + '</td>' +
-        '<td class="text-right">' + response.DataSubAccount.Phone + '</td>' +
-        '</tr>'
-    );
-
-
-
-
-                        // إخفاء الرسالة بعد 3 ثوانٍ
-                        setTimeout(function() {
-                            $('#successMessage').fadeOut('slow');
-                        }, 100);
-
-    // تفريغ الحقول بعد الإضافة
-    $('#addItemForm')[0].reset();
-                        // تفريغ الحقول بعد الإضافة
-                        // $('#account_name').val('');
-                        // $('#Nature_account').val('');
-                        // $('#creditor').val('');
-
-                        // ��ضافة الحساب ��لى الجدول
-                        $('#invoiceItemsTable tbody').append('<tr><td>' + response.post.main_account_id + '</td><td>' + response.post.account_name + '</td><td>' + response.post.debtor + '</td><td>' + response.post.creditor + '</td><td>' + response.post.Phone + '</td></tr>');
-                    },
-                    // error: function(response) {
-                    //     alert('Error adding account');
-                    // }
-                   
-                   
-                    error: function(response) {
-                        alert('Error adding account');
-                    }
-
-
-                });
-            });
-        });
-</script>
-
-    {{-- <script>
+  document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('ajaxForm');
+      const successMessage = document.getElementById('successMessage');
+      const errorMessage = document.getElementById('errorMessage');
+      const inputs = document.querySelectorAll('.input-field'); // تحديد جميع الحقول
+      let account_name = document.getElementById('account_name');
+      
+      // تركيز على حقل الاسم عند بدء التشغيل
+      account_name.focus();
+  
+      // منع السلوك الافتراضي لزر Enter
+      form.addEventListener('keydown', function (event) {
+          if (event.key === 'Enter') {
+              event.preventDefault(); // منع الحفظ عند الضغط على زر Enter
+          }
+      });
+  
+      // التنقل بين الحقول باستخدام السهم الأيمن أو الأيسر
+      document.addEventListener('keydown', function(event) {
+          if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+              let currentIndex = -1;
+  
+              // العثور على الحقل النشط حاليًا
+              for (let i = 0; i < inputs.length; i++) {
+                  if (inputs[i] === document.activeElement) {
+                      currentIndex = i;
+                      break;
+                  }
+              }
+  
+              if (currentIndex !== -1) {
+                  if (event.key === "ArrowRight") {
+                      if (currentIndex < inputs.length - 1) {
+                          inputs[currentIndex + 1].focus(); // نقل التركيز إلى الحقل التالي
+                      }
+                  } else if (event.key === "ArrowLeft") {
+                      if (currentIndex > 0) {
+                          inputs[currentIndex - 1].focus(); // نقل التركيز إلى الحقل السابق
+                      }
+                  }
+              }
+          }
+      });
+  
+      // التعامل مع إرسال النموذج وحفظ البيانات باستخدام AJAX
+      form.addEventListener('submit', function (event) {
+          event.preventDefault(); // منع تحديث الصفحة
+  
+          // تجميع بيانات النموذج
+          const formData = new FormData(form);
+  
+          // إرسال الطلب باستخدام Fetch API
+          fetch('{{ route("Main_Account.store") }}', {
+              method: 'POST',
+              headers: {
+                  'X-CSRF-TOKEN': '{{ csrf_token() }}' // إرسال التوكن الخاص بـ Laravel
+              },
+              body: formData // إرسال البيانات
+          })
+          .then(response => response.json()) // تحليل استجابة السيرفر
+          .then(data => {
+              if (data.success) {
+                  // إظهار رسالة النجاح
+                  successMessage.style.display = 'block';
+                  successMessage.textContent = 'تم الحفظ بنجاح!';
+                  account_name.focus(); // إعادة التركيز على حقل الاسم بعد الحفظ
+  
+                  // إخفاء الرسالة بعد 3 ثوانٍ
+                  setTimeout(() => {
+                      successMessage.style.display = 'none';
+                  }, 3000);
+  
+                  // إضافة البيانات المحفوظة إلى الجدول
+                  addToTable(data.DataSubAccount);
+  
+                  // تفريغ النموذج بعد الحفظ
+                  form.reset();
+              } else {
+                  // إظهار رسالة عند وجود نفس الاسم
+                  successMessage.style.display = 'block';
+                  successMessage.textContent = 'يوجد نفس هذا الاسم من قبل';
+                  account_name.focus();
+  
+                  setTimeout(() => {
+                      successMessage.style.display = 'none';
+                  }, 1000);
+              }
+          })
+          .catch(error => {
+              errorMessage.style.display = 'block';
+              errorMessage.textContent = 'حدث خطأ أثناء الحفظ.';
+          });
+      });
+  
+      // وظيفة لإضافة البيانات إلى الجدول
+      function addToTable(account) {
+          const tableBody = document.querySelector('#invoiceItemsTable tbody');
+          const newRow = `
+              <tr>
+                  <td class="text-right tagTd">${account.Main_id}</td>
+                  <td class="text-right tagTd">${account.sub_name}</td>
+                  <td class="text-right tagTd">${account.debtor_amount || 0}</td>
+                  <td class="text-right tagTd">${account.creditor_amount || 0}</td>
+                  <td class="text-right tagTd">${account.Phone || ''}</td>
+              </tr>
+          `;
+          tableBody.insertAdjacentHTML('beforeend', newRow);
+      }
+  });
+  </script>
+  
+ {{-- <script>
         $(document).ready(function() {
             // عند الكتابة في حقل البحث
             $('#account_name').on('keyup', function() {

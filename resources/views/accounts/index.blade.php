@@ -1,21 +1,18 @@
 @extends('layout')
 @section('conm')
 
-<div class=" container  shadow p-2 mt-2" id="new_account" style="">
 
 <nav class="navIndex ">
     <div class="flex items-center">
- <a href="{{route('Main_Account.create')}}"  class="text-sm px-4 py-2 leading-none rounded hover:bg-gray-50" >اضافة حساب رئيسي</a> 
-        <a href="{{route('Main_Account.create-sub-account')}}"  class="text-sm px-4 py-2 leading-none rounded hover:bg-gray-50" > اضافة حساب فرعي</a>
-
-        <a href=" {{route('index_account_tree')}}"  class="text-sm px-4 py-2 leading-none rounded hover:bg-gray-50" >شجرة الحسابات</a>
-        <button onclick="FinancialAccounts()" type="button" class="text-sm px-4 py-2 leading-none rounded hover:bg-gray-50" >  مراجعة الحسابات </button>
-       {{-- <form action="{{route('accounts.balancing')}}" method="GET"> --}}
-            <button onclick="AccountBalancing()"  id="Accountbalancing"  type="submit"  class="text-sm px-4 py-2 leading-none rounded hover:bg-gray-50" > ترصيد الحسابات</button>
-        {{-- </form>  --}}
-        {{-- <a href="{{route('accounts.balancing')}}" onclick="AccountBalancing()"  class="text-sm px-4 py-2 leading-none rounded-full hover:bg-gray-700" > ترصيد الحسابات</a> --}}
-    </div>
+ <a href="{{route('Main_Account.create')}}"   class="py-2 px-4 {{ Request::is('accounts/Main_Account/create') ? '   border-b-2   text-[#0a0aeec6]' : 'border-b-0' }} border-[#0a0aeec6]   leading-none rounded hover:bg-gray-50" >اضافة حساب رئيسي</a> 
+        <a href="{{route('Main_Account.create-sub-account')}}"  class="py-2 px-4 {{ Request::is('accounts/Main_Account/create-sub-account') ? '   border-b-2   text-[#0a0aeec6]' : 'border-b-0' }} border-[#0a0aeec6]   leading-none rounded hover:bg-gray-50" > اضافة حساب فرعي</a>
+        <a href=" {{route('index_account_tree')}}" class="py-2 px-4 {{ Request::is('accounts/account_tree/index_account_tree') ? '   border-b-2   text-[#0a0aeec6]' : 'border-b-0' }} border-[#0a0aeec6]   leading-none rounded hover:bg-gray-50"  >شجرة الحسابات</a>
+        <button onclick="FinancialAccounts()" type="button" class="py-2  px-4{{ Request::is('accounts/Main_Account/create') ? '   border-b-2   text-[#0a0aeec6]' : 'border-b-0' }} border-[#0a0aeec6]   leading-none rounded hover:bg-gray-50"  >  مراجعة الحسابات </button>
+            <button onclick="AccountBalancing()"  id="Accountbalancing"  type="submit" class="py-2  px-4 {{ Request::is('accounts/Main_Account/create') ? '   border-b-2   text-[#0a0aeec6]' : 'border-b-0' }} border-[#0a0aeec6]   leading-none rounded hover:bg-gray-50"  > ترصيد الحسابات</button>
+      </div>
 </nav>
+<div class=" container  shadow p-2 mt-2" id="new_account" style="">
+
         @yield('accounts')
     </div>
     {{-- <div class="  border-x border-y border-orange-950 rounded-xl p-2 mt-2 " id="account_tree" style="display:none">

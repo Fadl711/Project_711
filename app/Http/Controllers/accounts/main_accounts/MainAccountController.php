@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Accounts\main_accounts;
 
+use App\Enum\AccountType;
 use App\Enum\Deportatton;
 use App\Enum\IntOrderStatus;
 use App\Http\Controllers\Controller;
@@ -17,8 +18,19 @@ class MainaccountController extends Controller
     public function create(){
         $post=MainAccount::all();//-
 
-        return view('accounts.Main_Account.create',['pos'=> $post]);
-  }  
+        $dataDeportattons=[
+            ['Deportatton'=> (Deportatton::FINANCAL_CENTER_LIST ),'id'=>(IntOrderStatus::FINANCAL_CENTER_LIST )],
+            ['Deportatton'=> (Deportatton::INCOME_STATEMENT),'id'=>(IntOrderStatus::INCOME_STATEMENT)],
+ ];
+ $TypesAccountName=[
+     ['TypesAccountName' => Deportatton::CURRENT_ASSETS, 'id' => AccountType::CURRENT_ASSETS],
+     ['TypesAccountName' => Deportatton::FIXED_ASSETS, 'id' => AccountType::FIXED_ASSETS],
+    ['TypesAccountName' => Deportatton::LIABILITIES_OPPONENTS, 'id' => AccountType::LIABILITIES_OPPONENTS],
+    ['TypesAccountName' => Deportatton::EXPENSES, 'id' => AccountType::EXPENSES],
+    ['TypesAccountName' => Deportatton::REVENUE, 'id' => AccountType::REVENUE],
+
+ ];
+return view('accounts.Main_Account.create',['pos'=> $post,'TypesAccounts'=> $TypesAccountName,'Deportattons'=> $dataDeportattons]);  }  
     
     public function convertArabicToEnglish($number)
     {
@@ -52,7 +64,7 @@ class MainaccountController extends Controller
         // التحقق مما إذا كان الحساب موجودًا بالفعل
         $account_nametExists = MainAccount::where('account_name', $account_name)->exists();
         if ($account_nametExists) {
-            return response()->json(['message' => 'هذا الاسم موجود من قبل'], 409);
+            return response()->json(['success' => false,'message' => 'هذا الاسم موجود من قبل'], 409);
         }
         // __________________________MainAccount______________________________________
         $mainAccount = MainAccount::create([
@@ -75,8 +87,11 @@ class MainaccountController extends Controller
         $DataSubAccount-> name_The_known= !empty($name_The_known ) ? $name_The_known : null ;
         $DataSubAccount->Known_phone = !empty($Known_phone ) ? $Known_phone : null ;
     $DataSubAccount->save();
-        return response()->json(['message' => 'تمت العملية بنجاح', 'DataSubAccount' => $DataSubAccount], 201);
+        return response()->json(['success' => true, 'message' => 'تمت العملية بنجاح', 'DataSubAccount' => $DataSubAccount], 201);
     }
+
+
+
             public function storc(Request $request)
             { 
 $DataSubAccount=new SubAccount() ;
@@ -96,7 +111,7 @@ $DataSubAccount=new SubAccount() ;
     {
 if($at_namet==$sub_name)
 {
-    return response()->json(['message'=>' يوجد نفس هذا الاسم  من قبل']);
+    return response()->json(['success' => false,'message'=>' يوجد نفس هذا الاسم  من قبل'], 400);
 }
 else{
     $DataSubAccount->Main_id = $Main_id;
@@ -111,6 +126,6 @@ else{
 }
     }
     $DataSubAccount->save();  
-                return  response()->json(['message'=>'تمت العملية بنجاح"' ,'DataSubAccount'=>$DataSubAccount]);//-
+                return  response()->json(['success' => true,'message'=>'تمت العملية بنجاح"' ,'DataSubAccount'=>$DataSubAccount]);//-
             }      
 }

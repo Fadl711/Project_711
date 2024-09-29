@@ -19,19 +19,10 @@ class MainAccount extends Model
          'User_id',
          'Type_migration',
         ];
+        protected $casts = [
+            'account_type' => AccountType::class,
+        ];
+    
         
  
-        protected $casts = [
-            'typeAccount' => AccountType::class, // تحويل الحقل إلى Enum
-        ];
-        protected $casts1 = [
-            'typeAccount' => Deportatton::class, // تحويل الحقل إلى Enum
-        ];
-
-        
-        public function subAccounts()
-        {
-            return $this->hasMany(SubAccount::class, 'Main_id');
-        }
-
 }

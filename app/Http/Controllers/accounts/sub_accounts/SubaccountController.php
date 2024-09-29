@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Accounts\sub_accounts;
 
+use App\Enum\AccountType;
 use App\Enum\Deportatton;
 use App\Enum\IntOrderStatus;
 use App\Http\Controllers\Controller;
@@ -18,18 +19,20 @@ class SubaccountController extends Controller
             ['Deportatton'=> (Deportatton::FINANCAL_CENTER_LIST ),'id'=>(IntOrderStatus::FINANCAL_CENTER_LIST )],
             ['Deportatton'=> (Deportatton::INCOME_STATEMENT),'id'=>(IntOrderStatus::INCOME_STATEMENT)],
  ];
- $dataTypesAccounts=[
-            ['TypesAccount'=> (Deportatton::ASSETS ),'id'=>(IntOrderStatus::ASSETS )],
-            ['TypesAccount'=> (Deportatton::LIABILITIES_OPPONENTS),'id'=>(IntOrderStatus::LIABILITIES_OPPONENTS)],
-            ['TypesAccount'=> (Deportatton::EXPENSES ),'id'=>(IntOrderStatus::EXPENSES )],
-            ['TypesAccount'=> (Deportatton::REVENUE ),'id'=>(IntOrderStatus::REVENUE )],
-            
+ $TypesAccountName = [
+
+    ['TypesAccountName' => Deportatton::FIXED_ASSETS, 'id' => AccountType::FIXED_ASSETS],
+    ['TypesAccountName' => Deportatton::CURRENT_ASSETS, 'id' => AccountType::CURRENT_ASSETS],
+    ['TypesAccountName' => Deportatton::LIABILITIES_OPPONENTS, 'id' => AccountType::LIABILITIES_OPPONENTS],
+    ['TypesAccountName' => Deportatton::EXPENSES, 'id' => AccountType::EXPENSES],
+    ['TypesAccountName' => Deportatton::REVENUE, 'id' => AccountType::REVENUE],
  ];
+
  $MainAccounts=MainAccount::all();
 
 //  dd( $MainAccounts);
 
- return view('accounts.Main_Account.create-sub-account',['MainAccounts'=> $MainAccounts,'TypesAccounts'=> $dataTypesAccounts,'Deportattons'=> $dataDeportattons]);
+ return view('accounts.Main_Account.create-sub-account',['MainAccounts'=> $MainAccounts,'TypesAccounts'=> $TypesAccountName,'Deportattons'=> $dataDeportattons]);
          }
     public function convertArabicToEnglish($number)
     {
