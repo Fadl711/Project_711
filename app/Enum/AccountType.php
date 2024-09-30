@@ -11,6 +11,7 @@ enum AccountType: int
 case LIABILITIES_OPPONENTS=3;
 case EXPENSES=4;
 case REVENUE=5;
+
 public function label(): string
 {
     return match($this) {

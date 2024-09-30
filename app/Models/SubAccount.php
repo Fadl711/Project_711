@@ -19,4 +19,8 @@ class SubAccount extends Model
         'Phone',
      
     ];
+    public function daily_entries()
+{
+    return $this->hasMany(DailyEntrie::class, 'sub_account_id');
+}
 }

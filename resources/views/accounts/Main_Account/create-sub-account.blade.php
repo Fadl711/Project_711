@@ -126,13 +126,6 @@ $('.select2').select2({
       sub_name.focus();
   
       // منع السلوك الافتراضي لزر Enter
-      form.addEventListener('keydown', function (event) {
-          if (event.key === 'Enter') {
-              event.preventDefault(); // منع الحفظ عند الضغط على زر Enter
-          }
-      });
-  
-      // التنقل بين الحقول باستخدام السهم الأيمن أو الأيسر
       document.addEventListener('keydown', function(event) {
           if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
               let currentIndex = -1;

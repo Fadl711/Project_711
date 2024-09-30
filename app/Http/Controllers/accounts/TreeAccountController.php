@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\MainAccount;
 use App\Models\SubAccount;
 use Illuminate\Http\Request;
+use DB;
 
 class TreeAccountController extends Controller
 {
@@ -49,8 +50,30 @@ class TreeAccountController extends Controller
         dd($AllAssetsMainAccount);
        response()->json($AllAssetsMainAccount);;
     }
-    // public function getSubAccounts($id){
+   
+    public function searchSubAccounts(Request $request)
+    {
+        // ->withSum(['daily_entries as total_debit' => function ($query) {
+        //     $query->whereYear('created_at', 2024);
+        // }], 'Amount_debit') // جمع المبالغ المدينة لعام 2024
+        // ->withSum(['daily_entries as total_credit' => function ($query) {
+        //     $query->whereYear('created_at', 2024);
+        // }], 'Amount_Credit') // جمع المبالغ الدائنة لعام 2024
+       
+        $query = $request->input('query');
 
-    //     return view('accounts.tree_accounts.index');
-    // }
+        // استعلام لجلب الحسابات الفرعية مع جمع المبالغ المدينة والدائنة من جدول القيود اليومية لعام 2024
+        $subAccounts = SubAccount::where('sub_account_id', '!=', null)
+                                 ->where('sub_name', 'LIKE', "%{$query}%")
+                               ->get();
+
+        // إرجاع النتيجة كاستجابة JSON
+                    //  if ($subAccounts->isEmpty()) {
+                    //         return response()->json(['message' => 'No sub-accounts found'], 404);
+                    //     }
+   // إرجاع النتيجة كاستجابة JSON
+   return response()->json($subAccounts);
+                                                 
+                                                  
+}
 }

@@ -26,6 +26,7 @@ class SubaccountsController extends Controller
         return str_replace($arabicNumbers, $englishNumbers, $number);
     }
 
+
     public function store(Request $request)
     {    
         $debtor1 = $request->input('debtor', '٠١٢٣٤٥٦٧٨٩');

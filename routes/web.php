@@ -38,6 +38,14 @@ use App\Http\Controllers\settingController\SettingController;
 use App\Http\Controllers\UsersController\UsersController;
 use Illuminate\Support\Facades\Route;
 
+
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    
 Route::get('/', function () {
     return view('home.index');
 });
@@ -144,12 +152,15 @@ Route::get('/accounts/main-accounts/{mainAccountId}/sub-accounts', [TreeAccountC
 Route::get('/accounts', [AccountCoctroller::class, 'index'])->name('accounts.index');
 Route::get('/accounts/Main_Account/create-sub-account', [SubaccountController::class, 'create'])->name('Main_Account.create-sub-account');
 Route::get('/accounts/account_tree/index_account_tree', [AccountCoctroller::class, 'index_account_tree'])->name('index_account_tree');
-// Route::get('/accounts/{type}/main-accounts', [TreeAccountController::class, 'getMainAccounts'])->name('getMainAccounts');
-// Route::get('/accounts/Sub_Account/create', [AccountCoctroller::class, 'create'])->name('Sub_Account.create1');
+Route::get('/accounts/show/main-accounts', [AccountCoctroller::class, 'showMainAccount'])->name('showMainAccount');
+Route::get('/search-sub-accounts', [TreeAccountController::class, 'searchSubAccounts'])->name('search.sub.accounts');
+Route::post('/accounts/Main_Account/store', [MainaccountController::class, 'store'])->name('Main_Account.store');
 
 Route::get('/accounts/Main_Account/create', [MainaccountController::class, 'create'])->name('Main_Account.create');
-Route::post('/accounts/Main_Account/store', [MainaccountController::class, 'store'])->name('Main_Account.store');
 Route::post('/accounts/Main_Account/storc', [MainaccountController::class, 'storc'])->name('Main_Account.storc');
+Route::get('/accounts/Main_Account/{id}/edit', [MainaccountController::class, 'edit'])->name('accounts.Main_Account.edit');
+Route::put('/accounts/Main_Account/{id}', [MainaccountController::class, 'update'])->name('accounts.Main_Account.update');
+
 Route::get('/home', [HomeCoctroller::class, 'indxe'])->name('home.index');
 
 
@@ -165,13 +176,6 @@ Route::get('/customers', [CustomerCoctroller::class, 'index'])->name('customers.
 Route::get('/suppliers', [SupplierCoctroller::class, 'index'])->name('suppliers.index');
 
 
-
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware('auth')->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -28,6 +28,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $dataDeportattons=[
+            ['Deportatton'=> (Deportatton::FINANCAL_CENTER_LIST ),'id'=>(IntOrderStatus::FINANCAL_CENTER_LIST )],
+            ['Deportatton'=> (Deportatton::INCOME_STATEMENT),'id'=>(IntOrderStatus::INCOME_STATEMENT)],
+ ];
         $TypesAccountName=[
             ['TypesAccountName' => Deportatton::CURRENT_ASSETS, 'id' => AccountType::CURRENT_ASSETS],
             ['TypesAccountName' => Deportatton::FIXED_ASSETS, 'id' => AccountType::FIXED_ASSETS],
@@ -36,7 +40,11 @@ class AppServiceProvider extends ServiceProvider
            ['TypesAccountName' => Deportatton::REVENUE, 'id' => AccountType::REVENUE],
        
         ];
-
+        View::share([
+        
+            'TypesAccounts'=>$TypesAccountName,
+            'Deportattons'=>$dataDeportattons,
+        ]);
 
         $cate=Category::all();
         $buss=BusinessData::all()->first();

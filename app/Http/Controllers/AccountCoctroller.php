@@ -83,5 +83,13 @@ return response()->json( $data);
         return view('accounts.account_tree', ['Assets'=>$Assets,'TypesAccounts'=> $TypesAccountName,]);
     
     }
+    // public function showMainAccount()
+    // {
+    //     // جلب جميع الحسابات الرئيسية
+    //     $mainAccounts = MainAccount::all();
+    //     $subAccount = SubAccount::all();
+    //     // إرجاع البيانات كاستجابة JSON
+    //     return response()->json($mainAccounts,$subAccount);
+    // }
    
 }

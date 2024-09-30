@@ -14,9 +14,16 @@ use function PHPUnit\Framework\isNull;
 
 class MainaccountController extends Controller
 {
-    
+    public function editMainAccount(){
+
+
+
+    }
     public function create(){
-        $post=MainAccount::all();//-
+        $mainAccount=MainAccount::all();//
+    //    $id= $mainAccount->main_account_id;
+    
+        $subAccount = SubAccount::all();
 
         $dataDeportattons=[
             ['Deportatton'=> (Deportatton::FINANCAL_CENTER_LIST ),'id'=>(IntOrderStatus::FINANCAL_CENTER_LIST )],
@@ -30,7 +37,7 @@ class MainaccountController extends Controller
     ['TypesAccountName' => Deportatton::REVENUE, 'id' => AccountType::REVENUE],
 
  ];
-return view('accounts.Main_Account.create',['pos'=> $post,'TypesAccounts'=> $TypesAccountName,'Deportattons'=> $dataDeportattons]);  }  
+return view('accounts.Main_Account.create',[ 'mainAccounts'=>$mainAccount,'subAccounts'=>$subAccount,'TypesAccounts'=> $TypesAccountName,'Deportattons'=> $dataDeportattons]);  }  
     
     public function convertArabicToEnglish($number)
     {
@@ -75,7 +82,7 @@ return view('accounts.Main_Account.create',['pos'=> $post,'TypesAccounts'=> $Typ
             'Type_migration' => $Type_migration
         ]);
     
-        // __________________________ SubAccount ______________________________________
+     //   __________________________ SubAccount ______________________________________
         $data=MainAccount::where('User_id',$User_id)->latest()->first();
         $DataSubAccount=new SubAccount();
         $DataSubAccount->Main_id=$data->main_account_id; 
@@ -86,8 +93,37 @@ return view('accounts.Main_Account.create',['pos'=> $post,'TypesAccounts'=> $Typ
         $DataSubAccount->Phone = ($Phone1 ) ;
         $DataSubAccount-> name_The_known= !empty($name_The_known ) ? $name_The_known : null ;
         $DataSubAccount->Known_phone = !empty($Known_phone ) ? $Known_phone : null ;
-    $DataSubAccount->save();
-        return response()->json(['success' => true, 'message' => 'تمت العملية بنجاح', 'DataSubAccount' => $DataSubAccount], 201);
+        $DataSubAccount->save();
+        return response()->json(['success' => true, 'message' => 'تمت العملية بنجاح', 'DataSubAccount' => $mainAccount], 201);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $account = MainAccount::find($request->main_account_id);
+        if ($account) {
+           
+            MainAccount::where('main_account_id',$id)
+            ->update([
+                'account_name'=>$account->account_name,
+                'Nature_account'=>$account->Nature_account,
+                'typeAccount'=>$account->typeAccount,
+                'main_account_id'=>$account->main_account_id,
+        ]);
+
+            return response()->json(['success' => true, 'message' => 'تم تحديث البيانات بنجاح']);
+        }
+
+        return response()->json(['success' => false, 'message' => 'الحساب غير موجود']);
+    }  
+
+    public function edit($id)
+    {
+        $account = MainAccount::where('main_account_id', $id)->first();
+        // $TypesAccounts = ...; // استرجاع أنواع الحسابات من قاعدة البيانات
+        // $Deportattons =   ;// استرجاع ترحيلات الحسابات من قاعدة البيانات
+        
+        // , 'TypesAccounts', 'Deportattons'
+        return view('accounts.Main_Account.edit-main-account',['account'=>$account] );
     }
 
 
@@ -127,5 +163,7 @@ else{
     }
     $DataSubAccount->save();  
                 return  response()->json(['success' => true,'message'=>'تمت العملية بنجاح"' ,'DataSubAccount'=>$DataSubAccount]);//-
-            }      
+            } 
+            
+            
 }
