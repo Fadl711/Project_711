@@ -18,8 +18,8 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-        <script src="jquery-3.7.1.min.js"></script>
-        {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
+        <script src="{{ asset('node_modules/jquery/dist/jquery.min.js') }}"></script>
+        <script src="{{ mix('js/app.js') }}"></script>        {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
 
 
 

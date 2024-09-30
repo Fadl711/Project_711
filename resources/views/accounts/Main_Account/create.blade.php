@@ -255,7 +255,7 @@
 <!-- منطقة طباعة البيانات المحفوظة -->
 <div id="results" class="results"></div>
 
-<script src={{url('node_modules/jquery/dist/')}}></script>
+
 <style>
     .alert-success {
         color: green;
