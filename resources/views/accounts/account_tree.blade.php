@@ -1,5 +1,8 @@
-@extends('accounts.index')
-@section('accounts')
+@extends('layout')
+@section('conm')
+
+<x-navbar_accounts/>
+
 <h1 class="font-bold">شجرة الحسابات</h1>
 <br>
 
@@ -50,13 +53,13 @@
     });
 </script>
     <br>
-<div dir="rtl" class="grid gap-4 mb-4 grid-cols-3 max-sm:grid-cols-2 min-w-full ">
-  <div dir="ltr" id="largeMainAccounts" class="w-[25%] shadow-md rounded-md">
+<div dir="rtl" class="flex min-w-full border ">
+  <div dir="ltr" id="largeMainAccounts" class="w-[15%] shadow-md rounded-md">
   <ul>
     @auth
       @foreach ($TypesAccounts as $largeAccount)
           <li class="py-2 px-2 ">
-              <a href="#" 
+              <a href="#"
                  class= "{{ Request::is(' ') ? 'border-b-2 text-[#0a0aeec6]' : 'border-b-0' }} border-[#0a0aeec6] leading-none rounded hover:bg-gray-50 large-main-account link-item"
                  data-id="{{ $largeAccount['id'] }}">
                   {{ $largeAccount['TypesAccountName'] }}
@@ -69,14 +72,14 @@
 
 
 
-<div class="w-[100%] ">
+<div class="w-[100%]  ">
 <!-- عرض الحسابات الرئيسية -->
 <div id="mainAccountsTable" style="display: none;">
     <h3>الحسابات الرئيسية</h3>
     <table class="table ">
         <thead>
             <tr>
-                <th class="tagHt">رقم الحساب</th>
+                <th class="tagHt border-r">رقم الحساب</th>
                 <th class="tagHt">اسم الحساب</th>
                 <th class="tagHt">الرصيد مدين</th>
                 <th class="tagHt">الرصيد دائن</th>
@@ -88,9 +91,9 @@
         </tbody>
     </table>
 </div>
-</div>
+
 <!-- عرض الحسابات الفرعية -->
-<div id="subAccountsTable" style="display: none;">
+<div id="subAccountsTable" class=" flex-col" style="display: none;">
   <h3>الحسابات الفرعية</h3>
   <table class="table">
       <thead>
@@ -108,31 +111,35 @@
 </div>
 
 </div>
-<input type="text" id="search" name="search" placeholder="Search for sub-accounts" class="border border-gray-300 p-2 rounded w-full mb-4">
+</div>
 
-<table id="results-table" class="min-w-full border-collapse border border-gray-300 hidden">
-    <thead class="bg-gray-200">
-        <tr>
-            <th class="border border-gray-300 p-2">#</th>
-            <th class="border border-gray-300 p-2">Account Name</th>
-            <th class="border border-gray-300 p-2">Account Number</th>
-            <th class="border border-gray-300 p-2">Parent ID</th>
-            <th class="border border-gray-300 p-2">المدين</th> <!-- المبلغ المدين لعام 2024 -->
-            <th class="border border-gray-300 p-2">الدائن</th> <!-- المبلغ الدائن لعام 2024 -->
-        </tr>
-    </thead>
-    <tbody id="results-body">
-        <!-- سيتم عرض النتائج هنا -->
-    </tbody>
-</table>
-<input type="text" value="" name="mainAccountInput" id="mainAccountInput">
+
+    <input type="text" id="search" name="search" placeholder="Search for sub-accounts" class="border border-gray-300 p-2 rounded w-full mb-4">
+
+    <table id="results-table" class="min-w-full border-collapse border border-gray-300 hidden">
+        <thead class="bg-gray-200">
+            <tr>
+                <th class="border border-gray-300 p-2">#</th>
+                <th class="border border-gray-300 p-2">Account Name</th>
+                <th class="border border-gray-300 p-2">Account Number</th>
+                <th class="border border-gray-300 p-2">Parent ID</th>
+                <th class="border border-gray-300 p-2">المدين</th> <!-- المبلغ المدين لعام 2024 -->
+                <th class="border border-gray-300 p-2">الدائن</th> <!-- المبلغ الدائن لعام 2024 -->
+            </tr>
+        </thead>
+        <tbody id="results-body">
+            <!-- سيتم عرض النتائج هنا -->
+        </tbody>
+    </table>
+    <input type="text" value="" name="mainAccountInput" id="mainAccountInput">
+
 <script>
   // الحصول على جميع العناصر التي تحمل الكلاس "link-item"
   const links = document.querySelectorAll('.link-item');
 
   links.forEach(link => {
       link.addEventListener('click', function(event) {
-      
+
           event.preventDefault(); // لمنع الانتقال
 
           // إزالة الكلاس "colored" من جميع الروابط
@@ -146,7 +153,7 @@
 
 <style>
   .colored {
-    
+
 border-bottom:2px solid rgb(43, 12, 244);      color: #1b1bfdc6; /* يمكنك تغيير اللون كما تريد */
   }
 </style>
@@ -170,7 +177,7 @@ border-bottom:2px solid rgb(43, 12, 244);      color: #1b1bfdc6; /* يمكنك �
                         mainAccountsTableBody.innerHTML = ''; // تفريغ القائمة القديمة
                         const subAccountsTable = document.getElementById('subAccountsTable');
                         const subAccountsTableBody = document.getElementById('subAccountsTableBody');
-                        subAccountsTableBody.innerHTML = ''; // 
+                        subAccountsTableBody.innerHTML = ''; //
 
                         // عرض الحسابات الرئيسية في الجدول
                         if (data.length > 0) {

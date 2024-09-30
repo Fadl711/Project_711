@@ -1,8 +1,10 @@
-@extends('accounts.index')
-@section('accounts')
+@extends('layout')
+@section('conm')
+
+<x-navbar_accounts/>
 <h1 > انشأ حساب رئيسي  </h1>
 <form id="ajaxForm" class="p-4 md:p-5" method="POST" action="{{ route('accounts.Main_Account.update', $account->main_account_id) }}">
-    
+
     @csrf
     @method('PUT') <!-- استخدام PUT لتحديث البيانات -->
   <input type="number" name="main_account_id" value="{{$account->main_account_id}}" id="accountId">
@@ -29,7 +31,7 @@
             <select class="input-field inputSale text-left" required name="typeAccount" id="typeAccount">
                 <option selected></option>
                 @foreach ($TypesAccounts as $TypesAccount)
-                <option  value="{{$TypesAccount['id']}}" {{ $TypesAccount['id'] == $account->typeAccount ? 'selected' : '' }}>{{$TypesAccount['TypesAccountName']}} </option>
+                <option  value="{{$TypesAccount['id']}}" {{ $TypesAccount['id']->value == $account->typeAccount ? 'selected' : '' }}>{{$TypesAccount['TypesAccountName']}} </option>
                 @endforeach
             </select>
         </div>
@@ -49,7 +51,7 @@
             <select id="Type_migration" class="text-left input-field inputSale" name="Type_migration">
                 <option selected></option>
                 @foreach ($Deportattons as $Deportatton)
-                <option selected value="{{$Deportatton['id']}}" {{ $Deportatton['id'] == $account->Type_migration ? 'selected' : '' }}> {{ $Deportatton['Deportatton'] }}</option>
+                <option  value="{{$Deportatton['id']}}" {{ $Deportatton['id']->value == $account->Type_migration ? 'selected' : '' }}> {{ $Deportatton['Deportatton'] }}</option>
                 @endforeach
             </select>
         </div>
@@ -69,7 +71,7 @@
             <input type="number" autocomplete="off" name="Known_phone" id="Known_phone" class="inputSale input-field english-numbers" value="{{ $account->Known_phone }}"/>
         </div>
     </div>
-{{-- 
+{{--
     @auth
     <input type="hidden" name="User_id" required id="User_id" value="{{ Auth::user()->id }}">
     @endauth --}}

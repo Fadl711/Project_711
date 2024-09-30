@@ -15,7 +15,7 @@ return new class extends Migration
             $table->increments('sub_account_id')->unsigned();
             $table->string('sub_name');
             $table->integer('Main_id')->unsigned();
-       
+
             $table->double('debtor_amount')->nullable();
             $table->double('creditor_amount')->nullable();
 
@@ -25,7 +25,7 @@ return new class extends Migration
             $table->integer('Phone')->nullable();
             $table->timestamps();
 
-            $table->foreign('Main_id')->references('main_account_id')->on('main_accounts');
+            $table->foreign('Main_id')->references('main_account_id')->on('main_accounts')->onDelete('cascade');
             $table->foreign('User_id')->references('id')->on('users');
         });
     }
