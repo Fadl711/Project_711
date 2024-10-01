@@ -1,5 +1,7 @@
-@extends('accounts.index')
-@section('accounts')
+@extends('layout')
+@section('conm')
+
+<x-navbar_accounts/>
 <h1>انشأ حساب فرعي</h1>
 <script>
     $(document).ready(function() {
@@ -107,7 +109,7 @@
                 <label class="labelSale" for="Main_id">الحساب الرئيسي</label>
                 <select dir="ltr" class="input-field select2 inputSale" id="Main_id" name="Main_id">
                     @forelse($MainAccounts as $MainAccount)
-                    <option value="{{$MainAccount['main_account_id']}}">{{$MainAccount['account_name']}}</option> 
+                    <option value="{{$MainAccount['main_account_id']}}">{{$MainAccount['account_name']}}</option>
                     @empty
                     @endforelse
                 </select>

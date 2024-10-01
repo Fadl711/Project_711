@@ -1,21 +1,20 @@
 @extends('layout')
 @section('conm')
+<x-navbar_accounts/>
 
 
-<nav class=" ">
+{{-- <nav class=" ">
     <div class="flex ">
- <a href="{{route('Main_Account.create')}}"   class="py-2 px-4 {{ Request::is('accounts/Main_Account/create') ? '   border-b-2   text-[#0a0aeec6]' : 'border-b-0' }} border-[#0a0aeec6]   leading-none rounded hover:bg-gray-50" >اضافة حساب رئيسي</a> 
+ <a href="{{route('Main_Account.create')}}"   class="py-2 px-4 {{ Request::is('accounts/Main_Account/create') ? '   border-b-2   text-[#0a0aeec6]' : 'border-b-0' }} border-[#0a0aeec6]   leading-none rounded hover:bg-gray-50" >اضافة حساب رئيسي</a>
         <a href="{{route('Main_Account.create-sub-account')}}"  class="py-2 px-4 {{ Request::is('accounts/Main_Account/create-sub-account') ? '   border-b-2   text-[#0a0aeec6]' : 'border-b-0' }} border-[#0a0aeec6]   leading-none rounded hover:bg-gray-50" > اضافة حساب فرعي</a>
         <a href=" {{route('index_account_tree')}}" class="py-2 px-4 {{ Request::is('accounts/account_tree/index_account_tree') ? '   border-b-2   text-[#0a0aeec6]' : 'border-b-0' }} border-[#0a0aeec6]   leading-none rounded hover:bg-gray-50"  >شجرة الحسابات</a>
         <button onclick="FinancialAccounts()" type="button" class="py-2  px-4{{ Request::is('accounts/Main_Account/create') ? '   border-b-2   text-[#0a0aeec6]' : 'border-b-0' }} border-[#0a0aeec6]   leading-none rounded hover:bg-gray-50"  >  مراجعة الحسابات </button>
             <button onclick="AccountBalancing()"  id="Accountbalancing"  type="submit" class="py-2  px-4 {{ Request::is('accounts/Main_Account/create') ? '   border-b-2   text-[#0a0aeec6]' : 'border-b-0' }} border-[#0a0aeec6]   leading-none rounded hover:bg-gray-50"  > ترصيد الحسابات</button>
       </div>
-</nav>
-<div class=" w-[100%]  shadow  mt-2" id="new_account" style="">
+</nav> --}}
 
-        @yield('accounts')
-        <br>
-    </div>
+{{--         @yield('accounts')
+ --}}
     {{-- <div class="  border-x border-y border-orange-950 rounded-xl p-2 mt-2 " id="account_tree" style="display:none">
             @include('accounts.account_tree')
     </div>
@@ -37,8 +36,8 @@
 
 
 
-   
-{{--     
+
+{{--
 <h1 class="text-center  font-bold py-2">ترصيد الحسابات</h1>
 <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 overflow-x-auto   p-1">
     <h1> ترصيد حساب: ب  </h1>
@@ -62,12 +61,12 @@
             </thead>
             <tbody class="">
                 @foreach($posts as $mnn)
-               <tr class="bg-white transition-all duration-500 hover:bg-gray-50"> 
+               <tr class="bg-white transition-all duration-500 hover:bg-gray-50">
                     <td class="tagTd  border-r border-r-orange-950">{{$mnn['id']}}</td>
                     <td class="tagTd  border-r border-r-orange-950">{{$mnn['sec']}}</td>
                     <td class="tagTd  border-r border-r-orange-950">{{$mnn['idsec']}}</td>
                     <td class="tagTd   items-center font-bold ">{{$mnn['pric']}}</td>
-                    <td class="tagTd   items-center font-bold ">{{$mnn['name']}}</td> 
+                    <td class="tagTd   items-center font-bold ">{{$mnn['name']}}</td>
                     <td class="tagTd  border-r border-r-orange-950">1</td>
                     <td  id="financial_accoun" class="tagTd  border-r border-r-orange-950">الصندوق</td>
                     <td class="tagTd   items-center font-bold ">$41225</td>
@@ -81,7 +80,7 @@
                         </a>
                     </td>
                 </tr>
-             @endforeach 
+             @endforeach
             </tbody>
         </table>
     </div>
@@ -89,12 +88,12 @@
 </div>   --}}
 
 
-<script> 
+<script>
 
 // $(document).ready(function(){
-//   $("#Accountbalancing").click(function(){  
+//   $("#Accountbalancing").click(function(){
 //      $.ajax({
-    
+
 //     url:'{{route('accounts.balancing')}}',
 //     type:'GET',
 //     success:function(data){
@@ -102,9 +101,9 @@
 //         data.forEach($item=>{
 //             html+='<br>'+'<p>'+$item.name+'</P>';
 
-            
+
 //         });
-        
+
 //         $('#account_balancing').html(html)
 
 
@@ -118,8 +117,8 @@
 // ----------------------------
 
 function AccountTree(){
-    
-    
+
+
     var accounttree= document.getElementById('account_tree');
     var Chart= document.getElementById('chart');
 
@@ -209,12 +208,12 @@ function FinancialAccounts(){
 
     }
 };
- 
+
 // ____________________________________
 
 function AccountBalancing(){
-    
-    
+
+
     var accounttree= document.getElementById('account_tree');
     var financialaccount= document.getElementById('financial_account');
     var newaccount= document.getElementById('new_account');

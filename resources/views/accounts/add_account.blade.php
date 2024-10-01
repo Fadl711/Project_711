@@ -1,10 +1,10 @@
+@extends('layout')
+@section('conm')
 
-@extends('accounts.index')
-@section('accounts')
-
+<x-navbar_accounts/>
 <div class="mb-4 max-lg:flex md:flex   w-full" >
   <div class="lg:ml-2 w-[30%] max-sm:ml-2">
-  
+
     <label class="labelSale  " for="accountty"> نوع الحساب</label>
     <select   dir="ltr" id="accountty" class="inputSale " style="display:block">
       <option value="CA" selected>  </option>
@@ -40,12 +40,12 @@
         @foreach ($pos as $post)
         <option value=" {{$post['main_account_id']}}">  {{$post['account_name']}}</option>
         @endforeach
-      
+
         {{-- <option value="DE">الصندوق الرئيسي</option>
         <option value="DE">البنك  </option> --}}
       </select>
       </div>
-  
+
       <div class="mb-2">
           <label class="labelSale" for="debtor">  رصيدافتتاحي مدين (اخذ)</label>
           <input name="debtor" class="inputSale " id="debtor" type="number" placeholder="0"/>
@@ -76,7 +76,7 @@
           </div>
     </div>
     <button type="submit" id="submit" class="text-white inline-flex items-center bgcolor hover:bg-stone-400  font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-      
+
       حفظ البيانات
     </button>
   </form>
@@ -109,10 +109,10 @@
 
   <div class="flex ">
     <label class="" for="email">طبيعة الحساب</label>
-    
+
     <div class="flex px-4" >
     <label for="debtor" class="labelSale">مدين</label>
-    
+
       <input id="debtor" type="radio" value="" name="Nature_account" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
     </div>
     <div class="flex ">
@@ -151,7 +151,7 @@
         @foreach ($Deportattons as $Deportatton)
         <option >{{$Deportatton['Deportatton']}} - {{$Deportatton['id']}}</option>
         @endforeach
-       
+
       </select>
     </div>
     <div class="mb-2">
@@ -194,7 +194,7 @@
     }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js"></script>
- 
+
 <script type="text/javascript">
   // تحميل الأصناف الحالية عند تحميل الصفحة
   $(document).ready(function() {
@@ -221,8 +221,8 @@
                         $('#debtor1').text(response.posts.debtor).show();
                         $('#creditor1').text(response.posts.creditor).show();
                         // $('#successMessage').text(response.posts.message).show();
-                          
-                         
+
+
                         // إخفاء الرسالة بعد 3 ثوانٍ
                         setTimeout(function() {
                             $('#successMessage').hide();
@@ -244,15 +244,15 @@
   // addEventListener
   document.getElementById('accountty').addEventListener('focusout',function(event){
     event.preventDefault();
-    var accountty= document.getElementById('accountty').value;    
+    var accountty= document.getElementById('accountty').value;
 var acaaa= document.getElementById('SubAccount');
   var aaa= document.getElementById('mainaccount');
   const selectedOption=this.value;
-  if(selectedOption=='DE'){ 
+  if(selectedOption=='DE'){
     // alert("jfj");
     acaaa.style.display="block";
     aaa.style.display="none";
-  }else if(selectedOption=='US'){ 
+  }else if(selectedOption=='US'){
 
     aaa.style.display="block";
     acaaa.style.display="none";
@@ -272,11 +272,11 @@ var acaaa= document.getElementById('SubAccount');
   var acaaa= document.getElementById('SubAccount');
   var aaa= document.getElementById('mainaccount');
   const selectedOption=this.value;
-  if(selectedOption=='DE'){ 
+  if(selectedOption=='DE'){
     // alert("jfj");
     acaaa.style.display="block";
     aaa.style.display="none";
-  }else if(selectedOption=='US'){ 
+  }else if(selectedOption=='US'){
 
     aaa.style.display="block";
     acaaa.style.display="none";
@@ -290,17 +290,17 @@ var acaaa= document.getElementById('SubAccount');
 })
 </script>
 <script>
-  
+
 document.getElementById('accountty').addEventListener('focusin',function(){
-    var accountty= document.getElementById('accountty').value;    
+    var accountty= document.getElementById('accountty').value;
 var acaaa= document.getElementById('SubAccount');
   var aaa= document.getElementById('mainaccount');
   const selectedOption=this.value;
-  if(selectedOption=='DE'){ 
+  if(selectedOption=='DE'){
     // alert("jfj");
     acaaa.style.display="block";
     aaa.style.display="none";
-  }else if(selectedOption=='US'){ 
+  }else if(selectedOption=='US'){
 
     aaa.style.display="block";
     acaaa.style.display="none";
