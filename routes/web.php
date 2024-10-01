@@ -151,7 +151,7 @@ Route::get('/earningsReportsPdf',[reportsConreoller::class,'earningsReportsPdf']
 
 
 Route::get('/accounts/large-main-accounts/{largeAccountType}', [TreeAccountController::class, 'getMainAccountsByLargeAccountType'])->name('getMainAccountsByLargeAccountType');
-Route::get('/accounts/main-accounts/{mainAccountId}/sub-accounts', [TreeAccountController::class, 'getSubAccountsByMainAccount'])->name('getSubAccountsByMainAccount');
+Route::get('/main-accounts/{id}/sub-accounts', [MainAccountController::class, 'getSubAccounts'])->name('sub-accounts');
 Route::get('/accounts', [AccountCoctroller::class, 'index'])->name('accounts.index');
 Route::get('/accounts/Main_Account/create-sub-account', [SubaccountController::class, 'create'])->name('Main_Account.create-sub-account');
 Route::get('/accounts/account_tree/index_account_tree', [AccountCoctroller::class, 'index_account_tree'])->name('index_account_tree');

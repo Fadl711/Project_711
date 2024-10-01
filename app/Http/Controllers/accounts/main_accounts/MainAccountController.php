@@ -176,6 +176,16 @@ else{
 }
 
           
-            
+public function getSubAccounts(Request $request , $id)
+
+{
+//    $id= $request->account_debit_id;
+    $subAccounts = SubAccount::where('Main_id', $id)->get();
+    
+
+    // إرجاع النتائج بصيغة JSON لاستخدامها في Select2
+    return response()->json($subAccounts);
+ 
+}
             
 }

@@ -19,6 +19,12 @@ class SubAccount extends Model
         'Phone',
      
     ];
+
+    // // ربط الحساب الفرعي بالحساب الرئيسي
+    // public function mainAccount()
+    // {
+    //     return $this->belongsTo(MainAccount::class, 'Main_id');
+    // }
     public function daily_entries()
 {
     return $this->hasMany(DailyEntrie::class, 'sub_account_id');

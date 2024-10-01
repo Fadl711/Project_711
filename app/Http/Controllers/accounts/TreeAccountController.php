@@ -8,6 +8,7 @@ use App\Models\MainAccount;
 use App\Models\SubAccount;
 use Illuminate\Http\Request;
 use DB;
+use Illuminate\Contracts\View\View;
 
 class TreeAccountController extends Controller
 {
@@ -36,11 +37,7 @@ class TreeAccountController extends Controller
         return response()->json($mainAccounts);
     }
     // لجلب الحسابات الفرعية بناءً على الحساب الرئيسي
-    public function getSubAccountsByMainAccount($mainAccountId)
-    {
-        $subAccounts = SubAccount::where('Main_id', $mainAccountId)->get();
-        return response()->json($subAccounts);
-    }
+   
 
 
 
