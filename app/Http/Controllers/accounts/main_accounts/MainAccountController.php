@@ -127,29 +127,37 @@ return view('accounts.Main_Account.create',[ 'mainAccounts'=>$mainAccount,'subAc
     }
 
 
+    public function storc(Request $request)
+{ 
+    // إنشاء كائن جديد من SubAccount
+    $DataSubAccount = new SubAccount(); 
+    
+    // استرجاع البيانات من الطلب
+    $sub_name = $request->sub_name;
+    $Main_id = $request->Main_id;
+    $User_id = $request->User_id;
 
-            public function storc(Request $request)
-            { 
-$DataSubAccount=new SubAccount() ;
-  $sub_name = $request->sub_name;
-  $Main_id = $request->Main_id;
-  $User_id = $request->User_id;
-  // تحويل الأرقام من العربي إلى الإنجليزي
-  $debtor_amount1 = $request->input('debtor_amount', '٠١٢٣٤٥٦٧٨٩');
-  $creditor_amount1 = $request->input('creditor_amount', '٠١٢٣٤٥٦٧٨٩');
-  $Phone1 = $request->input('Phone', '٠١٢٣٤٥٦٧٨٩');
-  $Known_phone = $request->input('Known_phone');
-  $name_The_known = $request->input('name_The_known');
-  $creditor_amount = $this->convertArabicToEnglish($creditor_amount1);
-  $debtor_amount = $this->convertArabicToEnglish($debtor_amount1);            
-    $account_nametExists = SubAccount::where('Main_id', $Main_id)->pluck('sub_name');
-    foreach($account_nametExists as  $at_namet )
-    {
-if($at_namet==$sub_name)
-{
-    return response()->json(['success' => false,'message'=>' يوجد نفس هذا الاسم  من قبل'], 400);
+    // تحويل الأرقام من العربي إلى الإنجليزي
+    $debtor_amount1 = $request->input('debtor_amount', '٠١٢٣٤٥٦٧٨٩');
+    $creditor_amount1 = $request->input('creditor_amount', '٠١٢٣٤٥٦٧٨٩');
+    $Phone1 = $request->input('Phone', '٠١٢٣٤٥٦٧٨٩');
+    $Known_phone = $request->input('Known_phone');
+    $name_The_known = $request->input('name_The_known');
+
+    $creditor_amount = $this->convertArabicToEnglish($creditor_amount1);
+    $debtor_amount = $this->convertArabicToEnglish($debtor_amount1);            
+
+    /// التحقق من وجود نفس الاسم في قاعدة البيانات
+$account_names_exist = SubAccount::where('Main_id', $Main_id)->pluck('sub_name');
+
+// إذا وجد الاسم بالفعل، إرجاع استجابة خطأ
+if ($account_names_exist->contains($sub_name)) {
+    return response()->json(['success' => false, 'message' => 'يوجد نفس هذا الاسم من قبل']);
 }
 else{
+    
+
+    // تعيين القيم في كائن SubAccount
     $DataSubAccount->Main_id = $Main_id;
     $DataSubAccount->sub_name = $sub_name;
     $DataSubAccount->User_id = $User_id;
@@ -159,11 +167,15 @@ else{
     $DataSubAccount->name_The_known = !empty($name_The_known) ? $name_The_known : null;
     $DataSubAccount->Known_phone = !empty($Known_phone) ? $Known_phone : null;
 
-}
-    }
+    // حفظ البيانات في قاعدة البيانات
     $DataSubAccount->save();  
-                return  response()->json(['success' => true,'message'=>'تمت العملية بنجاح"' ,'DataSubAccount'=>$DataSubAccount]);//-
-            } 
+
+    // إرجاع استجابة نجاح
+    return response()->json(['success' => true, 'message' => 'تمت العملية بنجاح', 'DataSubAccount' => $DataSubAccount]);
+}
+}
+
+          
             
             
 }

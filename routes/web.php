@@ -93,6 +93,9 @@ Route::get('/restrictions/index', [RestrictionController::class, 'index'])->name
 Route::get('/restrictions/all_restrictions_show', [RestrictionController::class, 'all_restrictions_show'])->name('all_restrictions_show');
 Route::get('/restrictions/edit', [RestrictionController::class, 'edit'])->name('restrictions.edit');
 Route::get('/restrictions/show', [RestrictionController::class, 'show'])->name('restrictions.show');
+Route::post('/daily_restrictions/store', [RestrictionController::class, 'store'])->name('daily_restrictions.store');
+
+
 Route::get('/refunds/index', [Sale_RefundController::class, 'index'])->name('refunds.index');
 Route::get('/refunds/create/sale', [Sale_RefundController::class, 'create'])->name('sale_refunds.create');
 Route::get('/refunds/show_purchase_refund', [Purchase_RefundController::class, 'show_purchase_refund'])->name('show_purchase_refund');

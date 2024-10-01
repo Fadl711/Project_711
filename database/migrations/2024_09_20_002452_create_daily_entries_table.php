@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('daily_entries', function (Blueprint $table) {
             $table->increments('entrie_id')->unsigned();
-            $table->decimal('Amount_debit', 8, 2);
+            $table->double('Amount_debit');
             $table->integer('account_debit_id')->unsigned();
-            $table->decimal('Amount_Credit', 8, 2);
+            $table->double('Amount_Credit');
             $table->integer('account_Credit_id')->unsigned();
             $table->string('Statement');
             $table->integer('Daily_page_id')->unsigned();
