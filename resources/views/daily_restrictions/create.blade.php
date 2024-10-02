@@ -2,11 +2,30 @@
 
 @section('restrictions')
 
-<form id="dailyRestrictionsForm" action="{{ route('daily_restrictions.store') }}" method="POST" class="space-y-6">
+
+<form action="{{route('daily_restrictions.stor')}}" method="POST"  enctype="multipart/form-data">
     @csrf
-    <div class="container mx-auto py-8 px-4">
+    <div class="mb-4">
+        <label for="page_id" class="block font-medium mb-2">رقم الصفحة</label>
+@auth
+@isset($dailyPage->page_id)
+<input type="text" name="page_id" id="page_id" class=" rounded-md w-[10%]"  value="{{$dailyPage['page_id']}}">
+@endisset
+
+
+@endauth
+
+    </div>
+    <button type="submit">إنشاء صفحة جديدة</button>
+</form>
+<div id="successMessage" style="display: none;"></div>
+<div id="errorMessage" style="display: none;"></div>
+
+<form id="dailyRestrictionsForm" method="POST" class="space-y-6">
+    @csrf
+    <div class="container mx-auto  px-4">
         <!-- Title -->
-        <h2 class="text-2xl font-bold text-center mb-6">إضافة قيد يومي</h2>
+        <h2 class="text-1xl font-bold text-center ">إضافة قيد يومي</h2>
 
         <!-- Form Layout -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -16,14 +35,16 @@
                 <div class="mb-4">
                     <label for="account_debit_id" class="block font-medium mb-2">حساب المدين/الرئيسي</label>
 
-                    <select name="account_debit_id" id="account_debit_id" dir="ltr" class="block w-full p-2 border select2 rounded-md inputSale" required>
+                    <select name="account_debit_id" id="account_debit_id" dir="ltr" class="input-field  select2 inputSale" required>
                        <!-- إضافة خيارات الحسابات -->
-                       
+                       @auth
+                           
+                    
                       <option value="" selected>اختر الحساب</option>
                       @foreach ($mainAccounts as $mainAccount)
                            <option value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
                       @endforeach
-                      
+                      @endauth
                     </select>
                 </div>
                 <div class="mb-4">
@@ -31,19 +52,15 @@
                     <label for="sub_account_debit_id" class="block font-medium mb-2 ">حساب المدين/الفرعي</label>
                     @auth
 
-                    <select name="sub_account_debit_id" dir="ltr" class="input-field select2 inputSale" id="sub_account_debit_id">
+                    <select name="sub_account_debit_id" name="sub_account_debit_id" dir="ltr" class="input-field select2 inputSale" id="sub_account_debit_id">
                         <!-- سيتم تعبئة الخيارات بناءً على الحساب الرئيسي المحدد -->
-                     
-                 
-                      
+                        <option value="" selected>اختر الحساب الفرعي</option>
 
-                    </select>
+                 
+                        </select>
                     @endauth
                 </div>
-                <div>
-                    <label for="Amount_debit" class="block font-medium mb-2">المبلغ المدين</label>
-                    <input name="Amount_debit" type="number" step="0.01" class="block w-full p-2 border rounded-md inputSale " placeholder="أدخل المبلغ" required>
-                </div>
+             
             </div>
 
             <!-- حساب الدائن -->
@@ -51,59 +68,79 @@
                 <h3 class="text-lg font-semibold mb-4">الدائن</h3>
                 <div class="mb-4">
                     <label for="account_Credit_id" class="block font-medium mb-2">حساب الدائن/الرئيسي</label>
-                    <select name="account_Credit_id" id="account_Credit_id" class="block w-full p-2 select2 border rounded-md inputSale" required>
+                    <select name="account_Credit_id" id="account_Credit_id" class=" select2 inputSale" required>
                         <option value="" selected>اختر الحساب</option>
-                        <option value="" selected>اختر الحساب</option>
-                        @foreach ($mainAccounts as $mainAccount)
-                             <option value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
+
+@auth
+    
+                       @foreach ($mainAccounts as $mainAccount)
+                             <option value="{{$mainAccount->main_account_id}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
                         @endforeach
+                        @endauth 
                                             </select>
                 </div>
-                <div class="mb-4">
+                <div class="mb-4 ">
                     <label for="sub_account_Credit_id" class="block font-medium mb-2">حساب الدائن/الفرعي</label>
-                    <select name="sub_account_Credit_id" id="sub_account_Credit_id" class="block w-full select2 p-2 border rounded-md inputSale">
+                    <select name="sub_account_Credit_id"  step="0.01" id="sub_account_Credit_id" class="block w-full select2 p-2 border rounded-md inputSale">
                         <option value="" selected>اختر الحساب الفرعي</option>
                         <!-- سيتم تعبئة الخيارات بناءً على الحساب الرئيسي المحدد -->
                     </select>
                 </div>
-                <div>
-                    <label for="Amount_Credit" class="block font-medium mb-2">المبلغ الدائن</label>
-                    <input name="Amount_Credit" type="number" step="0.01" class="block w-full p-2 border rounded-md inputSale" placeholder="أدخل المبلغ" required>
-                </div>
+                
             </div>
         </div>
-
         <!-- تفاصيل إضافية -->
         <div class="shadow-lg rounded-lg p-4 bg-white border">
-            <h3 class="text-lg font-semibold mb-4">تفاصيل إضافية</h3>
+          <h3 class="text-lg font-semibold mb-4">تفاصيل إضافية</h3>
+          <div class="grid grid-cols-2 md:grid-cols-2 gap-4">
 
-            <div class="mb-4">
-                <label for="Statement" class="block font-medium mb-2">البيان</label>
-                <textarea name="Statement" class="block w-full p-2 border rounded-md inputSale" placeholder="أدخل البيان" rows="4" required></textarea>
-            </div>
-
-            <div class="mb-4">
-                <label for="Currency_id" class="block font-medium mb-2">العملة</label>
-                <select name="Currency_id" id="Currency_id" class="block w-full p-2 border rounded-md inputSale" required>
-                    <option value="" selected>اختر العملة</option>
-                    <!-- إضافة خيارات العملات -->
-                </select>
-            </div>
-
-            <input type="hidden" name="Daily_page_id" value="1">
-            <input type="hidden" name="User_id" value="{{ Auth::user()->id }}">
+          <div>
+            <label for="Amount_debit" class="block font-medium mb-2">المبلغ المدين</label>
+            <input name="Amount_debit" type="number" step="0.01" class=" inputSale " placeholder="أدخل المبلغ" required>
         </div>
+          
 
-        <!-- Submit Button -->
-        <div class="flex justify-center">
+            <div class="">
+                <label for="Currency_name" class="block font-medium mb-2">العملة</label>
+                <select   dir="ltr" id="Currency_name" class="inputSale " name="Currency_name"  required>
+                    @auth
+                        
+                   
+                  @foreach ($curr as $cur)
+                  <option @isset($cu)
+                  @selected($cur->currency_id==$cu->Currency_id)
+                  @endisset
+                  value="{{$cur->currency_name}}">{{$cur->currency_name}}</option>
+                   @endforeach
+                   @endauth
+                  </select>
+            </div>
+        </div>
+            <div class="">
+                <label for="Statement" class="block font-medium mb-2">البيان</label>
+                <textarea name="Statement" id="Statement" class="block w-full p-2 border rounded-md inputSale" placeholder="أدخل البيان" rows="4" required></textarea>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-2 gap-4">
+
+            <div class=" justify-">
+              <button type="submit" id="submitButton" class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  حفظ القيد
+              </button>
+          </div>
+          <div class=" justify-">
             <button type="submit" id="submitButton" class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                حفظ القيد
+                حفظ وطباعه
             </button>
         </div>
+            </div>
+            <input type="hidden" name="User_id" value="{{ Auth::user()->id }}">
+       
+        </div>
+       
     </div>
 </form>
+<script src="{{url('payments.js')}}">   </script>
 
-{{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
 <script>
   $(document).ready(function() {
       // تفعيل Select2
@@ -112,69 +149,57 @@
       // التركيز على الحقل الأول عند التحميل
       $('#account_debit_id').focus();
   
-      // التنقل بين الحقول باستخدام أزرار الأسهم
-      $('.inputSale').on('keydown', function(e) {
-          var inputs = $('.inputSale');
-          var currentIndex = inputs.index(this);
-  
-          // السهم السفلي (Down Arrow)
-          if (e.which === 40) {
-              e.preventDefault();
-              if (currentIndex + 1 < inputs.length) {
-                  inputs.eq(currentIndex + 1).focus();
-              }
-          }
-  
-          // السهم العلوي (Up Arrow)
-          if (e.which === 38) {
-              e.preventDefault();
-              if (currentIndex - 1 >= 0) {
-                  inputs.eq(currentIndex - 1).focus();
-              }
-          }
-      });
+      
   
       // إضافة مؤشر تحميل
-      function toggleLoading(state) {
-          if (state) {
-              $('#submitButton').prop('disabled', true).text('جارٍ الحفظ...');
-          } else {
-              $('#submitButton').prop('disabled', false).text('حفظ القيد');
-          }
-      }
-  
+     
       // إرسال النموذج باستخدام AJAX بدون تحديث الصفحة
-      $('#dailyRestrictionsForm').on('submit', async function(e) {
-          e.preventDefault(); // منع التحديث الافتراضي للصفحة
-  
-          try {
-              toggleLoading(true); // تشغيل مؤشر التحميل
-  
-              let formData = $(this).serialize(); // تحويل البيانات لإرسالها
-              let response = await fetch($(this).attr('action'), {
-                  method: 'POST',
-                  headers: {
-                      'Content-Type': 'application/x-www-form-urlencoded',
-                      'X-CSRF-TOKEN': $('input[name="_token"]').val() // إضافة التوكن إذا كنت تستخدم Laravel
-                  },
-                  body: formData
-              });
-  
-              if (!response.ok) throw new Error('فشل في حفظ البيانات');
-  
-              let result = await response.json();
-  
-              // هنا يتم التعامل مع الرد بعد النجاح
-              alert('تم حفظ القيد بنجاح');
-              $('#dailyRestrictionsForm')[0].reset(); // تصفية الحقول
-          } catch (error) {
-              console.error(error);
-              alert('حدث خطأ أثناء حفظ القيد. حاول مرة أخرى.');
-          } finally {
-              toggleLoading(false); // إيقاف مؤشر التحميل
-          }
-      });
-  
+      $(document).ready(function() {
+        $('#dailyRestrictionsForm').on('submit', function(event) {
+            event.preventDefault(); // منع إعادة تحميل الصفحة
+
+            // تجميع البيانات من النموذج
+            var formData = $(this).serialize();
+
+            // إرسال الطلب باستخدام AJAX
+            $.ajax({
+                url: '{{ route("daily_restrictions.store") }}',
+                method: 'POST',
+                data: formData,
+                success: function(data) {
+                    if (data.success) {
+                        // إظهار رسالة النجاح
+                        $('#successMessage').show().text(data.success);
+                        $('#dailyRestrictionsForm')[0].reset(); // إعادة تعيين النموذج
+                        // إخفاء الرسالة بعد 3 ثوانٍ
+                        setTimeout(function() {
+                            $('#successMessage').hide();
+                        }, 3000);
+                    }else
+                     {
+                        $('#successMessage').show().text(data.success);
+                        setTimeout(function() {
+                            $('#successMessage').hide();
+                        }, 3000);
+
+                    }
+                },
+                error: function(xhr) {
+                    if (xhr.status === 422) {
+                        // إظهار الأخطاء عند وجود أخطاء في التحقق
+                        var errors = xhr.responseJSON.errors;
+                        var errorMessage = '';
+                        $.each(errors, function(key, value) {
+                            errorMessage += value[0] + '<br>'; // إضافة الأخطاء
+                        });
+                        $('#errorMessage').show().html(errorMessage);
+                    } else {
+                        $('#errorMessage').show().text('حدث خطأ أثناء الحفظ.');
+                    }
+                }
+            });
+        });
+    });
       // عند اختيار الحساب الرئيسي (المدين)
       $('#account_debit_id').on('change', function() {
           const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي (المدين)

@@ -1,183 +1,42 @@
-document.getElementById('debit').addEventListener('input',function(){
-    var debits= document.getElementById('debit').value;        
-    var credits= document.getElementById('credit').value;
-    var optionCuostomar= document.getElementById('optionCuostomar1');
+   // منع السلوك الافتراضي لزر السهم
+   $(document).on('keydown', function(event) {
+    if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+        var currentIndex = $('.input-field').index(document.activeElement);
 
-    var  purchases="المشتريات", expenses="المصروفات"
-     ,bank="البنك",box="الصندوق",supplir="الموردين",cutomers="العملاء"
-     ,sales="المبيعات",revenue="الإيرادات",capital="راس المال",
-     saleAllowed="مسموحات المبيعات",purchasingAllowed="مسموحات المشتريات";
- if(debits==purchases)
- { 
-    if(credits==box)
-     {
-        expensesBlock();
-
-      } 
-        else if(credits==bank)
-        {
-           expensesBlock();
-
+        if (event.key === "ArrowRight") {
+            $('.input-field').eq(currentIndex + 1).focus(); // نقل التركيز إلى الحقل التالي
+        } else if (event.key === "ArrowLeft") {
+            $('.input-field').eq(currentIndex - 1).focus(); // نقل التركيز إلى الحقل السابق
         }
-        else if(credits==supplir)
-        {
-         supplirsBlock();
-
-        } else {supplirsNone();}
-
- } 
- else if(debits==expenses)
- {
-    if(credits==box)
-     {
-        expensesBlock();
-
-      }  else if(credits==bank)
-        {
-           expensesBlock();
-
-        } else {supplirsNone();}
- }
- else if(debits==box)
- { 
-   // optionCuostomar.style.display="none";
-
-
-    if(credits==bank){expensesBlock();}
-        else if(credits==cutomers)
-        {
-            customersBlock();
-
-        }else if(credits==sales)
-        {
-            customersBlock();
-
-        }else if(credits==revenue)
-        {
-            expensesBlock();
-
-        }else if(credits==capital){expensesBlock();} else {supplirsNone();}
-
-
- }
- else if(debits==bank)
- {
-     if(credits==box){expensesBlock();}
-        else if(credits==cutomers){customersBlock();}
-        else if(credits==sales){customersBlock();}
-        else if(credits==revenue){expensesBlock();}
-        else if(credits==capital){expensesBlock();} else {supplirsNone();}
- }
-  else if(debits==supplir)
- {
-   if(credits==box){supplirsBlock();}
-   else if(credits==bank){supplirsBlock();}
-   else if(credits==purchasingAllowed){supplirsBlock();} else {supplirsNone();}
- }
- else if(debits==cutomers)
- {
-    if(credits==sales){customersBlock();}
-   else  if(credits==saleAllowed){customersBlock();} 
-   else  if(credits==box){customersBlock();}  
-   else if(credits==bank){customersBlock();}  else {supplirsNone();}
- }
- else {supplirsNone();}
- });
-// __________________  credit الدائن المرسل  ______________________
- document.getElementById('credit').addEventListener('input',function(){
-     var credits= document.getElementById('credit').value;
-     var debits= document.getElementById('debit').value;        
-     var  purchases="المشتريات", expenses="المصروفات",bank="البنك",box="الصندوق",supplir="الموردين",cutomers="العملاء",
-     sales="المبيعات",revenue="الإيرادات",capital="راس المال",saleAllowed="مسموحات المبيعات",purchasingAllowed="مسموحات المشتريات";
-
-     if(debits==purchases)
-     { 
-      if(credits==box){expensesBlock();} 
-        else if(credits==bank){expensesBlock();}
-        else if(credits==supplir){supplirsBlock();}else {supplirsNone();}
-     } 
-     else if(debits==expenses)
-     {
-      if(credits==box){expensesBlock();} 
-       else if(credits==bank){expensesBlock();}else {supplirsNone();}
-     }
-     else if(debits==box)
-     {
-       if(credits==bank){expensesBlock();}
-        else if(credits==cutomers){customersBlock();}
-        else if(credits==sales){customersBlock();}
-        else if(credits==revenue){expensesBlock();}
-        else if(credits==capital){expensesBlock();}else {supplirsNone();}
-     }
-     else if(debits==bank)
-      {
-       if(credits==box){expensesBlock();}
-        else if(credits==cutomers){customersBlock();}
-        else if(credits==sales){customersBlock();}
-        else if(credits==revenue){expensesBlock();}
-        else if(credits==capital)
-        {expensesBlock();}else {supplirsNone();}
-      } 
-     else if(debits==supplir)
-      {
-              if(credits==box){supplirsBlock();}
-         else if(credits==bank){supplirsBlock();}
-         else if(credits==purchasingAllowed){supplirsBlock();} else {supplirsNone();}
-     }
-     else if(debits==cutomers)
-     {
-             if(credits==sales){customersBlock();}
-       else  if(credits==saleAllowed){customersBlock();}
-       else  if(credits==box){customersBlock();}
-       else  if(credits==bank){customersBlock();} else {supplirsNone();}
-     }
- else {supplirsNone();}
-});
- function customersBlock(){   // ____________________ data customers _______________________      
- var custome=document.getElementById('supplirs');
- custome.style.display="block";
-  document.getElementById('labelName').textContent='اسم العميل';
-  document.getElementById('thName').textContent='اسم العميل';
-  document.getElementById('labelId').textContent=' رقم العميل';
-  document.getElementById('thId').textContent=' رقم العميل';
     }
+});
 
-  function supplirsNone(){       // _____________________ data supplirs _______________________________    
-  var supplir=document.getElementById('supplirs');
-  supplir.style.display="none";
-     }
-  function supplirsBlock(){
-  var supplir=document.getElementById('supplirs');
-  supplir.style.display="block";
-  document.getElementById('labelName').innerHTML='اسم المورد';
-  document.getElementById('thName').innerHTML='اسم المورد';
-  document.getElementById('labelId').innerHTML=' رقم المورد';
-  document.getElementById('thId').innerHTML=' رقم المورد';
-              }
-              function expensesBlock(){   // ____________________ data customers _______________________      
-               var custome=document.getElementById('supplirs');
-               custome.style.display="block";
-               document.getElementById('labelName').textContent='اسم الحساب';
-               //  document.getElementById('thName').textContent='اسم العميل';
-              document.getElementById('labelId').textContent=' رقم الحساب';
-               //  document.getElementById('thId').textContent=' رقم العميل';
-               //  
-                 }
-                 function tBlock(){   // ____________________ data customers _______________________      
-                  var custome=document.getElementById('supplirs');
-                  custome.style.display="block";
-               //   var none= document.getElementById('labelName');
-               //   var accountName= document.getElementById('accountName');
-               //   var accountName= document.getElementById('accountName');
+$('.inputSale').on('keydown', function(e) {
+  var inputs = $('.inputSale');
+  var currentIndex = inputs.index(this);
+
+  // السهم السفلي (Down Arrow)
+  if (e.which === 40) {
+      e.preventDefault();
+      if (currentIndex + 1 < inputs.length) {
+          inputs.eq(currentIndex + 1).focus();
+      }
+  }
+
+  // السهم العلوي (Up Arrow)
+  if (e.which === 38) {
+      e.preventDefault();
+      if (currentIndex - 1 >= 0) {
+          inputs.eq(currentIndex - 1).focus();
+      }
+  }
+});
 
 
-               //  var none2 =document.getElementById('labelId');
-               //  none2.style.display="none";
-               //   none.style.display="none";
-               //   accountName.style.display="none";
-
-
-                  //  document.getElementById('thName').textContent='اسم العميل';
-                  //  document.getElementById('thId').textContent=' رقم العميل';
-                  //  
-                    }
+function toggleLoading(state) {
+  if (state) {
+      $('#submitButton').prop('disabled', true).text('جارٍ الحفظ...');
+  } else {
+      $('#submitButton').prop('disabled', false).text('حفظ القيد');
+  }
+}

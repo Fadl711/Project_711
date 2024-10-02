@@ -83,17 +83,17 @@ return view('accounts.Main_Account.create',[ 'mainAccounts'=>$mainAccount,'subAc
         ]);
 
      //   __________________________ SubAccount ______________________________________
-        $data=MainAccount::where('User_id',$User_id)->latest()->first();
-        $DataSubAccount=new SubAccount();
-        $DataSubAccount->Main_id=$data->main_account_id;
-        $DataSubAccount->sub_name=$account_name ;
-        $DataSubAccount-> User_id= $User_id;
-        $DataSubAccount->debtor_amount = !empty($debtor_amount) ? $debtor_amount :0;
-        $DataSubAccount-> creditor_amount= !empty($creditor_amount ) ? $creditor_amount :0;
-        $DataSubAccount->Phone = ($Phone1 ) ;
-        $DataSubAccount-> name_The_known= !empty($name_The_known ) ? $name_The_known : null ;
-        $DataSubAccount->Known_phone = !empty($Known_phone ) ? $Known_phone : null ;
-        $DataSubAccount->save();
+        // $data=MainAccount::where('User_id',$User_id)->latest()->first();
+        // $DataSubAccount=new SubAccount();
+        // $DataSubAccount->Main_id=$data->main_account_id;
+        // $DataSubAccount->sub_name=$account_name ;
+        // $DataSubAccount-> User_id= $User_id;
+        // $DataSubAccount->debtor_amount = !empty($debtor_amount) ? $debtor_amount :0;
+        // $DataSubAccount-> creditor_amount= !empty($creditor_amount ) ? $creditor_amount :0;
+        // $DataSubAccount->Phone = ($Phone1 ) ;
+        // $DataSubAccount-> name_The_known= !empty($name_The_known ) ? $name_The_known : null ;
+        // $DataSubAccount->Known_phone = !empty($Known_phone ) ? $Known_phone : null ;
+        // $DataSubAccount->save();
         return response()->json(['success' => true, 'message' => 'تمت العملية بنجاح', 'DataSubAccount' => $mainAccount], 201);
     }
 
@@ -118,10 +118,6 @@ return view('accounts.Main_Account.create',[ 'mainAccounts'=>$mainAccount,'subAc
     public function edit($id)
     {
         $account = MainAccount::where('main_account_id', $id)->first();
-        // $TypesAccounts = ...; // استرجاع أنواع الحسابات من قاعدة البيانات
-        // $Deportattons =   ;// استرجاع ترحيلات الحسابات من قاعدة البيانات
-
-        // , 'TypesAccounts', 'Deportattons'
         return view('accounts.Main_Account.edit-main-account',['account'=>$account] );
     }
 
@@ -178,7 +174,6 @@ else{
 public function getSubAccounts(Request $request , $id)
 
 {
-//    $id= $request->account_debit_id;
     $subAccounts = SubAccount::where('Main_id', $id)->get();
     
 

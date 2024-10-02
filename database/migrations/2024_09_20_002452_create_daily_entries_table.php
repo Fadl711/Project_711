@@ -17,15 +17,14 @@ return new class extends Migration
             $table->integer('account_debit_id')->unsigned();
             $table->double('Amount_Credit');
             $table->integer('account_Credit_id')->unsigned();
-            $table->string('Statement');
+            $table->string('Statement')->nullable();
             $table->integer('Daily_page_id')->unsigned();
-            $table->integer('Currency_id')->unsigned();
+            $table->string('Currency_name')->nullable();
             $table->integer('User_id')->unsigned();
             $table->timestamps();
 
             $table->foreign('account_debit_id')->references('sub_account_id')->on('sub_accounts');
             $table->foreign('account_Credit_id')->references('sub_account_id')->on('sub_accounts');
-            $table->foreign('Currency_id')->references('currency_id')->on('currencies');
             $table->foreign('User_id')->references('id')->on('users');
             $table->foreign('Daily_page_id')->references('page_id')->on('general_journal');
 

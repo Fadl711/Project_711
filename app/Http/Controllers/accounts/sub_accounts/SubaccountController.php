@@ -45,9 +45,7 @@ class SubaccountController extends Controller
     public function store(Request $request)
     { 
          $MainAccounts=MainAccount::all();
-        //  dd( $MainAccounts);
-        //  return view(['MainAccounts'=> $MainAccounts,'TypesAccounts'=> $dataTypesAccounts,'Deportattons'=> $dataDeportattons]);
-        $sub_name=$request->sub_name;
+             $sub_name=$request->sub_name;
 
         $account_nametExists = SubAccount::where('sub_name', $sub_name)->exists();
             if ($account_nametExists)

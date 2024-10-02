@@ -10,6 +10,7 @@ use App\Models\Category;
 use App\Models\MainAccount;
 use App\Models\SubAccount;
 use App\Models\CurrencySetting;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -40,18 +41,25 @@ class AppServiceProvider extends ServiceProvider
            ['TypesAccountName' => Deportatton::REVENUE, 'id' => AccountType::REVENUE],
        
         ];
+        $today = Carbon::now()->toDateString();  // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
+
+    // $dailyPage = GeneralJournal::whereDate('created_at', $today)->first(); // البحث عن الصفحة
+    
         View::share([
         
             'TypesAccounts'=>$TypesAccountName,
             'Deportattons'=>$dataDeportattons,
+            'today '=> Carbon::now()->toDateString(),
         ]);
 
         $cate=Category::all();
         $buss=BusinessData::all()->first();
         $cu=CurrencySetting::first();
+        
         View::share([
             'cate'=>$cate,
             'cu'=>$cu,
+            
         ]);
         if(isset($buss)){
 

@@ -3,68 +3,111 @@
 namespace App\Http\Controllers\DailyRestrictionController;
 
 use App\Http\Controllers\Controller;
+use App\Models\Currency;
 use App\Models\DailyEntrie;
 use App\Models\GeneralJournal;
 use App\Models\MainAccount;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+
+use Illuminate\Support\Facades\DB;
 
 class RestrictionController extends Controller
 {
     //
+   
+    // تحقق من صحة البيانات
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'account_debit_id' => 'required|exists:accounts,id',
-            'sub_account_debit_id' => 'nullable|exists:accounts,id',
-            'Amount_debit' => 'required|numeric|min:0',
-            'account_Credit_id' => 'required|exists:accounts,id',
-            'sub_account_Credit_id' => 'nullable|exists:accounts,id',
-            'Amount_Credit' => 'required|numeric|min:0',
+
+        // $mainAccount=MainAccount::all();
+        // dd($mainAccount);
+
+
+        // التحقق من صحة البيانات المدخلة
+        $validated = $request->validate([
+            'sub_account_debit_id' => 'required|integer',
+            'sub_account_debit_id' => 'required|integer',
+            'Amount_debit' => 'required|numeric',
+            'account_Credit_id' => 'required|integer',
+            'sub_account_Credit_id' => 'required|integer',
+            'Amount_debit' => 'required|numeric', // تأكد من تطابق المبلغين
             'Statement' => 'required|string',
-            'Currency_id' => 'required|exists:currencies,id',
-            'User_id' => 'required|exists:users,id',
+            'Currency_name' => 'required|string', // تأكد من استخدام الاسم الصحيح هنا
+            'User_id' => 'required|integer', // تأكد من إضافة User_id إذا كان مطلوباً
         ]);
-
-        // التأكد من تساوي المبلغ المدين والمبلغ الدائن
-        if ($validatedData['Amount_debit'] != $validatedData['Amount_Credit']) {
-            return response()->json(['error' => 'المبلغ المدين يجب أن يساوي المبلغ الدائن'], 400);
+        // التأكد من عدم اختيار حسابين فرعيين متماثلين
+        if ($request->sub_account_debit_id === $request->sub_account_Credit_id) {
+            return response()->json(['success' => 'يجب عدم تساوي الحسابات الفرعية المدين والدائن.']);
         }
 
-        // التأكد من وجود صفحة بتاريخ اليوم
-        $today = date('Y-m-d'); // الحصول على تاريخ اليوم
-        $dailyPage = GeneralJournal::whereDate('created_at', $today)
-            ->where('User_id', Auth::user()->id) // يمكنك تعديل هذا الشرط حسب الحاجة
-            ->first();
-
+        // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
+        $today = Carbon::now()->toDateString();
+        $dailyPage = GeneralJournal::whereDate('created_at', $today)->first();
+    
+        // إذا لم توجد صفحة، قم بإنشائها
         if (!$dailyPage) {
-            // إنشاء صفحة جديدة إذا لم توجد صفحة بتاريخ اليوم
-            $dailyPage = new GeneralJournal();
-            $dailyPage->User_id = Auth::user()->id; // حفظ معرف المستخدم الحالي
-            $dailyPage->created_at = now(); // تعيين تاريخ الإنشاء
-            $dailyPage->save(); // حفظ الصفحة الجديدة
-        }
-
+            $dailyPage = GeneralJournal::create([]);
+        } 
+        
+       
         // حفظ القيد اليومي
-        $restriction = new DailyEntrie();
-        $restriction->account_debit_id = $validatedData['account_debit_id'];
-        $restriction->sub_account_debit_id = $validatedData['sub_account_debit_id'];
-        $restriction->Amount_debit = $validatedData['Amount_debit'];
-        $restriction->account_Credit_id = $validatedData['account_Credit_id'];
-        $restriction->sub_account_Credit_id = $validatedData['sub_account_Credit_id'];
-        $restriction->Amount_Credit = $validatedData['Amount_Credit'];
-        $restriction->Statement = $validatedData['Statement'];
-        $restriction->Currency_id = $validatedData['Currency_id'];
-        $restriction->Daily_page_id = $dailyPage->id; // حفظ معرف الصفحة اليومية
-        $restriction->User_id = Auth::user()->id; // حفظ معرف المستخدم الحالي
-        $restriction->save();
+        $dailyEntrie = new DailyEntrie();
+    $dailyEntrie->account_debit_id = $validated['sub_account_debit_id'];
+    $dailyEntrie->Amount_debit = $validated['Amount_debit'];
+    $dailyEntrie->account_Credit_id = $validated['sub_account_Credit_id'];
+    $dailyEntrie->Amount_Credit = $validated['Amount_debit'];
+    $dailyEntrie->Statement = $validated['Statement'];
+    $dailyEntrie->Currency_name = $validated['Currency_name']; // استخدم الاسم الصحيح هنا
+    $dailyEntrie->Daily_page_id = $dailyPage->page_id; // حفظ معرف الصفحة اليومية
+    $dailyEntrie->User_id = $validated['User_id']; // تأكد من استخدام المتغيرات المصرح بها
 
-        // الرد بنجاح العملية
-        return response()->json(['success' => 'تم حفظ القيد بنجاح']);
+    $dailyEntrie->save();
+    
+        return response()->json(['success' => 'تم حفظ القيد بنجاح'])
+        ;
     }
+public function stor(Request $request){
+    $today = Carbon::now()->toDateString(); // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
+    $dailyPage = GeneralJournal::whereDate('created_at', $today)->first(); // البحث عن الصفحة
+    
+    if ($dailyPage) {
+      
+            $generalJournal1=GeneralJournal::all();
+            $mainAccount=MainAccount::all();
+        $curr=Currency::all();
+        return view('daily_restrictions.create',compact('curr','dailyPage'),['mainAccounts'=> $mainAccount]);
+        
+    } else {
+        $Statement=$request->Statement;
+             GeneralJournal::create([
+            ]);
+            // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
+            $today = Carbon::now()->toDateString(); 
+            $dailyPage = GeneralJournal::whereDate('created_at', $today)->first(); // البحث عن الصفحة
+            if ($dailyPage) {
+                // إذا تم العثور على الصفحة، عرض رقم الصفحة
+                $generalJournal1=GeneralJournal::all();
+                $mainAccount=MainAccount::all();
+            // dd($generalJournal1);
+            $curr=Currency::all();
+            return view('daily_restrictions.create',compact('curr','dailyPage'),['mainAccounts'=> $mainAccount]);
+            }
+    }
+ 
+}
+
     public function create(){
         $mainAccount=MainAccount::all();
-        return view('daily_restrictions.create',['mainAccounts'=> $mainAccount]);
+        $curr=Currency::all();
+        // الحصول على تاريخ اليوم
+        $today = Carbon::now()->toDateString(); // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
+
+        $dailyPage = GeneralJournal::whereDate('created_at', $today)->first(); // البحث عن الصفحة
+      
+        //}
+        return view('daily_restrictions.create',compact('curr','dailyPage'),['mainAccounts'=> $mainAccount,$dailyPage]);
 
     }
     public function index(){

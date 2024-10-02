@@ -3,6 +3,8 @@
 
 <x-navbar_accounts/>
 <h1>انشأ حساب فرعي</h1>
+<script src="{{url('payments.js')}}">   </script>
+
 <script>
     $(document).ready(function() {
         // تهيئة Select2 مع تحديد الحد الأدنى لعدد المدخلات المطلوبة
@@ -80,17 +82,7 @@
         });
 
         // منع السلوك الافتراضي لزر السهم
-        $(document).on('keydown', function(event) {
-            if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
-                var currentIndex = $('.input-field').index(document.activeElement);
-
-                if (event.key === "ArrowRight") {
-                    $('.input-field').eq(currentIndex + 1).focus(); // نقل التركيز إلى الحقل التالي
-                } else if (event.key === "ArrowLeft") {
-                    $('.input-field').eq(currentIndex - 1).focus(); // نقل التركيز إلى الحقل السابق
-                }
-            }
-        });
+      
     });
 </script>
 

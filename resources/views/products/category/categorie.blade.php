@@ -53,6 +53,8 @@
             </thead>
             <tbody class="divide-y divide-gray-300 ">
 
+@auth
+    
 
                 @foreach ($cate as $cat)
                 <tr class="bg-white transition-all duration-500 hover:bg-gray-50 border-b-2">
@@ -101,6 +103,7 @@
                   </tr>
 
                     @endforeach
+                    @endauth
             </tbody>
         </table>
     </div>
