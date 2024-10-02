@@ -38,8 +38,8 @@
                     <select name="account_debit_id" id="account_debit_id" dir="ltr" class="input-field  select2 inputSale" required>
                        <!-- إضافة خيارات الحسابات -->
                        @auth
-                           
-                    
+
+
                       <option value="" selected>اختر الحساب</option>
                       @foreach ($mainAccounts as $mainAccount)
                            <option value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
@@ -56,11 +56,11 @@
                         <!-- سيتم تعبئة الخيارات بناءً على الحساب الرئيسي المحدد -->
                         <option value="" selected>اختر الحساب الفرعي</option>
 
-                 
+
                         </select>
                     @endauth
                 </div>
-             
+
             </div>
 
             <!-- حساب الدائن -->
@@ -72,11 +72,11 @@
                         <option value="" selected>اختر الحساب</option>
 
 @auth
-    
+
                        @foreach ($mainAccounts as $mainAccount)
                              <option value="{{$mainAccount->main_account_id}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
                         @endforeach
-                        @endauth 
+                        @endauth
                                             </select>
                 </div>
                 <div class="mb-4 ">
@@ -86,7 +86,7 @@
                         <!-- سيتم تعبئة الخيارات بناءً على الحساب الرئيسي المحدد -->
                     </select>
                 </div>
-                
+
             </div>
         </div>
         <!-- تفاصيل إضافية -->
@@ -98,14 +98,14 @@
             <label for="Amount_debit" class="block font-medium mb-2">المبلغ المدين</label>
             <input name="Amount_debit" type="number" step="0.01" class=" inputSale " placeholder="أدخل المبلغ" required>
         </div>
-          
+
 
             <div class="">
                 <label for="Currency_name" class="block font-medium mb-2">العملة</label>
-                <select   dir="ltr" id="Currency_name" class="inputSale " name="Currency_name"  required>
+                <select   dir="ltr" id="Currency_name" class="inputSale " name="Currency_name"  >
                     @auth
-                        
-                   
+
+
                   @foreach ($curr as $cur)
                   <option @isset($cu)
                   @selected($cur->currency_id==$cu->Currency_id)
@@ -133,10 +133,13 @@
             </button>
         </div>
             </div>
+            @auth
+
             <input type="hidden" name="User_id" value="{{ Auth::user()->id }}">
-       
+            @endauth
+
         </div>
-       
+
     </div>
 </form>
 <script src="{{url('payments.js')}}">   </script>
@@ -145,14 +148,14 @@
   $(document).ready(function() {
       // تفعيل Select2
       $('.select2').select2();
-  
+
       // التركيز على الحقل الأول عند التحميل
       $('#account_debit_id').focus();
-  
-      
-  
+
+
+
       // إضافة مؤشر تحميل
-     
+
       // إرسال النموذج باستخدام AJAX بدون تحديث الصفحة
       $(document).ready(function() {
         $('#dailyRestrictionsForm').on('submit', function(event) {
@@ -203,10 +206,10 @@
       // عند اختيار الحساب الرئيسي (المدين)
       $('#account_debit_id').on('change', function() {
           const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي (المدين)
-  
+
           // تفريغ القائمة الفرعية إذا لم يتم اختيار حساب رئيسي
           $('#sub_account_debit_id').empty().append('<option value="">اختر الحساب الفرعي</option>');
-  
+
           // التحقق من وجود قيمة
           if (mainAccountId) {
               // طلب AJAX لجلب الحسابات الفرعية بناءً على الحساب الرئيسي
@@ -216,13 +219,13 @@
                   dataType: 'json',
                   success: function(data) {
                       // تعبئة الحسابات الفرعية الجديدة
-                      const subAccountOptions = data.map(subAccount => 
+                      const subAccountOptions = data.map(subAccount =>
                           `<option value="${subAccount.sub_account_id}">${subAccount.sub_name}</option>`
                       ).join('');
-  
+
                       // إضافة الخيارات الجديدة إلى القائمة الفرعية
                       $('#sub_account_debit_id').append(subAccountOptions);
-  
+
                       // إعادة تهيئة Select2 بعد إضافة الخيارات
                       $('#sub_account_debit_id').select2('destroy').select2();
                   },
@@ -232,14 +235,14 @@
               });
           }
       });
-  
+
       // عند اختيار الحساب الرئيسي (الدائن)
       $('#account_Credit_id').on('change', function() {
           const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي (الدائن)
-  
+
           // تفريغ القائمة الفرعية إذا لم يتم اختيار حساب رئيسي
           $('#sub_account_Credit_id').empty().append('<option value="">اختر الحساب الفرعي</option>');
-  
+
           // التحقق من وجود قيمة
           if (mainAccountId) {
               // طلب AJAX لجلب الحسابات الفرعية بناءً على الحساب الرئيسي
@@ -249,13 +252,13 @@
                   dataType: 'json',
                   success: function(data) {
                       // تعبئة الحسابات الفرعية الجديدة
-                      const subAccountOptions = data.map(subAccount => 
+                      const subAccountOptions = data.map(subAccount =>
                           `<option value="${subAccount.sub_account_id}">${subAccount.sub_name}</option>`
                       ).join('');
-  
+
                       // إضافة الخيارات الجديدة إلى القائمة الفرعية
                       $('#sub_account_Credit_id').append(subAccountOptions);
-  
+
                       // إعادة تهيئة Select2 بعد إضافة الخيارات
                       $('#sub_account_Credit_id').select2('destroy').select2();
                   },
@@ -267,5 +270,5 @@
       });
   });
   </script>
-  
+
 @endsection

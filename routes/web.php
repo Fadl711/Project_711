@@ -39,13 +39,6 @@ use App\Http\Controllers\UsersController\UsersController;
 use Illuminate\Support\Facades\Route;
 
 
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware('auth')->group(function () {
-
 Route::get('/', function () {
     return view('home.index');
 });
@@ -91,10 +84,12 @@ Route::get('/exchange/edit', [ExchangeController::class, 'edit'])->name('exchang
 Route::get('/restrictions/create', [RestrictionController::class, 'create'])->name('restrictions.create');
 Route::get('/restrictions/index', [RestrictionController::class, 'index'])->name('restrictions.index');
 Route::get('/restrictions/all_restrictions_show', [RestrictionController::class, 'all_restrictions_show'])->name('all_restrictions_show');
-Route::get('/restrictions/edit', [RestrictionController::class, 'edit'])->name('restrictions.edit');
+Route::get('/restrictions/{id}/edit', [RestrictionController::class, 'edit'])->name('restrictions.edit');
 Route::get('/restrictions/show', [RestrictionController::class, 'show'])->name('restrictions.show');
 Route::post('/daily_restrictions/store', [RestrictionController::class, 'store'])->name('daily_restrictions.store');
 Route::post('/daily_restrictions/stor', [RestrictionController::class, 'stor'])->name('daily_restrictions.stor');
+Route::put('/daily-restrictions/{id}', [RestrictionController::class, 'update'])->name('daily_restrictions.update');
+Route::delete('/daily-restrictions/{id1}', [RestrictionController::class, 'destroy'])->name('daily_restrictions.destroy');
 
 
 
@@ -181,6 +176,13 @@ Route::get('/get-options', [AccountCoctroller::class, 'show_all_accounts']);
 
 Route::get('/customers', [CustomerCoctroller::class, 'index'])->name('customers.index');
 Route::get('/suppliers', [SupplierCoctroller::class, 'index'])->name('suppliers.index');
+
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
 
 
 
