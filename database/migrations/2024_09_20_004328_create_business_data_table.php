@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('business_data', function (Blueprint $table) {
             $table->increments('business_data_id');
             $table->string('Company_Name');
-            $table->string('Company_Logo');
+            $table->string('Company_Logo')->nullable();
             $table->string('Phone_Number');
             $table->string('Company_Address');
             $table->string('Services');

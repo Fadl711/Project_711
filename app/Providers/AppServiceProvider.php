@@ -55,12 +55,13 @@ class AppServiceProvider extends ServiceProvider
         ]);
 
         $cate=Category::all();
-        $buss=BusinessData::all()->first();
+        $buss=BusinessData::first();
         $cu=CurrencySetting::first();
 
         View::share([
             'cate'=>$cate,
             'cu'=>$cu,
+            'buss'=>$buss,
 
         ]);
         if(isset($buss)){

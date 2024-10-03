@@ -118,7 +118,6 @@ public function stor(Request $request){
         $eail=DailyEntrie::all();
         $mainc=MainAccount::all();
         $suba=SubAccount::all();
-
         return view('daily_restrictions.all_restrictions_show',['eail'=>$eail,'mainc'=>$mainc,'suba'=>$suba]);
     }
 
@@ -166,8 +165,19 @@ public function stor(Request $request){
         DailyEntrie::where('entrie_id',$id)->delete();
         return redirect()->back();
     }
-    public function  show(){
-        return view('daily_restrictions.show');
+    public function show($id){
+
+        $mainc=MainAccount::all();
+        $suba=SubAccount::all();
+        $dailyEntrie =DailyEntrie::where('entrie_id',$id)->first();
+        return view('daily_restrictions.show',['daily'=>$dailyEntrie,'mainc'=>$mainc,'suba'=>$suba]);
+    }
+    public function print($id){
+
+        $mainc=MainAccount::all();
+        $suba=SubAccount::all();
+        $dailyEntrie =DailyEntrie::where('entrie_id',$id)->first();
+        return view('daily_restrictions.print',['daily'=>$dailyEntrie,'mainc'=>$mainc,'suba'=>$suba]);
     }
 
 }

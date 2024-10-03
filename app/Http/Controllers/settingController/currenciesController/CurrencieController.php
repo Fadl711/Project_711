@@ -26,7 +26,7 @@ class CurrencieController extends Controller
             'currency_symbol'=>$request->symbol
 
         ]);
-        return back();
+        return redirect()->back()->withInput();
     }
     public function edit($id){
         $curr=Currency::where('currency_id',$id)->first();
@@ -42,7 +42,7 @@ class CurrencieController extends Controller
     }
     public function destroy($id){
         Currency::where('currency_id',$id)->delete();
-        return back();
+        return redirect()->back();
     }
 
     public function setDefaultCurrency(Request $request){

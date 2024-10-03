@@ -85,7 +85,8 @@ Route::get('/restrictions/create', [RestrictionController::class, 'create'])->na
 Route::get('/restrictions/index', [RestrictionController::class, 'index'])->name('restrictions.index');
 Route::get('/restrictions/all_restrictions_show', [RestrictionController::class, 'all_restrictions_show'])->name('all_restrictions_show');
 Route::get('/restrictions/{id}/edit', [RestrictionController::class, 'edit'])->name('restrictions.edit');
-Route::get('/restrictions/show', [RestrictionController::class, 'show'])->name('restrictions.show');
+Route::get('/restrictions/{id}', [RestrictionController::class, 'show'])->name('restrictions.show');
+Route::get('/restrictions/{id}/print', [RestrictionController::class, 'print'])->name('restrictions.print');
 Route::post('/daily_restrictions/store', [RestrictionController::class, 'store'])->name('daily_restrictions.store');
 Route::post('/daily_restrictions/stor', [RestrictionController::class, 'stor'])->name('daily_restrictions.stor');
 Route::put('/daily-restrictions/{id}', [RestrictionController::class, 'update'])->name('daily_restrictions.update');
@@ -126,7 +127,7 @@ Route::get('bar-chart-data',[ChartController::class, 'getBarChartDate']);
 
 Route::get('/settings',[SettingController::class,'index'])->name('settings.index');
 Route::get('/settings/company_data/create',[Company_DataController::class,'create'])->name('company_data.settings.create');
-Route::post('/settings/company_data/{data}',[Company_DataController::class,'store'])->name('company_data.store');
+Route::post('/settings/company_data',[Company_DataController::class,'store'])->name('company_data.store');
 Route::get('/settings/currencies/index',[CurrencieController::class,'index'])->name('settings.currencies.index');
 Route::get('/settings/currencies/create',[CurrencieController::class,'create'])->name('settings.currencies.create');
 Route::post('/settings/currencies/store',[CurrencieController::class,'store'])->name('settings.currencies.store');
