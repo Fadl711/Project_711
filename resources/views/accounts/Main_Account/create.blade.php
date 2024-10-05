@@ -4,48 +4,6 @@
 <x-navbar_accounts/>
 <h1 > انشأ حساب رئيسي  </h1>
 
-{{-- <div class="container mt-5">
-  <h2>بحث داخل القائمة المنسدلة باستخدام Select2</h2>
-
-  <!-- القائمة المنسدلة مع البحث -->
-  <select class="select2" multiple="multiple" style="width: 100%">
-      <option value="1">One</option>
-      <option value="2">Two</option>
-      <option value="3">Three</option>
-      <option value="4">Four</option>
-      <option value="5">Five</option>
-      <option value="6">Six</option>
-  </select>
-
-
-<script>
-    $(document).ready(function() {
-        // تهيئة Select2 مع تحديد عدد العناصر المسموح اختيارها إلى 1
-        $('.select2').select2({
-            maximumSelectionLength: 1
-
-        });
-
-
-
-    $('.select2').select2({
-            ajax: {
-                url: '/get-options',
-                dataType: 'json',
-                delay: 250,
-                processResults: function (data) {
-                    return {
-                        results: data.map(function(item) {
-                            return { id: item.id, text: item.name };
-                        })
-                    };
-                },
-                cache: true
-            },
-            minimumInputLength: 1 // بدء البحث بعد كتابة حرف واحد
-        });
-      });
-</script> --}}
 <style>
   /* تثبيت الأرقام بالإنجليزية */
   .english-numbers {
@@ -65,7 +23,7 @@
 <div  class="w-[80%]">
   <form id="ajaxForm"  class="  " method="POST"  >
     @csrf
-
+<div class=" flex">
   <div class="flex ">
     <label class="" for="">طبيعة الحساب</label>
 
@@ -78,6 +36,21 @@
       <input type="radio" required  value="دائن"  name="Nature_account" class="input-field w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
     </div>
     </div>
+    
+  <div class="flex px-4">
+    <label class="" for=""> نوع الحساب </label>
+
+    <div class="flex px-4" >
+    <label class="labelSale">عميل</label>
+      <input  type="radio" required value="1" name="Nature_account" class="input-field w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+    </div>
+    <div class="flex ">
+    <label  class="labelSale">مورد</label>
+      <input type="radio" required  value="دائن"  name="Nature_account" class="input-field w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+    </div>
+    </div>
+  </div>
+  <br>
   <div class="grid gap-4 mb-4  lg:grid-cols-6  max-sm:grid-cols-2">
 
     <div class="mb-2">
