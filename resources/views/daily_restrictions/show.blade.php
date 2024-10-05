@@ -6,7 +6,7 @@
     {{-- <button onclick="window.history.back()">رجوع</button> --}}
 
     @include('includes.header2')
-    
+
     <div class=" relative container p-3 flex justify-between bg-gray-100 border-black border-2 rounded-lg h-40 my-2 text-center font-bold ">
         <div class="p-3  bg-gray-100 border-black  h-16 my-1 text-right font-bold space-y-2 ">
 

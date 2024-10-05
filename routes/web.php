@@ -92,6 +92,7 @@ Route::post('/daily_restrictions/store', [RestrictionController::class, 'store']
 Route::post('/daily_restrictions/stor', [RestrictionController::class, 'stor'])->name('daily_restrictions.stor');
 Route::put('/daily-restrictions/{id}', [RestrictionController::class, 'update'])->name('daily_restrictions.update');
 Route::delete('/daily-restrictions/{id1}', [RestrictionController::class, 'destroy'])->name('daily_restrictions.destroy');
+Route::get('/daily-restrictions/search', [RestrictionController::class, 'search'])->name('search.daily_restrictions');
 
 
 
