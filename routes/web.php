@@ -12,6 +12,7 @@ use App\Http\Controllers\bondController\receipController\All_Receipt_BondControl
 use App\Http\Controllers\bondController\receipController\ReceipController;
 use App\Http\Controllers\chartController\ChartController;
 use App\Http\Controllers\DailyRestrictionController\RestrictionController;
+use App\Http\Controllers\default_customerController;
 use App\Http\Controllers\FixedAssetsController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\invoicepurchasessController\InvoicePurchaseController;
@@ -69,6 +70,13 @@ Route::delete('/Category/{Category}',[CategoryController::class,'destroy'])->nam
     Route::get('/Default_Supplier/{id}/edit', [default_supplierController::class, 'edit'])->name('default_suppliers.edit');
     Route::put('/Default_Supplier/{id}/update', [default_supplierController::class, 'update'])->name('default_suppliers.update');
     Route::delete('/Default_Supplier/{id}/destroy', [default_supplierController::class, 'destroy'])->name('default_suppliers.destroy');
+
+    Route::get('/Default_customer', [default_customerController::class, 'index'])->name('default_customers.index');
+    Route::get('/Default_customer/create', [default_customerController::class, 'create'])->name('default_customers.create');
+    Route::post('Default_customer/store', [default_customerController::class, 'store'])->name('default_customers.store');
+    Route::get('/Default_customer/{id}/edit', [default_customerController::class, 'edit'])->name('default_customers.edit');
+    Route::put('/Default_customer/{id}/update', [default_customerController::class, 'update'])->name('default_customers.update');
+    Route::delete('/Default_customer/{id}/destroy', [default_customerController::class, 'destroy'])->name('default_customers.destroy');
 
 Route::get('/Purchase', [PurchaseController::class, 'Purchase'])->name('Purchases.index');
 

@@ -45,7 +45,6 @@
 
             @forelse ($eail as $eai)
 
-    
 
             <tr class="transition-all duration-500">
 
@@ -120,10 +119,10 @@
 
 
             </tr>
-         
             @empty
 
             @endforelse
+
             <!-- يمكنك إضافة المزيد من الصفوف هنا -->
         </tbody>
     </table>

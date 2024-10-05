@@ -11,6 +11,7 @@ use App\Models\Category;
 use App\Models\MainAccount;
 use App\Models\SubAccount;
 use App\Models\CurrencySetting;
+use App\Models\Default_customer;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\View;
@@ -52,7 +53,7 @@ class AppServiceProvider extends ServiceProvider
             'today '=> Carbon::now()->toDateString(),
             'users'=>$users,
         ]);
-
+        $Default_customers=Default_customer::first();
         $cate=Category::all();
         $buss=BusinessData::first();
         $cu=CurrencySetting::first();
@@ -61,6 +62,7 @@ class AppServiceProvider extends ServiceProvider
             'cate'=>$cate,
             'cu'=>$cu,
             'buss'=>$buss,
+            'Default_customers'=>$Default_customers,
 
         ]);
         if(isset($buss)){
@@ -80,7 +82,7 @@ $ASSETSAccountType_id=AccountType::FIXED_ASSETS;
 
  $REVENUE_id=AccountType::REVENUE;
  $REVENUE_name=Deportatton::REVENUE;
- 
+
  $MainAccount4= MainAccount::where('typeAccount',$REVENUE_id)->get();
 
  $SubAccounts=SubAccount::all();

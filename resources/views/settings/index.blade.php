@@ -59,9 +59,9 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20h10M12 4v16m0 0H8m4 0h4" />
                     </svg>
                 </span>
-                <span>Training Sources</span>
+                <span>العميل الافتراضي</span>
             </a>
-            <a href="#" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+            <a href="{{route('default_customers.index')}}" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
                 <span class="mr-3">
                     <!-- Visual Look Icon -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -70,7 +70,7 @@
                 </span>
                 <span>Visual Look</span>
             </a>
-            <a href="#" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+            <a href="{{route('default_customers.index')}}" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
                 <span class="mr-3">
                     <!-- Embed Icon -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -111,6 +111,6 @@
     </div>
 
     <!-- Footer Note -->
-   
+
 </aside>
 @endsection
