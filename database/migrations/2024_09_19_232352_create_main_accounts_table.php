@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('main_accounts', function (Blueprint $table) {
             $table->increments('main_account_id')->unsigned();
             $table->string('Nature_account');
+            $table->integer('AccountClass')->unsigned();
             $table->string('account_name');
             $table->integer('typeAccount')->unsigned();
             $table->integer('Type_migration');
             $table->integer('User_id')->unsigned();
-
             $table->timestamps();
 
             $table->foreign('User_id')->references('id')->on('users');

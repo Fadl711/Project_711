@@ -29,4 +29,12 @@ class SubAccount extends Model
 {
     return $this->hasMany(DailyEntrie::class, 'sub_account_id');
 }
+public function purchases()
+{
+    return $this->belongsTo(Purchase::class, 'Supplier_id', 'sub_account_id');
+}
+public function purchase_invoices()
+{
+    return $this->belongsTo(PurchaseInvoice::class, 'Supplier_id', 'sub_account_id');
+}
 }

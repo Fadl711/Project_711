@@ -39,25 +39,23 @@
     
   <div class="flex px-4">
     <label class="" for=""> نوع الحساب </label>
+        
+   @foreach($accountClasses as $accountClass)
+        <div class="flex px-4" >
+          <label class="labelSale">{{ $accountClass->label() }} </label>
+      <input  type="radio" required  value="{{ $accountClass->value }}" id="AccountClass" name="AccountClass" class="input-field w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+    </div>
+  
+  @endforeach
 
-    <div class="flex px-4" >
-    <label class="labelSale">عميل</label>
-      <input  type="radio" required value="1" name="Nature_account" class="input-field w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-    </div>
-    <div class="flex ">
-    <label  class="labelSale">مورد</label>
-      <input type="radio" required  value="دائن"  name="Nature_account" class="input-field w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-    </div>
     </div>
   </div>
   <br>
   <div class="grid gap-4 mb-4  lg:grid-cols-6  max-sm:grid-cols-2">
-
     <div class="mb-2">
       <label class="labelSale" for="account_name">اسم الحساب</label>
       <input name="account_name" class="inputSale input-field" id="account_name" type="text" required placeholder="اسم الحساب الجديد"/>
   </div>
-
   <div class="mb-2">
     <label class="labelSale  "   for="typeAccount"> تصنيف الحساب</label>
       <select class=" input-field inputSale text-left " required  name="typeAccount" id="typeAccount">
@@ -227,6 +225,7 @@
 </div>
 <!-- منطقة طباعة البيانات المحفوظة -->
 <div id="results" class="results"></div>
+<script src="{{url('payments.js')}}">   </script>
 
 
 <style>
@@ -335,11 +334,15 @@
           const tableBody = document.querySelector('#mainAccountsTable tbody');
           const newRow = `
               <tr>
-                  <td class="text-right tagTd">${account.Main_id}</td>
-                  <td class="text-right tagTd">${account.sub_name}</td>
-                  <td class="text-right tagTd">${account.debtor_amount || 0}</td>
-                  <td class="text-right tagTd">${account.creditor_amount || 0}</td>
-                  <td class="text-right tagTd">${account.Phone || ''}</td>
+       
+        <td class="text-right tagTd">${account.main_account_id}</td>
+        <td class="text-right tagTd">${account.account_name}</td>
+        <td class="text-right tagTd">${account.Nature_account || 0}</td>
+        <td class="text-right tagTd">${account.typeAccount || 0}</td>
+        <td class="text-right tagTd">${account.User_id}</td>
+         <td class="text-right tagTd">${account.Type_migration}</td>
+
+       
               </tr>
           `;
           tableBody.insertAdjacentHTML('beforeend', newRow);

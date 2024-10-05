@@ -96,13 +96,13 @@
 
           <div>
             <label for="Amount_debit" class="block font-medium mb-2">المبلغ المدين</label>
-            <input name="Amount_debit" type="number" step="0.01" class=" inputSale " placeholder="أدخل المبلغ" required>
+            <input name="Amount_debit" type="number" step="0.01" class=" inputSale input-field" placeholder="أدخل المبلغ" required>
         </div>
 
 
             <div class="">
                 <label for="Currency_name" class="block font-medium mb-2">العملة</label>
-                <select   dir="ltr" id="Currency_name" class="inputSale " name="Currency_name"  >
+                <select   dir="ltr" id="Currency_name" class="inputSale input-field " name="Currency_name"  >
                     @auth
 
 

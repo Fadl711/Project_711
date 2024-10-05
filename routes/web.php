@@ -28,6 +28,7 @@ use App\Http\Controllers\SupplierCoctroller;
 use App\Http\Controllers\PDFReportController;
 use App\Http\Controllers\productController\CategoryController;
 use App\Http\Controllers\productController\ProductCoctroller;
+use App\Http\Controllers\purchases\PurchaseController;
 use App\Http\Controllers\refundsController\purchasesController\Purchase_RefundController;
 use App\Http\Controllers\refundsController\saleController\RefundController as SaleControllerRefundController;
 use App\Http\Controllers\refundsController\salesController\Sale_RefundController;
@@ -60,7 +61,7 @@ Route::delete('/Category/{Category}',[CategoryController::class,'destroy'])->nam
 
 
 
-Route::get('/Purchase', [PurchaseCoctroller::class, 'Purchase'])->name('Purchases.index');
+Route::get('/Purchase', [PurchaseController::class, 'Purchase'])->name('Purchases.index');
 
 Route::get('/balancing', [AccountCoctroller::class, 'balancing'])->name('accounts.balancing');
 Route::get('/invoice_sales', [AllBillsController::class, 'index'])->name('invoice_sales.index');

@@ -3,52 +3,73 @@
 <div class=" min-w-[20%] px-1  border-x border-y border-orange-950 rounded-xl p-2 " style="display:block ">
     <div class="text-bro flex items-center" >
         <div class=" w-full min-w-full bg-white" >
-            <div class=" md:flex md:justify-around  text-right" >
-                <div class=" px-1 ">
-                         <div class="mb-1">
-                             <label for="Supplirname" class="labelSale">اسم المورد</label>
-                             <input type="text" name="Supplirname" placeholder="name" class="inputSale" />
-                         </div>
+            <form >
+                    <div class="  md:justify-around  text-right grid md:grid-cols-7 " >
+                <div class=" ">
+                    <div class=" ">
+                             <label for="Supplier_id" class="labelSale">اسم المورد</label>
+@if ($supplirs!=NULL)
+    
+
+                             <select name="Supplier_id" id="Supplier_id" dir="ltr" class="input-field  w-full select2 inputSale" required>
+                                @auth
+                              
+                                    
+                              
+                                @foreach ($supplirs as $supplir)
+
+                                <option @isset($subAccount)
+                                @selected($supplir->sub_account_id==$subAccount->sub_account_id)
+                                @endisset
+                                value="{{$supplir->sub_account_id}}">{{$supplir->sub_name}} </option>
+                                 @endforeach
+                             
+                                 @endauth
+                             </select>   
+                             @endif   
                      </div>
-                     <div class=" px-1 ">
+                </div>
+                     <div class=" px- ">
                          <div class="mb-1">
                              <label for="phone" class="labelSale">تلفون المورد</label>
                              <input type="text" name="phone"  placeholder="" class="inputSale" />
                          </div>
                      </div>
-                     <div class=" px-1 ">
+                     <div class=" px- ">
                          <div class="mb-1">
-                             <label for="num" class="labelSale">رقم الإيصال</label>
-                             <input type="text" name="num"  placeholder="0"class="inputSale" />
+                             <label for="Receipt_number" class="labelSale">رقم الإيصال</label>
+                             <input type="text" name="Receipt_number" id="Receipt_number"  placeholder="0"class="inputSale" />
                          </div>
                      </div>
-                           <div class=" px-1 ">
+                           <div class=" px- ">
                             <div class="mb-1">
-                                 <label for="payment" class="labelSale">المدفوع</label>
-                                 <input type="text" name="payment" placeholder="0" class="inputSale" />
+                                 <label for="Paid" class="labelSale">المدفوع</label>
+                                 <input type="text" name="Paid" id="Paid" placeholder="0" class="inputSale" />
                              </div>
                          </div>
-                         <div class=" px-1 ">
+                         <div class=" - ">
                              <div class="mb-1">
-                                 <label for="f" class="labelSale">المتبقي</label>
-                                 <input type="text" name="f"  placeholder="0" class="inputSale" />
+                                 <label for="Remaining" class="labelSale">المتبقي</label>
+                                 <input type="text" name="Remaining" id="Remaining" placeholder="0" class="inputSale" />
                              </div>
                          </div>
-                         <div class=" px-1">
+                         <div class="">
                              <div class="mb-1">
-                                 <label for="d" class="labelSale">اجمالي التكلفة</label>
-                                 <input type="text" name="d" id="contact_person _name" placeholder="0" class="inputSale" />
+                                 <label for="Total_cost" class="labelSale">اجمالي التكلفة</label>
+                                 <input type="text" name="Total_cost" id=" Total_cost" placeholder="0" class="inputSale" />
                              </div>
                          </div>
                          <div id="newInvoice"  style="display: block">
-                            <button onclick="NewProduc()" class="inputSale flex font-bold " type="button">
+                            <button  class="inputSale flex font-bold " type="submit" id="submit">
                                 <svg class="w-6 h-5 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                                     <path fill-rule="evenodd" d="M9 7V2.221a2 2 0 0 0-.5.365L4.586 6.5a2 2 0 0 0-.365.5H9Zm2 0V2h7a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9h5a2 2 0 0 0 2-2Zm2-2a1 1 0 1 0 0 2h3a1 1 0 1 0 0-2h-3Zm0 3a1 1 0 1 0 0 2h3a1 1 0 1 0 0-2h-3Zm-6 4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-6Zm8 1v1h-2v-1h2Zm0 3h-2v1h2v-1Zm-4-3v1H9v-1h2Zm0 3H9v1h2v-1Z" clip-rule="evenodd"/>
                                   </svg>
                               اضافة الفاتورة
                             </button>
                             </div>
-          </div>
+                        </div>
+                    </form>
+
      </div>
    </div>
 </div>
@@ -56,13 +77,20 @@
     <div class=" min-w-[30%]  border-x border-y border-orange-950 rounded-xl  ">
         <form action="" class="min-w-[30%]  ">
             <div class="flex">
-                    <div class="mb-1 p-1">
-                        <label for="name" class="btn">اسم الصنف</label>
-                        <input type="text" name="name" id=" _name" placeholder="name" class="inputSale" />
+                    <div class="mb-1 p-1 w-full">
+                        <label for="Product_name" class="btn">اسم الصنف</label>
+                        <select name="Product_name" id="Product_name" dir="ltr" class="input-field   select2 inputSale" required>
+                            @auth
+                           <option value="" selected>اختر الحساب</option>
+                           {{-- @foreach ($mainAccounts as $mainAccount)
+                                <option value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
+                           @endforeach --}}
+                           @endauth
+                         </select> 
                     </div>
                     <div class="mb-1 p-1">
-                        <label for="quantity" class="btn">الكمية</label>
-                        <input type="number" name="quantity" id="address" placeholder="0" class="inputSale" />
+                        <label for="Quantity" class="btn">الكمية</label>
+                        <input type="number" name="Quantity" id="Quantity" placeholder="0" class="inputSale" />
                     </div>
                 </div>
                 <div id="newProduc" class="col-span-6 sm:col-span-3 py-2" style="display:">
@@ -79,28 +107,28 @@
                         <input type="number" name="total" placeholder="0" class="inputSale" />
                      </div>
                     <div class=" px-1 ">
-                        <label for="pricep" class="btn">سعر الشراء</label>
-                        <input type="number" name="pricep" id="pricep" placeholder="0" class="inputSale" />
+                        <label for="Purchase_price" class="btn">سعر الشراء</label>
+                        <input type="number" name="Purchase_price" id="Purchase_price" placeholder="0" class="inputSale" />
                     </div>
                 </div>
                 <div class="flex">
                 <div class=" px-1">
-                        <label for="pricesa" class="btn">سعر البيع</label>
-                        <input type="number" name="" id="" placeholder="0" class="inputSale" />
+                        <label for="Selling_price" class="btn">سعر البيع</label>
+                        <input type="number" name="Selling_price" id="Selling_price" placeholder="0" class="inputSale" />
                     </div>
                 <div class=" px-1  ">
-                        <label for="quantity" class="btn ">الاجماليه</label>
-                        <input type="number" name="quantity" id="address" placeholder="0" class="inputSale" />
+                        <label for="Total" class="btn ">الاجماليه</label>
+                        <input type="number" name="Total" id="Total" placeholder="0" class="inputSale" />
                     </div>
                 </div>
                 <div class="flex">
                 <div class=" px-1  ">
-                        <label for="barcod" class="btn">الباركود</label>
-                        <input type="number" name="barcod" placeholder="0  " class="inputSale" />
+                        <label for="Barcode" class="btn">الباركود</label>
+                        <input type="number" name="Barcode" id="Barcode" placeholder="0  " class="inputSale" />
                     </div>
                 <div class=" px-1 ">
-                        <label for="discount" class="btn">التخفيض</label>
-                        <input type="number" name="discount" id="address" placeholder="0" class="inputSale" />
+                        <label for="Discount_earned" class="btn">التخفيض</label>
+                        <input type="number" name="Discount_earned" id="Discount_earned" placeholder="0" class="inputSale" />
                     </div>
                 </div>
                 <div class="flex">
@@ -119,8 +147,8 @@
                     <input type="text" name="num"  placeholder="0"class="inputSale" />
                 </div>
                 <div class=" px-1 ">
-                        <label for="total" class="labelSale">أجمالي الفاتورة</label>
-                        <input type="text" name="total"  placeholder="0" class="inputSale" />
+                        <label for="Total_invoice" class="labelSale">أجمالي الفاتورة</label>
+                        <input type="text" name="Total_invoice" id="Total_invoice" placeholder="0" class="inputSale" />
                 </div>
                 </div>
                 <div class="flex"  id="printEndSave" style="display: ">
@@ -130,16 +158,16 @@
                              aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                 <path stroke="currentColor" stroke-linejoin="round"
                                  stroke-width="2" d="M16.444 18H19a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h2.556M17 11V5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v6h10ZM7 15h10v4a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-4Z"/>
+                                </svg>
                                 <span class="textNav mr-1"> حفظ وطباعة</span>
-                            </svg>
                             </button>
                     </div>
                 <div class="col-span-6 sm:col-span-3" >
                 <button class="flex inputSale mt-2 "   type="submit">
                         <svg class="w-6 h-5 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M11 16h2m6.707-9.293-2.414-2.414A1 1 0 0 0 16.586 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V7.414a1 1 0 0 0-.293-.707ZM16 20v-6a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v6h8ZM9 4h6v3a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V4Z"/>
-                    <span class="textNav mr-1"> حفظ</span>
-                    </svg>
+                        </svg>
+                        <span class="textNav mr-1"> حفظ</span>
                 </button>
                 </div>
             </div>
@@ -198,54 +226,6 @@
 </div>
 </div>
 <br>
-<script>
-    document.getElementById('payment_type').addEventListener('input',function(){
-        var paymenttype= document.getElementById('payment_type').value;
-        var Payment= document.getElementById('payment');
-        var PrintEndSave= document.getElementById('printEndSave');
-    
-        if(paymenttype=="NULL")
-         {
-            // alert("fdkfj");
-            Payment.style.display="block";
-    
-    
-        }   else if(paymenttype=="bank")
-        {
-            PrintEndSave.style.display="flex";
-            Payment.style.display="none";
-    
-        } else if(paymenttype=="box")
-        {
-            PrintEndSave.style.display="flex";
-            Payment.style.display="none";
-        } else if(paymenttype!="NULL")
-        {
-            Payment.style.display="none";
-    
-        }
-        else
-        PrintEndSave.style.display="none";
-    
-    
-    
-    
-    });
-    
-    function NewProduc(){
-        var NewInvoice= document.getElementById('newInvoice');
-        var PrintEndSave= document.getElementById('printEndSave');
-        var paymentType= document.getElementById('payment_type').value;
-      var newprodu= document.getElementById('newProduc');
-        if(newprodu.style.display="none"){
-            // PrintEndSave.style.display="block";
-            newprodu.style.display="block";
-            NewInvoice.style.display="none";
-          
-    
-    
-        }
-    
-    }
-    </script>
+<script src="{{url('payments.js')}}">   </script>
+
 @endsection

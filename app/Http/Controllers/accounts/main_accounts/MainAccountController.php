@@ -57,7 +57,7 @@ return view('accounts.Main_Account.create',[ 'mainAccounts'=>$mainAccount,'subAc
         $typeAccount = $request->typeAccount;
         $Nature_account = $request->Nature_account;
         $Type_migration = $request->Type_migration;
-
+    
         // جلب المدخلات وتحويل الأرقام العربية إلى الإنجليزية
         $debtor_amount1 = $request->input('debtor_amount', '٠١٢٣٤٥٦٧٨٩');
         $creditor_amount1 = $request->input('creditor_amount', '٠١٢٣٤٥٦٧٨٩');
@@ -67,7 +67,6 @@ return view('accounts.Main_Account.create',[ 'mainAccounts'=>$mainAccount,'subAc
         // تحويل الأرقام العربية إلى الإنجليزية
         $creditor_amount = $this->convertArabicToEnglish($creditor_amount1);
         $debtor_amount = $this->convertArabicToEnglish($debtor_amount1);
-
         // التحقق مما إذا كان الحساب موجودًا بالفعل
         $account_nametExists = MainAccount::where('account_name', $account_name)->exists();
         if ($account_nametExists) {
@@ -79,27 +78,28 @@ return view('accounts.Main_Account.create',[ 'mainAccounts'=>$mainAccount,'subAc
             'Nature_account' => $Nature_account,
             'typeAccount' => $typeAccount,
             'User_id' => $User_id,
-            'Type_migration' => $Type_migration
+            'Type_migration' => $Type_migration,
+            'AccountClass'=>$request->input('AccountClass')
         ]);
 
-     //   __________________________ SubAccount ______________________________________
-        // $data=MainAccount::where('User_id',$User_id)->latest()->first();
-        // $DataSubAccount=new SubAccount();
-        // $DataSubAccount->Main_id=$data->main_account_id;
-        // $DataSubAccount->sub_name=$account_name ;
-        // $DataSubAccount-> User_id= $User_id;
-        // $DataSubAccount->debtor_amount = !empty($debtor_amount) ? $debtor_amount :0;
-        // $DataSubAccount-> creditor_amount= !empty($creditor_amount ) ? $creditor_amount :0;
-        // $DataSubAccount->Phone = ($Phone1 ) ;
-        // $DataSubAccount-> name_The_known= !empty($name_The_known ) ? $name_The_known : null ;
-        // $DataSubAccount->Known_phone = !empty($Known_phone ) ? $Known_phone : null ;
-        // $DataSubAccount->save();
+       //__________________________ SubAccount ______________________________________
+        $data=MainAccount::where('User_id',$User_id)->latest()->first();
+        $DataSubAccount=new SubAccount();
+        $DataSubAccount->Main_id=$data->main_account_id;
+        $DataSubAccount->sub_name=$account_name ;
+        $DataSubAccount-> User_id= $User_id;
+        $DataSubAccount->debtor_amount = !empty($debtor_amount) ? $debtor_amount :0;
+        $DataSubAccount-> creditor_amount= !empty($creditor_amount ) ? $creditor_amount :0;
+        $DataSubAccount->Phone = ($Phone1 ) ;
+        $DataSubAccount-> name_The_known= !empty($name_The_known ) ? $name_The_known : null ;
+        $DataSubAccount->Known_phone = !empty($Known_phone ) ? $Known_phone : null ;
+        $DataSubAccount->save();
         return response()->json(['success' => true, 'message' => 'تمت العملية بنجاح', 'DataSubAccount' => $mainAccount], 201);
+    
     }
 
     public function update(Request $request, $id)
     {
-
 
             MainAccount::where('main_account_id',$id)
             ->update([

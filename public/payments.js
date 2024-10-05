@@ -40,3 +40,7 @@ function toggleLoading(state) {
       $('#submitButton').prop('disabled', false).text('حفظ القيد');
   }
 }
+$(document).ready(function() {
+    // تفعيل Select2
+    $('.select2').select2();
+    });

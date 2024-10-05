@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enum\AccountClass;
 use App\Enum\AccountType;
 use App\Enum\Deportatton;
 use App\Enum\IntOrderStatus;
@@ -18,9 +19,13 @@ class MainAccount extends Model
          'typeAccount',
          'User_id',
          'Type_migration',
+         'AccountClass',
+
         ];
         protected $casts = [
             'account_type' => AccountType::class,
+            'AccountClass' => AccountClass::class,
+
         ];
     
         

@@ -23,6 +23,7 @@ return new class extends Migration
             $table->integer('user_id')->unsigned()->nullable();
             $table->integer('Currency_id')->unsigned()->nullable();
             $table->decimal('Total_price', 8, 2)->unsigned()->nullable();
+            
             $table->timestamps();
 
             $table->foreign('Categorie_id')->references('categorie_id')->on('categories')->onDelete('cascade');

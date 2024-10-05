@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Enum\AccountClass;
 use App\Enum\AccountType;
 use App\Enum\Deportatton;
 use App\Enum\IntOrderStatus;
@@ -42,12 +43,10 @@ class AppServiceProvider extends ServiceProvider
            ['TypesAccountName' => Deportatton::REVENUE, 'id' => AccountType::REVENUE],
 
         ];
-        $today = Carbon::now()->toDateString();  // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
-
-    // $dailyPage = GeneralJournal::whereDate('created_at', $today)->first(); // البحث عن الصفحة
+        $accountClasses = AccountClass::cases();
         $users=User::all();
         View::share([
-
+            'accountClasses'=>$accountClasses,
             'TypesAccounts'=>$TypesAccountName,
             'Deportattons'=>$dataDeportattons,
             'today '=> Carbon::now()->toDateString(),
@@ -81,6 +80,7 @@ $ASSETSAccountType_id=AccountType::FIXED_ASSETS;
 
  $REVENUE_id=AccountType::REVENUE;
  $REVENUE_name=Deportatton::REVENUE;
+ 
  $MainAccount4= MainAccount::where('typeAccount',$REVENUE_id)->get();
 
  $SubAccounts=SubAccount::all();
