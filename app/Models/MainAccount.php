@@ -22,11 +22,13 @@ class MainAccount extends Model
          'AccountClass',
 
         ];
-        protected $casts = [
-            'account_type' => AccountType::class,
-            'AccountClass' => AccountClass::class,
-
-        ];
+        public function subAccounts()
+        {
+            return $this->hasMany(SubAccount::class, 'Main_id', 'main_account_id');
+        }
+       
+      
+    
     
         
  

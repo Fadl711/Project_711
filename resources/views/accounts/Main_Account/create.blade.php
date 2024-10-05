@@ -106,7 +106,7 @@
     </div>
  </div>
  @auth
- <input type="hidden" name="User_id" required id="User_id" value="{{Auth::user()->id}}">
+ <input type="text" name="User_id" required id="User_id" value="{{Auth::user()->id}}">
  @endauth
 
 
@@ -227,129 +227,115 @@
 <div id="results" class="results"></div>
 <script src="{{url('payments.js')}}">   </script>
 
-
 <style>
-    .alert-success {
-        color: green;
-        font-weight: bold;
-    }
+  .alert-success {
+      color: green;
+      font-weight: bold;
+  }
 </style>
+
 <script type="text/javascript">
-  document.addEventListener('DOMContentLoaded', function () {
-      const form = document.getElementById('ajaxForm');
-      const successMessage = document.getElementById('successMessage');
-      const errorMessage = document.getElementById('errorMessage');
-      const inputs = document.querySelectorAll('.input-field'); // تحديد جميع الحقول
-      let account_name = document.getElementById('account_name');
+$(document).ready(function () {
+  const form = $('#ajaxForm');
+  const successMessage = $('#successMessage');
+  const errorMessage = $('#errorMessage');
+  const inputs = $('.input-field'); // تحديد جميع الحقول
+  const account_name = $('#account_name');
 
-      // تركيز على حقل الاسم عند بدء التشغيل
-      account_name.focus();
+  // تركيز على حقل الاسم عند بدء التشغيل
+  account_name.focus();
 
-      // منع السلوك الافتراضي لزر Enter
-      form.addEventListener('keydown', function (event) {
-          if (event.key === 'Enter') {
-              event.preventDefault(); // منع الحفظ عند الضغط على زر Enter
-          }
-      });
+  // منع السلوك الافتراضي لزر Enter
+  form.on('keydown', function (event) {
+      if (event.key === 'Enter') {
+          event.preventDefault(); // منع الحفظ عند الضغط على زر Enter
+      }
+  });
 
-      // التنقل بين الحقول باستخدام السهم الأيمن أو الأيسر
-      document.addEventListener('keydown', function(event) {
-          if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
-              let currentIndex = -1;
+  // التنقل بين الحقول باستخدام السهم الأيمن أو الأيسر
+  $(document).on('keydown', function (event) {
+      if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+          let currentIndex = inputs.index(document.activeElement);
 
-              // العثور على الحقل النشط حاليًا
-              for (let i = 0; i < inputs.length; i++) {
-                  if (inputs[i] === document.activeElement) {
-                      currentIndex = i;
-                      break;
+          if (currentIndex !== -1) {
+              if (event.key === "ArrowRight") {
+                  if (currentIndex < inputs.length - 1) {
+                      $(inputs[currentIndex + 1]).focus(); // نقل التركيز إلى الحقل التالي
                   }
-              }
-
-              if (currentIndex !== -1) {
-                  if (event.key === "ArrowRight") {
-                      if (currentIndex < inputs.length - 1) {
-                          inputs[currentIndex + 1].focus(); // نقل التركيز إلى الحقل التالي
-                      }
-                  } else if (event.key === "ArrowLeft") {
-                      if (currentIndex > 0) {
-                          inputs[currentIndex - 1].focus(); // نقل التركيز إلى الحقل السابق
-                      }
+              } else if (event.key === "ArrowLeft") {
+                  if (currentIndex > 0) {
+                      $(inputs[currentIndex - 1]).focus(); // نقل التركيز إلى الحقل السابق
                   }
               }
           }
-      });
+      }
+  });
 
-      // التعامل مع إرسال النموذج وحفظ البيانات باستخدام AJAX
-      form.addEventListener('submit', function (event) {
-          event.preventDefault(); // منع تحديث الصفحة
+  // التعامل مع إرسال النموذج وحفظ البيانات باستخدام AJAX
+  form.on('submit', function (event) {
+      event.preventDefault(); // منع تحديث الصفحة
 
-          // تجميع بيانات النموذج
-          const formData = new FormData(form);
+      // تجميع بيانات النموذج
+      const formData = form.serialize(); // استخدام serialize لجمع البيانات
 
-          // إرسال الطلب باستخدام Fetch API
-          fetch('{{ route("Main_Account.store") }}', {
-              method: 'POST',
-              headers: {
-                  'X-CSRF-TOKEN': '{{ csrf_token() }}' // إرسال التوكن الخاص بـ Laravel
-              },
-              body: formData // إرسال البيانات
-          })
-          .then(response => response.json()) // تحليل استجابة السيرفر
-          .then(data => {
+      // إرسال الطلب باستخدام jQuery AJAX
+      $.ajax({
+          url: '{{ route("Main_Account.store") }}', // رابط الطلب
+          type: 'POST', // نوع الطلب
+          data: formData, // البيانات المرسلة
+          headers: {
+              'X-CSRF-TOKEN': '{{ csrf_token() }}' // إرسال التوكن الخاص بـ Laravel
+          },
+          success: function (data) {
               if (data.success) {
                   // إظهار رسالة النجاح
-                  successMessage.style.display = 'block';
-                  successMessage.textContent = 'تم الحفظ بنجاح!';
+                  successMessage.show().text('تم الحفظ بنجاح!');
                   account_name.focus(); // إعادة التركيز على حقل الاسم بعد الحفظ
 
                   // إخفاء الرسالة بعد 3 ثوانٍ
                   setTimeout(() => {
-                      successMessage.style.display = 'none';
+                      successMessage.hide();
                   }, 3000);
 
                   // إضافة البيانات المحفوظة إلى الجدول
                   addToTable(data.DataSubAccount);
 
                   // تفريغ النموذج بعد الحفظ
-                  form.reset();
+                  form[0].reset();
               } else {
                   // إظهار رسالة عند وجود نفس الاسم
-                  successMessage.style.display = 'block';
-                  successMessage.textContent = 'يوجد نفس هذا الاسم من قبل';
+                  errorMessage.show().text('يوجد نفس هذا الاسم من قبل');
                   account_name.focus();
 
                   setTimeout(() => {
-                      successMessage.style.display = 'none';
+                    errorMessage.hide();
                   }, 1000);
               }
-          })
-          .catch(error => {
-              errorMessage.style.display = 'block';
-              errorMessage.textContent = 'حدث خطأ أثناء الحفظ.';
-          });
+          },
+          error: function () {
+              errorMessage.show().text('حدث خطأ أثناء الحفظ.');
+          }
       });
-
-      // وظيفة لإضافة البيانات إلى الجدول
-      function addToTable(account) {
-          const tableBody = document.querySelector('#mainAccountsTable tbody');
-          const newRow = `
-              <tr>
-       
-        <td class="text-right tagTd">${account.main_account_id}</td>
-        <td class="text-right tagTd">${account.account_name}</td>
-        <td class="text-right tagTd">${account.Nature_account || 0}</td>
-        <td class="text-right tagTd">${account.typeAccount || 0}</td>
-        <td class="text-right tagTd">${account.User_id}</td>
-         <td class="text-right tagTd">${account.Type_migration}</td>
-
-       
-              </tr>
-          `;
-          tableBody.insertAdjacentHTML('beforeend', newRow);
-      }
   });
 
-  </script>
+  // وظيفة لإضافة البيانات إلى الجدول
+  function addToTable(account) {
+      const tableBody = $('#mainAccountsTable tbody');
+      const newRow = `
+          <tr>
+              <td class="text-right tagTd">${account.main_account_id}</td>
+              <td class="text-right tagTd">${account.account_name}</td>
+              <td class="text-right tagTd">${account.Nature_account || 0}</td>
+              <td class="text-right tagTd">${account.typeAccount || 0}</td>
+              <td class="text-right tagTd">${account.User_id}</td>
+              <td class="text-right tagTd">${account.Type_migration}</td>
+          </tr>
+      `;
+      tableBody.append(newRow); // إضافة الصف الجديد إلى الجدول
+  }
+});
+</script>
+
 
  {{-- <script>
         $(document).ready(function() {

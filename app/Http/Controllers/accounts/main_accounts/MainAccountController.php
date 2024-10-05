@@ -45,7 +45,8 @@ return view('accounts.Main_Account.create',[ 'mainAccounts'=>$mainAccount,'subAc
         $arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
         $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
         return str_replace($arabicNumbers, $englishNumbers, $number);
-    }public function store(Request $request)
+    }
+    public function store(Request $request)
     {
         // التحقق من صلاحية المستخدم
         $User_id = $request->User_id;
@@ -70,7 +71,7 @@ return view('accounts.Main_Account.create',[ 'mainAccounts'=>$mainAccount,'subAc
         // التحقق مما إذا كان الحساب موجودًا بالفعل
         $account_nametExists = MainAccount::where('account_name', $account_name)->exists();
         if ($account_nametExists) {
-            return response()->json(['success' => false,'message' => 'هذا الاسم موجود من قبل'], 409);
+            return response()->json(['success' => false,'message' => 'هذا الاسم موجود من قبل']);
         }
         // __________________________MainAccount______________________________________
         $mainAccount = MainAccount::create([
@@ -82,7 +83,7 @@ return view('accounts.Main_Account.create',[ 'mainAccounts'=>$mainAccount,'subAc
             'AccountClass'=>$request->input('AccountClass')
         ]);
 
-       //__________________________ SubAccount ______________________________________
+      // __________________________ SubAccount ______________________________________
         $data=MainAccount::where('User_id',$User_id)->latest()->first();
         $DataSubAccount=new SubAccount();
         $DataSubAccount->Main_id=$data->main_account_id;

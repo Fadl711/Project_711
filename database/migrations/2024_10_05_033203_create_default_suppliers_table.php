@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sub_accounts', function (Blueprint $table) {
-            $table->increments('sub_account_id')->unsigned();
-            $table->string('sub_name');
+        Schema::create('default_suppliers', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->integer('subaccount_id')->unsigned();
             $table->double('debtor_amount')->nullable();
             $table->double('creditor_amount')->nullable();
             $table->string('name_The_known')->nullable();
@@ -21,8 +22,7 @@ return new class extends Migration
             $table->integer('User_id')->unsigned();
             $table->integer('Phone')->nullable();
             $table->timestamps();
-
-            $table->foreign('Main_id')->references('main_account_id')->on('main_accounts')->onDelete('cascade');
+            $table->foreign('subaccount_id')->references('sub_account_id')->on('sub_accounts')->onDelete('cascade');
             $table->foreign('User_id')->references('id')->on('users');
         });
     }
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sub_accounts');
+        Schema::dropIfExists('default_suppliers');
     }
 };

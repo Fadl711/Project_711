@@ -8,25 +8,24 @@
                 <div class=" ">
                     <div class=" ">
                              <label for="Supplier_id" class="labelSale">اسم المورد</label>
-@if ($supplirs!=NULL)
+
     
 
                              <select name="Supplier_id" id="Supplier_id" dir="ltr" class="input-field  w-full select2 inputSale" required>
                                 @auth
+
                               
                                     
                               
-                                @foreach ($supplirs as $supplir)
+                                {{-- @foreach ($defaultSupplier as $supplir) --}}
 
-                                <option @isset($subAccount)
-                                @selected($supplir->sub_account_id==$subAccount->sub_account_id)
-                                @endisset
-                                value="{{$supplir->sub_account_id}}">{{$supplir->sub_name}} </option>
-                                 @endforeach
+                                <option selected
+                                value="{{$defaultSupplier['subaccount_id']}}">{{$defaultSupplier['name']}} </option>
+                                 {{-- @endforeach --}}
                              
                                  @endauth
                              </select>   
-                             @endif   
+                       
                      </div>
                 </div>
                      <div class=" px- ">
