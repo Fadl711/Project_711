@@ -9,7 +9,7 @@
             <label for="subaccount_id" class="block text-sm font-medium text-gray-700">العميل الفرعي</label>
             <select name="subaccount_id" id="subaccount_id" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
                 <option value="">اختر عميل الفرعي</option>
-                
+
                 @if (isset($supplirx))
                     @foreach($supplirx as $supplir)
                         @if(isset($Default_customers))

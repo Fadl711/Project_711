@@ -52,7 +52,7 @@
                 <span>المورد الافتراضي</span>
             </a>
             <hr class="my-2 border-gray-300">
-            <a href="{{route('default_suppliers.index')}}" class="flex items-center p-2 text-gray-700 bg-gray-100 rounded">
+            <a href="{{route('default_customers.index')}}" class="flex items-center p-2 text-gray-700 bg-gray-100 rounded">
                 <span class="mr-3">
                     <!-- Training Icon -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

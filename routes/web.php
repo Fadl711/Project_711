@@ -101,7 +101,8 @@ Route::get('/exchange/edit', [ExchangeController::class, 'edit'])->name('exchang
 
 Route::get('/restrictions/create', [RestrictionController::class, 'create'])->name('restrictions.create');
 Route::get('/restrictions/index', [RestrictionController::class, 'index'])->name('restrictions.index');
-Route::get('/restrictions/all_restrictions_show', [RestrictionController::class, 'all_restrictions_show'])->name('all_restrictions_show');
+Route::get('/restrictions/all_restrictions_show/{id}', [RestrictionController::class, 'all_restrictions_show'])->name('all_restrictions_show');
+Route::get('/restrictions/all_restrictions_show_1', [RestrictionController::class, 'all_restrictions_show_1'])->name('all_restrictions_show_1');
 Route::get('/restrictions/{id}/edit', [RestrictionController::class, 'edit'])->name('restrictions.edit');
 Route::get('/restrictions/{id}', [RestrictionController::class, 'show'])->name('restrictions.show');
 Route::get('/restrictions/{id}/print', [RestrictionController::class, 'print'])->name('restrictions.print');

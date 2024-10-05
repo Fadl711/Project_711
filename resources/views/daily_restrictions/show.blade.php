@@ -43,11 +43,28 @@ $oo = convertNumberToWords($number) . ' ريال  يمني';
     {{-- body srart --}}
     <div class="container p-3 relative space-y-2  text-base bg-gray-200 border-black  rounded-lg  my-2 text-right font-bold">
         @php
-        $resultDebit=$mainc->where('main_account_id',$daily->account_debit_id)->first();
-        $resultDebit1=$suba->where('Main_id',$resultDebit->main_account_id)->first();
+        $resultDebit;
+        $resultDebit1;
+        $resultDebit1=$suba->where('sub_account_id',$daily->account_debit_id);
+        foreach ($resultDebit1 as $key) {
+            $resultDebit=$mainc->where('main_account_id',$key->Main_id)->first();
+            if ($key->sub_name!=$resultDebit->account_name) {
+                $resultDebit1=$key;
+                break;
 
-        $resultCredit=$mainc->where('main_account_id',$daily->account_Credit_id)->first();
-        $resultCredit1=$suba->where('Main_id',$resultCredit->main_account_id)->first();
+            }
+        }
+        $resultCredit;
+        $resultCredit1;
+        $resultCredit1=$suba->where('sub_account_id',$daily->account_Credit_id);
+        foreach ($resultCredit1 as $key) {
+            $resultCredit=$mainc->where('main_account_id',$key->Main_id)->first();
+            if ($key->sub_name!=$resultCredit->account_name) {
+                $resultCredit1=$key;
+                break;
+            }
+            # code...
+        }
         @endphp
 
         <div class="container">
