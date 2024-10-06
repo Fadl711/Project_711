@@ -40,7 +40,7 @@ class RestrictionController extends Controller
             'User_id' => 'required|integer', // تأكد من إضافة User_id إذا كان مطلوباً
         ]);
         // التأكد من عدم اختيار حسابين فرعيين متماثلين
-        if ($request->sub_account_debit_id === $request->sub_account_Credit_id) {
+        if ($request->sub_account_debit_id == $request->sub_account_Credit_id) {
             return response()->json(['success' => 'يجب عدم تساوي الحسابات الفرعية المدين والدائن.']);
         }
 

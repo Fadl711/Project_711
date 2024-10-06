@@ -34,6 +34,7 @@ use App\Http\Controllers\refundsController\purchasesController\Purchase_RefundCo
 use App\Http\Controllers\refundsController\saleController\RefundController as SaleControllerRefundController;
 use App\Http\Controllers\refundsController\salesController\Sale_RefundController;
 use App\Http\Controllers\reportsConreoller;
+use App\Http\Controllers\SaleCoctroller\SaleController;
 use App\Http\Controllers\settingController\company_dataController\Company_DataController;
 use App\Http\Controllers\settingController\currenciesController\CurrencieController;
 use App\Http\Controllers\settingController\default_supplierController;
@@ -46,7 +47,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('home.index');
 });
-Route::get('/sales', [SaleCoctroller::class, 'index'])->name('sales.index');
+Route::get('/sales', [SaleController::class, 'index'])->name('sales.index');
 
 Route::get('/products', [ProductCoctroller::class, 'index'])->name('products.index');
 Route::get('/products/create', [ProductCoctroller::class, 'create'])->name('products.create');
@@ -79,6 +80,7 @@ Route::delete('/Category/{Category}',[CategoryController::class,'destroy'])->nam
     Route::delete('/Default_customer/{id}/destroy', [default_customerController::class, 'destroy'])->name('default_customers.destroy');
 
 Route::get('/Purchase', [PurchaseController::class, 'Purchase'])->name('Purchases.index');
+Route::get('/Purchase/store', [PurchaseController::class, 'store'])->name('Purchase.store');
 
 Route::get('/balancing', [AccountCoctroller::class, 'balancing'])->name('accounts.balancing');
 Route::get('/invoice_sales', [AllBillsController::class, 'index'])->name('invoice_sales.index');
