@@ -25,15 +25,20 @@
     <table class=" min-w-full rounded-xl">
         <thead>
             <tr class=" bgcolor ">
-                <th scope="col" class="leading-2 tagHt  ">اسم الصنف</th>
                 <th scope="col" class="leading-2 tagHt ">الباركود</th>
+                <th scope="col" class="leading-2 tagHt  ">اسم الصنف</th>
                 <th scope="col" class="leading-2 tagHt ">الكمية</th>
                 <th scope="col" class="leading-2 tagHt ">الوحدة</th>
                 <th scope="col" class="leading-2 tagHt ">سعر الشراء</th>
+                <th scope="col" class="leading-2 tagHt ">سعر البيع</th>
+                <th scope="col" class="leading-2 tagHt ">الاجمالي</th>
+                <th scope="col" class="leading-2 tagHt ">التكلفة</th>
+                <th scope="col" class="leading-2 tagHt ">الربح</th>
                 <th scope="col" class="leading-2 tagHt ">خصم عادي</th>
                 <th scope="col" class="leading-2 tagHt">خصم خاص</th>
-                <th scope="col" class="leading-2 tagHt ">الاجمالي</th>
                 <th scope="col" class="leading-2 tagHt ">العملة</th>
+                <th scope="col" class="leading-2 tagHt ">المخزن</th>
+                <th scope="col" class="leading-2 tagHt ">ملاحظه</th>
                 <th scope="col" class="leading-2 tagHt">تعديل الشراء</th>
 
             </tr>
@@ -42,9 +47,9 @@
             @foreach ($prod as $pro)
 
             <tr class="bg-white transition-all duration-500 hover:bg-gray-50">
+                <td class="tagTd ">{{$pro->Barcode}}</td>
                 <td class="tagTd  ">{{$pro->product_name}}</td>
-                <td class="tagTd ">{{$pro->barcod}}</td>
-                <td class="tagTd ">{{$pro->quantity}}</td>
+                <td class="tagTd ">{{$pro->Quantity}}</td>
                 @if(isset($pro->Categorie_id) && !empty($pro->Categorie_id))
                 @foreach ($cate as $cat)
                 @if ($cat->categorie_id==$pro->Categorie_id)
@@ -56,13 +61,17 @@
                 <td class="tagTd "></td>
 
                 @endif
-                <td class="tagTd ">{{$pro->Product_price}}</td>
+                <td class="tagTd ">{{$pro->Purchase_price}}</td>
+                <td class="tagTd ">{{$pro->Selling_price}}</td>
+                <td class="tagTd ">{{$pro->Total}}</td>
+                <td class="tagTd ">{{$pro->Cost}}</td>
+                <td class="tagTd ">{{$pro->Profit}}</td>
                 <td class="tagTd">{{$pro->Regular_discount}}</td>
                 <td class="tagTd">{{$pro->Special_discount}}</td>
-                <td class="tagTd">{{$pro->Total_price}}</td>
-                @if(isset($pro->Currency_id) && !empty($pro->Currency_id))
+
+                @if(isset($pro->currency_id) && !empty($pro->currency_id))
                 @foreach ($curr as $cur)
-                @if ($cur->currency_id==$pro->Currency_id)
+                @if ($cur->currency_id==$pro->currency_id)
                 <td class="tagTd">{{$cur->currency_name}}</td>
                 @endif
                 @endforeach
@@ -71,6 +80,8 @@
                 <td class="tagTd"></td>
 
                 @endif
+                <td class="tagTd"></td>
+                <td class="tagTd max-w-10 truncate">{{$pro->note}}</td>
 
 
                 <td class="p-1 tagTd">

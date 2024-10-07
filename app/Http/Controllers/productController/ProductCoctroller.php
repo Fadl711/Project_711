@@ -40,15 +40,18 @@ class ProductCoctroller extends Controller
         Product::create([
             'Barcode'=>$request->Barcode,
             'product_name'=>$request->product_name,
-            'Quantity'=>$Quantity,
-            'Selling_price'=>$Selling_price,
+            'Quantity'=>$request->Quantity,
+            'Purchase_price'=>$request->Purchase_price,
+            'Selling_price'=>$request->Selling_price,
             'Categorie_id'=>$request->Categorie_id,
-            'Purchase_price'=>$Purchase_price,
-            'Regular_discount'=>$Regular_discount,
-            'Special_discount'=>$Special_discount,
+            'Regular_discount'=>$request->Regular_discount,
+            'Special_discount'=>$request->Special_discount,
             'User_id'=>$request->User_id,
             'currency_id'=>$request->currency_id,
             'Total'=>$request->Total,
+            'Cost'=>$request->Cost,
+            'Profit'=>$request->Profit,
+            'note'=>$request->note,
 
 
         ]);
@@ -63,18 +66,22 @@ class ProductCoctroller extends Controller
     }
     public function update(Request $request,$id){
         Product::where('product_id',$id)->update([
-            'barcod'=>$request->barcod,
-            'product_name'=>$request->name,
-            'Categorie_id'=>$request->Catog,
-            'Product_price'=>$request->pricep,
-            'quantity'=>$request->quni,
-            'Regular_discount'=>$request->pricesa,
-            'Special_discount'=>$request->pricesp,
-            'user_id'=>$request->user_id,
-            'Currency_id'=>$request->cr,
-            'Total_price'=>$request->allpri,
+            'Barcode'=>$request->Barcode,
+            'product_name'=>$request->product_name,
+            'Quantity'=>$request->Quantity,
+            'Purchase_price'=>$request->Purchase_price,
+            'Selling_price'=>$request->Selling_price,
+            'Categorie_id'=>$request->Categorie_id,
+            'Regular_discount'=>$request->Regular_discount,
+            'Special_discount'=>$request->Special_discount,
+            'User_id'=>$request->User_id,
+            'currency_id'=>$request->currency_id,
+            'Total'=>$request->Total,
+            'Cost'=>$request->Cost,
+            'Profit'=>$request->Profit,
+            'note'=>$request->note,
         ]);
-         return back();
+         return redirect()->route('products.index');
     }
 
     public function destroy($id){
@@ -91,7 +98,7 @@ class ProductCoctroller extends Controller
             $query = $request->get('search');
             if ($query != '') {
                 $products = Product::where('product_name', 'LIKE', '%'.$query.'%')
-                    ->orWhere('barcod', 'LIKE', '%'.$query.'%') // أضف أي حقل آخر تريد البحث فيه
+                    ->orWhere('Barcode', 'LIKE', '%'.$query.'%') // أضف أي حقل آخر تريد البحث فيه
                     ->get();
 
                 if ($products) {
@@ -103,24 +110,29 @@ class ProductCoctroller extends Controller
                                 $categoryName = $cat->Categorie_name;
                                 break;
                             }
-                            $currName = '';
                         }
+                        $currName = '';
                         foreach ($curr as $cur) {
-                            if ($cur->currency_id == $product->Currency_id) {
+                            if ($cur->currency_id == $product->currency_id) {
                                 $currName = $cur->currency_name;
                                 break;
                             }
                         }
                         $output .= '<tr class="bg-white transition-all duration-500 hover:bg-gray-50 text-right"">'.
+                        '<td class="tagTd">'.$product->Barcode.'</td>'.
                         '<td class="tagTd">'.$product->product_name.'</td>'.
-                        '<td class="tagTd">'.$product->barcod.'</td>'.
-                        '<td class="tagTd">'.$product->quantity.'</td>'.
+                        '<td class="tagTd">'.$product->Quantity.'</td>'.
                         '<td class="tagTd">'.$categoryName.'</td>'.
-                        '<td class="tagTd">'.$product->Product_price.'</td>'.
+                        '<td class="tagTd">'.$product->Purchase_price.'</td>'.
+                        '<td class="tagTd">'.$product->Selling_price.'</td>'.
+                        '<td class="tagTd">'.$product->Cost.'</td>'.
+                        '<td class="tagTd">'.$product->Total.'</td>'.
+                        '<td class="tagTd">'.$product->Profit.'</td>'.
                         '<td class="tagTd">'.$product->Regular_discount.'</td>'.
                         '<td class="tagTd">'.$product->Special_discount.'</td>'.
-                        '<td class="tagTd">'.$product->Total_price.'</td>'.
                         '<td class="tagTd">'.$currName.'</td>'.
+                        '<td class="tagTd">'.''.'</td>'.
+                        '<td class="tagTd">'.$product->note.'</td>'.
                         '<td class="p-1 tagTd">'.
                             '<div class="flex items-center gap-1">'.
                             '<a href="'.route('products.edit', $product->product_id).'" class="p-1 rounded-full group transition-all duration-500 flex item-center">'.                                    '<svg class="cursor-pointer" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">'.
@@ -159,21 +171,26 @@ class ProductCoctroller extends Controller
                     $currName = '';
 
                     foreach ($curr as $cur) {
-                        if ($cur->currency_id == $product->Currency_id) {
+                        if ($cur->currency_id == $product->currency_id) {
                             $currName = $cur->currency_name;
                             break;
                         }
                     }
                     $output .= '<tr class="bg-white transition-all duration-500 hover:bg-gray-50 text-right">'.
-                    '<td>'.$product->product_name.'</td>'.
-                    '<td>'.$product->barcod.'</td>'.
-                    '<td>'.$product->quantity.'</td>'.
-                    '<td>'.$categoryName.'</td>'.
-                    '<td>'.$product->Product_price.'</td>'.
-                    '<td>'.$product->Regular_discount.'</td>'.
-                    '<td>'.$product->Special_discount.'</td>'.
-                    '<td>'.$product->Total_price.'</td>'.
-                    '<td>'.$currName.'</td>'.
+                    '<td class="tagTd">'.$product->Barcode.'</td>'.
+                    '<td class="tagTd">'.$product->product_name.'</td>'.
+                    '<td class="tagTd">'.$product->Quantity.'</td>'.
+                    '<td class="tagTd">'.$categoryName.'</td>'.
+                    '<td class="tagTd">'.$product->Purchase_price.'</td>'.
+                    '<td class="tagTd">'.$product->Selling_price.'</td>'.
+                    '<td class="tagTd">'.$product->Cost.'</td>'.
+                    '<td class="tagTd">'.$product->Total.'</td>'.
+                    '<td class="tagTd">'.$product->Profit.'</td>'.
+                    '<td class="tagTd">'.$product->Regular_discount.'</td>'.
+                    '<td class="tagTd">'.$product->Special_discount.'</td>'.
+                    '<td class="tagTd">'.$currName.'</td>'.
+                    '<td class="tagTd">'.''.'</td>'.
+                    '<td class="tagTd">'.$product->note.'</td>'.
                     '<td class="p-1 tagTd">'.
                         '<div class="flex items-center gap-1">'.
                         '<a href="'.route('products.edit', $product->product_id).'" class="p-1 rounded-full group transition-all duration-500 flex item-center">'.                                    '<svg class="cursor-pointer" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">'.

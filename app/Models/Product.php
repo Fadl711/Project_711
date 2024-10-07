@@ -32,8 +32,6 @@ protected static function boot()
             'currency_id',
             'warehouse_id',
             'User_id',
-           
     ];
-  
      // تحويل Purchase_price إلى أرقام إنجليزية
 }
