@@ -14,20 +14,16 @@ return new class extends Migration
         Schema::create('purchase_invoices', function (Blueprint $table) {
             $table->increments('purchase_invoice_id')->unsigned();
             $table->integer('Receipt_number')->unsigned();
-            $table->decimal('Total_invoice', 8, 2);
-            $table->decimal('Paid', 8, 2);
-            $table->decimal('Remaining', 8, 2);
-            $table->decimal('Total_cost', 8, 2);
-            $table->integer('User_id')->unsigned();
-            $table->integer('Payment_type_id')->unsigned();
-            $table->integer('Currency_id')->unsigned();
+            $table->decimal('Total_invoice', 8, 2)->nullable();
+            $table->decimal('Total_cost', 8, 2)->nullable();
+             $table->integer('User_id')->unsigned();
+            $table->string('Payment_type')->nullable();
             $table->integer('Supplier_id')->unsigned();
+           
+            $table->timestamps();
             $table->foreign('Supplier_id')->references('sub_account_id')->on('sub_accounts')
             ->onDelete('cascade');
-            $table->timestamps();
-
             $table->foreign('User_id')->references('id')->on('users');
-            $table->foreign('Currency_id')->references('currency_id')->on('currencies');
           });
     }
 

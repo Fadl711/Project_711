@@ -23,7 +23,6 @@ use App\Http\Controllers\SaleCoctroller;
 
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\PurchaseCoctroller;
 use App\Http\Controllers\RefundController;
 use App\Http\Controllers\SupplierCoctroller;
 use App\Http\Controllers\PDFReportController;
@@ -78,9 +77,13 @@ Route::delete('/Category/{Category}',[CategoryController::class,'destroy'])->nam
     Route::get('/Default_customer/{id}/edit', [default_customerController::class, 'edit'])->name('default_customers.edit');
     Route::put('/Default_customer/{id}/update', [default_customerController::class, 'update'])->name('default_customers.update');
     Route::delete('/Default_customer/{id}/destroy', [default_customerController::class, 'destroy'])->name('default_customers.destroy');
+Route::post('/invoicePurchases/store', [PurchaseController::class, 'store'])->name('invoicePurchases.store');
+Route::get('/api/products/search', [PurchaseController::class, 'search']);
 
-Route::get('/Purchase', [PurchaseController::class, 'Purchase'])->name('Purchases.index');
-Route::get('/Purchase/store', [PurchaseController::class, 'store'])->name('Purchase.store');
+Route::get('/Purchase', [PurchaseController::class,'create'])->name('Purchases.create');
+Route::get('/products/details', [PurchaseController::class, 'details'])->name('products.details');
+Route::get('/products/list', [PurchaseController::class, 'list'])->name('products.list');
+
 
 Route::get('/balancing', [AccountCoctroller::class, 'balancing'])->name('accounts.balancing');
 Route::get('/invoice_sales', [AllBillsController::class, 'index'])->name('invoice_sales.index');
@@ -103,7 +106,8 @@ Route::get('/exchange/edit', [ExchangeController::class, 'edit'])->name('exchang
 
 Route::get('/restrictions/create', [RestrictionController::class, 'create'])->name('restrictions.create');
 Route::get('/restrictions/index', [RestrictionController::class, 'index'])->name('restrictions.index');
-Route::get('/restrictions/all_restrictions_show', [RestrictionController::class, 'all_restrictions_show'])->name('all_restrictions_show');
+Route::get('/restrictions/all_restrictions_show/{id}', [RestrictionController::class, 'all_restrictions_show'])->name('all_restrictions_show');
+Route::get('/restrictions/all_restrictions_show_1', [RestrictionController::class, 'all_restrictions_show_1'])->name('all_restrictions_show_1');
 Route::get('/restrictions/{id}/edit', [RestrictionController::class, 'edit'])->name('restrictions.edit');
 Route::get('/restrictions/{id}', [RestrictionController::class, 'show'])->name('restrictions.show');
 Route::get('/restrictions/{id}/print', [RestrictionController::class, 'print'])->name('restrictions.print');

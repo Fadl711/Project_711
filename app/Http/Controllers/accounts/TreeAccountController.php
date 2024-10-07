@@ -62,7 +62,7 @@ class TreeAccountController extends Controller
         // استعلام لجلب الحسابات الفرعية مع جمع المبالغ المدينة والدائنة من جدول القيود اليومية لعام 2024
         $subAccounts = SubAccount::where('sub_account_id', '!=', null)
                                  ->where('sub_name', 'LIKE', "%{$query}%")
-                               ->get();
+                                 ->Orwhere('sub_account_id', 'LIKE', "%{$query}%") ->get();
 
         // إرجاع النتيجة كاستجابة JSON
                     //  if ($subAccounts->isEmpty()) {

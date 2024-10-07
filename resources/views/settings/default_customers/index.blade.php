@@ -19,7 +19,7 @@
         </thead>
         <tbody>
 
-                @if (isset($SubAccounts))
+                @if (isset($SubAccounts) && isset($Default_customers))
 
                 @foreach ($SubAccounts as $SubAccount)
 

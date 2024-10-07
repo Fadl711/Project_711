@@ -28,6 +28,7 @@
                     if (data.length > 0) {
                         $('#results-table').removeClass('hidden'); // إظهار الجدول عند وجود نتائج
                         $.each(data, function(index, account) {
+                            
                             $('#results-body').append(
                                 '<tr>' +
                                     '<td class="border border-gray-300 p-2">' + (index + 1) + '</td>' +

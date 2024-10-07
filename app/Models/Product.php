@@ -17,15 +17,23 @@ protected static function boot()
 }
 
     protected $fillable =[
-            'barcod',
+            'Barcode',
             'product_name',
-            'Categorie_id',
-            'Product_price',
-            'quantity',
+            'Quantity',
+            'Purchase_price',
+            'Selling_price',
+            'Total',
+            'Cost',
             'Regular_discount',
             'Special_discount',
-            'user_id',
-            'Currency_id',
-            'Total_price',
+            'Profit',
+            'note',
+            'Categorie_id',
+            'currency_id',
+            'warehouse_id',
+            'User_id',
+           
     ];
+  
+     // تحويل Purchase_price إلى أرقام إنجليزية
 }

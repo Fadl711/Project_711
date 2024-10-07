@@ -21,7 +21,7 @@
 <div class="grid mb-4 min-w-[100%]   " id="mainaccount" >
 
 <div  class="w-[80%]">
-  <form id="ajaxForm"  class="  " method="POST"  >
+  <form id="ajaxForm"  >
     @csrf
 <div class=" flex">
   <div class="flex ">
@@ -99,7 +99,7 @@
         <input type="number"  autocomplete="off" name="Known_phone" id="Known_phone"  class="inputSale input-field english-numbers" />
       </div>
       <div class="mb-2">
-        <button type="submit" id="submit" class="input-field text-white inline-flex items-center bgcolor hover:bg-stone-400  font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+        <button type="button" id="saveButton" class="input-field text-white inline-flex items-center bgcolor hover:bg-stone-400  font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
 
             حفظ البيانات
           </button></div>
@@ -271,21 +271,31 @@ $(document).ready(function () {
       }
   });
 
+  $(document).keydown(function(event) {
+        if (event.ctrlKey && event.shiftKey) {
+            event.preventDefault(); // منع السلوك الافتراضي (حفظ الصفحة)
+            saveData(); // استدعاء دالة الحفظ
+        }
+    });
+    $('#saveButton').click(function() {
+        saveData(); // استدعاء دالة الحفظ
+    });
   // التعامل مع إرسال النموذج وحفظ البيانات باستخدام AJAX
-  form.on('submit', function (event) {
-      event.preventDefault(); // منع تحديث الصفحة
+  function saveData() {
+    event.preventDefault(); // منع تحديث الصفحة
+        // تجميع بيانات النموذج
+        const formData = new FormData($('#ajaxForm')[0]);
 
-      // تجميع بيانات النموذج
-      const formData = form.serialize(); // استخدام serialize لجمع البيانات
-
-      // إرسال الطلب باستخدام jQuery AJAX
-      $.ajax({
-          url: '{{ route("Main_Account.store") }}', // رابط الطلب
-          type: 'POST', // نوع الطلب
-          data: formData, // البيانات المرسلة
-          headers: {
-              'X-CSRF-TOKEN': '{{ csrf_token() }}' // إرسال التوكن الخاص بـ Laravel
-          },
+        // إرسال الطلب باستخدام AJAX
+        $.ajax({
+            url: '{{ route("Main_Account.store") }}', // استبدل هذا بالمسار الخاص بك
+            type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}' // إرسال التوكن الخاص بـ Laravel
+            },
+            data: formData,
+            processData: false, // ضروري مع FormData
+            contentType: false, // ضروري مع FormData
           success: function (data) {
               if (data.success) {
                   // إظهار رسالة النجاح
@@ -295,7 +305,9 @@ $(document).ready(function () {
                   // إخفاء الرسالة بعد 3 ثوانٍ
                   setTimeout(() => {
                       successMessage.hide();
-                  }, 3000);
+                      location.reload();
+                  }, 1000);
+                  // يمكنك تعديل الوقت إذا كنت تريد التحميل أسرع أو أبطأ
 
                   // إضافة البيانات المحفوظة إلى الجدول
                   addToTable(data.DataSubAccount);
@@ -316,7 +328,7 @@ $(document).ready(function () {
               errorMessage.show().text('حدث خطأ أثناء الحفظ.');
           }
       });
-  });
+  };
 
   // وظيفة لإضافة البيانات إلى الجدول
   function addToTable(account) {

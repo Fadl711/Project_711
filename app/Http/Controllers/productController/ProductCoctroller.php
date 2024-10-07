@@ -20,19 +20,37 @@ class ProductCoctroller extends Controller
         $curr=Currency::all();
         return view('products.create',['curr'=>$curr]);
     }
+    private function convertArabicNumbersToEnglish($value)
+    {
+        $arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+        $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+        return str_replace($arabicNumbers, $englishNumbers, $value);
+    }
     public function store(Request $request){
+        $Quantity = $this->convertArabicNumbersToEnglish($request->input('Quantity'));
+        $Selling_price = $this->convertArabicNumbersToEnglish($request->input('Selling_price'));
+
+        $Purchase_price = $this->convertArabicNumbersToEnglish($request->input('Purchase_price'));
+        $Regular_discount = $this->convertArabicNumbersToEnglish($request->input('Regular_discount'));
+
+        $Special_discount = $this->convertArabicNumbersToEnglish($request->input('Special_discount'));
+
 
         Product::create([
-            'barcod'=>$request->barcod,
-            'product_name'=>$request->name,
-            'Categorie_id'=>$request->Catog,
-            'Product_price'=>$request->pricep,
-            'quantity'=>$request->quni,
-            'Regular_discount'=>$request->pricesa,
-            'Special_discount'=>$request->pricesp,
-            'user_id'=>$request->user_id,
-            'Currency_id'=>$request->cr,
-            'Total_price'=>$request->allpri,
+            'Barcode'=>$request->Barcode,
+            'product_name'=>$request->product_name,
+            'Quantity'=>$Quantity,
+            'Selling_price'=>$Selling_price,
+            'Categorie_id'=>$request->Categorie_id,
+            'Purchase_price'=>$Purchase_price,
+            'Regular_discount'=>$Regular_discount,
+            'Special_discount'=>$Special_discount,
+            'User_id'=>$request->User_id,
+            'currency_id'=>$request->currency_id,
+            'Total'=>$request->Total,
+
+
         ]);
         return back();
     }

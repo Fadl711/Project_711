@@ -102,7 +102,7 @@
 <script>
 
     $(document).ready(function() {
-     $('#newProduc button').click(function(e) {
+     $('#newProduc  button').click(function(e) {
          e.preventDefault();
          var formData = new FormData($('form')[0]);
          $.ajax({

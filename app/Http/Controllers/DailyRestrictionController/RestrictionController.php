@@ -115,8 +115,14 @@ public function stor(Request $request){
     public function index(){
         return view('daily_restrictions.index');
     }
-    public function   all_restrictions_show(){
-        $eail=DailyEntrie::all()->take(10);
+    public function   all_restrictions_show_1(){
+        $pageNums=GeneralJournal::all();
+
+        return view('daily_restrictions.all_restrictions_show1',['pagesNum'=>$pageNums,]);
+    }
+    public function   all_restrictions_show($id){
+
+        $eail=DailyEntrie::where('Daily_page_id',$id)->get();
         $mainc=MainAccount::all();
         $suba=SubAccount::all();
         return view('daily_restrictions.all_restrictions_show',['eail'=>$eail,'mainc'=>$mainc,'suba'=>$suba]);
@@ -189,17 +195,33 @@ public function stor(Request $request){
             $output = '';
             $query = $request->get('search');
             if ($query != '') {
-                $products = DailyEntrie::where('Daily_page_id', 'LIKE', '%'.$query.'%')->get();
+                $products = DailyEntrie::where('entrie_id', 'LIKE', '%'.$query.'%')->get();
                 if ($products) {
 
                     foreach ($products as $product) {
-                        $resultDebit=$mainc->where('main_account_id',$product->account_debit_id)->first();
                         $user=User::find($product->User_id)->value('name');
+                        $resultDebit=null;
+                        $resultDebit1=null;
+                        $resultDebit1=$suba->where('sub_account_id',$product->account_debit_id);
+                        foreach ($resultDebit1 as $key) {
+                            $resultDebit=$mainc->where('main_account_id',$key->Main_id)->first();
+                            if ($key->sub_name!=$resultDebit->account_name) {
+                                $resultDebit1=$key;
+                                break;
 
-                        $resultDebit1=$suba->where('Main_id',$resultDebit->main_account_id)->first();
-
-                        $resultCredit=$mainc->where('main_account_id',$product->account_Credit_id)->first();
-                        $resultCredit1=$suba->where('Main_id',$resultCredit->main_account_id)->first();
+                            }
+                        }
+                        $resultCredit=null;
+                        $resultCredit1=null;
+                        $resultCredit1=$suba->where('sub_account_id',$product->account_Credit_id);
+                        foreach ($resultCredit1 as $key) {
+                            $resultCredit=$mainc->where('main_account_id',$key->Main_id)->first();
+                            if ($key->sub_name!=$resultCredit->account_name) {
+                                $resultCredit1=$key;
+                                break;
+                            }
+                            # code...
+                        }
 
                         $output .= '<tr class=" transition-all duration-500">'.
                         '<td class="border text-right">'.$product->entrie_id.'</td>'.
@@ -265,13 +287,29 @@ public function stor(Request $request){
                 // إذا كان الحقل فارغًا، أرجع جميع المنتجات
                $products= DailyEntrie::all()->take(10);
                 foreach ($products as $product) {
-                    $resultDebit=$mainc->where('main_account_id',$product->account_debit_id)->first();
                     $user=User::find($product->User_id)->value('name');
+                    $resultDebit=null;
+                    $resultDebit1=null;
+                    $resultDebit1=$suba->where('sub_account_id',$product->account_debit_id);
+                    foreach ($resultDebit1 as $key) {
+                        $resultDebit=$mainc->where('main_account_id',$key->Main_id)->first();
+                        if ($key->sub_name!=$resultDebit->account_name) {
+                            $resultDebit1=$key;
+                            break;
 
-                    $resultDebit1=$suba->where('Main_id',$resultDebit->main_account_id)->first();
-
-                    $resultCredit=$mainc->where('main_account_id',$product->account_Credit_id)->first();
-                    $resultCredit1=$suba->where('Main_id',$resultCredit->main_account_id)->first();
+                        }
+                    }
+                    $resultCredit=null;
+                    $resultCredit1=null;
+                    $resultCredit1=$suba->where('sub_account_id',$product->account_Credit_id);
+                    foreach ($resultCredit1 as $key) {
+                        $resultCredit=$mainc->where('main_account_id',$key->Main_id)->first();
+                        if ($key->sub_name!=$resultCredit->account_name) {
+                            $resultCredit1=$key;
+                            break;
+                        }
+                        # code...
+                    }
 
                     $output .= '<tr class=" transition-all duration-500">'.
                     '<td class="border text-right">'.$product->entrie_id.'</td>'.

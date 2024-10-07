@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\invoicepurchasessController;
 
 use App\Http\Controllers\Controller;
+use App\Models\PurchaseInvoice;
 use Illuminate\Http\Request;
 
 class InvoicePurchaseController extends Controller
@@ -14,7 +15,8 @@ class InvoicePurchaseController extends Controller
 
   
 public function index(){
-    
+    $ff="ff";  
+    dd($ff);
         
     return view('invoice_purchases.index');
 

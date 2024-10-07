@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\PurchaseInvoice;
 use Illuminate\Http\Request;
 
 class PaymentCoctroller extends Controller
@@ -11,5 +12,5 @@ class PaymentCoctroller extends Controller
 
         return view('payments.index');
     }
-    //
+
 }

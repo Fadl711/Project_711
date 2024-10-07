@@ -14,15 +14,16 @@ return new class extends Migration
         Schema::create('purchases', function (Blueprint $table) {
             $table->increments('purchase_id')->unsigned();
             $table->string('Product_name');
+            $table->integer('product_id');
             $table->string('Barcode');
             $table->integer('Quantity');
-            $table->decimal('Purchase_price', 8, 2);
-            $table->decimal('Selling_price', 8, 2);
-            $table->decimal('Total', 8, 2);
-            $table->decimal('Cost', 8, 2);
-            $table->decimal('Discount_earned', 8, 2);
-            $table->decimal('Profit', 8, 2);
-            $table->decimal('Exchange rate', 8, 2);
+            $table->double('Purchase_price');
+            $table->double('Selling_price');
+            $table->double('Total');
+            $table->double('Cost');
+            $table->double('Discount_earned');
+            $table->double('Profit');
+            $table->double('Exchange_rate');
             $table->string('note');
             $table->integer('Currency_id')->unsigned();
             $table->integer('Store_id')->unsigned();
