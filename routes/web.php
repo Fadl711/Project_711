@@ -38,6 +38,7 @@ use App\Http\Controllers\settingController\company_dataController\Company_DataCo
 use App\Http\Controllers\settingController\currenciesController\CurrencieController;
 use App\Http\Controllers\settingController\default_supplierController;
 use App\Http\Controllers\settingController\SettingController;
+use App\Http\Controllers\settingController\WarehouseController;
 use App\Http\Controllers\UsersController\UsersController;
 use App\Models\DefaultSupplier;
 use Illuminate\Support\Facades\Route;
@@ -157,9 +158,15 @@ Route::get('/settings/currencies/index',[CurrencieController::class,'index'])->n
 Route::get('/settings/currencies/create',[CurrencieController::class,'create'])->name('settings.currencies.create');
 Route::post('/settings/currencies/store',[CurrencieController::class,'store'])->name('settings.currencies.store');
 Route::get('/settings/{currency}/edit',[CurrencieController::class,'edit'])->name('settings.currencies.edit');
-Route::put('/settings/{currency}/',[CurrencieController::class,'update'])->name('settings.currencies.update');
+Route::put('/settings/{currency}',[CurrencieController::class,'update'])->name('settings.currencies.update');
 Route::delete('/settings/{currency}',[CurrencieController::class,'destroy'])->name('settings.currencies.destroy');
 Route::post('set-default-currency',[CurrencieController::class,'setDefaultCurrency'])->name('set-default-currency');
+
+Route::get('/settings/warehouse',[WarehouseController::class,'index'])->name('warehouse.index');
+Route::post('/settings/warehouse/store',[WarehouseController::class,'store'])->name('settings.warehouse.store');
+Route::get('/settings/warehouse/{id}/edit',[WarehouseController::class,'edit'])->name('settings.warehouse.edit');
+Route::put('/settings/warehouse/{id}',[WarehouseController::class,'update'])->name('settings.warehouse.update');
+Route::delete('/settings/warehouse/{id}',[WarehouseController::class,'destroy'])->name('settings.warehouse.destroy');
 
 
 
