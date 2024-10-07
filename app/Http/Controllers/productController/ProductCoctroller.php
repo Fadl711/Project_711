@@ -6,19 +6,21 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Currency;
 use App\Models\Product;
+use App\Models\Warehouse;
 use Illuminate\Http\Request;
 
 class ProductCoctroller extends Controller
 {
     public function index(){
-
+        $Warehouses=Warehouse::all();
         $curr=Currency::all();
         $prod=Product::all();
-        return view('products.index',['prod'=>$prod,'curr'=>$curr]);
+        return view('products.index',['prod'=>$prod,'curr'=>$curr,'Warehouses'=>$Warehouses]);
     }
     public function create(){
         $curr=Currency::all();
-        return view('products.create',['curr'=>$curr]);
+        $Warehouses=Warehouse::all();
+        return view('products.create',['curr'=>$curr,'Warehouses'=>$Warehouses]);
     }
     private function convertArabicNumbersToEnglish($value)
     {
@@ -52,6 +54,7 @@ class ProductCoctroller extends Controller
             'Cost'=>$request->Cost,
             'Profit'=>$request->Profit,
             'note'=>$request->note,
+            'warehouse_id'=>$request->warehouse_id,
 
 
         ]);
@@ -61,8 +64,10 @@ class ProductCoctroller extends Controller
        $prod= Product::where('product_id',$id)->first();
 
        $curr=Currency::all();
+       $Warehouses=Warehouse::all();
 
-        return view('products.edit',['prod'=>$prod,'curr'=>$curr]);
+
+        return view('products.edit',['prod'=>$prod,'curr'=>$curr,'Warehouses'=>$Warehouses]);
     }
     public function update(Request $request,$id){
         Product::where('product_id',$id)->update([
@@ -80,6 +85,7 @@ class ProductCoctroller extends Controller
             'Cost'=>$request->Cost,
             'Profit'=>$request->Profit,
             'note'=>$request->note,
+            'warehouse_id'=>$request->warehouse_id,
         ]);
          return redirect()->route('products.index');
     }
@@ -94,6 +100,7 @@ class ProductCoctroller extends Controller
         if ($request->ajax()) {
             $cate=Category::all();
             $curr=Currency::all();
+            $Warehouses=Warehouse::all();
             $output = '';
             $query = $request->get('search');
             if ($query != '') {
@@ -118,6 +125,13 @@ class ProductCoctroller extends Controller
                                 break;
                             }
                         }
+                        $WarehouseName = '';
+                        foreach ($Warehouses as $Warehouse) {
+                            if ($Warehouse->warehouse_id == $product->warehouse_id) {
+                                $WarehouseName = $Warehouse->Store_name;
+                                break;
+                            }
+                        }
                         $output .= '<tr class="bg-white transition-all duration-500 hover:bg-gray-50 text-right"">'.
                         '<td class="tagTd">'.$product->Barcode.'</td>'.
                         '<td class="tagTd">'.$product->product_name.'</td>'.
@@ -131,7 +145,7 @@ class ProductCoctroller extends Controller
                         '<td class="tagTd">'.$product->Regular_discount.'</td>'.
                         '<td class="tagTd">'.$product->Special_discount.'</td>'.
                         '<td class="tagTd">'.$currName.'</td>'.
-                        '<td class="tagTd">'.''.'</td>'.
+                        '<td class="tagTd">'.$WarehouseName.'</td>'.
                         '<td class="tagTd">'.$product->note.'</td>'.
                         '<td class="p-1 tagTd">'.
                             '<div class="flex items-center gap-1">'.
@@ -159,6 +173,8 @@ class ProductCoctroller extends Controller
             } else {
                 // إذا كان الحقل فارغًا، أرجع جميع المنتجات
                 $products = Product::all();
+                $Warehouses=Warehouse::all();
+
                 foreach ($products as $product) {
                     $categoryName = '';
 
@@ -176,6 +192,13 @@ class ProductCoctroller extends Controller
                             break;
                         }
                     }
+                    $WarehouseName = '';
+                    foreach ($Warehouses as $Warehouse) {
+                        if ($Warehouse->warehouse_id == $product->warehouse_id) {
+                            $WarehouseName = $Warehouse->Store_name;
+                            break;
+                        }
+                    }
                     $output .= '<tr class="bg-white transition-all duration-500 hover:bg-gray-50 text-right">'.
                     '<td class="tagTd">'.$product->Barcode.'</td>'.
                     '<td class="tagTd">'.$product->product_name.'</td>'.
@@ -189,7 +212,7 @@ class ProductCoctroller extends Controller
                     '<td class="tagTd">'.$product->Regular_discount.'</td>'.
                     '<td class="tagTd">'.$product->Special_discount.'</td>'.
                     '<td class="tagTd">'.$currName.'</td>'.
-                    '<td class="tagTd">'.''.'</td>'.
+                    '<td class="tagTd">'.$WarehouseName.'</td>'.
                     '<td class="tagTd">'.$product->note.'</td>'.
                     '<td class="p-1 tagTd">'.
                         '<div class="flex items-center gap-1">'.

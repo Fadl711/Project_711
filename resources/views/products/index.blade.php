@@ -70,17 +70,30 @@
                 <td class="tagTd">{{$pro->Special_discount}}</td>
 
                 @if(isset($pro->currency_id) && !empty($pro->currency_id))
-                @foreach ($curr as $cur)
-                @if ($cur->currency_id==$pro->currency_id)
-                <td class="tagTd">{{$cur->currency_name}}</td>
-                @endif
-                @endforeach
+                    @foreach ($curr as $cur)
+                        @if ($cur->currency_id==$pro->currency_id)
+                            <td class="tagTd">{{$cur->currency_name}}</td>
+                        @endif
+                    @endforeach
 
-                @else
-                <td class="tagTd"></td>
+                    @else
+                    <td class="tagTd"></td>
+                @endif
+                {{-- اظهار المخازن يا جمال البطل  --}}
+
+                    @if(isset($pro->warehouse_id) && !empty($pro->warehouse_id))
+                        @foreach ($Warehouses as $Warehouse)
+                            @if ($Warehouse->warehouse_id==$pro->warehouse_id)
+                                <td class="tagTd">{{$Warehouse->Store_name}}</td>
+                            @endif
+                        @endforeach
+
+                    @else
+                        <td class="tagTd"></td>
 
                 @endif
-                <td class="tagTd"></td>
+                {{-- اظهار المخازن يا جمال البطل  --}}
+
                 <td class="tagTd max-w-10 truncate">{{$pro->note}}</td>
 
 

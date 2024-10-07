@@ -66,7 +66,7 @@
         </div>
         <div class="flex flex-col">
           <label for="note" class="btn"> ملاحظه  </label>
-          <input type="text" name="note" id="note" placeholder="0" class="inputSale" required/>
+          <input type="text" name="note" id="note"  class="inputSale" required/>
         </div>
 
         <div class="flex flex-col">
@@ -84,11 +84,12 @@
         <div class="flex flex-col bg-gray-200">
           <label for="warehouse_id" class="btn">اسم المخزن</label>
           <select style="background-image: none ;" name="warehouse_id" id="warehouse_id" class="inputSale appearance-auto" required>
-              {{-- @forelse ($curr as $cur)
-              <option value="{{$cur->currency_id}}">{{$cur->currency_name}}</option>
-              @empty --}}
+             <option selected value=""></option>
+            @forelse ($Warehouses as $Warehouse)
+              <option value="{{$Warehouse->warehouse_id}}">{{$Warehouse->Store_name}}</option>
+              @empty
                   <div>لايوجد بيانات حالية</div>
-              {{-- @endforelse --}}
+              @endforelse
 
           </select>
       </div>
