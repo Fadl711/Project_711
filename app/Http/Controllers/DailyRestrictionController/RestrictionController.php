@@ -225,9 +225,9 @@ public function stor(Request $request){
 
                         $output .= '<tr class=" transition-all duration-500">'.
                         '<td class="border text-right">'.$product->entrie_id.'</td>'.
-                        '<td class="border text-right">'.($resultDebit->account_name).'-'.($resultDebit1->sub_name).'</td>'.
+                        '<td class="border text-right">'.'('.$resultDebit->account_name.')'.'-'.'('.$resultDebit1->sub_name.')'.'</td>'.
                         '<td class="border text-right">'.$product->Amount_debit.'</td>'.
-                        '<td class="border text-right">'.($resultCredit->account_name).'-'.($resultCredit1->sub_name).'</td>'.
+                        '<td class="border text-right">'.'('.$resultCredit->account_name.')'.'-'.'('.$resultCredit1->sub_name.')'.'</td>'.
                         '<td class="border text-right">'.$product->Amount_Credit.'</td>'.
                         '<td class="border text-right">'.$product->Statement.'</td>'.
                         '<td class="border text-right">'.$product->created_at.'</td>'.
@@ -313,9 +313,9 @@ public function stor(Request $request){
 
                     $output .= '<tr class=" transition-all duration-500">'.
                     '<td class="border text-right">'.$product->entrie_id.'</td>'.
-                    '<td class="border text-right">'.($resultDebit->account_name).'-'.($resultDebit1->sub_name).'</td>'.
+                    '<td class="border text-right">'.'('.$resultDebit->account_name.')'.'-'.'('.$resultDebit1->sub_name.')'.'</td>'.
                     '<td class="border text-right">'.$product->Amount_debit.'</td>'.
-                    '<td class="border text-right">'.($resultCredit->account_name).'-'.($resultCredit1->sub_name).'</td>'.
+                    '<td class="border text-right">'.'('.$resultCredit->account_name.')'.'-'.'('.$resultCredit1->sub_name.')'.'</td>'.
                     '<td class="border text-right">'.$product->Amount_Credit.'</td>'.
                     '<td class="border text-right">'.$product->Statement.'</td>'.
                     '<td class="border text-right">'.$product->created_at.'</td>'.

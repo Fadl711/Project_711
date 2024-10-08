@@ -61,16 +61,16 @@
                 </span>
                 <span>العميل الافتراضي</span>
             </a>
-            <a href="{{route('default_customers.index')}}" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+            <a href="{{route('warehouse.index')}}" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
                 <span class="mr-3">
                     <!-- Visual Look Icon -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12h4m-4-2h6m-6 4h6m-6 4h4M6 12H2m0-2h6m-6 4h6M8 6h8M8 18h8m-5 0v4m-2-4v4M8 3v4m0 12v4" />
                     </svg>
                 </span>
-                <span>Visual Look</span>
+                <span>المخازن</span>
             </a>
-            <a href="{{route('default_customers.index')}}" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+            <a href="{{route('warehouse.index')}}" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
                 <span class="mr-3">
                     <!-- Embed Icon -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

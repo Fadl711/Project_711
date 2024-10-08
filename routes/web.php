@@ -12,7 +12,6 @@ use App\Http\Controllers\bondController\receipController\All_Receipt_BondControl
 use App\Http\Controllers\bondController\receipController\ReceipController;
 use App\Http\Controllers\chartController\ChartController;
 use App\Http\Controllers\DailyRestrictionController\RestrictionController;
-use App\Http\Controllers\default_customerController;
 use App\Http\Controllers\FixedAssetsController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\invoicepurchasessController\InvoicePurchaseController;
@@ -24,6 +23,7 @@ use App\Http\Controllers\SaleCoctroller;
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RefundController;
+use App\Http\Controllers\settingController\SettingController;
 use App\Http\Controllers\SupplierCoctroller;
 use App\Http\Controllers\PDFReportController;
 use App\Http\Controllers\productController\CategoryController;
@@ -36,8 +36,10 @@ use App\Http\Controllers\reportsConreoller;
 use App\Http\Controllers\SaleCoctroller\SaleController;
 use App\Http\Controllers\settingController\company_dataController\Company_DataController;
 use App\Http\Controllers\settingController\currenciesController\CurrencieController;
+use App\Http\Controllers\settingController\default_customerController;
 use App\Http\Controllers\settingController\default_supplierController;
-use App\Http\Controllers\settingController\SettingController;
+
+use App\Http\Controllers\settingController\WarehouseController;
 use App\Http\Controllers\UsersController\UsersController;
 use App\Models\DefaultSupplier;
 use Illuminate\Support\Facades\Route;
@@ -72,10 +74,7 @@ Route::delete('/Category/{Category}',[CategoryController::class,'destroy'])->nam
     Route::delete('/Default_Supplier/{id}/destroy', [default_supplierController::class, 'destroy'])->name('default_suppliers.destroy');
 
     Route::get('/Default_customer', [default_customerController::class, 'index'])->name('default_customers.index');
-    Route::get('/Default_customer/create', [default_customerController::class, 'create'])->name('default_customers.create');
     Route::post('Default_customer/store', [default_customerController::class, 'store'])->name('default_customers.store');
-    Route::get('/Default_customer/{id}/edit', [default_customerController::class, 'edit'])->name('default_customers.edit');
-    Route::put('/Default_customer/{id}/update', [default_customerController::class, 'update'])->name('default_customers.update');
     Route::delete('/Default_customer/{id}/destroy', [default_customerController::class, 'destroy'])->name('default_customers.destroy');
 Route::post('/invoicePurchases/store', [PurchaseController::class, 'store'])->name('invoicePurchases.store');
 Route::get('/api/products/search', [PurchaseController::class, 'search']);
@@ -156,9 +155,15 @@ Route::get('/settings/currencies/index',[CurrencieController::class,'index'])->n
 Route::get('/settings/currencies/create',[CurrencieController::class,'create'])->name('settings.currencies.create');
 Route::post('/settings/currencies/store',[CurrencieController::class,'store'])->name('settings.currencies.store');
 Route::get('/settings/{currency}/edit',[CurrencieController::class,'edit'])->name('settings.currencies.edit');
-Route::put('/settings/{currency}/',[CurrencieController::class,'update'])->name('settings.currencies.update');
+Route::put('/settings/{currency}',[CurrencieController::class,'update'])->name('settings.currencies.update');
 Route::delete('/settings/{currency}',[CurrencieController::class,'destroy'])->name('settings.currencies.destroy');
 Route::post('set-default-currency',[CurrencieController::class,'setDefaultCurrency'])->name('set-default-currency');
+
+Route::get('/settings/warehouse',[WarehouseController::class,'index'])->name('warehouse.index');
+Route::post('/settings/warehouse/store',[WarehouseController::class,'store'])->name('settings.warehouse.store');
+Route::get('/settings/warehouse/{id}/edit',[WarehouseController::class,'edit'])->name('settings.warehouse.edit');
+Route::put('/settings/warehouse/{id}',[WarehouseController::class,'update'])->name('settings.warehouse.update');
+Route::delete('/settings/warehouse/{id}',[WarehouseController::class,'destroy'])->name('settings.warehouse.destroy');
 
 
 

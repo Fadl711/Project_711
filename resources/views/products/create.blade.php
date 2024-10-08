@@ -10,8 +10,8 @@
     @csrf
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
         <div class="flex flex-col">
-          <label for="barcod" class="btn">الباركود</label>
-          <input type="number" name="barcod" placeholder="0" class="inputSale"  />
+          <label for="Barcode" class="btn">الباركود</label>
+          <input type="number" name="Barcode" placeholder="0" class="inputSale"  />
         </div>
 
         <div class="flex flex-col">
@@ -22,12 +22,12 @@
         <div class="flex flex-col bg-gray-200 ">
           <label for="Categorie_id" class="btn">وحدة الصنف</label>
           <select style="background-image: none ;" name="Categorie_id" id="Categorie_id" class="inputSale appearance-auto" required>
-          
+
             <option selected value=""></option>
             @auth
             @foreach ($cate as $cat)
-       
-                
+
+
             <option value="{{$cat->categorie_id}}">{{$cat->Categorie_name}}</option>
 
             @endforeach
@@ -47,6 +47,15 @@
         </div>
 
         <div class="flex flex-col">
+          <label for="Purchase_price" class="btn">سعر الشراء</label>
+          <input type="number" name="Purchase_price" id="Purchase_price" placeholder="0" class="inputSale"required />
+        </div>
+        <div class="flex flex-col">
+          <label for="Selling_price" class="btn"> سعر البيع</label>
+          <input type="number" name="Selling_price" id="Selling_price" placeholder="0" class="inputSale" required/>
+        </div>
+
+        <div class="flex flex-col">
           <label for="Regular_discount" class="btn">خصم عادي</label>
           <input type="number" name="Regular_discount" id="Regular_discount" placeholder="0" class="inputSale" required/>
         </div>
@@ -56,22 +65,31 @@
           <input type="number" name="Special_discount" id="Special_discount" placeholder="0" class="inputSale" required/>
         </div>
         <div class="flex flex-col">
-          <label for="Purchase_price" class="btn"> سعر الشراء </label>
-          <input type="number" name="Purchase_price" id="Purchase_price" placeholder="0" class="inputSale" required/>
+          <label for="note" class="btn"> ملاحظه  </label>
+          <input type="text" name="note" id="note"  class="inputSale" required/>
         </div>
 
         <div class="flex flex-col">
           <label for="Total" class="btn">أجمالي الشراء </label>
           <input type="number" name="Total" id="Total" placeholder="0" class="inputSale" required/>
         </div>
+        <div class="flex flex-col">
+          <label for="Cost" class="btn"> التكلفة </label>
+          <input type="number" name="Cost" id="Cost" placeholder="0" class="inputSale" required/>
+        </div>
+        <div class="flex flex-col">
+          <label for="Profit" class="btn"> الربح </label>
+          <input type="number" name="Profit" id="Profit" placeholder="0" class="inputSale" required/>
+        </div>
         <div class="flex flex-col bg-gray-200">
-          <label for="cr" class="btn">اسم المخزن</label>
-          <select style="background-image: none ;" name="currency_id" id="currency_id" class="inputSale appearance-auto" required>
-              {{-- @forelse ($curr as $cur)
-              <option value="{{$cur->currency_id}}">{{$cur->currency_name}}</option>
-              @empty --}}
+          <label for="warehouse_id" class="btn">اسم المخزن</label>
+          <select style="background-image: none ;" name="warehouse_id" id="warehouse_id" class="inputSale appearance-auto" required>
+             <option selected value=""></option>
+            @forelse ($Warehouses as $Warehouse)
+              <option value="{{$Warehouse->warehouse_id}}">{{$Warehouse->Store_name}}</option>
+              @empty
                   <div>لايوجد بيانات حالية</div>
-              {{-- @endforelse --}}
+              @endforelse
 
           </select>
       </div>
