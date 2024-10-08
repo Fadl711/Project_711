@@ -3,7 +3,10 @@
 {{-- <button onclick="window.history.back()">رجوع</button> --}}
 <div class=" text-sm">
     <div colspan="4"  class="flex flex-col  justify-center items-center  py-2">
-
+<div class="absolute top-5 right-5 w-10 flex ">
+<span>رقم الصفحة</span>
+    <input  id="Daily_page_id"  type="text" class="rounded-md w-10  text-left outline-none border-0  " value="{{$id}}" >
+</div>
         <div class="relative  border text-black border-gray-200 rounded-lg w-[50%]  ">
             <input id="search" name="search" type="text" class="rounded-md w-full text-left" placeholder="Search ">
 
@@ -149,11 +152,12 @@
     $(document).ready(function() {
         $('#search').on('keyup', function() {
             var searchValue = $(this).val();
+            var inputValue = $('#Daily_page_id').val();
             if (searchValue !== '') {
                 $.ajax({
                     type: 'GET',
                     url: '{{ route('search.daily_restrictions') }}',
-                    data: {search: searchValue},
+                    data: {search: searchValue,Value: inputValue},
                     success: function(data) {
                         $('#products-table').html(data);
                     }
@@ -163,7 +167,7 @@
                 $.ajax({
                     type: 'GET',
                     url: '{{ route('search.daily_restrictions') }}',
-                    data: {search: ''},
+                    data: {search: '',Value: inputValue},
                     success: function(data) {
                         $('#products-table').html(data);
                     }

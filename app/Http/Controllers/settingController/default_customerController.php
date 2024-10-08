@@ -18,6 +18,7 @@ class default_customerController extends Controller
         $customers =MainAccount::where('AccountClass', AccountClass::CUSTOMER->value)->first();
             // الحصول على SubAccount بناءً على main_account_id
             $supplirx = SubAccount::where('Main_id', $customers->main_account_id)->get();
+            
         return view('settings.default_customers.index', compact('defaultSuppliers','SubAccounts','supplirx'));
    }
     public function store(Request $request)

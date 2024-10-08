@@ -125,7 +125,7 @@ public function stor(Request $request){
         $eail=DailyEntrie::where('Daily_page_id',$id)->get();
         $mainc=MainAccount::all();
         $suba=SubAccount::all();
-        return view('daily_restrictions.all_restrictions_show',['eail'=>$eail,'mainc'=>$mainc,'suba'=>$suba]);
+        return view('daily_restrictions.all_restrictions_show',['eail'=>$eail,'mainc'=>$mainc,'suba'=>$suba,"id"=>$id]);
     }
 
     public function edit($id){
@@ -189,13 +189,21 @@ public function stor(Request $request){
     public function search(Request $request)
     {
         if ($request->ajax()) {
-
-            $mainc=MainAccount::all();
-            $suba=SubAccount::all();
+            $mainc = MainAccount::all();
+            $suba = SubAccount::all();
             $output = '';
             $query = $request->get('search');
+            $Daily_page_id = $request->get('Value');  // هنا يمكنك تعريف المتغيرات التي تحتاجها في كلا الحالتين
+            $products = null; // متغير سيحتوي على النتائج
             if ($query != '') {
-                $products = DailyEntrie::where('entrie_id', 'LIKE', '%'.$query.'%')->get();
+                $products = DailyEntrie::where('daily_page_id', $Daily_page_id) // شرط رقم الصفحة
+                ->where(function($q) use ($query) {
+                    $q->where('entrie_id', 'LIKE', '%'.$query.'%')
+                      ->orWhereHas('debitAccount', function ($q) use ($query) {
+                          $q->where('sub_name', 'LIKE', "%$query%");
+                      });
+                })
+                ->get();
                 if ($products) {
 
                     foreach ($products as $product) {
@@ -284,8 +292,9 @@ public function stor(Request $request){
                     return Response($output);
                 }
             }else {
+
+                $products= DailyEntrie::where('Daily_page_id',$Daily_page_id)->get();
                 // إذا كان الحقل فارغًا، أرجع جميع المنتجات
-               $products= DailyEntrie::all()->take(10);
                 foreach ($products as $product) {
                     $user=User::find($product->User_id)->value('name');
                     $resultDebit=null;

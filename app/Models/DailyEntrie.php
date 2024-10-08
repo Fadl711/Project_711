@@ -29,17 +29,17 @@ class DailyEntrie extends Model
 
     // العلاقات مع الجداول الأخرى
 
-    // // علاقة مع جدول sub_accounts - الحساب المدين
-    // public function debitAccount()
-    // {
-    //     return $this->belongsTo(SubAccount::class, 'account_debit_id', 'sub_account_id');
-    // }
+    // علاقة مع جدول sub_accounts - الحساب المدين
+    public function debitAccount()
+    {
+        return $this->belongsTo(SubAccount::class, 'account_debit_id', 'sub_account_id');
+    }
 
-    // // علاقة مع جدول sub_accounts - الحساب الدائن
-    // public function creditAccount()
-    // {
-    //     return $this->belongsTo(SubAccount::class, 'account_Credit_id', 'sub_account_id');
-    // }
+    // علاقة مع جدول sub_accounts - الحساب الدائن
+    public function creditAccount()
+    {
+        return $this->belongsTo(SubAccount::class, 'account_Credit_id', 'sub_account_id');
+    }
 
     // // علاقة مع جدول users
     // public function user()
