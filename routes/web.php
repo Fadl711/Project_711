@@ -81,8 +81,7 @@ Route::post('/invoicePurchases/store', [PurchaseController::class, 'store'])->na
 Route::get('/api/products/search', [PurchaseController::class, 'search']);
 
 Route::get('/Purchase', [PurchaseController::class,'create'])->name('Purchases.create');
-Route::get('/products/details', [PurchaseController::class, 'details'])->name('products.details');
-Route::get('/products/list', [PurchaseController::class, 'list'])->name('products.list');
+Route::get('/Purchase/save', [PurchaseController::class, 'save'])->name('Purchase.save');
 
 
 Route::get('/balancing', [AccountCoctroller::class, 'balancing'])->name('accounts.balancing');
