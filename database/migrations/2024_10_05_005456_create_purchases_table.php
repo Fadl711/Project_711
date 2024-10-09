@@ -29,12 +29,12 @@ return new class extends Migration
             $table->integer('Store_id')->unsigned();
             $table->integer('User_id')->unsigned();
             $table->integer('Purchase_invoice_id')->unsigned();
+            $table->timestamps();
             $table->foreign('Purchase_invoice_id')->references('Purchase_invoice_id')->on('purchase_invoices')
             ->onDelete('cascade');
             $table->integer('Supplier_id')->unsigned();
             $table->foreign('Supplier_id')->references('sub_account_id')->on('sub_accounts')
             ->onDelete('cascade');
-            $table->timestamps();
 
             $table->foreign('Currency_id')->references('currency_id')->on('currencies');
             $table->foreign('Store_id')->references('warehouse_id')->on('warehouses');

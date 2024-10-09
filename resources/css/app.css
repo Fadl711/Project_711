@@ -34,7 +34,7 @@
   @apply block mb-2 text-sm  text-gray-700 dark:text-white text-center font-bold
 }
 .inputSale{
-@apply w-full rounded-md border border-[#d2d0d0] bg-white py-2 px-2 text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md 
+@apply w-full rounded-md border border-[#d2d0d0] bg-white py-2 px-2 text-base font-medium text-[#07074D] outline-none focus:border-[#6A64F1] focus:shadow-md 
 }
 .divProducte {
    @apply flex items-center w-full px-1 py-1 text-base  text-black bg-white  rounded-l-md  md:col-span-3

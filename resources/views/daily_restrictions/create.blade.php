@@ -104,8 +104,6 @@
                 <label for="Currency_name" class="block font-medium mb-2">العملة</label>
                 <select   dir="ltr" id="Currency_name" class="inputSale input-field " name="Currency_name"  >
                     @auth
-
-
                   @foreach ($curr as $cur)
                   <option @isset($cu)
                   @selected($cur->currency_id==$cu->Currency_id)

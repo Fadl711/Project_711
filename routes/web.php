@@ -80,7 +80,7 @@ Route::post('/invoicePurchases/store', [PurchaseController::class, 'store'])->na
 Route::get('/api/products/search', [PurchaseController::class, 'search']);
 
 Route::get('/Purchase', [PurchaseController::class,'create'])->name('Purchases.create');
-Route::get('/Purchase/save', [PurchaseController::class, 'save'])->name('Purchase.save');
+Route::post('/Purchases/storc', [PurchaseController::class, 'storc'])->name('Purchases.storc');
 
 
 Route::get('/balancing', [AccountCoctroller::class, 'balancing'])->name('accounts.balancing');

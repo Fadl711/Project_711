@@ -4,11 +4,13 @@ namespace App\Http\Controllers\purchases;
 
 use App\Enum\AccountClass;
 use App\Http\Controllers\Controller;
-use App\Models\DefaultSupplier;
+use App\Models\Currency;
 use App\Models\MainAccount;
 use App\Models\Product;
+use App\Models\Purchase;
 use App\Models\PurchaseInvoice;
 use App\Models\SubAccount;
+use App\Models\Warehouse;
 use Illuminate\Http\Request;
 
 class PurchaseController extends Controller
@@ -22,23 +24,22 @@ class PurchaseController extends Controller
     }
     
     public function create() {
-        // $ff="ff";  
-     
-        $products = Product::all(); // جلب جميع المنتجات
-
+        $Currency_name=Currency::all();
+        $products = Product::all(); 
+        $Warehouse=Warehouse::all();
         $mainAccount_supplier=MainAccount::where('AccountClass',AccountClass::SUPPLIER->value)->first();
+
         if($mainAccount_supplier)
         {
             $allSubAccounts = SubAccount::all();
-           
-                // $subAccounts = SubAccount::where('Main_id', $mainAccount->main_account_id)->get();
-                // dd($subAccounts);
-                return view('Purchases.create', ['AllSubAccounts'=>$allSubAccounts,'mainAccount_supplier'=>$mainAccount_supplier,'products' => $products]);
+                return view('Purchases.create', ['AllSubAccounts'=>$allSubAccounts,'mainAccount_supplier'=>$mainAccount_supplier,
+                'products' => $products,
+                'Currency_name'=>$Currency_name,
+                'Warehouse'=>$Warehouse
+                 
+            
+            ]);
                  }
-           
-
-        
-
         return view('Purchases.create');
   
     }
@@ -60,29 +61,51 @@ class PurchaseController extends Controller
         $purchaseInvoice->save();
 // إعادة البيانات كاستجابة
 return response()->json([
-'success' => true,
-'message' => 'تم الحفظ بنجاح',
-'invoice_number' => $purchaseInvoice->id
+    'success' => true,
+    'message' => 'تم الحفظ بنجاح',
+    'invoice_number' => $purchaseInvoice->id,
+    'supplier_id' => $purchaseInvoice->Supplier_id
 ], 201);
-
     }
     
-    public function searchProdact(Request $request)
-    {   
-        $query = $request->input('query');
-        $subAccounts = SubAccount::where('sub_account_id', '!=', null)
-                                 ->where('sub_name', 'LIKE', "%{$query}%")
-                                 ->Orwhere('sub_account_id', 'LIKE', "%{$query}%") ->get();
-   return response()->json($subAccounts);
-                                                 
-                                                  
-}
-public function list() {
-    
-    $products = Product::all(); // جلب جميع المنتجات
 
-    return response()->json(['products' => $products]);
+public function storc(Request $request)
+{
+  
+    // تحقق من صحة الإدخالات وتعيين قيم افتراضية للقيم الفارغة
+    $purchase =new Purchase;
+ 
+         $purchase->Product_name      =$request->product_name;
+         $purchase->Barcode            =$request->Barcode ; // باركود افتراضي إذا كان فارغًا
+         $purchase->Quantity           =$request->Quantity; // تعيين 0 إذا كانت الكمية فارغة
+         $purchase->Purchase_price     =$request->Purchase_price; // تعيين 0 إذا كان سعر الشراء فارغًا
+         $purchase->Selling_price      =$request->Selling_price ; // تعيين 0 إذا كان سعر البيع فارغًا
+         $purchase->Total              =$request->Total  ; // تعيين 0 إذا كان الإجمالي فارغًا
+         $purchase->Cost               =$request->Cost ?? 0; // تعيين 0 إذا كانت التكلفة فارغة
+         $purchase->Currency_id        =$request->Currency_id ; // تعيين null إذا كان Currency_id فارغًا
+         $purchase->Supplier_id         =$request->supplier_name ; // تعيين null إذا كان Supplier_id فارغًا
+         $purchase->User_id            =$request->User_id; // تعيين معرف المستخدم الحالي إذا كان فارغًا
+         $purchase->Purchase_invoice_id =$request->purchase_invoice_id; // تعيين null إذا كان Purchase_invoice_id فارغًا
+         $purchase->Store_id           =$request->Store_id ; // تعيين null إذا كان Store_id فارغًا
+         $purchase->Discount_earned    =$request->Discount_earned ?? 0; // تعيين 0 إذا كان الخصم المكتسب فارغًا
+         $purchase->Profit             =$request->Profit ?? 0; // تعيين 0 إذا كان الربح فارغًا
+         $purchase->Exchange_rate      =$request->Exchange_rate ?? 0 ; // تعيين 1.0 كمعدل صرف افتراضي
+         $purchase->note               =$request->note ?? null ;// تعيين فارغ إذا كانت الملاحظة فارغة
+         $purchase->product_id         =$request->product_id; // تعيين 0 إذا كانت القيمة فارغة
+
+        // إنشاء السجل الجديد في قاعدة البيانات
+        $purchase->save();
+        $Purchasesum = Purchase::where('Purchase_invoice_id', $purchase->Purchase_invoice_id)->sum('Total');
+        return response()->json([
+        'success' =>true,'message'=> 'تم الحفظ بنجاح',
+        'purchase' => $purchase,
+        'Purchasesum'=>$Purchasesum
+        ],201 );
+        
+   
+    
 }
+
 
  private function convertArabicNumbersToEnglish($value)
     {
