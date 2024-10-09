@@ -17,12 +17,12 @@
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-white">
             @include('layouts.navigation')
-           
+
             <div class="flex flex-col  w-40 h-full overflow-hidden text-gray-700 bg-gray-100 rounded ">
-         
+
                 <div class="w-full px-2">
                   <div class="flex flex-col items-center w-full mt-3 border-t border-gray-300">
-                    <a class="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300" href="#">
+                    <a href="/" class="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300" href="#">
                       <svg class="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -30,25 +30,25 @@
                       </svg>
                       <span class="ml-2 text-sm font-medium"> الرئسية</span>
                     </a>
-                    
+
                     <a class="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300" href="#">
-      
+
                     <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                       <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 17.345a4.76 4.76 0 0 0 2.558 1.618c2.274.589 4.512-.446 4.999-2.31.487-1.866-1.273-3.9-3.546-4.49-2.273-.59-4.034-2.623-3.547-4.488.486-1.865 2.724-2.899 4.998-2.31.982.236 1.87.793 2.538 1.592m-3.879 12.171V21m0-18v2.2"/>
                     </svg>
                     <span class="ml-2 text-sm font-medium">المبيعات</span>
-      
+
                     </a>
                     <a class="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300" href="#">
-      
+
                       <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 4h1.5L9 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm-8.5-3h9.25L19 7h-1M8 7h-.688M13 5v4m-2-2h4"/>
                         </svg>
                       <span class="ml-2 text-sm font-medium">المشتريات</span>
-        
+
                       </a>
-      
-                   
+
+
                       <a class="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300" href="#">
                           <svg class="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
@@ -57,7 +57,7 @@
                           </svg>
                           <span class="ml-2 text-sm font-medium">المنتجات</span>
                         </a>
-      
+
                       <a class="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300" href="#">
                           <svg class="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -76,7 +76,7 @@
                     </a>
                   </div>
                   <div class="flex flex-col items-center w-full mt-2 border-t border-gray-300">
-                   
+
                     <a class="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300" href="#">
                       <svg class="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -85,7 +85,7 @@
                       </svg>
                       <span class="ml-2 text-sm font-medium">الإعدادات</span>
                     </a>
-      
+
                     <a class="relative flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300" href="#">
                       <svg class="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -95,17 +95,17 @@
                       <span class="ml-2 text-sm font-medium">الرسائل</span>
                       <span class="absolute top-0 left-0 w-2 h-2 mt-2 ml-2 bg-indigo-500 rounded-full"></span>
                     </a>
-                    
+
                     <a class="relative flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300" href="#">
-      
+
                   <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
               <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M4.5 17H4a1 1 0 0 1-1-1 3 3 0 0 1 3-3h1m0-3.05A2.5 2.5 0 1 1 9 5.5M19.5 17h.5a1 1 0 0 0 1-1 3 3 0 0 0-3-3h-1m0-3.05a2.5 2.5 0 1 0-2-4.45m.5 13.5h-7a1 1 0 0 1-1-1 3 3 0 0 1 3-3h3a3 3 0 0 1 3 3 1 1 0 0 1-1 1Zm-1-9.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"/>
             </svg>
             <span class="ml-2 text-sm font-medium">العملاء</span>
                     </a>
-      
+
                     <a class="relative flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300" href="#">
-      
+
                       <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                   <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M4.5 17H4a1 1 0 0 1-1-1 3 3 0 0 1 3-3h1m0-3.05A2.5 2.5 0 1 1 9 5.5M19.5 17h.5a1 1 0 0 0 1-1 3 3 0 0 0-3-3h-1m0-3.05a2.5 2.5 0 1 0-2-4.45m.5 13.5h-7a1 1 0 0 1-1-1 3 3 0 0 1 3-3h3a3 3 0 0 1 3 3 1 1 0 0 1-1 1Zm-1-9.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"/>
                 </svg>
@@ -117,19 +117,19 @@
                   <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                       <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0a8.949 8.949 0 0 0 4.951-1.488A3.987 3.987 0 0 0 13 16h-2a3.987 3.987 0 0 0-3.951 3.512A8.948 8.948 0 0 0 12 21Zm3-11a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
                     </svg>
-                    
+
                   <span class="ml-2 text-sm font-medium">Account</span>
                 </a>
               </div>
               <!-- Component End  -->
-             
+
               <!-- Social Links  -->
-            
+
               <div class="group fixed bottom-0 right-0 p-2  flex items-end justify-end w-24 h-24 ">
                 <!-- main -->
                 <div
                   class="text-white shadow-xl flex items-center justify-center p-3 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 z-50 absolute  ">
-            
+
                   <svg class="w-6 h-6 group-hover:rotate-90  transition-all duration-[0.6s]" fill="#ffffff" height="80px"
                     width="80px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
                     xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 458.624 458.624" xml:space="preserve">
@@ -201,7 +201,7 @@
 
                 {{ $slot }}
             </main>
-            
+
         </div>
     </body>
 </html>

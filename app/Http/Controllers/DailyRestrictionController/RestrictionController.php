@@ -70,6 +70,59 @@ class RestrictionController extends Controller
         return response()->json(['success' => 'تم حفظ القيد بنجاح'])
         ;
     }
+    public function saveAndPrint(Request $request)
+    {
+
+        // $mainAccount=MainAccount::all();
+        // dd($mainAccount);
+
+
+        // التحقق من صحة البيانات المدخلة
+        $validated = $request->validate([
+            'sub_account_debit_id' => 'required|integer',
+            //'sub_account_debit_id' => 'required|integer',
+            'Amount_debit' => 'required|numeric',
+            'account_Credit_id' => 'required|integer',
+            'sub_account_Credit_id' => 'required|integer',
+            //'Amount_debit' => 'required|numeric', // تأكد من تطابق المبلغين
+            'Statement' => 'required|string',
+            'Currency_name' => 'required|string', // تأكد من استخدام الاسم الصحيح هنا
+            'User_id' => 'required|integer', // تأكد من إضافة User_id إذا كان مطلوباً
+        ]);
+        // التأكد من عدم اختيار حسابين فرعيين متماثلين
+        if ($request->sub_account_debit_id == $request->sub_account_Credit_id) {
+            return response()->json(['success' => 'يجب عدم تساوي الحسابات الفرعية المدين والدائن.']);
+        }
+
+        // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
+        $today = Carbon::now()->toDateString();
+        $dailyPage = GeneralJournal::whereDate('created_at', $today)->first();
+
+        // إذا لم توجد صفحة، قم بإنشائها
+        if (!$dailyPage) {
+            $dailyPage = GeneralJournal::create([]);
+        }
+
+
+        // حفظ القيد اليومي
+        $dailyEntrie = new DailyEntrie();
+    $dailyEntrie->account_debit_id = $validated['sub_account_debit_id'];
+    $dailyEntrie->Amount_debit = $validated['Amount_debit'];
+    $dailyEntrie->account_Credit_id = $validated['sub_account_Credit_id'];
+    $dailyEntrie->Amount_Credit = $validated['Amount_debit'];
+    $dailyEntrie->Statement = $validated['Statement'];
+    $dailyEntrie->Currency_name = $validated['Currency_name']; // استخدم الاسم الصحيح هنا
+    $dailyEntrie->Daily_page_id = $dailyPage->page_id; // حفظ معرف الصفحة اليومية
+    $dailyEntrie->User_id = $validated['User_id']; // تأكد من استخدام المتغيرات المصرح بها
+
+    $dailyEntrie->save();
+    // إرجاع البيانات التي تحتاجها لصفحة الطباعة
+    return response()->json([
+        'success' => 'تم الحفظ بنجاح!',
+        'dailyEntrie' => $dailyEntrie->first() // إرسال القيد اليومي بالكامل
+    ]);
+
+    }
 public function stor(Request $request){
     $today = Carbon::now()->toDateString(); // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
     $dailyPage = GeneralJournal::whereDate('created_at', $today)->first(); // البحث عن الصفحة
@@ -180,7 +233,6 @@ public function stor(Request $request){
         return view('daily_restrictions.show',['daily'=>$dailyEntrie,'mainc'=>$mainc,'suba'=>$suba]);
     }
     public function print($id){
-
         $mainc=MainAccount::all();
         $suba=SubAccount::all();
         $dailyEntrie =DailyEntrie::where('entrie_id',$id)->first();
