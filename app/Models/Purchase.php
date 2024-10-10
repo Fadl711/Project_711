@@ -8,9 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Purchase extends Model
 {
     use HasFactory;
+
+protected $primaryKey = 'purchase_id';
     protected $fillable = [
+        'purchase_id',
         'Product_name',
-         'Barcode', 
+         'Barcode',
          'Quantity',
          'Purchase_price',
          'Selling_price',
@@ -27,10 +30,10 @@ class Purchase extends Model
          'Exchange_rate',
          'note',
          'product_id',
-         
-         
-        
+
+
+
 
         ];
-    
+
 }

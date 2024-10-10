@@ -17,15 +17,15 @@ class PurchaseController extends Controller
 {
     //
     public function bills_purchase_show(){
-    
-        
+
+
         return view('invoice_purchases.bills_purchase_show');
-    
+
     }
-    
+
     public function create() {
         $Currency_name=Currency::all();
-        $products = Product::all(); 
+        $products = Product::all();
         $Warehouse=Warehouse::all();
         $mainAccount_supplier=MainAccount::where('AccountClass',AccountClass::SUPPLIER->value)->first();
 
@@ -36,20 +36,20 @@ class PurchaseController extends Controller
                 'products' => $products,
                 'Currency_name'=>$Currency_name,
                 'Warehouse'=>$Warehouse
-                 
-            
+
+
             ]);
                  }
         return view('Purchases.create');
-  
+
     }
 
 
     public function store(Request $request)
     {
-    
+
         // // التحقق من البيانات المطلوبة
-        
+
 
         $purchaseInvoice =new PurchaseInvoice();
         $purchaseInvoice->Receipt_number = $request->Receipt_number;
@@ -67,43 +67,45 @@ return response()->json([
     'supplier_id' => $purchaseInvoice->Supplier_id
 ], 201);
     }
-    
+
 
 public function storc(Request $request)
 {
-  
-    // تحقق من صحة الإدخالات وتعيين قيم افتراضية للقيم الفارغة
-    $purchase =new Purchase;
- 
-         $purchase->Product_name      =$request->product_name;
-         $purchase->Barcode            =$request->Barcode ; // باركود افتراضي إذا كان فارغًا
-         $purchase->Quantity           =$request->Quantity; // تعيين 0 إذا كانت الكمية فارغة
-         $purchase->Purchase_price     =$request->Purchase_price; // تعيين 0 إذا كان سعر الشراء فارغًا
-         $purchase->Selling_price      =$request->Selling_price ; // تعيين 0 إذا كان سعر البيع فارغًا
-         $purchase->Total              =$request->Total  ; // تعيين 0 إذا كان الإجمالي فارغًا
-         $purchase->Cost               =$request->Cost ?? 0; // تعيين 0 إذا كانت التكلفة فارغة
-         $purchase->Currency_id        =$request->Currency_id ; // تعيين null إذا كان Currency_id فارغًا
-         $purchase->Supplier_id         =$request->supplier_name ; // تعيين null إذا كان Supplier_id فارغًا
-         $purchase->User_id            =$request->User_id; // تعيين معرف المستخدم الحالي إذا كان فارغًا
-         $purchase->Purchase_invoice_id =$request->purchase_invoice_id; // تعيين null إذا كان Purchase_invoice_id فارغًا
-         $purchase->Store_id           =$request->Store_id ; // تعيين null إذا كان Store_id فارغًا
-         $purchase->Discount_earned    =$request->Discount_earned ?? 0; // تعيين 0 إذا كان الخصم المكتسب فارغًا
-         $purchase->Profit             =$request->Profit ?? 0; // تعيين 0 إذا كان الربح فارغًا
-         $purchase->Exchange_rate      =$request->Exchange_rate ?? 0 ; // تعيين 1.0 كمعدل صرف افتراضي
-         $purchase->note               =$request->note ?? null ;// تعيين فارغ إذا كانت الملاحظة فارغة
-         $purchase->product_id         =$request->product_id; // تعيين 0 إذا كانت القيمة فارغة
 
-        // إنشاء السجل الجديد في قاعدة البيانات
-        $purchase->save();
+    // تحقق من صحة الإدخالات وتعيين قيم افتراضية للقيم الفارغة
+
+    Purchase::updateOrCreate(
+        ['purchase_invoice_id' => $request->purchase_invoice_id], // condition to check if the invoice exists
+        [
+            'Product_name' => $request->product_name,
+            'Barcode' => $request->Barcode ?? '', // باركود افتراضي إذا كان فارغًا
+            'Quantity' => $request->Quantity ?? 0, // تعيين 0 إذا كانت الكمية فارغة
+            'Purchase_price' => $request->Purchase_price ?? 0, // تعيين 0 إذا كان سعر الشراء فارغًا
+            'Selling_price' => $request->Selling_price ?? 0, // تعيين 0 إذا كان سعر البيع فارغًا
+            'Total' => $request->Total ?? 0, // تعيين 0 إذا كان الإجمالي فارغًا
+            'Cost' => $request->Cost ?? 0, // تعيين 0 إذا كانت التكلفة فارغة
+            'Currency_id' => $request->Currency_id, // تعيين null إذا كان Currency_id فارغًا
+            'Supplier_id' => $request->supplier_name ?? null, // تعيين null إذا كان Supplier_id فارغًا
+            'User_id' => $request->User_id, // تعيين معرف المستخدم الحالي إذا كان فارغًا
+            'Purchase_invoice_id' => $request->purchase_invoice_id, // تعيين null إذا كان Purchase_invoice_id فارغًا
+            'Store_id' => $request->Store_id, // تعيين null إذا كان Store_id فارغًا
+            'Discount_earned' => $request->Discount_earned ?? 0, // تعيين 0 إذا كان الخصم المكتسب فارغًا
+            'Profit' => $request->Profit ?? 0, // تعيين 0 إذا كان الربح فارغًا
+            'Exchange_rate' => $request->Exchange_rate ?? 1.0, // تعيين 1.0 كمعدل صرف افتراضي
+            'note' => $request->note, // تعيين فارغ إذا كانت الملاحظة فارغة
+            'product_id' => $request->product_id // تعيين 0 إذا كانت القيمة فارغة
+            ]
+        );
+        $purchase=Purchase::latest()->first();
         $Purchasesum = Purchase::where('Purchase_invoice_id', $purchase->Purchase_invoice_id)->sum('Total');
         return response()->json([
         'success' =>true,'message'=> 'تم الحفظ بنجاح',
         'purchase' => $purchase,
         'Purchasesum'=>$Purchasesum
         ],201 );
-        
-   
-    
+
+
+
 }
 
 
@@ -121,7 +123,7 @@ public function search(Request $request)
     $id = $request->query('id');
      // الحصول على id المنتج من الطلب
     $productData = Product::where('product_id', $id)->first(); // البحث عن المنتج باستخدام id
-  
+
     if ($productData) {
         $product = [
             'product_name' => $productData->product_name,
@@ -143,5 +145,18 @@ public function search(Request $request)
     }
 
     return response()->json(['message' => 'Product not found'], 404); // إرجاع رسالة خطأ إذا لم يتم العثور على المنتج
+}
+public function edit($id)
+{
+    $purchase = Purchase::where('purchase_id',$id)->first();
+    return response()->json($purchase);
+}
+
+public function destroy($id)
+{
+
+    Purchase::where('purchase_id',$id)->delete();
+
+    return response()->json(['message' => 'تم حذف البيانات بنجاح']);
 }
 }
