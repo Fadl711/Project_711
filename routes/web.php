@@ -110,6 +110,7 @@ Route::get('/restrictions/{id}/edit', [RestrictionController::class, 'edit'])->n
 Route::get('/restrictions/{id}', [RestrictionController::class, 'show'])->name('restrictions.show');
 Route::get('/restrictions/{id}/print', [RestrictionController::class, 'print'])->name('restrictions.print');
 Route::post('/daily_restrictions/store', [RestrictionController::class, 'store'])->name('daily_restrictions.store');
+Route::post('/daily_restrictions/saveAndPrint', [RestrictionController::class, 'saveAndPrint'])->name('daily_restrictions.saveAndPrint');
 Route::post('/daily_restrictions/stor', [RestrictionController::class, 'stor'])->name('daily_restrictions.stor');
 Route::put('/daily-restrictions/{id}', [RestrictionController::class, 'update'])->name('daily_restrictions.update');
 Route::delete('/daily-restrictions/{id1}', [RestrictionController::class, 'destroy'])->name('daily_restrictions.destroy');

@@ -126,7 +126,7 @@
               </button>
           </div>
           <div class=" justify-">
-            <button type="submit" id="submitButton" class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button type="submit" id="savaAndPrint" class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 حفظ وطباعه
             </button>
         </div>
@@ -156,11 +156,53 @@
 
       // إرسال النموذج باستخدام AJAX بدون تحديث الصفحة
       $(document).ready(function() {
-        $('#dailyRestrictionsForm').on('submit', function(event) {
-            event.preventDefault(); // منع إعادة تحميل الصفحة
+            $('#savaAndPrint').click(function(event) {
+                event.preventDefault();
+                // جمع بيانات النموذج
+                var formData = $('#dailyRestrictionsForm').serialize();
 
-            // تجميع البيانات من النموذج
-            var formData = $(this).serialize();
+            // إرسال الطلب باستخدام AJAX
+            $.ajax({
+                url: '{{ route("daily_restrictions.saveAndPrint") }}',
+                method: 'POST',
+                data: formData,
+                success: function(data) {
+                    if (data.success) {
+        // إظهار رسالة النجاح
+        $('#successMessage').show().text(data.success);
+        $('#dailyRestrictionsForm')[0].reset(); // إعادة تعيين النموذج
+
+        // فتح صفحة الطباعة مع البيانات
+        const printUrl = '{{ route("restrictions.print", ":id") }}'.replace(':id', data.dailyEntrie.entrie_id);
+        window.open(printUrl, '_blank'); // فتح في نافذة جديدة
+
+        // إخفاء الرسالة بعد 3 ثوانٍ
+        setTimeout(function() {
+            $('#successMessage').hide();
+        }, 3000);
+    }
+                },
+                error: function(xhr) {
+                    if (xhr.status === 422) {
+                        // إظهار الأخطاء عند وجود أخطاء في التحقق
+                        var errors = xhr.responseJSON.errors;
+                        var errorMessage = '';
+                        $.each(errors, function(key, value) {
+                            errorMessage += value[0] + '<br>'; // إضافة الأخطاء
+                        });
+                        $('#errorMessage').show().html(errorMessage);
+                    } else {
+                        $('#errorMessage').show().text('حدث خطأ أثناء الحفظ.');
+                    }
+                }
+            });
+        });
+    });
+      $(document).ready(function() {
+            $('#submitButton').click(function(event) {
+                event.preventDefault();
+                // جمع بيانات النموذج
+                var formData = $('#dailyRestrictionsForm').serialize();
 
             // إرسال الطلب باستخدام AJAX
             $.ajax({
