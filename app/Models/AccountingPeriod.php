@@ -10,4 +10,9 @@ class AccountingPeriod extends Model
     use HasFactory;
 
     protected $table = 'accounting_period';
+    protected $fillable = [
+        'Year',
+        'Month',
+       'Today',
+    ];
 }

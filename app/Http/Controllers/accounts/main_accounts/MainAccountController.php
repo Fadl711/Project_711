@@ -6,10 +6,12 @@ use App\Enum\AccountType;
 use App\Enum\Deportatton;
 use App\Enum\IntOrderStatus;
 use App\Http\Controllers\Controller;
+use App\Models\DailyEntrie;
 use App\Models\MainAccount;
 use App\Models\SubAccount;
 use Illuminate\Http\Request;
 
+use function Laravel\Prompts\select;
 use function PHPUnit\Framework\isNull;
 
 class MainaccountController extends Controller
@@ -21,10 +23,7 @@ class MainaccountController extends Controller
     }
     public function create(){
         $mainAccount=MainAccount::all();//
-    //    $id= $mainAccount->main_account_id;
-
         $subAccount = SubAccount::all();
-
         $dataDeportattons=[
             ['Deportatton'=> (Deportatton::FINANCAL_CENTER_LIST ),'id'=>(IntOrderStatus::FINANCAL_CENTER_LIST )],
             ['Deportatton'=> (Deportatton::INCOME_STATEMENT),'id'=>(IntOrderStatus::INCOME_STATEMENT)],
@@ -188,7 +187,15 @@ public function destroy($id){
     return redirect()->back();
 }
 
-
-
+public function review_budget()
+{
+    // $di=DailyEntrie::query('entrie_id')
+    // ->sum('Amount_debit');
+    $subAccount=SubAccount::all();
+    $accountTotals=[];
+    
+    //  dd($di);
+    return view('accounts.review-budget' );
+}
 
 }
