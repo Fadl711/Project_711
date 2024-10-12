@@ -64,6 +64,9 @@ Route::get('/Category/{Category}/edit', [CategoryController::class, 'edit'])->na
 Route::put('/Category/{Category}', [CategoryController::class, 'update'])->name('Category.update');
 Route::delete('/Category/{Category}',[CategoryController::class,'destroy'])->name('Category.destroy');
 
+Route::get('/purchases/{id}',[PurchaseController::class,'edit'])->name('purchases.edit');
+Route::delete('/purchases/{id}',[PurchaseController::class,'destroy'])->name('purchases.destroy');
+
 
 
     Route::get('/Default_Supplier', [default_supplierController::class, 'index'])->name('default_suppliers.index');
@@ -78,6 +81,7 @@ Route::delete('/Category/{Category}',[CategoryController::class,'destroy'])->nam
     Route::delete('/Default_customer/{id}/destroy', [default_customerController::class, 'destroy'])->name('default_customers.destroy');
 Route::post('/invoicePurchases/store', [PurchaseController::class, 'store'])->name('invoicePurchases.store');
 Route::get('/api/products/search', [PurchaseController::class, 'search']);
+
 
 Route::get('/Purchase', [PurchaseController::class,'create'])->name('Purchases.create');
 Route::post('/Purchases/storc', [PurchaseController::class, 'storc'])->name('Purchases.storc');

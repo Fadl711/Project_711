@@ -1,7 +1,7 @@
 @extends('layout')
 @section('conm')
 
-
+    
 
 <div class="-translate-x-[40%] w-1/2">
     <div id="successAlert1" class="hidden fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
