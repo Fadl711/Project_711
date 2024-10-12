@@ -6,10 +6,15 @@ use App\Enum\AccountType;
 use App\Enum\Deportatton;
 use App\Enum\IntOrderStatus;
 use App\Http\Controllers\Controller;
+use App\Models\AccountingPeriod;
 use App\Models\DailyEntrie;
 use App\Models\MainAccount;
 use App\Models\SubAccount;
+use Illuminate\Support\Facades\Db;
+
+// use Illuminate\Container\Attributes\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB as FacadesDB;
 
 use function Laravel\Prompts\select;
 use function PHPUnit\Framework\isNull;
@@ -181,21 +186,82 @@ public function getSubAccounts(Request $request , $id)
     return response()->json($subAccounts);
  
 }
-            
+
 public function destroy($id){
     MainAccount::where('main_account_id',$id)->delete();
     return redirect()->back();
 }
-
-public function review_budget()
+public function review_budget($year, $month)
 {
-    // $di=DailyEntrie::query('entrie_id')
-    // ->sum('Amount_debit');
-    $subAccount=SubAccount::all();
-    $accountTotals=[];
+    // جلب الفترة المحاسبية المحددة
+    $accountingPeriod = AccountingPeriod::where('Year', $year)
+        ->where('Month', $month)
+        ->first();
+
+    // التحقق من وجود الفترة المحاسبية
+    if (!$accountingPeriod) {
+        return response()->json(['error' => 'الفترة المحاسبية غير موجودة'], 404);
+    }
+
+    // استرجاع الحسابات الرئيسية مع حساباتها الفرعية وتجميع الأرصدة
+    $mainAccountsTotals = MainAccount::with(['subAccounts' => function($query) {
+        $query->select(
+            'sub_accounts.sub_account_id',
+            'sub_accounts.Main_id',
+            'sub_accounts.sub_name',
+            'sub_accounts.debtor_amount',
+            'sub_accounts.creditor_amount'
+        )
+        ->leftJoin('daily_entries AS debit', 'sub_accounts.sub_account_id', '=', 'debit.account_debit_id')
+        ->leftJoin('daily_entries AS credit', 'sub_accounts.sub_account_id', '=', 'credit.account_Credit_id')
+        ->selectRaw('
+            sub_accounts.sub_account_id,
+            sub_accounts.Main_id,
+            sub_accounts.sub_name,
+            sub_accounts.debtor_amount,
+            sub_accounts.creditor_amount,
+            SUM(IFNULL(sub_accounts.debtor_amount, 0) + IFNULL(debit.Amount_debit, 0)) as total_debit,
+            SUM(IFNULL(sub_accounts.creditor_amount, 0) + IFNULL(credit.Amount_credit, 0)) as total_credit
+        ')
+        ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.Main_id', 'sub_accounts.sub_name', 'sub_accounts.debtor_amount', 'sub_accounts.creditor_amount');
+    }])->get();
     
-    //  dd($di);
-    return view('accounts.review-budget' );
+
+
+    // تمرير البيانات إلى العرض
+    return view('accounts.review-budget', [
+        'mainAccountsTotals' => $mainAccountsTotals,
+        'accountingPeriod' => $accountingPeriod, 
+    ]);
 }
+
+
+
+
+
+
+
+public function getMainAccountsByType($type)
+{
+    // التحقق مما إذا كان نوع الحساب الكبير موجود في Enum
+    $accountType = AccountType::tryFrom($type);
+    
+    if (!$accountType) {
+        return response()->json(['error' => 'نوع الحساب غير موجود'], 404);
+    }
+
+    // استرجاع الحسابات الرئيسية المرتبطة بالنوع
+    $mainAccounts = MainAccount::where('typeAccount', $accountType->value)->get();
+
+    return response()->json($mainAccounts);
+}
+
+
+
+
+ 
+
+
+
 
 }

@@ -40,7 +40,23 @@ class DailyEntrie extends Model
     {
         return $this->belongsTo(SubAccount::class, 'account_Credit_id', 'sub_account_id');
     }
+    public function subAccount()
+    {
+        return $this->belongsTo(SubAccount::class, 'sub_account_id');
+    }
 
+    
+    // علاقة belongsTo مع الحساب الفرعي كمدين
+    public function debitSubAccount()
+    {
+        return $this->belongsTo(SubAccount::class, 'account_debit_id');
+    }
+
+    // علاقة belongsTo مع الحساب الفرعي كدائن
+    public function creditSubAccount()
+    {
+        return $this->belongsTo(SubAccount::class, 'account_Credit_id');
+    }
     // // علاقة مع جدول users
     // public function user()
     // {

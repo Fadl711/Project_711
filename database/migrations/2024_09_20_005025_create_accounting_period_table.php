@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('accounting_period', function (Blueprint $table) {
             $table->increments('accounting_period_id');
-            $table->date('Year');
-            $table->date('Month');
-            $table->date('Today');
+            $table->integer('Year');   // السنة كرقم
+            $table->integer('Month');  // الشهر كرقم
+            $table->date('Today');   
             $table->timestamps();
         });
     }

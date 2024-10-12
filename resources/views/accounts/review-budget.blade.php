@@ -1,40 +1,156 @@
 @extends('layout')
 @section('conm')
+<x-navbar_accounts/>
+
+<h1 class="text-2xl font-bold text-center py-4">مراجعة الميزانية</h1>
+<div dir="rtl" class="flex min-w-full border ">
 
 
-<h1 class="text-center  font-bold py-2"> الحسابات</h1>
-<div class="-mx-4 sm:-mx-8 px-4 sm:px-8 overflow-x-auto   p-1">
-    <div class="inline-block min-w-full shadow rounded-lg  max-h-[500px] ">
-        <table id="myTable" class="min-w-full leading-normal ">
-            <thead class="tracking-tight ">
-                <tr class="bgcolor">
-                    <th scope="col" class="leading-2 tagHt ">رقم الحساب</th>
+@if($accountingPeriod)
+    <h2 class="text-lg font-semibold text-center text-gray-600 mb-4">
+        الفترة المحاسبية: {{ $accountingPeriod->Year }} - {{ $accountingPeriod->Month }}
+    </h2>
 
-                    <th scope="col" class="leading-2 tagHt ">اسم الحساب</th>
-                    <th scope="col" class="leading-2 tagHt "> الرصيد الحالي </th>
-                   
-                 
-                    <th scope="col" class="leading-2 tagHt "> المزيد التفاصيل</th>
-                </tr>
-            </thead>
-            <tbody class="">
-            
-               <tr class="bg-white transition-all duration-500 hover:bg-gray-50"> 
-                   
-                    <td class="tagTd  border-r border-r-orange-950">1</td>
-                    <td  id="financial_accoun" class="tagTd  border-r border-r-orange-950">الصندوق</td>
-                    <td class="tagTd   items-center font-bold ">$41225</td>
-                            <td class="tagTd  "><a href="{{route('users.details')}}"
-                            class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-                            <span aria-hidden
-                            class="absolute inset-0 bg-green-200 opacity-50 rounded-full"></span>
-                            <span class="relative">المزيد</span>
-                        </a>
-                    </td>
-                </tr>
+    <div class="overflow-x-auto mx-auto p-4 max-w-7xl">
+        <div class="shadow-lg rounded-lg overflow-hidden">
+            <table id="myTable" class="min-w-full leading-normal border-collapse">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                            اسم الحساب الرئيسي
+                        </th>
+                        <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                            حركة المبالغ المدين
+                        </th>
+                        <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                            حركة المبالغ  الدائن
+                        </th>
+                        <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                            عرض الحسابات الفرعية
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white">
+                    @forelse($mainAccountsTotals as $mainAccount)
+                        <tr class="hover:bg-gray-100 transition duration-300">
+                            <td class="px-6 py-4 border-b border-gray-200">
+                                <a href="#" class="text-blue-600 font-semibold" onclick="toggleSubAccounts({{ $mainAccount->main_account_id }})">
+                                    {{ $mainAccount->account_name }}
+                                </a>
+                            </td>
+                            <td class="px-6 py-4 border-b border-gray-200">
+                                {{ number_format($mainAccount->subAccounts->sum('total_debit')) }} د.إ
+                            </td>
+                            <td class="px-6 py-4 border-b border-gray-200">
+                                {{ number_format($mainAccount->subAccounts->sum('total_credit')) }} د.إ
+                            </td>
+                            <td class="px-6 py-4 border-b border-gray-200
+                            @if(($mainAccount->subAccounts->sum('total_debit') ?? 0) - ($mainAccount->subAccounts->sum('total_credit')?? 0) < 0)
+                             text-green-500  
+                            @else 
+                                   text-red-500 
+                            @endif">
+                            
+                            {{-- حساب الفرق بين المدين والدائن --}}
+                            @php
+                                $balance = ($mainAccount->subAccounts->sum('total_debit') ?? 0) - ($mainAccount->subAccounts->sum('total_credit')?? 0) ;
+                            @endphp
+                         @if($balance < 0)
+                         دائن/له
+                        @else
+                         مدين/عليه
+                        @endif
+                            {{-- عرض القيمة مع النص المناسب (مدين/دائن) --}}
+                            {{ number_format(abs($balance)) }} 
+                           
+                        </td>
+                        
+                            <td class="px-6 py-4 border-b border-gray-200">
+                                <button onclick="toggleSubAccounts({{ $mainAccount->main_account_id }})" class="text-blue-500 underline hover:text-blue-700">
+                                    عرض
+                                </button>
+                            </td>
+                        </tr>
+                        <!-- الحسابات الفرعية -->
+                        <tr id="subAccounts-{{ $mainAccount->main_account_id }}" class="hidden">
+                            <td colspan="4">
+                                <div class="bg-gray-50 p-4">
+                                    <table class="min-w-full bg-white rounded-lg shadow-md">
+                                        <thead>
+                                            <tr>
+                                                <th>رقم الحساب الفرعي</th>
+
+                                                <th class="tagHt">اسم الحساب الفرعي</th>
+                                                <th class="tagHt">حركة المبالغ المدين</th>
+                                                <th class="tagHt">حركة المبالغ  الدائن</th>
+                                                <th class="tagHt">الفرق</th> <!-- إضافة عنوان العمود الجديد -->
+                                                <th class="tagHt"></th> <!-- ��ضافة عنوان العمود الجديد -->
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($mainAccount->subAccounts as $subAccount)
+                                                <tr class="hover:bg-gray-100">
+                                                    <td class=" tagTd px-6 py-4 border-b border-gray-200">
+                                                        {{ $subAccount->sub_account_id }}
+                                                    </td>
+                                                    <td class="px-6 tagTd py-4 border-b border-gray-200">
+                                                        {{ $subAccount->sub_name }}
+                                                    </td>
+                                                    <td class="px-6 py-4 tagTd border-b border-gray-200">
+                                                        {{ number_format($subAccount->total_debit ?? 0) }} د.إ
+                                                    </td>
+                                                    <td class="px-6 py-4 tagTd border-b border-gray-200">
+                                                        {{ number_format($subAccount->total_credit ?? 0) }} د.إ 
+                                                    </td>
+                                                    <td class="px-6 py-4 tagTd border-b border-gray-200
+    @if(($subAccount->total_debit ?? 0) - ($subAccount->total_credit ?? 0) < 0)
+     text-green-500  
+    @else 
+           text-red-500 
+    @endif">
     
-            </tbody>
-        </table>
+    {{-- حساب الفرق بين المدين والدائن --}}
+    @php
+        $balance = ($subAccount->total_debit ?? 0) - ($subAccount->total_credit ?? 0);
+    @endphp
+ @if($balance < 0)
+ دائن/له
+@else
+ مدين/عليه
+@endif
+    {{-- عرض القيمة مع النص المناسب (مدين/دائن) --}}
+    {{ number_format(abs($balance)) }} 
+   
+</td>
+
+                                                
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                    
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="text-center py-4 text-red-500">لا توجد حسابات رئيسية متاحة.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
+@else
+    <p class="text-red-500 text-center py-4">الفترة المحاسبية غير موجودة.</p>
+@endif
 </div>
+
+<script>
+    function toggleSubAccounts(mainAccountId) {
+        const subAccountsRow = document.getElementById(`subAccounts-${mainAccountId}`);
+        subAccountsRow.classList.toggle('hidden');
+    }
+</script>
+
 @endsection
