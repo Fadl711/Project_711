@@ -1,32 +1,31 @@
 <?php
 
-namespace App\Http\Controllers\invoicepurchasessController;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Purchase;
 use App\Models\PurchaseInvoice;
 use Illuminate\Http\Request;
 
 class InvoicePurchaseController extends Controller
 {
-    public function all_bills_purchase(){
-        
-        return view('invoice_purchases.all_bills_purchase');
-    }
 
-  
+
+
 public function index(){
-    $ff="ff";  
-    dd($ff);
-        
-    return view('invoice_purchases.index');
+    $Purchases=Purchase::all();
+    return view('invoice_purchases.all_bills_purchase',compact('Purchases'));
 
 }
 
-public function bills_purchase_show(){
-    
-        
-    return view('invoice_purchases.bills_purchase_show');
+public function bills_purchase_show($id){
+    $Purchase=Purchase::where('purchase_id',$id)->first();
+
+
+    return view('invoice_purchases.bills_purchase_show',compact('Purchase'));
 
 }
+
+
     //
 }

@@ -21,7 +21,16 @@ class RestrictionController extends Controller
 
     // تحقق من صحة البيانات
     public function store(Request $request)
-    {
+    {/* $validated = $request->validate([
+    'sub_account_debit_id' => 'required|integer',
+    'Amount_debit' => 'required|numeric',
+    'account_Credit_id' => 'required|integer',
+    'sub_account_Credit_id' => 'required|integer',
+    'Statement' => 'required|string',
+    'Currency_name' => 'required|string',
+    'User _id' => 'required|integer',
+], [], trans('validation')); */
+
         $validated = $request->validate([
             'sub_account_debit_id' => 'required|integer',
             'Amount_debit' => 'required|numeric',
@@ -110,7 +119,7 @@ class RestrictionController extends Controller
     // إرجاع البيانات التي تحتاجها لصفحة الطباعة
     return response()->json([
         'success' => 'تم الحفظ بنجاح!',
-        'dailyEntrie' => $dailyEntrie->first() // إرسال القيد اليومي بالكامل
+        'dailyEntrie' => $dailyEntrie // إرسال القيد اليومي بالكامل
     ]);
 
     }

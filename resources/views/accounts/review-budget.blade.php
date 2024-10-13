@@ -47,11 +47,11 @@
                             </td>
                             <td class="px-6 py-4 border-b border-gray-200
                             @if(($mainAccount->subAccounts->sum('total_debit') ?? 0) - ($mainAccount->subAccounts->sum('total_credit')?? 0) < 0)
-                             text-green-500  
-                            @else 
-                                   text-red-500 
+                             text-green-500
+                            @else
+                                   text-red-500
                             @endif">
-                            
+
                             {{-- حساب الفرق بين المدين والدائن --}}
                             @php
                                 $balance = ($mainAccount->subAccounts->sum('total_debit') ?? 0) - ($mainAccount->subAccounts->sum('total_credit')?? 0) ;
@@ -62,10 +62,10 @@
                          مدين/عليه
                         @endif
                             {{-- عرض القيمة مع النص المناسب (مدين/دائن) --}}
-                            {{ number_format(abs($balance)) }} 
-                           
+                            {{ number_format(abs($balance)) }}
+
                         </td>
-                        
+
                             <td class="px-6 py-4 border-b border-gray-200">
                                 <button onclick="toggleSubAccounts({{ $mainAccount->main_account_id }})" class="text-blue-500 underline hover:text-blue-700">
                                     عرض
@@ -101,15 +101,15 @@
                                                         {{ number_format($subAccount->total_debit ?? 0) }} د.إ
                                                     </td>
                                                     <td class="px-6 py-4 tagTd border-b border-gray-200">
-                                                        {{ number_format($subAccount->total_credit ?? 0) }} د.إ 
+                                                        {{ number_format($subAccount->total_credit ?? 0) }} د.إ
                                                     </td>
                                                     <td class="px-6 py-4 tagTd border-b border-gray-200
     @if(($subAccount->total_debit ?? 0) - ($subAccount->total_credit ?? 0) < 0)
-     text-green-500  
-    @else 
-           text-red-500 
+     text-green-500
+    @else
+           text-red-500
     @endif">
-    
+
     {{-- حساب الفرق بين المدين والدائن --}}
     @php
         $balance = ($subAccount->total_debit ?? 0) - ($subAccount->total_credit ?? 0);
@@ -120,15 +120,15 @@
  مدين/عليه
 @endif
     {{-- عرض القيمة مع النص المناسب (مدين/دائن) --}}
-    {{ number_format(abs($balance)) }} 
-   
+    {{ number_format(abs($balance)) }}
+
 </td>
 
-                                                
+
                                             @endforeach
                                         </tbody>
                                     </table>
-                                    
+
                                 </div>
                             </td>
                         </tr>
