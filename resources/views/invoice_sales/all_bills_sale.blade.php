@@ -99,8 +99,8 @@
                             <td class=" text-center  text-[#1ff823] ">$442</td>
                             <td class=" text-center">$442</td>
                             <td class=" text-center  text-[rgb(193,44,44)]">$442</td>
-                            <td class=" text-center text-indigo-700 "> <button data-modal-target="crud-modal" data-modal-toggle="crud-modal" class="   focus:outline-none " type="button">
-                            عرض مبيعات  الفاتورة   </button>
+                            <td class=" text-center text-indigo-700 "> <a href="{{route('print_bills_sale')}}" target="_blank">
+                            عرض مبيعات  الفاتورة   </a>
                         </td>
                         </tr>
                     </tbody>
@@ -114,32 +114,9 @@
 
 {{-- alert --}}
 
-    <div  id="crud-modal"    tabindex="-1" aria-hidden="true" class=" bg-black bg-opacity-50  hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0  h-full">
-        <div class="  relative p-2 w-full max-h-full">
-            <!-- Modal content -->
-            <div class=" bg-white rounded-lg shadow dark:bg-gray-700 container" x-data="invoices()" >
-                <!-- Modal header -->
-                <div class="flex items-center justify-between p-1 md:p-5 border-b rounded-t dark:border-gray-600">
-
-                    <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
-                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                        </svg>
-                        <span class="sr-only">Close modal</span>
-                    </button>
 
 
-                </div>
 
-                <!-- Modal body -->
-                <div  x-refs="printTemplate"  id="js-print-template" >
-                    @include('invoice_sales.bills_sale_show')
-
-            </div>
-            </div>
-        </div>
-    </div>
-</div>
 {{-- alert --}}
 <br>
 <br>

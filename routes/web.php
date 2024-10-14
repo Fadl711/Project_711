@@ -14,9 +14,8 @@ use App\Http\Controllers\chartController\ChartController;
 use App\Http\Controllers\DailyRestrictionController\RestrictionController;
 use App\Http\Controllers\FixedAssetsController;
 use App\Http\Controllers\InventoryController;
-use App\Http\Controllers\invoicepurchasessController\InvoicePurchaseController;
+use App\Http\Controllers\InvoicePurchaseController;
 use App\Http\Controllers\invoicesController\AllBillsController;
-use App\Http\Controllers\invoicesController\InvoiceController;
 use App\Http\Controllers\PaymentCoctroller;
 use App\Http\Controllers\SaleCoctroller;
 
@@ -90,9 +89,11 @@ Route::post('/Purchases/storc', [PurchaseController::class, 'storc'])->name('Pur
 Route::get('/balancing', [AccountCoctroller::class, 'balancing'])->name('accounts.balancing');
 Route::get('/invoice_sales', [AllBillsController::class, 'index'])->name('invoice_sales.index');
 Route::get('/all_bills_sale', [AllBillsController::class, 'all_bills_sale'])->name('invoice_sales.all_bills_sale');
+Route::get('/print_bills_sale', [AllBillsController::class, 'print_bills_sale'])->name('print_bills_sale');
 Route::get('/bills_sale_show', [AllBillsController::class, 'bills_sale_show'])->name('invoice_sales.bills_sale_show');
-Route::get('/invoice_purchases', [InvoicePurchaseController::class, 'index'])->name('invoice_purchase.index');
-Route::get('/PDF', [PDFReportController::class, 'createPDF']);
+Route::get('/invoice_purchases/show/{id}', [InvoicePurchaseController::class, 'bills_purchase_show'])->name('bills_purchase_show');
+Route::get('/invoice_purchases/index', [InvoicePurchaseController::class, 'index'])->name('invoice_purchase.index');
+
 
 
 Route::get('/bonds', [BondController::class, 'bonds'])->name('bonds.index');

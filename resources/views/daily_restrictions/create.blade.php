@@ -97,6 +97,7 @@
           <div>
             <label for="Amount_debit" class="block font-medium mb-2">المبلغ المدين</label>
             <input name="Amount_debit" type="number" step="0.01" class=" inputSale input-field" placeholder="أدخل المبلغ" required>
+            
         </div>
 
 
@@ -174,8 +175,8 @@
 
         // فتح صفحة الطباعة مع البيانات
         const printUrl = '{{ route("restrictions.print", ":id") }}'.replace(':id', data.dailyEntrie.entrie_id);
-        window.open(printUrl, '_blank'); // فتح في نافذة جديدة
-
+        window.open(printUrl, '_blank');
+        location.reload ();
         // إخفاء الرسالة بعد 3 ثوانٍ
         setTimeout(function() {
             $('#successMessage').hide();

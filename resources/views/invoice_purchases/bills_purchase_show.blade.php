@@ -1,42 +1,14 @@
-
-
-
-
-<div class="" x-data="invoices()" >
-    <div class="relative mr-4 inline-block " >
-        <div class="text-gray-500 cursor-pointer w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-300 inline-flex items-center justify-center" @mouseenter="showTooltip = true" @mouseleave="showTooltip = false" @click="printInvoice()">
-
-
-            <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <rect x="0" y="0" width="24" height="24" stroke="none"></rect>
-                <path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M16.444 18H19a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h2.556M17 11V5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v6h10ZM7 15h10v4a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-4Z"/>
-                <path d="M17 9v-4a2 2 0 0 0 -2 -2h-6a2 2 0 0 0 -2 2v4" />
-                <rect x="7" y="13" width="10" height="8" rx="2" />
-            </svg>
-
-        </div>
-        <div class="text-gray-500 cursor-pointer w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-300 inline-flex items-center justify-center" @click="()">
-            <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M7.926 10.898 15 7.727m-7.074 5.39L15 16.29M8 12a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm12 5.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm0-11a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"/>
-              </svg>
-
-
-
-
-        </div>
-        <div class="text-gray-500 cursor-pointer w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-300 inline-flex items-center justify-center" @click="()">
-            <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
-              </svg>
-
-
-
-
-        </div>
-
-    </div>
-
-<div class=" rounded-lg shadow-lg px-2 py-2 max-w-[100%] mx-auto  " id="js-print-template  " x-ref="printTemplate">
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Document</title>
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body>
+    <div class="container mx-auto ">
     @include('includes.header2')
 
     <div class="flex items-center bg-gray-100 justify-between my-2 px-2 border-2  border-black rounded  ">
@@ -69,8 +41,8 @@
         <thead>
 
                 <tr class=" bg-[#6992f875]" >
+                    <th scope="col" class="text-right  border-x  border-y border-black  ">الباركود</th>
                 <th scope="col" class="text-right border-x  border-y border-black w-[20%] ">اسم الصنف</th>
-                <th scope="col" class="text-right  border-x  border-y border-black  ">الباركود</th>
                 <th scope="col" class="text-center border-x  border-y border-black ">الكمية</th>
                 <th scope="col" class="text-right  border-x  border-y border-black ">السعر الشراء</th>
                 <th scope="col" class="text-right  border-x  border-y border-black w-[] ">السعر البيع</th>
@@ -78,25 +50,25 @@
                 <th scope="col" class="text-right  border-x  border-y border-black w-[] ">التكلفة</th>
                 <th scope="col" class="text-right  border-x  border-y border-black w-[]">التخفيض</th>
                 <th scope="col" class="text-right  border-x  border-y border-black w-[]">العلامة التجارية</th>
-                <th scope="col" class="text-center border-x  border-y border-black w-[]">تعديل الشراء</th>
+                {{-- <th scope="col" class="text-center border-x  border-y border-black w-[]">تعديل الشراء</th> --}}
 
 
             </tr>
         </thead>
         <tbody>
-            @for($i=0; $i<=20;$i++)
+
             <tr class="border">
 
-                <td class="py-1 bg-white text-right border-x  border-y  border-black w-[20%]   "> علب بلاستيك ابو اثنين جافي</td>
-                <td class="py-1 bg-white text-right  border-x  border-y border-black  ">154650565</td>
-                <td class="py-1 bg-white text-center border-x  border-y border-black ">5</td>
-                <td class="py-1 bg-white text-right  border-x  border-y border-black">4,000</td>
-                <td class="py-1 bg-white text-right  border-x  border-y border-black">4,500</td>
-                <td class="py-1 bg-white text-right  border-x  border-y border-black">20,000</td>
-                <td class="py-1 bg-white text-right  border-x  border-y border-black">50</td>
-                <td class="py-1 bg-white text-right  border-x  border-y border-black">250</td>
-                <td class="py-1 bg-white text-right  border-x  border-y border-black">لا يوجد</td>
-         <td class="p-1 bg-white border-x  border-y border-black">
+                <td class="py-1 bg-white text-right  border-x  border-y border-black  ">{{$Purchase->Barcode}}</td>
+                <td class="py-1 bg-white text-right border-x  border-y  border-black w-[20%]   ">{{$Purchase->Product_name}}</td>
+                <td class="py-1 bg-white text-center border-x  border-y border-black ">{{$Purchase->Quantity}}</td>
+                <td class="py-1 bg-white text-right  border-x  border-y border-black">{{$Purchase->Purchase_price}}</td>
+                <td class="py-1 bg-white text-right  border-x  border-y border-black">{{$Purchase->Selling_price}}</td>
+                <td class="py-1 bg-white text-right  border-x  border-y border-black">{{$Purchase->Total}}</td>
+                <td class="py-1 bg-white text-right  border-x  border-y border-black">{{$Purchase->Cost}}</td>
+                <td class="py-1 bg-white text-right  border-x  border-y border-black">{{$Purchase->Discount_earned}}</td>
+                <td class="py-1 bg-white text-right  border-x  border-y border-black">{{$Purchase->note}}</td>
+         {{-- <td class="p-1 bg-white border-x  border-y border-black">
                     <div class="flex items-center gap-1">
                         <button class="p-1  rounded-full  group transition-all duration-500  flex item-center">
                             <svg class="cursor-pointer" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -109,66 +81,55 @@
                             </svg>
                         </button>
                     </div>
-                </td>
+                </td> --}}
 
 
             </tr>
 
-            @endfor
         </tbody>
     </table>
     </div>
-<tbody >
-<table>
+    <div class=" bg-gray-100">
+    <table>
+        <tbody >
     <br>
-            <tr class="   ">
+            <tr class="">
                 <th colspan="" class="text-right  border-x  border-y border-black  p-2"> الجمالي الفاتورة</th>
-                   <th class=" text-sm text-right  border-x  border-y border-black p-2"> 100,000</th>
+                   <th class=" text-sm text-right  border-x  border-y border-black p-2"> {{$Purchase->Total}}</th>
                    <th class=" text-sm text-right  border-x  border-y border-black p-2"> </th>
 
                     </tr>
                     <tr class="  ">
                         <th class=" text-sm text-right   border-x  border-y border-black p-2"> الخصم</th>
-                        <th colspan="" class="text-right border-x  border-y border-black  p-2">1,000</th>
+                        <th colspan="" class="text-right border-x  border-y border-black  p-2">{{$Purchase->Discount_earned}}</th>
                         <th class=" text-sm text-right   border-x  border-y border-black p-2"> </th>
 
                             </tr>
-                  <tr class="  " style="display:">
+                  <tr>
 
                <th class=" text-sm text-right   border-x  border-y border-black  p-2">صافي الفاتورة</th>
                <th class=" text-sm  text-right  border-x  border-y border-black p-2">  99,000</th>
                <th class=" text-sm  text-right  border-x  border-y border-black p-2">  الفين ومائتين وخمسين .ريال يمني</th>
 
                </tr>
-
-        </tbody>
-    </table>
-
-</div>
+            </tbody>
+        </table>
+    </div>
 
 
 
 </div>
 
-<script>
 
-function invoices() {
-     return {
-         printInvoice() {
-             var printContents = document.getElementById('js-print-template').innerHTML;
-             var originalContents = document.body.innerHTML;
-             document.body.innerHTML = printContents;
-             window.onafterprint = function() {
-                 document.body.innerHTML = originalContents;
-                 window.focus();
-                 window.location.reload(); // reload the page after printing
 
-                 // Add this line to close the modal window
-                 document.getElementById('crud-modal').classList.add('hidden');
-             };
-             window.print();
-         }
-     }
- }
-</script>
+    <script>
+
+        window.print();
+        </script>
+
+
+
+</body>
+</html>
+
 
