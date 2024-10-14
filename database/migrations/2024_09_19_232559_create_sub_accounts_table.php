@@ -21,6 +21,10 @@ return new class extends Migration
             $table->integer('User_id')->unsigned();
             $table->integer('Main_id')->unsigned();
             $table->integer('Phone')->nullable();
+            $table->integer('AccountClass')->unsigned();
+            $table->integer('typeAccount')->unsigned();
+
+
             $table->timestamps();
 
             $table->foreign('Main_id')->references('main_account_id')->on('main_accounts')->onDelete('cascade');

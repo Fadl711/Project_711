@@ -24,13 +24,15 @@
   <form id="ajaxForm"  >
     @csrf
 <div class=" flex">
+  
   <div class="flex ">
     <label class="" for="">طبيعة الحساب</label>
-
+    
     <div class="flex px-4" >
     <label class="labelSale">مدين</label>
       <input  type="radio" required value="مدين" name="Nature_account" class="input-field w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
     </div>
+
     <div class="flex ">
     <label  class="labelSale">دائن</label>
       <input type="radio" required  value="دائن"  name="Nature_account" class="input-field w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
@@ -41,6 +43,7 @@
     <label class="" for=""> نوع الحساب </label>
         
    @foreach($accountClasses as $accountClass)
+   
         <div class="flex px-4" >
           <label class="labelSale">{{ $accountClass->label() }} </label>
       <input  type="radio" required  value="{{ $accountClass->value }}" id="AccountClass" name="AccountClass" class="input-field w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">

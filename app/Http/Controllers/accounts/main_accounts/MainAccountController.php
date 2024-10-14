@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Accounts\main_accounts;
 
+use App\Enum\AccountClass;
 use App\Enum\AccountType;
 use App\Enum\Deportatton;
 use App\Enum\IntOrderStatus;
@@ -41,7 +42,14 @@ class MainaccountController extends Controller
     ['TypesAccountName' => Deportatton::REVENUE, 'id' => AccountType::REVENUE],
 
  ];
-return view('accounts.Main_Account.create',[ 'mainAccounts'=>$mainAccount,'subAccounts'=>$subAccount,'TypesAccounts'=> $TypesAccountName,'Deportattons'=> $dataDeportattons]);  }
+ $classd=AccountClass::cases();
+ $cus = MainAccount::where('AccountClass', $classd[0])->get();//+
+
+
+return view('accounts.Main_Account.create',
+[ 'mainAccounts'=>$mainAccount,'subAccounts'=>$subAccount,
+'TypesAccounts'=> $TypesAccountName,
+'Deportattons'=> $dataDeportattons,'cuo'=> $cus]);  }
 
     public function convertArabicToEnglish($number)
     {
@@ -90,8 +98,10 @@ return view('accounts.Main_Account.create',[ 'mainAccounts'=>$mainAccount,'subAc
       // __________________________ SubAccount ______________________________________
         $data=MainAccount::where('User_id',$User_id)->latest()->first();
         $DataSubAccount=new SubAccount();
-        $DataSubAccount->Main_id=$data->main_account_id;
+        $DataSubAccount->Main_id=$mainAccount->main_account_id;
         $DataSubAccount->sub_name=$account_name ;
+        $DataSubAccount->AccountClass =$mainAccount->AccountClass;
+        $DataSubAccount->typeAccount =$mainAccount->typeAccount;
         $DataSubAccount-> User_id= $User_id;
         $DataSubAccount->debtor_amount = !empty($debtor_amount) ? $debtor_amount :0;
         $DataSubAccount-> creditor_amount= !empty($creditor_amount ) ? $creditor_amount :0;
@@ -129,12 +139,15 @@ return view('accounts.Main_Account.create',[ 'mainAccounts'=>$mainAccount,'subAc
 
     public function storc(Request $request)
 {
+    $Main_id = $request->Main_id;
+
     // إنشاء كائن جديد من SubAccount
     $DataSubAccount = new SubAccount();
+    $TypeSubAccount=  MainAccount::where('main_account_id',$Main_id)->first();;
 
     // استرجاع البيانات من الطلب
     $sub_name = $request->sub_name;
-    $Main_id = $request->Main_id;
+
     $User_id = $request->User_id;
 
     // تحويل الأرقام من العربي إلى الإنجليزي
@@ -155,22 +168,18 @@ if ($account_names_exist->contains($sub_name)) {
     return response()->json(['success' => false, 'message' => 'يوجد نفس هذا الاسم من قبل']);
 }
 else{
-
-
-    // تعيين القيم في كائن SubAccount
     $DataSubAccount->Main_id = $Main_id;
     $DataSubAccount->sub_name = $sub_name;
     $DataSubAccount->User_id = $User_id;
+    $DataSubAccount->AccountClass =$TypeSubAccount->AccountClass;
+    $DataSubAccount->typeAccount =$TypeSubAccount->typeAccount;
     $DataSubAccount->debtor_amount = !empty($debtor_amount) ? $debtor_amount : 0;
     $DataSubAccount->creditor_amount = !empty($creditor_amount) ? $creditor_amount : 0;
     $DataSubAccount->Phone = !empty($Phone1) ? $Phone1 : null;
     $DataSubAccount->name_The_known = !empty($name_The_known) ? $name_The_known : null;
     $DataSubAccount->Known_phone = !empty($Known_phone) ? $Known_phone : null;
-
-    // حفظ البيانات في قاعدة البيانات
     $DataSubAccount->save();
 
-    // إرجاع استجابة نجاح
     return response()->json(['success' => true, 'message' => 'تمت العملية بنجاح', 'DataSubAccount' => $DataSubAccount]);
 }
 }
@@ -202,7 +211,6 @@ public function review_budget($year, $month)
     if (!$accountingPeriod) {
         return response()->json(['error' => 'الفترة المحاسبية غير موجودة'], 404);
     }
-
     // استرجاع الحسابات الرئيسية مع حساباتها الفرعية وتجميع الأرصدة
     $mainAccountsTotals = MainAccount::with(['subAccounts' => function($query) {
         $query->select(
@@ -223,9 +231,29 @@ public function review_budget($year, $month)
             SUM(IFNULL(sub_accounts.debtor_amount, 0) + IFNULL(debit.Amount_debit, 0)) as total_debit,
             SUM(IFNULL(sub_accounts.creditor_amount, 0) + IFNULL(credit.Amount_credit, 0)) as total_credit
         ')
-        ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.Main_id', 'sub_accounts.sub_name', 'sub_accounts.debtor_amount', 'sub_accounts.creditor_amount');
+        ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.Main_id', 'sub_accounts.sub_name', 'sub_accounts.debtor_amount', 'sub_accounts.creditor_amount','sub_accounts.AccountClass', 'sub_accounts.typeAccount',);
     }])->get();
+    $subaccount=new SubAccount;
+    foreach($mainAccountsTotals as $mainAccount)
+    {
+        foreach($mainAccount->subAccounts as $subAccount)
+        {
+          $sum= $subAccount->total_debit - $subAccount->total_credit;
+          if( $sum>0)
+          {
+            SubAccount::where('sub_account_id',$subAccount->sub_account_id)->update([
+                'debtor_amount'=>$sum,
+                'creditor_amount'=>0,
+
+            ]);
+          
+        
+        }  
+
     
+
+    }
+
 
 
     // تمرير البيانات إلى العرض
@@ -233,7 +261,7 @@ public function review_budget($year, $month)
         'mainAccountsTotals' => $mainAccountsTotals,
         'accountingPeriod' => $accountingPeriod, 
     ]);
-}
+}}
 
 
 

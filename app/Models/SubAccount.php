@@ -17,6 +17,8 @@ class SubAccount extends Model
         'Known_phone' ,
         'User_id',
         'Phone',
+        'typeAccount',
+        'AccountClass',
      
     ];
 
