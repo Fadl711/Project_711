@@ -47,10 +47,7 @@ class PurchaseController extends Controller
 
     public function store(Request $request)
     {
-
         // // التحقق من البيانات المطلوبة
-
-
         $purchaseInvoice =new PurchaseInvoice();
         $purchaseInvoice->Receipt_number = $request->Receipt_number;
         $purchaseInvoice->Total_invoice = !empty($request->Total_invoice) ? $request->Total_invoice : 0;
