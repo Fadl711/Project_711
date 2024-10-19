@@ -12,62 +12,63 @@ use Illuminate\Support\Facades\DB;//+
 
 class Review_BudgetController extends Controller
 {
-    public function review_budget($year, $month)
+
+    public function review_budget($year)
     {
         // جلب الفترة المحاسبية المحددة
-        $accountingPeriod = AccountingPeriod::where('Year', $year)
-            ->first();
+        $accountingPeriod = AccountingPeriod::where('Year', $year)->firstOrFail();
     
-        // التحقق من وجود الفترة المحاسبية
-        if (!$accountingPeriod) {
-            return response()->json(['error' => 'الفترة المحاسبية غير موجودة'], 404);
-        }
+        // استرجاع الحسابات الرئيسية مع حساباتها الفرعية وجمع الأرصدة
+        $mainAccountsTotals = MainAccount::with(['subAccounts' => function ($query) {
+            $query->select([
+                'sub_accounts.sub_account_id',
+                'sub_accounts.Main_id',
+                'sub_accounts.sub_name',
+                DB::raw('SUM(DISTINCT COALESCE(sub_accounts.debtor_amount, 0) + COALESCE(debit.Amount_debit, 0)) as total_debit'),
+                DB::raw('SUM(DISTINCT COALESCE(sub_accounts.creditor_amount, 0) + COALESCE(credit.Amount_credit, 0)) as total_credit'),
+                DB::raw('(SUM(DISTINCT COALESCE(sub_accounts.debtor_amount, 0) + COALESCE(debit.Amount_debit, 0)) - SUM(DISTINCT COALESCE(sub_accounts.creditor_amount, 0) + COALESCE(credit.Amount_credit, 0))) as balance')
+            ])
+            ->leftJoin('daily_entries AS debit', 'sub_accounts.sub_account_id', '=', 'debit.account_debit_id')
+            ->leftJoin('daily_entries AS credit', 'sub_accounts.sub_account_id', '=', 'credit.account_Credit_id')
+            ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.Main_id', 'sub_accounts.sub_name');
+        }])->get();
     
-        // التخزين المؤقت (Caching) لمدة 60 دقيقة
-        $mainAccountsTotals = Cache::remember('main_accounts_totals_'.$year.'_'.$month, 60, function() {//-
-            // استرجاع الحسابات الرئيسية مع حساباتها الفرعية وتجميع الأرصدة
-                 return MainAccount::with(['subAccounts' => function($query) {
-                    $query->select(
-                        'sub_accounts.sub_account_id',
-                        'sub_accounts.Main_id',
-                        'sub_accounts.sub_name',
-                        'sub_accounts.debtor_amount',
-                        'sub_accounts.creditor_amount'
-                    )
-                    ->leftJoin('daily_entries AS debit', 'sub_accounts.sub_account_id', '=', 'debit.account_debit_id')
-                    ->leftJoin('daily_entries AS credit', 'sub_accounts.sub_account_id', '=', 'credit.account_Credit_id')
-                    ->selectRaw('
-                        sub_accounts.sub_account_id,
-                        sub_accounts.Main_id,
-                        sub_accounts.sub_name,
-                        sub_accounts.debtor_amount,
-                        sub_accounts.creditor_amount,
-                        SUM(IFNULL(sub_accounts.debtor_amount, 0) + IFNULL(debit.Amount_debit, 0)) as total_debit,
-                        SUM(IFNULL(sub_accounts.creditor_amount, 0) + IFNULL(credit.Amount_credit, 0)) as total_credit
-                    ')
-                    ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.Main_id', 'sub_accounts.sub_name', 'sub_accounts.debtor_amount', 'sub_accounts.creditor_amount','sub_accounts.AccountClass', 'sub_accounts.typeAccount',);
-                }])->get();
-        
-        });
+        // استخدام المجموعات لتحسين العمليات الحسابية
+        $totals = $mainAccountsTotals->reduce(function ($carry, $mainAccount) {
+            $debitSum = 0;
+            $creditSum = 0;
     
-        // تقسيم البيانات إلى دفعات صغيرة باستخدام chunk لتحسين الأداء
-        MainAccount::chunk(100, function($mainAccounts) use (&$mainAccountsTotals) {
-            foreach ($mainAccounts as $mainAccount) {
-                // معالجة البيانات داخل كل جزء
-                // يمكن تعديل هذه العملية لاحتياجاتك الخاصة
+            foreach ($mainAccount->subAccounts as $subAccount) {
+                $balance = $subAccount->balance;
+    
+                if ($balance > 0) {
+                    $debitSum += $balance; // مجموع الأرصدة المدينة
+                } elseif ($balance < 0) {
+                    $creditSum += $balance; // مجموع الأرصدة الدائنة
+                }
             }
-        });
+    
+            if (in_array($mainAccount->typeAccount, [1, 2])) {
+                $carry['totalDebit'] += $debitSum+$creditSum;
+                $carry['totalCredit'] += $creditSum;
+            } elseif ($mainAccount->typeAccount == 3) {
+                $carry['totalDebit2'] += $debitSum;
+                $carry['totalCredit2'] += $creditSum;
+            }
+    
+            return $carry;
+        }, ['totalDebit' => 0, 'totalCredit' => 0, 'totalDebit2' => 0, 'totalCredit2' => 0]);
     
         // تمرير البيانات إلى العرض
         return view('accounts.review-budget', [
             'mainAccountsTotals' => $mainAccountsTotals,
-            'accountingPeriod' => $accountingPeriod, 
+            'accountingPeriod' => $accountingPeriod,
+            'totalDebit' => $totals['totalDebit'],
+            'totalCredit' => $totals['totalCredit'],
+            'totalDebit2' => $totals['totalDebit2'],
+            'totalCredit2' => $totals['totalCredit2'],
         ]);
     }
-    
-    
-    
-    
     
     
     }

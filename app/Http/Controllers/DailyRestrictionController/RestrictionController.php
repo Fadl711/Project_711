@@ -21,22 +21,15 @@ class RestrictionController extends Controller
 
     // تحقق من صحة البيانات
     public function store(Request $request)
-    {/* $validated = $request->validate([
-    'sub_account_debit_id' => 'required|integer',
-    'Amount_debit' => 'required|numeric',
-    'account_Credit_id' => 'required|integer',
-    'sub_account_Credit_id' => 'required|integer',
-    'Statement' => 'required|string',
-    'Currency_name' => 'required|string',
-    'User _id' => 'required|integer',
-], [], trans('validation')); */
+    {
+       
 
         $validated = $request->validate([
             'sub_account_debit_id' => 'required|integer',
             'Amount_debit' => 'required|numeric',
             'account_Credit_id' => 'required|integer',
             'sub_account_Credit_id' => 'required|integer',
-            'Statement' => 'required|string',
+            'Statement' => 'string',
             'Currency_name' => 'required|string', // تأكد من استخدام الاسم الصحيح هنا
             'User_id' => 'required|integer', // تأكد من إضافة User_id إذا كان مطلوباً
         ]);
@@ -44,15 +37,11 @@ class RestrictionController extends Controller
         if ($request->sub_account_debit_id == $request->sub_account_Credit_id) {
             return response()->json(['success' => 'يجب عدم تساوي الحسابات الفرعية المدين والدائن.']);
         }
-        if ($request->account_debit_id == $request->sub_account_debit_id) {
-            return response()->json(['success' => 'يجب عدم تساوي الحسابات الرئيسيه والفرعيه  .']);
-        }
-        if ($request->account_Credit_id == $request->sub_account_Credit_id) {
-            return response()->json(['success' => 'يجب عدم تساوي الحسابات الفرعية الرئيسيه والفرعيه.']);
-        }
+      
         // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
         $today = Carbon::now()->toDateString();
         $dailyPage = GeneralJournal::whereDate('created_at', $today)->first();
+
         // إذا لم توجد صفحة، قم بإنشائها
         if (!$dailyPage) {
             $dailyPage = GeneralJournal::create([]);
@@ -85,7 +74,7 @@ class RestrictionController extends Controller
             'account_Credit_id' => 'required|integer',
             'sub_account_Credit_id' => 'required|integer',
             //'Amount_debit' => 'required|numeric', // تأكد من تطابق المبلغين
-            'Statement' => 'required|string',
+            'Statement' => 'string',
             'Currency_name' => 'required|string', // تأكد من استخدام الاسم الصحيح هنا
             'User_id' => 'required|integer', // تأكد من إضافة User_id إذا كان مطلوباً
         ]);
@@ -110,7 +99,7 @@ class RestrictionController extends Controller
     $dailyEntrie->Amount_debit = $validated['Amount_debit'];
     $dailyEntrie->account_Credit_id = $validated['sub_account_Credit_id'];
     $dailyEntrie->Amount_Credit = $validated['Amount_debit'];
-    $dailyEntrie->Statement = $validated['Statement'];
+    $dailyEntrie->Statement = $validated['Statement'] ?? "قيد";//+
     $dailyEntrie->Currency_name = $validated['Currency_name']; // استخدم الاسم الصحيح هنا
     $dailyEntrie->Daily_page_id = $dailyPage->page_id; // حفظ معرف الصفحة اليومية
     $dailyEntrie->User_id = $validated['User_id']; // تأكد من استخدام المتغيرات المصرح بها
@@ -217,7 +206,7 @@ public function stor(Request $request){
     }
     public function  destroy($id){
         DailyEntrie::where('entrie_id',$id)->delete();
-        return redirect()->back();
+        return view('daily_restrictions.all_restrictions_show');
     }
     public function show($id)
     {

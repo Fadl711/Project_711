@@ -194,7 +194,7 @@ Route::get('/search-sub-accounts', [TreeAccountController::class, 'searchSubAcco
 Route::post('/accounts/create-sub-account/store', [MainaccountController::class, 'store'])->name('Main_Account.store');
 
 Route::get('/accounts/Main_Account/create', [MainaccountController::class, 'create'])->name('Main_Account.create');
-Route::get('/accounts/review-budget/{year}/{month}', [Review_BudgetController::class, 'review_budget'])->name('accounts.review_budget');
+Route::get('/accounts/review-budget/{year}', [Review_BudgetController::class, 'review_budget'])->name('accounts.review_budget');
 Route::post('/accounts/Main_Account/storc', [MainaccountController::class, 'storc'])->name('Main_Account.storc');
 Route::get('/accounts/Main_Account/{id}/edit', [MainaccountController::class, 'edit'])->name('accounts.Main_Account.edit');
 Route::delete('/accounts/Main_Account/{id}', [MainaccountController::class, 'destroy'])->name('accounts.Main_Account.destroy');

@@ -29,6 +29,8 @@ class DailyEntrie extends Model
 
     // العلاقات مع الجداول الأخرى
 
+    // علاقة مع جدول sub_accounts - الحساب المدين // العلاقات مع الجداول الأخرى
+
     // علاقة مع جدول sub_accounts - الحساب المدين
     public function debitAccount()
     {
@@ -40,22 +42,17 @@ class DailyEntrie extends Model
     {
         return $this->belongsTo(SubAccount::class, 'account_Credit_id', 'sub_account_id');
     }
-    public function subAccount()
+
+    // علاقة مع جدول users
+    public function user()
     {
-        return $this->belongsTo(SubAccount::class, 'sub_account_id');
+        return $this->belongsTo(User::class, 'User_id', 'id');
     }
 
-    
-    // علاقة belongsTo مع الحساب الفرعي كمدين
-    public function debitSubAccount()
+    // علاقة مع جدول general_journal
+    public function dailyPage()
     {
-        return $this->belongsTo(SubAccount::class, 'account_debit_id');
-    }
-
-    // علاقة belongsTo مع الحساب الفرعي كدائن
-    public function creditSubAccount()
-    {
-        return $this->belongsTo(SubAccount::class, 'account_Credit_id');
+        return $this->belongsTo(GeneralJournal::class, 'Daily_page_id', 'page_id');
     }
     // // علاقة مع جدول users
     // public function user()
@@ -68,4 +65,5 @@ class DailyEntrie extends Model
     // {
     //     return $this->belongsTo(GeneralJournal::class, 'Daily_page_id', 'page_id');
     // }
+ 
 }

@@ -46,10 +46,7 @@ protected $table = 'sub_accounts';
 protected $primaryKey = 'sub_account_id';
 
 // علاقة belongsTo بين الحساب الفرعي والحساب الرئيسي
-public function mainAccount()
-{
-    return $this->belongsTo(MainAccount::class, 'Main_id');
-}
+
 
 // علاقة hasMany بين الحساب الفرعي وقيود اليومية كمدين
 public function dailyEntriesDebit()
@@ -65,6 +62,9 @@ public function dailyEntriesCredit()
 public function dailyEntries()
 {
     return $this->hasMany(DailyEntrie::class, 'account_debit_id', 'sub_account_id');
+}
+public function mainAccount() {
+    return $this->belongsTo(MainAccount::class, 'Main_id', 'main_account_id');
 }
 
 

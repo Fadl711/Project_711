@@ -82,7 +82,7 @@
                 <div class="mb-4 ">
                     <label for="sub_account_Credit_id" class="block font-medium mb-2">حساب الدائن/الفرعي</label>
                     <select name="sub_account_Credit_id"  step="0.01" id="sub_account_Credit_id" class="block w-full select2 p-2 border rounded-md inputSale">
-                        <option value="" selected>اختر الحساب الفرعي</option>
+                        {{-- <option value="" >اختر الحساب الفرعي</option> --}}
                         <!-- سيتم تعبئة الخيارات بناءً على الحساب الرئيسي المحدد -->
                     </select>
                 </div>
@@ -117,7 +117,7 @@
         </div>
             <div class="">
                 <label for="Statement" class="block font-medium mb-2">البيان</label>
-                <textarea name="Statement" id="Statement" class="block w-full p-2 border rounded-md inputSale" placeholder="أدخل البيان" rows="4" required></textarea>
+                <textarea name="Statement" id="Statement" class="block w-full p-2 border rounded-md inputSale" placeholder="أدخل البيان" rows="4" ></textarea>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-2 gap-4">
 
@@ -171,7 +171,6 @@
                     if (data.success) {
         // إظهار رسالة النجاح
         $('#successMessage').show().text(data.success);
-        $('#dailyRestrictionsForm')[0].reset(); // إعادة تعيين النموذج
 
         // فتح صفحة الطباعة مع البيانات
         const printUrl = '{{ route("restrictions.print", ":id") }}'.replace(':id', data.dailyEntrie.entrie_id);
@@ -180,7 +179,7 @@
         // إخفاء الرسالة بعد 3 ثوانٍ
         setTimeout(function() {
             $('#successMessage').hide();
-        }, 3000);
+        }, 1000);
     }
                 },
                 error: function(xhr) {
@@ -246,69 +245,74 @@
     });
       // عند اختيار الحساب الرئيسي (المدين)
       $('#account_debit_id').on('change', function() {
-          const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي (المدين)
+    const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي (المدين)
 
-          // تفريغ القائمة الفرعية إذا لم يتم اختيار حساب رئيسي
-          $('#sub_account_debit_id').empty().append('<option value="">اختر الحساب الفرعي</option>');
+    // تفريغ القائمة الفرعية
+    $('#sub_account_debit_id').empty();
 
-          // التحقق من وجود قيمة
-          if (mainAccountId) {
-              // طلب AJAX لجلب الحسابات الفرعية بناءً على الحساب الرئيسي
-              $.ajax({
-                  url: `/main-accounts/${mainAccountId}/sub-accounts`, // استخدام القيم الديناميكية
-                  type: 'GET',
-                  dataType: 'json',
-                  success: function(data) {
-                      // تعبئة الحسابات الفرعية الجديدة
-                      const subAccountOptions = data.map(subAccount =>
-                          `<option value="${subAccount.sub_account_id}">${subAccount.sub_name}</option>`
-                      ).join('');
+    // التحقق من وجود قيمة
+    if (mainAccountId) {
+        // طلب AJAX لجلب الحسابات الفرعية بناءً على الحساب الرئيسي
+        $.ajax({
+            url: `/main-accounts/${mainAccountId}/sub-accounts`, // استخدام القيم الديناميكية
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                // تعبئة الحسابات الفرعية الجديدة
+                const subAccountOptions = data.map(subAccount =>
+                    `<option value="${subAccount.sub_account_id}">${subAccount.sub_name}</option>`
+                ).join('');
 
-                      // إضافة الخيارات الجديدة إلى القائمة الفرعية
-                      $('#sub_account_debit_id').append(subAccountOptions);
+                // إضافة الخيارات الجديدة إلى القائمة الفرعية
+                $('#sub_account_debit_id').append(subAccountOptions);
+                
 
-                      // إعادة تهيئة Select2 بعد إضافة الخيارات
-                      $('#sub_account_debit_id').select2('destroy').select2();
-                  },
-                  error: function() {
-                      console.error('Error fetching sub-accounts.');
-                  }
-              });
-          }
-      });
+                // إعادة تهيئة Select2 بعد إضافة الخيارات
+                $('#sub_account_debit_id').select2('destroy').select2();
+            },
+            error: function() {
+                console.error('Error fetching sub-accounts.');
+            }
+        });
+    }
+});
 
       // عند اختيار الحساب الرئيسي (الدائن)
       $('#account_Credit_id').on('change', function() {
-          const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي (الدائن)
+    const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي (الدائن)
 
-          // تفريغ القائمة الفرعية إذا لم يتم اختيار حساب رئيسي
-          $('#sub_account_Credit_id').empty().append('<option value="">اختر الحساب الفرعي</option>');
+    // تفريغ القائمة الفرعية وإضافة الخيار الافتراضي
+    $('#sub_account_Credit_id').empty();
 
-          // التحقق من وجود قيمة
-          if (mainAccountId) {
-              // طلب AJAX لجلب الحسابات الفرعية بناءً على الحساب الرئيسي
-              $.ajax({
-                  url: `/main-accounts/${mainAccountId}/sub-accounts`, // استخدام القيم الديناميكية
-                  type: 'GET',
-                  dataType: 'json',
-                  success: function(data) {
-                      // تعبئة الحسابات الفرعية الجديدة
-                      const subAccountOptions = data.map(subAccount =>
-                          `<option value="${subAccount.sub_account_id}">${subAccount.sub_name}</option>`
-                      ).join('');
+    // التحقق من وجود قيمة في الحساب الرئيسي
+    if (mainAccountId) {
+        // طلب AJAX لجلب الحسابات الفرعية بناءً على الحساب الرئيسي
+        $.ajax({
+            url: `/main-accounts/${mainAccountId}/sub-accounts`, // استخدام القيم الديناميكية
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                // تعبئة الحسابات الفرعية الجديدة
+                const subAccountOptions = data.map(subAccount =>
+                    `<option value="${subAccount.sub_account_id}">${subAccount.sub_name}</option>`
+                ).join('');
 
-                      // إضافة الخيارات الجديدة إلى القائمة الفرعية
-                      $('#sub_account_Credit_id').append(subAccountOptions);
+                // إضافة الخيارات الجديدة إلى القائمة الفرعية
+                $('#sub_account_Credit_id').append(subAccountOptions);
 
-                      // إعادة تهيئة Select2 بعد إضافة الخيارات
-                      $('#sub_account_Credit_id').select2('destroy').select2();
-                  },
-                  error: function() {
-                      console.error('Error fetching sub-accounts.');
-                  }
-              });
-          }
-      });
+                // إعادة تهيئة Select2 بعد إضافة الخيارات
+                $('#sub_account_Credit_id').select2('destroy').select2();
+            },
+            error: function() {
+                console.error('Error fetching sub-accounts.');
+            }
+        });
+    }
+});
+
+
+          
+      
   });
   </script>
 

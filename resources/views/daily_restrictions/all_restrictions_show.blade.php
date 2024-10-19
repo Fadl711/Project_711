@@ -21,84 +21,51 @@
         </div>
     </div>
     <div class=" min-w-full shadow rounded-lg   max-h-screen overflow-x-auto text-sm ">
-    <table class="min-w-full bg-white  text-sm " >
-        <thead class="bg-[#2430d3] text-white  ">
-           <tr>
-            <th class="py-1   text-right bg-white"> </th>
-            <th colspan="2" class="py-1  border text-right">بيانات حساب المدين (الأخذ) </th>
-            <th colspan="2" class="py-1  border text-right">بيانات حساب الدائن (المعطي) </th>
-
-           </tr>
-            <tr>
-                <th class="py-1  border text-right">رقم القيد</th>
-                <th class="py-1  border text-right">   من حساب/</th>
-                <th class="py-1  border text-right">   مدين </th>
-
-                <th class="py-1  border text-right"> الى حساب/</th>
-                <th class="py-1  border text-right">دائن</th>
-                <th class="py-1  border text-right">	بيان الحساب</th>
-                <th class="py-1  border text-right">تاريخ القيد</th>
-                <th class="py-1  border text-right "> المستخدم</th>
-                <th class="py-1  border text-right"> عرض - تحرير</th>
-
-
-            </tr>
-        </thead>
-        <tbody id="products-table">
-
-            @forelse ($eail as $eai)
-
-
-            <tr class="transition-all duration-500">
-
-                <td class=" border text-right">{{$eai->entrie_id}}</td>
-                @php
-                $resultDebit;
-                $resultDebit1;
-                $resultDebit1=$suba->where('sub_account_id',$eai->account_debit_id);
-                foreach ($resultDebit1 as $key) {
-                    $resultDebit=$mainc->where('main_account_id',$key->Main_id)->first();
-                    if ($key->sub_name!=$resultDebit->account_name) {
-                        $resultDebit1=$key;
-                        break;
-
-                    }
-                }
-                $resultCredit;
-                $resultCredit1;
-                $resultCredit1=$suba->where('sub_account_id',$eai->account_Credit_id);
-                foreach ($resultCredit1 as $key) {
-                    $resultCredit=$mainc->where('main_account_id',$key->Main_id)->first();
-                    if ($key->sub_name!=$resultCredit->account_name) {
-                        $resultCredit1=$key;
-                        break;
-                    }
-                    # code...
-                }
-                @endphp
-                <td class=" border text-right"> ({{$resultDebit->account_name}})-({{$resultDebit1->sub_name}})</td>
-                <td class=" border text-right">{{$eai->Amount_debit}}.ريال</td>
-
-                <td class=" border text-right">({{$resultCredit->account_name}})-({{$resultCredit1->sub_name}})  </td>
-                <td class=" border text-right">{{$eai->Amount_Credit}}.ريال</td>
-                <td class=" border text-right">{{$eai->Statement}}</td>
-                <td class=" border text-right">{{$eai->created_at}} </td>
-                @foreach ($users as $user)
-                @if ($user->id==$eai->User_id)
-
-                <td class=" border text-right "> {{$user->name}}</td>
-                @endif
-                @endforeach
-                <td class=" border text-right flex ">
-                    <a href="{{route('restrictions.show',$eai->entrie_id)}}"  class="text-sm py-2  leading-none rounded-md hover:bg-gray-100" >
-                                              <svg class="w-6 h-6 text-[#2430d3] dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-
-                    <svg class="w-6 h-6 text-[#2430d3] dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-width="2" d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"/>
-                        <path stroke="currentColor" stroke-width="2" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
-                      </svg>
-                    </a>
-
+        <table class="min-w-full bg-white text-sm">
+            <thead class="bg-[#2430d3] text-white">
+                <tr>
+                    <th class="py-1 text-right bg-white"></th>
+                    <th colspan="2" class="py-1 border text-right">بيانات حساب المدين (الأخذ)</th>
+                    <th colspan="2" class="py-1 border text-right">بيانات حساب الدائن (المعطي)</th>
+                </tr>
+                <tr>
+                    <th class="py-1 border text-right">رقم القيد</th>
+                    <th class="py-1 border text-right">من حساب/</th>
+                    <th class="py-1 border text-right">مدين</th>
+                    <th class="py-1 border text-right">الى حساب/</th>
+                    <th class="py-1 border text-right">دائن</th>
+                    <th class="py-1 border text-right">بيان الحساب</th>
+                    <th class="py-1 border text-right">تاريخ القيد</th>
+                    <th class="py-1 border text-right">المستخدم</th>
+                    <th class="py-1 border text-right">عرض - تحرير</th>
+                </tr>
+            </thead>
+            <tbody id="products-table">
+                @forelse ($eail as $eai)
+                    @php
+                        $resultDebit1 = $suba->where('sub_account_id', $eai->account_debit_id)->first();
+                        $resultDebit = $mainc->where('main_account_id', $resultDebit1->Main_id)->first();
+        
+                        $resultCredit1 = $suba->where('sub_account_id', $eai->account_Credit_id)->first();
+                        $resultCredit = $mainc->where('main_account_id', $resultCredit1->Main_id)->first();
+                    @endphp
+        
+                    <tr class="transition-all duration-500">
+                        <td class="border text-right">{{ $eai->entrie_id }}</td>
+                        <td class="border text-right">({{ $resultDebit->account_name }}) - ({{ $resultDebit1->sub_name }})</td>
+                        <td class="border text-right">{{ $eai->Amount_debit }} ريال</td>
+                        <td class="border text-right">({{ $resultCredit->account_name }}) - ({{ $resultCredit1->sub_name }})</td>
+                        <td class="border text-right">{{ $eai->Amount_Credit }} ريال</td>
+                        <td class="border text-right">{{ $eai->Statement }}</td>
+                        <td class="border text-right">{{ $eai->created_at }}</td>
+                        <td class="border text-right">{{ $users->where('id', $eai->User_id)->first()->name }}</td>
+                        <td class="border text-right flex">
+                            <a href="{{ route('restrictions.show', $eai->entrie_id) }}" class="text-sm py-2 leading-none rounded-md hover:bg-gray-100">
+                                <svg class="w-6 h-6 text-[#2430d3]" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-width="2" d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"/>
+                                    <path stroke="currentColor" stroke-width="2" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                                </svg>
+                            </a>
                       <a href="{{route('restrictions.edit',$eai->entrie_id)}}"  class="text-sm py-2 px-2  leading-none rounded-md hover:bg-gray-100" >
                                             <svg class="w-6 h-6 text-[#2430d3] dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                         <svg class="w-6 h-6 text-[#2430d3] dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
@@ -129,6 +96,7 @@
                         <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                           <form action="{{route('daily_restrictions.destroy',$eai->entrie_id)}}" method="POST"  class="text-sm py-2 px-2  leading-none rounded-md hover:bg-gray-100" >
+                            @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger">Delete</button>
                           </form>

@@ -124,6 +124,11 @@ return view('accounts.Main_Account.create',
                 'Type_migration'=>$request->Type_migration,
                 'main_account_id'=>$request->main_account_id,
         ]);
+        SubAccount::where('Main_id', $id)
+    ->update([
+        'typeAccount' => $request->typeAccount,
+        // أي حقول أخرى يجب تحديثها في الحسابات الفرعية
+    ]);
 
             return redirect()->route('Main_Account.create');
         }
