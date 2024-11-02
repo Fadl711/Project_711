@@ -25,7 +25,7 @@
         </ul>
 
         <div class=" container relative  ">
-            <button onclick="window.history.back()">رجوع</button>
+            <button onclick='window.location.replace("/home");'>رجوع</button>
 
     @yield('restrictions')
 </div>

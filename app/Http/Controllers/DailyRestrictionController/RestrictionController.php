@@ -38,7 +38,7 @@ class RestrictionController extends Controller
         if ($request->sub_account_debit_id == $request->sub_account_Credit_id) {
             return response()->json(['success' => 'يجب عدم تساوي الحسابات الفرعية المدين والدائن.']);
         }
-      
+
         // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
         $today = Carbon::now()->toDateString();
         $dailyPage = GeneralJournal::whereDate('created_at', $today)->first();
@@ -51,7 +51,7 @@ class RestrictionController extends Controller
         $dailyEntrie = new DailyEntrie();
         $invoice_type=$request->Invoice_type;
         $Invoice_num=$request->Invoice_id;
-        
+
         $dailyEntrie->Invoice_type =$invoice_type ;//+
         $dailyEntrie->Invoice_id =$Invoice_num ;//+
     $dailyEntrie->account_debit_id = $validated['sub_account_debit_id'];
@@ -68,6 +68,8 @@ class RestrictionController extends Controller
     }
     public function saveAndPrint(Request $request)
     {
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+
         // $mainAccount=MainAccount::all();
         // dd($mainAccount);
         // التحقق من صحة البيانات المدخلة
@@ -89,16 +91,21 @@ class RestrictionController extends Controller
         if (!$dailyPage) {
             $dailyPage = GeneralJournal::create([]);// إذا لم توجد صفحة، قم بإنشائها
         }
-        $dailyEntrie = new DailyEntrie();// حفظ القيد اليومي
+        $dailyEntrie = new DailyEntrie();
+        $invoice_type=$request->Invoice_type;
+        $Invoice_num=$request->Invoice_id;
+
+        $dailyEntrie->Invoice_type =$invoice_type ;//+
+        $dailyEntrie->Invoice_id =$Invoice_num ;//+
     $dailyEntrie->account_debit_id = $validated['sub_account_debit_id'];
     $dailyEntrie->Amount_debit = $validated['Amount_debit'];
     $dailyEntrie->account_Credit_id = $validated['sub_account_Credit_id'];
     $dailyEntrie->Amount_Credit = $validated['Amount_debit'];
-    $dailyEntrie->Statement = $validated['Statement'] ?? "قيد";//+
+    $dailyEntrie->Statement = $validated['Statement'];
     $dailyEntrie->Currency_name = $validated['Currency_name']; // استخدم الاسم الصحيح هنا
+    $dailyEntrie->accounting_period_id = $accountingPeriod->accounting_period_id;
     $dailyEntrie->Daily_page_id = $dailyPage->page_id; // حفظ معرف الصفحة اليومية
-    $dailyEntrie->status = 'غير مرحل'; // تعيين الحالة كغير مرحل
-    $dailyEntrie->User_id = $validated['User_id']; // تأكد من استخدام المتغيرات المصرح بها
+    $dailyEntrie->User_id = $validated['User_id'];
     $dailyEntrie->save();
     // إرجاع البيانات التي تحتاجها لصفحة الطباعة
     return response()->json([
@@ -269,6 +276,9 @@ public function stor(Request $request){
                         '<td class="border text-right">'.$product->Amount_Credit.'</td>'.
                         '<td class="border text-right">'.$product->Statement.'</td>'.
                         '<td class="border text-right">'.$product->created_at.'</td>'.
+                        '<td class="border text-right">'.
+                        ($product->status == 'مرحل' ? '<span class="text-success">مرحل</span>' : '<span class="text-danger">غير مرحل</span>').
+                    '</td>'.
                         '<td class="border text-right">'.$user.'</td>'.
                         '<td class="p-1 border text-right flex">'.
                             '<a href="'.route('restrictions.show', $product->entrie_id).'" class="p-1 rounded-full group transition-all duration-500 flex item-center">'
@@ -357,6 +367,9 @@ public function stor(Request $request){
                     '<td class="border text-right">'.$product->Amount_Credit.'</td>'.
                     '<td class="border text-right">'.$product->Statement.'</td>'.
                     '<td class="border text-right">'.$product->created_at.'</td>'.
+                    '<td class="border text-right">'.
+                    ($product->status == 'مرحل' ? '<span class="text-success">مرحل</span>' : '<span class="text-danger">غير مرحل</span>').
+                '</td>'.
                     '<td class="border text-right">'.$user.'</td>'.
                     '<td class="p-1 border text-right flex">'.
                         '<a href="'.route('restrictions.show', $product->entrie_id).'" class="p-1 rounded-full group transition-all duration-500 flex item-center">'

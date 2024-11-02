@@ -26,7 +26,7 @@
     <h2 class="text-1xl font-bold text-center ">إضافة قيد يومي</h2>
     <div class="container mx-auto  px-4">
         <!-- Title -->
-       
+
         <!-- Form Layout -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="shadow-lg rounded-lg p-4 bg-white border">
@@ -37,9 +37,9 @@
                     <option value="مبيعات" > مبيعات</option>
                     <option value="مشتريات" > مشتريات</option>
                     <option value="خصم مكتسب" > خصم مكتسب</option>
-    
-    
-    
+
+
+
                     </select>
             </div>
             <!-- حساب المدين -->
@@ -54,7 +54,7 @@
                       @foreach ($mainAccounts as $mainAccount)
                            <option value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
                       @endforeach
-                      @endisset 
+                      @endisset
                     </select>
                 </div>
                 <div class="mb-4">
@@ -93,7 +93,7 @@
           <div class="grid grid-cols-2 md:grid-cols-2 gap-4">
           <div>
             <label for="Amount_debit" class="block font-medium mb-2">المبلغ المدين</label>
-            <input name="Amount_debit" id="Amount_debit" type="number" step="0.01" class=" inputSale input-field" placeholder="أدخل المبلغ" required>          
+            <input name="Amount_debit" id="Amount_debit" type="number" step="0.01" class=" inputSale input-field" placeholder="أدخل المبلغ" required>
         </div>
             <div class="">
                 <label for="Currency_name" class="block font-medium mb-2">العملة</label>
@@ -164,7 +164,7 @@
 
         // فتح صفحة الطباعة مع البيانات
         const printUrl = '{{ route("restrictions.print", ":id") }}'.replace(':id', data.dailyEntrie.entrie_id);
-        window.open(printUrl, '_blank');
+        window.open(printUrl , "_blank", "width=600,height=800,left=700,top=100");
         location.reload ();
         // إخفاء الرسالة بعد 3 ثوانٍ
         setTimeout(function() {
@@ -255,7 +255,7 @@
 
                 // إضافة الخيارات الجديدة إلى القائمة الفرعية
                 $('#sub_account_debit_id').append(subAccountOptions);
-                
+
 
                 // إعادة تهيئة Select2 بعد إضافة الخيارات
                 $('#sub_account_debit_id').select2('destroy').select2();
@@ -301,10 +301,10 @@
 });
 
 
-          
-      
+
+
   });
   </script>
- 
+
 
 @endsection

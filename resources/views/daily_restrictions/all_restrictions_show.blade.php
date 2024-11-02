@@ -47,11 +47,11 @@
                     @php
                         $resultDebit1 = $suba->where('sub_account_id', $eai->account_debit_id)->first();
                         $resultDebit = $mainc->where('main_account_id', $resultDebit1->Main_id)->first();
-        
+
                         $resultCredit1 = $suba->where('sub_account_id', $eai->account_Credit_id)->first();
                         $resultCredit = $mainc->where('main_account_id', $resultCredit1->Main_id)->first();
                     @endphp
-        
+
                     <tr class="transition-all duration-500">
                         <td class="border text-right">{{ $eai->entrie_id }}</td>
                         <td class="border text-right">({{ $resultDebit->account_name }}) - ({{ $resultDebit1->sub_name }})</td>

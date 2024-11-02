@@ -54,7 +54,7 @@
             <tbody class="divide-y divide-gray-300 ">
 
 @auth
-    
+
 
                 @foreach ($cate as $cat)
                 <tr class="bg-white transition-all duration-500 hover:bg-gray-50 border-b-2">
@@ -135,6 +135,7 @@
                 }, 3000);
 
 
+                location.reload ();
                 console.log('تمت الإضافة بنجاح');
             },
             error: function(xhr, status, error) {

@@ -26,8 +26,8 @@ class PurchaseController extends Controller
         return view('invoice_purchases.bills_purchase_show');
 
     }
-  
-    
+
+
 
 
     public function create() {
@@ -62,16 +62,16 @@ class PurchaseController extends Controller
     public function getMainAccounts(Request $request,$id)
     {
         // $mainAccountId = $request->input('Payment_type');
-    
+
         $accountType = AccountType::tryFrom($id );
         if (!$accountType) {
             return response()->json(['error' => 'نوع الحساب غير موجود'], 404);
         }
-    
+
         // استرجاع الحسابات الرئيسية المرتبطة بالنوع
         $subAccounts = MainAccount::where('typeAccount',$accountType->value )
         ->where('typeAccount',$accountType->value )->get();
-    
+
         if ($subAccounts->isEmpty()) {
             return response()->json(['error' => 'لا توجد حسابات رئيسية متاحة لهذا النوع'], 404);
         }
@@ -89,7 +89,7 @@ class PurchaseController extends Controller
         $purchaseInvoice->accounting_period_id = $accountingPeriod->accounting_period_id ;
         $purchaseInvoice->Invoice_type = $request->Payment_type ?? null;
         $purchaseInvoice->Supplier_id = $request->Supplier_id;
-    
+
         try {
             $purchaseInvoice->save();
             return response()->json([
@@ -105,7 +105,7 @@ class PurchaseController extends Controller
             ], 500);
         }
     }
-    
+
 public function storc(Request $request)
 {        $accountingPeriod = ModelsAccountingPeriod::where('is_closed', false)->first();
 
@@ -115,7 +115,7 @@ public function storc(Request $request)
 //   $NewPurchase=  Purchase::create(
 //         ['
 //         purchase_invoice_id' => $request->purchase_invoice_id, // condition to check if the invoice exists
-        
+
 //             'Product_name' => $request->product_name,
 //             'Barcode' => $request->Barcode ?? '', // باركود افتراضي إذا كان فارغًا
 //             'incoming_quantity' => $request->Quantity ?? 0, // تعيين 0 إذا كانت الكمية فارغة
@@ -188,10 +188,10 @@ Purchase::create($validatedData);
     //                     'status' => 'غير مرحل',
     //                 ]
     //             );
-                
+
     //         }
-     
-       
+
+
     // }
 
     return response()->json([
