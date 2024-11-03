@@ -35,6 +35,11 @@ Route::middleware('guest')->group(function () {
                 ->name('password.store');
 });
 
+
+Route::get('/login', [AuthenticatedSessionController::class, 'create'])
+    ->middleware(['guest'])
+    ->name('login');
+
 Route::middleware('auth')->group(function () {
     Route::get('verify-email', EmailVerificationPromptController::class)
                 ->name('verification.notice');

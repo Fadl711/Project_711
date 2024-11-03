@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class SubAccount extends Model
 {
     use HasFactory;
+    
+protected $table = 'sub_accounts';
+protected $primaryKey = 'sub_account_id';
     protected $fillable = [
         'sub_name', 
         'Main_id',
@@ -21,12 +24,8 @@ class SubAccount extends Model
         'AccountClass',
      
     ];
-
-    // // ربط الحساب الفرعي بالحساب الرئيسي
-    // public function mainAccount()
-    // {
-    //     return $this->belongsTo(MainAccount::class, 'Main_id');
-    // }
+ 
+  
     public function daily_entries()
 {
     return $this->hasMany(DailyEntrie::class, 'sub_account_id');
@@ -42,8 +41,6 @@ public function purchase_invoices()
 }
 
 
-protected $table = 'sub_accounts';
-protected $primaryKey = 'sub_account_id';
 
 // علاقة belongsTo بين الحساب الفرعي والحساب الرئيسي
 
@@ -61,11 +58,20 @@ public function dailyEntriesCredit()
 }
 public function dailyEntries()
 {
-    return $this->hasMany(DailyEntrie::class, 'account_debit_id', 'sub_account_id');
+    return $this->hasMany(DailyEntrie::class, 'account_Credit_id', 'sub_account_id');
 }
 public function mainAccount() {
     return $this->belongsTo(MainAccount::class, 'Main_id', 'main_account_id');
 }
 
+public function debitEntries()
+    {
+        return $this->hasMany(DailyEntrie::class, 'account_debit_id', 'sub_account_id');
+    }
 
+    public function creditEntries()
+    {
+        return $this->hasMany(DailyEntrie::class, 'account_Credit_id', 'sub_account_id');
+    }
+    
 }

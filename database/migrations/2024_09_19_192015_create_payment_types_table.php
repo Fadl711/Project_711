@@ -14,7 +14,10 @@ return new class extends Migration
         Schema::create('payment_types', function (Blueprint $table) {
             $table->increments('payment_types_id')->unsigned();
             $table->string('Payment_Name');
+            $table->integer('accounting_period_id')->unsigned();
+
             $table->timestamps();
+
         });
     }
 

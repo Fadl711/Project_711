@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('User_id')->unsigned();
             $table->integer('Payment_type_id')->unsigned();
             $table->integer('Currency_id')->unsigned();
+            $table->integer('accounting_period_id')->unsigned();
 
             $table->foreign('Customer_id')->references('id')->on('users');
             $table->foreign('User_id')->references('id')->on('users');

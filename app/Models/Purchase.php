@@ -10,30 +10,40 @@ class Purchase extends Model
     use HasFactory;
 
 protected $primaryKey = 'purchase_id';
-    protected $fillable = [
-        'purchase_id',
-        'Product_name',
-         'Barcode',
-         'Quantity',
-         'Purchase_price',
-         'Selling_price',
-         'Total',
-         'Cost',
-         'Currency_id',
-         'Supplier_id',
-         'User_id',
-         'Purchase_invoice_id',
-         'Category_id',
-         'Store_id',
-         'Discount_earned',
-         'Profit',
-         'Exchange_rate',
-         'note',
-         'product_id',
+   
+protected $fillable = [
+    'Product_name',
+    'product_id',
+    'Barcode',
+    'Purchase_price',
+    'Selling_price',
+    'Total',
+    'Cost',
+    'Discount_earned',
+    'Profit',
+    'Exchange_rate',
+    'note',
+    'Currency_id',
+    'User_id',
+    'quantity',
+    'Purchase_invoice_id',
+    'accounting_period_id',
+    'account_id',
+    'transaction_type',
+    'warehouse_from_id',
+    'warehouse_to_id',
+    'Supplier_id',
+];
 
+// تعريف العلاقات (إذا لزم الأمر)
+public function supplier()
+{
+    return $this->belongsTo(SubAccount::class, 'Supplier_id');
+}
 
-
-
-        ];
+public function purchaseInvoice()
+{
+    return $this->belongsTo(PurchaseInvoice::class, 'Purchase_invoice_id');
+}
 
 }

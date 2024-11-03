@@ -13,18 +13,22 @@ return new class extends Migration
     {
         Schema::create('purchase_invoices', function (Blueprint $table) {
             $table->increments('purchase_invoice_id')->unsigned();
-            $table->integer('Receipt_number')->unsigned();
-            $table->decimal('Total_invoice', 8, 2)->nullable();
-            $table->decimal('Total_cost', 8, 2)->nullable();
-             $table->integer('User_id')->unsigned();
-            $table->string('Payment_type')->nullable();
-            $table->integer('Supplier_id')->unsigned();
-           
+            $table->integer('Receipt_number')->unsigned()->nullable();
+            $table->decimal('Total_invoice', 15, 2)->nullable();
+            $table->decimal('Total_cost', 15, 2)->nullable();
+            $table->decimal('Paid', 15, 2)->nullable();
+            $table->integer('User_id')->unsigned();
+            $table->string('Invoice_type')->nullable();
+            $table->integer('Supplier_id')->unsigned()->nullable();
+            $table->integer('accounting_period_id')->unsigned();
             $table->timestamps();
-            $table->foreign('Supplier_id')->references('sub_account_id')->on('sub_accounts')
-            ->onDelete('cascade');
+          
+            $table->foreign('Supplier_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
+           
             $table->foreign('User_id')->references('id')->on('users');
+            
           });
+
     }
 
     /**

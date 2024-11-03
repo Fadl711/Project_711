@@ -23,46 +23,48 @@
 
 <form id="dailyRestrictionsForm" method="POST" class="space-y-6">
     @csrf
+    <h2 class="text-1xl font-bold text-center ">إضافة قيد يومي</h2>
     <div class="container mx-auto  px-4">
         <!-- Title -->
-        <h2 class="text-1xl font-bold text-center ">إضافة قيد يومي</h2>
-
+       
         <!-- Form Layout -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="shadow-lg rounded-lg p-4 bg-white border">
+                <label for="Invoice_type" class="block font-medium mb-2 ">  نوع المستند</label>
+                <select name="Invoice_type" dir="ltr" class=" select2 inputSale" id="Invoice_type">
+                    <!-- سيتم تعبئة الخيارات بناءً على الحساب الرئيسي المحدد -->
+                    <option value="قيد" selected>اختر  نوع المستند</option>
+                    <option value="مبيعات" > مبيعات</option>
+                    <option value="مشتريات" > مشتريات</option>
+                    <option value="خصم مكتسب" > خصم مكتسب</option>
+    
+    
+    
+                    </select>
+            </div>
             <!-- حساب المدين -->
             <div class="shadow-lg rounded-lg p-4 bg-white border">
                 <h3 class="text-lg font-semibold mb-4">المدين</h3>
                 <div class="mb-4">
                     <label for="account_debit_id" class="block font-medium mb-2">حساب المدين/الرئيسي</label>
-
                     <select name="account_debit_id" id="account_debit_id" dir="ltr" class="input-field  select2 inputSale" required>
                        <!-- إضافة خيارات الحسابات -->
-                       @auth
-
-
-                      <option value="" selected>اختر الحساب</option>
+                       @isset($mainAccounts)
+                     <option value="" selected>اختر الحساب</option>
                       @foreach ($mainAccounts as $mainAccount)
                            <option value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
                       @endforeach
-                      @endauth
+                      @endisset 
                     </select>
                 </div>
                 <div class="mb-4">
-
                     <label for="sub_account_debit_id" class="block font-medium mb-2 ">حساب المدين/الفرعي</label>
-                    @auth
-
-                    <select name="sub_account_debit_id" name="sub_account_debit_id" dir="ltr" class="input-field select2 inputSale" id="sub_account_debit_id">
+                    <select name="sub_account_debit_id" id="sub_account_debit_id" dir="ltr" class="input-field select2 inputSale" >
                         <!-- سيتم تعبئة الخيارات بناءً على الحساب الرئيسي المحدد -->
                         <option value="" selected>اختر الحساب الفرعي</option>
-
-
                         </select>
-                    @endauth
                 </div>
-
             </div>
-
             <!-- حساب الدائن -->
             <div class="shadow-lg rounded-lg p-4 bg-white border">
                 <h3 class="text-lg font-semibold mb-4">الدائن</h3>
@@ -71,20 +73,16 @@
                     <select name="account_Credit_id" id="account_Credit_id" class=" select2 inputSale" required>
                         <option value="" selected>اختر الحساب</option>
 
-@auth
-
+                        @isset($mainAccounts)
                        @foreach ($mainAccounts as $mainAccount)
                              <option value="{{$mainAccount->main_account_id}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
                         @endforeach
-                        @endauth
-                                            </select>
+                        @endisset                                             </select>
                 </div>
                 <div class="mb-4 ">
                     <label for="sub_account_Credit_id" class="block font-medium mb-2">حساب الدائن/الفرعي</label>
                     <select name="sub_account_Credit_id"  step="0.01" id="sub_account_Credit_id" class="block w-full select2 p-2 border rounded-md inputSale">
-                        {{-- <option value="" >اختر الحساب الفرعي</option> --}}
-                        <!-- سيتم تعبئة الخيارات بناءً على الحساب الرئيسي المحدد -->
-                    </select>
+                       </select>
                 </div>
 
             </div>
@@ -93,14 +91,10 @@
         <div class="shadow-lg rounded-lg p-4 bg-white border">
           <h3 class="text-lg font-semibold mb-4">تفاصيل إضافية</h3>
           <div class="grid grid-cols-2 md:grid-cols-2 gap-4">
-
           <div>
             <label for="Amount_debit" class="block font-medium mb-2">المبلغ المدين</label>
-            <input name="Amount_debit" type="number" step="0.01" class=" inputSale input-field" placeholder="أدخل المبلغ" required>
-            
+            <input name="Amount_debit" id="Amount_debit" type="number" step="0.01" class=" inputSale input-field" placeholder="أدخل المبلغ" required>          
         </div>
-
-
             <div class="">
                 <label for="Currency_name" class="block font-medium mb-2">العملة</label>
                 <select   dir="ltr" id="Currency_name" class="inputSale input-field " name="Currency_name"  >
@@ -150,12 +144,8 @@
 
       // التركيز على الحقل الأول عند التحميل
       $('#account_debit_id').focus();
-
-
-
       // إضافة مؤشر تحميل
-
-      // إرسال النموذج باستخدام AJAX بدون تحديث الصفحة
+     // إرسال النموذج باستخدام AJAX بدون تحديث الصفحة
       $(document).ready(function() {
             $('#savaAndPrint').click(function(event) {
                 event.preventDefault();
@@ -213,7 +203,7 @@
                     if (data.success) {
                         // إظهار رسالة النجاح
                         $('#successMessage').show().text(data.success);
-                        $('#dailyRestrictionsForm')[0].reset(); // إعادة تعيين النموذج
+                        $('#Amount_debit').val(""); // إعادة تعيين النموذج
                         // إخفاء الرسالة بعد 3 ثوانٍ
                         setTimeout(function() {
                             $('#successMessage').hide();
@@ -315,5 +305,6 @@
       
   });
   </script>
+ 
 
 @endsection

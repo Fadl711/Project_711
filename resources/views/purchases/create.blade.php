@@ -11,32 +11,57 @@
       text-align: right;
     }
   </style>
+  {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
 
+  <script>
+$(document).ready(function() {
+    $('#main_account_debit_id').on('change', function() {
+        const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي
+
+        showAccounts(mainAccountId,null);
+       
+    });
+    // $('#account_debitid').on('change', function() {
+    //     const mainAccountId2 = $(this).val(); // الحصول على ID الحساب الرئيسي
+
+    //     showAccounts(null,mainAccountId2);
+       
+    // });
+});
+
+
+
+</script>
 <div id="successMessage" class="alert-success" style="display: none;"></div>
-<div class="min-w-[20%] px-1 border-x border-y border-orange-950 rounded-xl p-2">
+<div class="min-w-[20%] px-1 border-x border-y border-orange-950 rounded-xl ">
     <div class="text-bro flex items-center">
-        <div class="w-full min-w-full bg-white">
+        <div class="w-full min-w-full bg-white py-1">
             <form id="invoicePurchases">
+                {{-- method="POST" action="{{route('Purchases.getMainAccounts')}}" --}}
                 @csrf
 
                 <div class="flex gap-4">
+
                     <div class="flex">
+                     
                         <label for="" class="labelSale">نقدا</label>
-                        <input type="radio" name="Payment_type" value="نقدا" required>
+                        <input type="radio" name="Payment_type" value="نقدا"  >
                     </div>
+                    
                     <div class="flex">
                         <label for="" class="labelSale">اجل</label>
-                        <input type="radio" name="Payment_type" value="اجل" required>
+                        <input type="radio" name="Payment_type" value="اجل" >
                     </div>
+                  
                     <div class="flex">
-                        <label for="" class="labelSale">شيك</label>
-                        <input type="radio" name="Payment_type" value="شيك" required>
+                        <label for="" class="labelSale">تحويل مخزني</label>
+                        <input type="radio" name="Payment_type" value="تحويل مخزني" >
                     </div>
                 </div>
-                <div class="md:justify-around text-right grid md:grid-cols-7">
-                    <div class="">
+                <div class="md:justify- text-right grid md:grid-cols-8 gap-2">
+                    <div>
                         <label for="Supplier_id" class="labelSale">اسم المورد</label>
-                        <select name="Supplier_id" id="Supplier_id" dir="ltr" class="input-field w-full select2 inputSale" required>
+                        <select name="Supplier_id" id="Supplier_id" dir="ltr" class="input-field w-full select2 inputSale" >
                             @isset($AllSubAccounts)
                                 @foreach ($AllSubAccounts as $subAccount)
                                     @if ($subAccount->Main_id == $mainAccount_supplier->main_account_id)
@@ -44,29 +69,52 @@
                                     @endif
                                 @endforeach
                             @endisset
+                           
+
                         </select>
                     </div>
-                    <div class="mb-1">
+                    <div >
                         <label for="Receipt_number" class="labelSale">رقم الإيصال</label>
                         <input type="number" name="Receipt_number" id="Receipt_number" placeholder="0" class="inputSale" />
                     </div>
-                    <div class="mb-1">
+                    <div >
                         <label for="Total_cost" class="labelSale">اجمالي التكلفة</label>
                         <input type="number" name="Total_cost" id="Total_cost" placeholder="0" class="inputSale" />
                     </div>
-                    <div class="px-1">
+                    <div >
                         <label for="Total_invoice" class="labelSale">أجمالي الفاتورة</label>
                         <input type="number" name="Total_invoice" id="Total_invoice" placeholder="0" class="inputSale" />
                     </div>
                     @auth
-                    <input type="hidden" name="User_id" required id="User_id" value="{{Auth::user()->id}}">
+                    <input type="hidden" name="User_id"  id="User_id" value="{{Auth::user()->id}}">
                     @endauth
+                        <div >
+                             <label for="main_account_debit_id" class=" font-medium labelSale">حساب الدفع/الرئيسي</label>
+                            <select name="main_account_debit_id" id="main_account_debit_id" dir="ltr" class="input-field  select2 inputSale" >
+                               <!-- إضافة خيارات الحسابات -->
+                               @isset($mainAccounts)
+                             <option value="" selected>اختر الحساب</option>
+                              @foreach ($mainAccounts as $mainAccount)
+                                   <option value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
+                              @endforeach
+                              @endisset 
+                            </select>
+                        </div>
+                        <div >
+                            <label for="sub_account_debit_id" class="labelSale font-medium  ">حساب الدفع/الفرعي</label>
+                            <select name="sub_account_debit_id" id="sub_account_debit_id" dir="ltr" class="input-field select2 inputSale" >
+                                <!-- سيتم تعبئة الخيارات بناءً على الحساب الرئيسي المحدد -->
+                                <option value="" selected>اختر الحساب الفرعي</option>
+                                </select>
+                    </div>
+                    <!-- حساب الدائن -->
                     <div style="display: block">
                         <button id="newInvoice" class="inputSale flex font-bold">
                             اضافة الفاتورة
                         </button>
                     </div>
                 </div>
+                {{-- <button  type="submit" id="submit">submit</button> --}}
             </form>
         </div>
     </div>
@@ -74,9 +122,32 @@
 <div class="flex max-md:block p-1">
     <div class="min-w-[30%] border-x border-y border-orange-950 rounded-xl">
         <form   id="ajaxForm">
-            @csrf
-            <div class="mb-1 p-1 w-full">
-                <label for="product_id" class="btn">بحث عن المنتج</label>
+            @csrf 
+            <div  class=" gap-2 grid grid-cols-3 px-1 ">
+                <div>
+                    <label for="account_debitid" class="block font-medium ">حساب المخزن/الرئيسي</label>
+                    <select name="account_debitid" id="account_debitid" dir="ltr" class="input-field  select2 inputSale" required>
+                       <!-- إضافة خيارات الحسابات -->
+                       @isset($Warehouse)
+                     <option value="" selected>اختر المخزن</option>
+                      @foreach ($AllSubAccounts as $mainAccount)
+                      @if ($mainAccount->Main_id==$Warehouse->main_account_id)
+                      <option value="{{$mainAccount['sub_account_id']}}">{{$mainAccount->sub_name}}-{{$mainAccount->sub_account_id}}</option>
+
+                      @endif
+                      @endforeach
+                      @endisset 
+                    </select>
+                </div>
+                <div >
+                    <label for="sub_account_debitid" class="block font-medium  ">حساب المخزن/الفرعي</label>
+                    <select name="sub_account_debitid" id="sub_account_debitid" dir="ltr" class="input-field select2 inputSale" >
+                        <!-- سيتم تعبئة الخيارات بناءً على الحساب الرئيسي المحدد -->
+                        <option value="" selected>اختر الحساب الفرعي</option>
+                        </select>
+            </div>
+            <div >
+                <label for="product_id" class="block font-medium  ">بحث عن المنتج</label>
                 <select name="product_id" id="product_id" dir="ltr" class="input-field select2 inputSale" required>
                     <option value="" selected>اختر منتج</option>
                     @isset($products)
@@ -86,23 +157,15 @@
                     @endisset
                 </select>
             </div>
-            <div class="flex">
+            </div>
+            
+            <div class="flex"> 
+             
                 <div class="mb-1 p-1">
                     <label for="product_name" class="btn">اسم المنتج</label>
                     <input type="text" name="product_name" id="product_name" class="inputSale " required />
                 </div>
-                <div class="mb-1 p-1 ">
-                    <label for="Store_id" class="btn"> موقع المخزن</label>
-                    <select name="Store_id"  dir="ltr" id="Store_id"  class="input-field  inputSale" required>
-                        @isset($Warehouse)
-                        @forelse ($Warehouse as $Warehous)
-                          <option value="{{$Warehous->warehouse_id}}">{{$Warehous->Store_name}}</option>
-                          @empty
-                              <div>لايوجد بيانات حالية</div>
-                          @endforelse
-                        @endisset
-                    </select>
-                </div>
+                
                 <div class="mb-1 p-1">
                     <label for="Quantity" class="btn">الكمية</label>
                     <input type="number" name="Quantity" id="Quantity" placeholder="0" class="inputSale english-numbers" required />
@@ -147,14 +210,16 @@
                 <div>
                 <label for="Currency_id" class="btn">العملة الشراء</label>
                 <select   dir="ltr" id="Currency_id" class="inputSale input-field " name="Currency_id"  >
-                    @auth
+                    @isset($Currency_name)
+
+
                   @foreach ($Currency_name as $cur)
                   <option @isset($cu)
                   @selected($cur->currency_id==$cu->Currency_id)
                   @endisset
                   value="{{$cur->currency_id}}">{{$cur->currency_name}}</option>
                    @endforeach
-                   @endauth
+                   @endisset
                   </select>
                 </div>
                 <div>
@@ -178,7 +243,7 @@
             </div>
             </div>
 
-            <div class="flex" id="printEndSave" style="display:">
+            <div class="flex" id="printEndSave">
                 <div class="col-span-6 sm:col-span-3">
                     <button class="inputSale mt-2 flex" type="">
                         <svg class="w-6 h-5 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -342,6 +407,8 @@
 </div>
 </div>
 </div>
+<script src="{{url('purchases/purchases.js')}}"></script>
+
 <script src="{{ url('purchases.js') }}"></script>
 <style>
     .alert-success {
@@ -349,6 +416,7 @@
         font-weight: bold;
     }
   </style>
+
 <script>
 $(document).ready(function() {
         Barcode        = $('#Barcode'),
@@ -484,7 +552,7 @@ if (!isNaN(total_cost) && total_cost > 0 && product.Purchase_price > 0) {
 function editData(id) {
     $.ajax({
         type: 'GET',
-        url: '{{ route("purchases.edit", ':id') }}'.replace(':id', id),
+        url: '{{ route("purchases.edit", ":id") }}'.replace(':id', id),
         success: function(data) {
             $('#product_name').val(data.Product_name);
             $('#Barcode').val(data.Barcode);
@@ -508,7 +576,7 @@ function deleteData(id) {
     if (confirm('هل أنت متأكد من حذف البيانات؟')) {
         $.ajax({
             type: 'DELETE',
-            url: '{{ route("purchases.destroy", ':id') }}'.replace(':id', id),
+            url: '{{ route("purchases.destroy", ":id") }}'.replace(':id', id),
             data: {
                 _token: '{{ csrf_token() }}'
             },
@@ -517,6 +585,8 @@ function deleteData(id) {
             }
         });
     }
-}
+}// عند اختيار الحساب الرئيسي (المدين)
+
+
   </script>
 @endsection

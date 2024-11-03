@@ -29,7 +29,7 @@ class MainAccount extends Model
         {
             return $this->hasMany(SubAccount::class, 'Main_id', 'main_account_id');
         }
-    
+ 
 
         // علاقة hasMany بين الحساب الرئيسي والحسابات الفرعية
       

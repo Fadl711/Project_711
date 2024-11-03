@@ -72,11 +72,11 @@
                     <span class="textNav">المنتجات</span>
                     </a></li>
                     <li class="mb-2">
-                    <a class="NavTagA" href="{{route('payments.index')}}">
+                    <a class="NavTagA" href="{{route('transfer_restrictions.index')}}">
                         <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 20V10m0 10-3-3m3 3 3-3m5-13v10m0-10 3 3m-3-3-3 3"/>
                           </svg>
-                           <span class="textNav mr-1"> المدفوعات</span>
+                           <span class="textNav mr-1"> سجلات الترحيل</span>
                     </a></li>
 
                     <li class="mb-2">

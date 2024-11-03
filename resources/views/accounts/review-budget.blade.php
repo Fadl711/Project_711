@@ -21,9 +21,9 @@
 
         <!-- جدول الأصول -->
         <div class="overflow-x-auto mx-auto px-1">
-            <div class=" min-w-full shadow rounded-lg   max-h-screen overflow-x-auto text-sm ">
+            <div class="max-w-7xl mx-auto h-screen overflow-auto">
 
-                <table class="min-w-full bg-white text-sm">
+                <table class="min-w-full border-collapse border border-gray-200">
                     <thead class="bg-[#2430d3] text-white">
                         <tr class="bg-gray-200">
                             <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">

@@ -84,9 +84,8 @@ $ASSETSAccountType_id=AccountType::FIXED_ASSETS;
  $REVENUE_name=Deportatton::REVENUE;
 
  $MainAccount4= MainAccount::where('typeAccount',$REVENUE_id)->get();
-
+ $mainAccount= MainAccount::all();
  $SubAccounts=SubAccount::all();
-
 
 //  $SubAccounts= SubAccount::where('Main_id',$ $MainAccount->main_account_id)->get();
 

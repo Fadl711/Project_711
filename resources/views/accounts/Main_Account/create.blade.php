@@ -116,7 +116,7 @@
 </form>
 </div>
 <div  class="w-[100%]" >
-<table class="w-[100%]" id="mainAccountsTable"  style="display: ;">
+<table class="w-[100%]" id="mainAccountsTable" >
   <thead>
       <tr class="">
           <th class="text-right tagHt">رقم الحساب</th>

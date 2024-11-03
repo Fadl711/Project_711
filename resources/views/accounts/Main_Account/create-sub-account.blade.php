@@ -3,6 +3,11 @@
 
 <x-navbar_accounts/>
 <h1>انشأ حساب فرعي</h1>
+{{-- @dd($subAccountId); --}}
+{{-- @isset($subAccountId)
+@dd($subAccountId)
+    
+@endisset --}}
 <script src="{{url('payments.js')}}">   </script>
 
 <script>
@@ -35,7 +40,7 @@
                         // إخفاء الرسالة بعد 3 ثوانٍ
                         setTimeout(function() {
                             $('#successMessage').hide();
-                        }, 3000);
+                        }, 8000);
                         // إضافة البيانات المحفوظة إلى الجدول
                         addToTable(data.DataSubAccount);
                    // تفريغ النموذج بعد الحفظ
@@ -45,7 +50,6 @@ $('#creditor_amount').val('');    // إعادة تعيين حقل المبلغ �
 $('#Phone').val('');              // إعادة تعيين حقل الهاتف
 $('#name_The_known').val('');     // إعادة تعيين حقل الاسم المعروف
 $('#Known_phone').val('');        // إعادة تعيين حقل الهاتف المعروف
-                        // $('#name_The_known')[0].reset();
 
 
                     } else {
@@ -54,16 +58,17 @@ $('#Known_phone').val('');        // إعادة تعيين حقل الهاتف �
                         $('#sub_name').focus();
                         setTimeout(function() {
                             $('#successMessage').hide();
-                        }, 1000);
+                        }, 8000);
                     }
                 },
                 error: function(xhr) {
                     if (xhr.status === 400) {
                         // إظهار رسالة خطأ عند وجود نفس الاسم
                         $('#successMessage').show().text(xhr.responseJSON.message);
-                    } else {
-                        $('#errorMessage').show().text('حدث خطأ أثناء الحفظ.');
-                    }
+                    } 
+                    //else {
+                    //     $('#errorMessage').show().text('حدث خطأ أثناء الحفظ.');
+                    // }
                 }
             });
         });

@@ -1,5 +1,6 @@
 <?php
 
+use App\Enum\AccountType;
 use App\Http\Controllers\CustomerCoctroller;
 use App\Http\Controllers\HomeCoctroller;
 use App\Http\Controllers\AccountCoctroller;
@@ -17,12 +18,12 @@ use App\Http\Controllers\FixedAssetsController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\InvoicePurchaseController;
 use App\Http\Controllers\invoicesController\AllBillsController;
+use App\Http\Controllers\LocksFinancialPeriods\LocksFinancialPeriodsController;
 use App\Http\Controllers\PaymentCoctroller;
 use App\Http\Controllers\SaleCoctroller;
 
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\RefundController;
 use App\Http\Controllers\settingController\SettingController;
 use App\Http\Controllers\SupplierCoctroller;
 use App\Http\Controllers\PDFReportController;
@@ -40,14 +41,15 @@ use App\Http\Controllers\settingController\default_customerController;
 use App\Http\Controllers\settingController\default_supplierController;
 
 use App\Http\Controllers\settingController\WarehouseController;
+use App\Http\Controllers\Transfers\TransferController;
 use App\Http\Controllers\UsersController\UsersController;
 use App\Models\DefaultSupplier;
+use App\Models\MainAccount;
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Route;
 
 
-Route::get('/', function () {
-    return view('home.index');
-});
+
 Route::get('/sales', [SaleController::class, 'index'])->name('sales.index');
 
 Route::get('/products', [ProductCoctroller::class, 'index'])->name('products.index');
@@ -85,6 +87,7 @@ Route::get('/api/products/search', [PurchaseController::class, 'search']);
 
 Route::get('/Purchase', [PurchaseController::class,'create'])->name('Purchases.create');
 Route::post('/Purchases/storc', [PurchaseController::class, 'storc'])->name('Purchases.storc');
+Route::get('/Purchases/{id}/main-accounts', [PurchaseController::class, 'getMainAccounts'])->name('main-accounts');
 
 
 Route::get('/balancing', [AccountCoctroller::class, 'balancing'])->name('accounts.balancing');
@@ -118,9 +121,18 @@ Route::get('/restrictions/{id}/print', [RestrictionController::class, 'print'])-
 Route::post('/daily_restrictions/store', [RestrictionController::class, 'store'])->name('daily_restrictions.store');
 Route::post('/daily_restrictions/saveAndPrint', [RestrictionController::class, 'saveAndPrint'])->name('daily_restrictions.saveAndPrint');
 Route::post('/daily_restrictions/stor', [RestrictionController::class, 'stor'])->name('daily_restrictions.stor');
-Route::put('/daily-restrictions/{id}', [RestrictionController::class, 'update'])->name('daily_restrictions.update');
-Route::delete('/daily-restrictions/{id1}', [RestrictionController::class, 'destroy'])->name('daily_restrictions.destroy');
-Route::get('/daily-restrictions/search', [RestrictionController::class, 'search'])->name('search.daily_restrictions');
+Route::put('/daily_restrictions/{id}', [RestrictionController::class, 'update'])->name('daily_restrictions.update');
+Route::delete('/daily_restrictions/{id1}', [RestrictionController::class, 'destroy'])->name('daily_restrictions.destroy');
+Route::get('/daily_restrictions/search', [RestrictionController::class, 'search'])->name('search.daily_restrictions');
+
+Route::get('/transfer_restrictions/create', [TransferController::class, 'create'])->name('transfer_restrictions.create');
+Route::get('/transfer_restrictions/index', [TransferController::class, 'index'])->name('transfer_restrictions.index');
+Route::post('/transfer_restrictions/optional', [TransferController::class, 'optional'])->name('transfer_restrictions.optional');
+Route::get('/transfer_restrictions/record', [TransferController::class, 'record'])->name('transfer_restrictions.record');
+Route::post('/transfer_restrictions/store', [AccountCoctroller::class, 'store'])->name('transfer_restrictions.store');
+
+Route::get('/Locks_financial_period/index', [LocksFinancialPeriodsController::class, 'index'])->name('Locks_financial_period.index');
+Route::get('/Locks_financial_period/getProfitAndLossData', [LocksFinancialPeriodsController::class, 'getProfitAndLossData'])->name('Locks_financial_period.getProfitAndLossData');
 
 
 
@@ -208,8 +220,14 @@ Route::get('/home', [HomeCoctroller::class, 'indxe'])->name('home.index');
 Route::get('/get-options', [AccountCoctroller::class, 'show_all_accounts']);
 
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/', function () {
+        return redirect()->route('home.index');
+    });
 
+    Route::get('/home', [HomeCoctroller::class, 'index'])->name('home.index');
 
+});
 
 
 Route::get('/customers', [CustomerCoctroller::class, 'index'])->name('customers.index');

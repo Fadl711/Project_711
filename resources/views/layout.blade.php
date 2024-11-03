@@ -16,14 +16,17 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
         <script src="{{ asset('node_modules/jquery/dist/jquery.min.js') }}"></script>
         <script src="{{ mix('js/app.js') }}"></script>        {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
+        <style>
+            .select2-container {
+width: 100% !important; /* فرض العرض الكامل */
+}
 
-
-
-
-
+.select2-selection {
+width: 100% !important; /* ضمان عرض عنصر select2 بشكل كامل */
+}
+        </style>
 
 {{-- fiex_assets --}}
         <link rel="stylesheet" href="https://demos.creative-tim.com/notus-js/assets/styles/tailwind.css">
@@ -34,7 +37,7 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js','public/select/select2.min.css','public/select/select2.min.js'])
     </head>
-    <body class="font-sans antialiased a">
+    <body class=" items-center justify-center min-h-screen bg-gray-100">
         <div class="flex max-h-screen    ">
 
                 @include('includes.swip')

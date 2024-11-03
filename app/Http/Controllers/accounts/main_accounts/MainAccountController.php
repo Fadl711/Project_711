@@ -9,24 +9,24 @@ use App\Enum\IntOrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\AccountingPeriod;
 use App\Models\DailyEntrie;
+use App\Models\GeneralJournal;
 use App\Models\MainAccount;
 use App\Models\SubAccount;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Db;
 
 // use Illuminate\Container\Attributes\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB as FacadesDB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 use function Laravel\Prompts\select;
 use function PHPUnit\Framework\isNull;
 
 class MainaccountController extends Controller
 {
-    public function editMainAccount(){
-
-
-
-    }
+    
     public function create(){
         $mainAccount=MainAccount::all();//
         $subAccount = SubAccount::all();
@@ -96,19 +96,51 @@ return view('accounts.Main_Account.create',
         ]);
 
       // __________________________ SubAccount ______________________________________
-        $data=MainAccount::where('User_id',$User_id)->latest()->first();
-        $DataSubAccount=new SubAccount();
-        $DataSubAccount->Main_id=$mainAccount->main_account_id;
-        $DataSubAccount->sub_name=$account_name ;
-        $DataSubAccount->AccountClass =$mainAccount->AccountClass;
-        $DataSubAccount->typeAccount =$mainAccount->typeAccount;
-        $DataSubAccount-> User_id= $User_id;
-        $DataSubAccount->debtor_amount = !empty($debtor_amount) ? $debtor_amount :0;
-        $DataSubAccount-> creditor_amount= !empty($creditor_amount ) ? $creditor_amount :0;
-        $DataSubAccount->Phone = ($Phone1 ) ;
-        $DataSubAccount-> name_The_known= !empty($name_The_known ) ? $name_The_known : null ;
-        $DataSubAccount->Known_phone = !empty($Known_phone ) ? $Known_phone : null ;
-        $DataSubAccount->save();
+        // $data=MainAccount::where('User_id',$User_id)->latest()->first();
+        // $DataSubAccount=new SubAccount();
+        // $DataSubAccount->Main_id=$mainAccount->main_account_id;
+        // $DataSubAccount->sub_name=$account_name ;
+        // $DataSubAccount->AccountClass =$mainAccount->AccountClass;
+        // $DataSubAccount->typeAccount =$mainAccount->typeAccount;
+        // $DataSubAccount-> User_id= $User_id;
+        // $DataSubAccount->debtor_amount = !empty($debtor_amount) ? $debtor_amount :0;
+        // $DataSubAccount-> creditor_amount= !empty($creditor_amount ) ? $creditor_amount :0;
+        // $DataSubAccount->Phone = ($Phone1 ) ;
+        // $DataSubAccount-> name_The_known= !empty($name_The_known ) ? $name_The_known : null ;
+        // $DataSubAccount->Known_phone = !empty($Known_phone ) ? $Known_phone : null ;
+        // $DataSubAccount->save();
+        // if ($DataSubAccount->debtor_amount>0 || $DataSubAccount->creditor_amount>0) {
+        //     $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
+
+        //     $DSubAccount = SubAccount::where('sub_account_id', $DataSubAccount->sub_account_id)->first();
+        //         $today = Carbon::now()->toDateString();
+        //         $dailyPage = GeneralJournal::whereDate('created_at', $today)->first() ?? GeneralJournal::create([]);
+        
+        //         if (!$dailyPage || !$dailyPage->page_id) {
+        //             return response()->json(['success' => false, 'message' => 'فشل في إنشاء صفحة يومية']);
+        //         }
+        
+        //     $dailyEntry = DailyEntrie::create([
+        //         'Amount_debit' => $DataSubAccount->debtor_amount  ?: 0,
+        //         'account_debit_id' => $DSubAccount->sub_account_id ,
+        //         'Amount_Credit' => $DataSubAccount->creditor_amount  ?: 0,
+        
+        //         'account_Credit_id' => $DSubAccount->sub_account_id ,
+        //         'Statement' => 'إدخال رصيد افتتاحي',
+        //         'Daily_page_id' =>  $dailyPage->page_id,
+        //         'Currency_name' => 'ر',
+        //         'User_id' =>$DataSubAccount->User_id,
+        //         'Invoice_type' => 'رصيد افتتاحي',
+        //         'Invoice_id' => null,
+        //         'accounting_period_id' =>  $accountingPeriod->accounting_period_id ,
+        //         'status_debit' => 'غير مرحل',
+        //         'status' => 'غير مرحل',
+        //     ]);
+        //     return response()->json(['success' => ' تم حفظ بنجاح ودخال مبلغ للحساب', 'DataSubAccount' => $mainAccount], 201);
+        // }  
+          
+                  
+            
         return response()->json(['success' => true, 'message' => 'تمت العملية بنجاح', 'DataSubAccount' => $mainAccount], 201);
     
     }
@@ -127,6 +159,8 @@ return view('accounts.Main_Account.create',
         SubAccount::where('Main_id', $id)
     ->update([
         'typeAccount' => $request->typeAccount,
+        'debtor_amount'=>$request->debtor_amount,
+        'creditor_amount'=>$request->creditor_amount,
         // أي حقول أخرى يجب تحديثها في الحسابات الفرعية
     ]);
 
@@ -143,51 +177,86 @@ return view('accounts.Main_Account.create',
 
 
     public function storc(Request $request)
-{
-    $Main_id = $request->Main_id;
+    {
+        
+            $Main_id = $request->Main_id;
+    
+            $DataSubAccount = new SubAccount();
+            $TypeSubAccount = MainAccount::where('main_account_id', $Main_id)->first();
+            $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
+    
+            $sub_name = $request->sub_name;
+            $User_id = $request->User_id;
+            $debtor_amount1 = $request->input('debtor_amount', '٠١٢٣٤٥٦٧٨٩');
+            $creditor_amount1 = $request->input('creditor_amount', '٠١٢٣٤٥٦٧٨٩');
+            $Phone1 = $this->convertArabicToEnglish($request->input('Phone', '٠١٢٣٤٥٦٧٨٩'));
+            $Known_phone = $this->convertArabicToEnglish($request->input('Known_phone'));
+            $name_The_known = $request->input('name_The_known');
+    
+            $creditor_amount = $this->convertArabicToEnglish($creditor_amount1);
+            $debtor_amount = $this->convertArabicToEnglish($debtor_amount1);
+    
+            $account_names_exist = SubAccount::where('Main_id', $Main_id)->pluck('sub_name');
+            if ($account_names_exist->contains($sub_name)) {
+                return response()->json(['success' => false, 'message' => 'يوجد نفس هذا الاسم من قبل']);
+            }
+    // إعداد البيانات التي ترغب في استخدامها في عملية البحث أو الإنشاء
+$dataSubAccountData = [
+    'Main_id' => $Main_id,
+    'sub_name' => $sub_name,
+    'User_id' => $User_id,
+    'AccountClass' => $TypeSubAccount->AccountClass,
+    'typeAccount' => $TypeSubAccount->typeAccount,
+    'debtor_amount' => $debtor_amount ?: 0,
+    'creditor_amount' => $creditor_amount ?: 0,
+    'Phone' => $Phone1 ?: null,
+    'name_The_known' => $name_The_known ?: null,
+    'Known_phone' => $Known_phone ?: null,
+];
 
-    // إنشاء كائن جديد من SubAccount
-    $DataSubAccount = new SubAccount();
-    $TypeSubAccount=  MainAccount::where('main_account_id',$Main_id)->first();;
+// استخدام firstOrCreate لإنشاء الكائن إذا لم يكن موجودًا
+$DataSubAccount = SubAccount::firstOrCreate(
+    [
+        'sub_name' => $sub_name, // حقل فريد للبحث
+        'Main_id' => $Main_id,   // حقل فريد آخر إذا كان موجودًا
+    ],
+    $dataSubAccountData // القيم التي سيتم استخدامها لإنشاء السجل إذا لم يكن موجودًا
+);
 
-    // استرجاع البيانات من الطلب
-    $sub_name = $request->sub_name;
+// تحقق مما إذا تم حفظ الكائن بنجاح
+if ($DataSubAccount->debtor_amount>0 || $DataSubAccount->creditor_amount>0) {
+    $DSubAccount = SubAccount::where('sub_account_id', $DataSubAccount->sub_account_id)->first();
+        $today = Carbon::now()->toDateString();
+        $dailyPage = GeneralJournal::whereDate('created_at', $today)->first() ?? GeneralJournal::create([]);
 
-    $User_id = $request->User_id;
+        if (!$dailyPage || !$dailyPage->page_id) {
+            return response()->json(['success' => false, 'message' => 'فشل في إنشاء صفحة يومية']);
+        }
 
-    // تحويل الأرقام من العربي إلى الإنجليزي
-    $debtor_amount1 = $request->input('debtor_amount', '٠١٢٣٤٥٦٧٨٩');
-    $creditor_amount1 = $request->input('creditor_amount', '٠١٢٣٤٥٦٧٨٩');
-    $Phone1 = $request->input('Phone', '٠١٢٣٤٥٦٧٨٩');
-    $Known_phone = $request->input('Known_phone');
-    $name_The_known = $request->input('name_The_known');
+    $dailyEntry = DailyEntrie::create([
+        'Amount_debit' => $DataSubAccount->debtor_amount  ?: 0,
+        'account_debit_id' => $DSubAccount->sub_account_id ,
+        'Amount_Credit' => $DataSubAccount->creditor_amount  ?: 0,
 
-    $creditor_amount = $this->convertArabicToEnglish($creditor_amount1);
-    $debtor_amount = $this->convertArabicToEnglish($debtor_amount1);
-
-    /// التحقق من وجود نفس الاسم في قاعدة البيانات
-$account_names_exist = SubAccount::where('Main_id', $Main_id)->pluck('sub_name');
-
-// إذا وجد الاسم بالفعل، إرجاع استجابة خطأ
-if ($account_names_exist->contains($sub_name)) {
-    return response()->json(['success' => false, 'message' => 'يوجد نفس هذا الاسم من قبل']);
-}
-else{
-    $DataSubAccount->Main_id = $Main_id;
-    $DataSubAccount->sub_name = $sub_name;
-    $DataSubAccount->User_id = $User_id;
-    $DataSubAccount->AccountClass =$TypeSubAccount->AccountClass;
-    $DataSubAccount->typeAccount =$TypeSubAccount->typeAccount;
-    $DataSubAccount->debtor_amount = !empty($debtor_amount) ? $debtor_amount : 0;
-    $DataSubAccount->creditor_amount = !empty($creditor_amount) ? $creditor_amount : 0;
-    $DataSubAccount->Phone = !empty($Phone1) ? $Phone1 : null;
-    $DataSubAccount->name_The_known = !empty($name_The_known) ? $name_The_known : null;
-    $DataSubAccount->Known_phone = !empty($Known_phone) ? $Known_phone : null;
-    $DataSubAccount->save();
-
-    return response()->json(['success' => true, 'message' => 'تمت العملية بنجاح', 'DataSubAccount' => $DataSubAccount]);
-}
-}
+        'account_Credit_id' => $DSubAccount->sub_account_id ,
+        'Statement' => 'إدخال رصيد افتتاحي',
+        'Daily_page_id' => 2,
+        'Currency_name' => 'ر',
+        'User_id' =>1,
+        'Invoice_type' => 'رصيد افتتاحي',
+        'Invoice_id' => null,
+        'accounting_period_id' => 1,
+        'status_debit' => 'غير مرحل',
+        'status' => 'غير مرحل',
+    ]);
+    return response()->json(['success' => ' تم حفظ بنجاح ودخال مبلغ للحساب' , 'subAccountId' => $DataSubAccount->id]);
+}  
+  
+return response()->json(['success' => 'تم حفظ  بنجاح']);
+          
+    
+    }
+    
 
           
 public function getSubAccounts(Request $request , $id)
@@ -210,22 +279,14 @@ public function getMainAccountsByType($type)
 {
     // التحقق مما إذا كان نوع الحساب الكبير موجود في Enum
     $accountType = AccountType::tryFrom($type);
-    
     if (!$accountType) {
         return response()->json(['error' => 'نوع الحساب غير موجود'], 404);
     }
-
     // استرجاع الحسابات الرئيسية المرتبطة بالنوع
     $mainAccounts = MainAccount::where('typeAccount', $accountType->value)->get();
 
     return response()->json($mainAccounts);
 }
-
-
-
-
- 
-
 
 
 

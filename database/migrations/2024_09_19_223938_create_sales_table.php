@@ -14,16 +14,18 @@ return new class extends Migration
         Schema::create('sales', function (Blueprint $table) {
             $table->increments('sale_id');
             $table->string('Product_name');
-            
+            $table->integer('accounting_period_id')->unsigned();
+
             $table->string('Barcode');
             $table->integer('Quantity');
-            $table->decimal('Selling_price', 8, 2); // Adjust precision as needed
-            $table->decimal('Total', 8, 2); // Adjust precision as needed
-            $table->decimal('Allowed_discount', 8, 2); // Adjust precision as needed
+            $table->decimal('Selling_price', 15, 2); // Adjust precision as needed
+            $table->decimal('Total', 15, 2); // Adjust precision as needed
+            $table->decimal('Allowed_discount', 15, 2); // Adjust precision as needed
             $table->string('note');
             $table->integer('Store_id')->unsigned();
             $table->integer('User_id')->unsigned();
             $table->integer('Invoice_id')->unsigned();
+
             $table->timestamps();
 
             $table->foreign('Store_id')->references('warehouse_id')->on('warehouses');

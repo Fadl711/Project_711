@@ -4,6 +4,7 @@ namespace App\Http\Controllers\accounts;
 
 use App\Http\Controllers\Controller;
 use App\Models\AccountingPeriod;
+use App\Models\DailyEntrie;
 use App\Models\MainAccount;
 use App\Models\SubAccount;
 use Illuminate\Http\Request;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\DB;//+
 
 class Review_BudgetController extends Controller
 {
-
+   
     public function review_budget($year)
     {
         // جلب الفترة المحاسبية المحددة

@@ -12,43 +12,22 @@ use Illuminate\Http\Request;
 class HomeCoctroller extends Controller
 {
 
-    public function indxe(){
-
-        if (AccountingPeriod::count() == 0) {
-            // إضافة البيانات إذا كان الجدول فارغًا
+    public function index()
+    {
+        // التحقق من عدد الفترات المحاسبية الموجودة
+        if (AccountingPeriod::count() == 0 || !AccountingPeriod::where('is_closed', false)->exists()) {
+            // إنشاء فترة محاسبية جديدة
             AccountingPeriod::create([
-                'Year' => now()->year,   // إدخال السنة كرقم
-                'Month' => now()->month, // إدخال الشهر كرقم
+                'Year' => now()->year,          // إدخال السنة كرقم
+                'Month' => now()->month,        // إدخال الشهر كرقم
                 'Today' => now()->format('Y-m-d'), // إدخال التاريخ الكامل
+                'start_date' => now()->format('Y-m-d'), // إدخال تاريخ البداية
+                'is_closed' => false,           // تحديد أن الفترة غير مغلقة
             ]);
-        
-            // يمكنك تكرار عملية الإضافة هنا إذا كنت ترغب في إضافة عدة صفوف.
         }
-// $date=AccountingPeriod::all();
-// if($date)
-// {
-
-//     $today = Carbon::now()->toDateString();
-// //  $dailyPage = AccountingPeriod::whereDate('created_at', $today)->first();
-
-//     // إذا لم توجد صفحة، قم بإنشائها
-   
-//       AccountingPeriod::create([
-//       'Year'=>2024,
-//       'Month'=>10,
-//       '	Today'=>10,
-//       ]);
-   
-//     return view('home.index');
-// }else{
-//     AccountingPeriod::create([
-//         'Year'=>2024,
-//         'Month'=>10,
-//         '	Today'=>10,
-//         ]);
-    return view('home.index');
-// }
-
-
+    
+        // عرض الصفحة المطلوبة
+        return view('home.index');
     }
+    
 }

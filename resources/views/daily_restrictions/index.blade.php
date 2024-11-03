@@ -11,6 +11,9 @@
                 <a href="{{route('all_restrictions_show_1')}}"  class="text-sm py-2 px-2  leading-none rounded-md hover:bg-gray-100" > القيود</a>
 
             </li>
+            <li class="   rounded ">
+                <a href="{{route('transfer_restrictions.create')}}"  class="text-sm py-2 px-2  leading-none rounded-md hover:bg-gray-100" > الترحيل القيود</a>
+            </li>
  {{-- <li class="  rounded ">
                 <a href="#}"  class="text-sm py-2 px-2  leading-none rounded-md hover:bg-gray-100" > {{$today}}</a>
 

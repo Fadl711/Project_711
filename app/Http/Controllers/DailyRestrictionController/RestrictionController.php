@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\DailyRestrictionController;
 
 use App\Http\Controllers\Controller;
+use App\Models\AccountingPeriod;
 use App\Models\Currency;
 use App\Models\DailyEntrie;
 use App\Models\GeneralJournal;
@@ -22,16 +23,16 @@ class RestrictionController extends Controller
     // تحقق من صحة البيانات
     public function store(Request $request)
     {
-       
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
 
         $validated = $request->validate([
             'sub_account_debit_id' => 'required|integer',
             'Amount_debit' => 'required|numeric',
             'account_Credit_id' => 'required|integer',
             'sub_account_Credit_id' => 'required|integer',
-            'Statement' => 'string',
-            'Currency_name' => 'required|string', // تأكد من استخدام الاسم الصحيح هنا
-            'User_id' => 'required|integer', // تأكد من إضافة User_id إذا كان مطلوباً
+            'Statement' => 'nullable|string',
+            'Currency_name' =>  'nullable|string', // تأكد من استخدام الاسم الصحيح هنا
+            'User_id' => 'required|integer',
         ]);
         // التأكد من عدم اختيار حسابين فرعيين متماثلين
         if ($request->sub_account_debit_id == $request->sub_account_Credit_id) {
@@ -48,32 +49,33 @@ class RestrictionController extends Controller
         }
         // حفظ القيد اليومي
         $dailyEntrie = new DailyEntrie();
+        $invoice_type=$request->Invoice_type;
+        $Invoice_num=$request->Invoice_id;
+        
+        $dailyEntrie->Invoice_type =$invoice_type ;//+
+        $dailyEntrie->Invoice_id =$Invoice_num ;//+
     $dailyEntrie->account_debit_id = $validated['sub_account_debit_id'];
     $dailyEntrie->Amount_debit = $validated['Amount_debit'];
     $dailyEntrie->account_Credit_id = $validated['sub_account_Credit_id'];
     $dailyEntrie->Amount_Credit = $validated['Amount_debit'];
     $dailyEntrie->Statement = $validated['Statement'];
     $dailyEntrie->Currency_name = $validated['Currency_name']; // استخدم الاسم الصحيح هنا
+    $dailyEntrie->accounting_period_id = $accountingPeriod->accounting_period_id;
     $dailyEntrie->Daily_page_id = $dailyPage->page_id; // حفظ معرف الصفحة اليومية
-    $dailyEntrie->User_id = $validated['User_id']; // تأكد من استخدام المتغيرات المصرح بها
+    $dailyEntrie->User_id = $validated['User_id'];
     $dailyEntrie->save();
         return response()->json(['success' => 'تم حفظ القيد بنجاح']);
     }
     public function saveAndPrint(Request $request)
     {
-
         // $mainAccount=MainAccount::all();
         // dd($mainAccount);
-
-
         // التحقق من صحة البيانات المدخلة
         $validated = $request->validate([
             'sub_account_debit_id' => 'required|integer',
-            //'sub_account_debit_id' => 'required|integer',
             'Amount_debit' => 'required|numeric',
             'account_Credit_id' => 'required|integer',
             'sub_account_Credit_id' => 'required|integer',
-            //'Amount_debit' => 'required|numeric', // تأكد من تطابق المبلغين
             'Statement' => 'string',
             'Currency_name' => 'required|string', // تأكد من استخدام الاسم الصحيح هنا
             'User_id' => 'required|integer', // تأكد من إضافة User_id إذا كان مطلوباً
@@ -82,19 +84,12 @@ class RestrictionController extends Controller
         if ($request->sub_account_debit_id == $request->sub_account_Credit_id) {
             return response()->json(['success' => 'يجب عدم تساوي الحسابات الفرعية المدين والدائن.']);
         }
-
-        // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
-        $today = Carbon::now()->toDateString();
+        $today = Carbon::now()->toDateString();// الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
         $dailyPage = GeneralJournal::whereDate('created_at', $today)->first();
-
-        // إذا لم توجد صفحة، قم بإنشائها
         if (!$dailyPage) {
-            $dailyPage = GeneralJournal::create([]);
+            $dailyPage = GeneralJournal::create([]);// إذا لم توجد صفحة، قم بإنشائها
         }
-
-
-        // حفظ القيد اليومي
-        $dailyEntrie = new DailyEntrie();
+        $dailyEntrie = new DailyEntrie();// حفظ القيد اليومي
     $dailyEntrie->account_debit_id = $validated['sub_account_debit_id'];
     $dailyEntrie->Amount_debit = $validated['Amount_debit'];
     $dailyEntrie->account_Credit_id = $validated['sub_account_Credit_id'];
@@ -102,8 +97,8 @@ class RestrictionController extends Controller
     $dailyEntrie->Statement = $validated['Statement'] ?? "قيد";//+
     $dailyEntrie->Currency_name = $validated['Currency_name']; // استخدم الاسم الصحيح هنا
     $dailyEntrie->Daily_page_id = $dailyPage->page_id; // حفظ معرف الصفحة اليومية
+    $dailyEntrie->status = 'غير مرحل'; // تعيين الحالة كغير مرحل
     $dailyEntrie->User_id = $validated['User_id']; // تأكد من استخدام المتغيرات المصرح بها
-
     $dailyEntrie->save();
     // إرجاع البيانات التي تحتاجها لصفحة الطباعة
     return response()->json([
