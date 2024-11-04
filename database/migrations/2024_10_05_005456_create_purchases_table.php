@@ -29,19 +29,19 @@ return new class extends Migration
             $table->integer('quantity')->default(0)->comment('كمية المنتج في المعاملة');
             $table->integer('Purchase_invoice_id')->unsigned();
             $table->integer('accounting_period_id')->unsigned();
-            $table->integer('account_id')->unsigned()->nullable()->comment('الحساب المرتبط بالعملية');
             $table->unsignedTinyInteger('transaction_type')->comment('يحدد نوع المعاملة');
+            $table->integer('account_id')->unsigned()->nullable()->comment('الحساب المرتبط بالعملية');
             $table->integer('warehouse_from_id')->unsigned()->nullable()->comment('المخزن المصدر (للتحويل المخزني)');
             $table->integer('warehouse_to_id')->unsigned()->nullable()->comment('المخزن الوجهة (للتحويل المخزني)');
-            $table->integer('Supplier_id')->unsigned();
+            $table->integer('Supplier_id')->unsigned()->nullable();
             $table->timestamps();
             $table->foreign('Purchase_invoice_id')->references('Purchase_invoice_id')->on('purchase_invoices')
             ->onDelete('cascade');
             $table->foreign('account_id')->references('sub_account_id')->on('sub_accounts')
             ->onDelete('cascade');
-            $table->foreign('Supplier_id')->references('sub_account_id')->on('sub_accounts');
-             $table->foreign('warehouse_to_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
-             $table->foreign('warehouse_from_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
+            $table->foreign('warehouse_to_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
+            $table->foreign('warehouse_from_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
+            $table->foreign('Supplier_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
         
 
             $table->foreign('User_id')->references('id')->on('users');

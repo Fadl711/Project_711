@@ -36,14 +36,5 @@ protected $fillable = [
 ];
 
 // تعريف العلاقات (إذا لزم الأمر)
-public function supplier()
-{
-    return $this->belongsTo(SubAccount::class, 'Supplier_id');
-}
-
-public function purchaseInvoice()
-{
-    return $this->belongsTo(PurchaseInvoice::class, 'Purchase_invoice_id');
-}
 
 }

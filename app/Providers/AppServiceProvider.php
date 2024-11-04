@@ -6,6 +6,7 @@ use App\Enum\AccountClass;
 use App\Enum\AccountType;
 use App\Enum\Deportatton;
 use App\Enum\IntOrderStatus;
+use App\Enum\TransactionType;
 use App\Models\BusinessData;
 use App\Models\Category;
 use App\Models\MainAccount;
@@ -45,6 +46,10 @@ class AppServiceProvider extends ServiceProvider
 
         ];
         $accountClasses = AccountClass::cases();
+      
+        
+            $transactionTypes = TransactionType::cases();
+            View::share('transactionTypes', $transactionTypes);
         $users=User::all();
         View::share([
             'accountClasses'=>$accountClasses,
