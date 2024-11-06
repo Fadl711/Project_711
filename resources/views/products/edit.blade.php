@@ -17,7 +17,7 @@
 
         <div class="flex flex-col bg-gray-200 ">
           <label for="Categorie_id" class="btn">وحدة الصنف</label>
-          <select style="background-image: none ;" name="Categorie_id" id="Categorie_id" class="inputSale appearance-auto" required>
+          <select style="background-image: none ;" name="Categorie_id" id="Categorie_id" class="inputSale appearance-auto" >
             <option value="" {{ $prod->Categorie_id == '' ? 'selected' : '' }}></option>
             @foreach ($cate as $cat)
             <option value="{{$cat->categorie_id}}" {{ $prod->Categorie_id == $cat->categorie_id ? 'selected' : '' }}>{{$cat->Categorie_name}}</option>
@@ -58,7 +58,7 @@
 
         <div class="flex flex-col">
           <label for="note" class="btn"> ملاحظه  </label>
-          <input type="text" name="note" id="note" value="{{$prod->note}}" placeholder="0" class="inputSale" required/>
+          <input type="text" name="note" id="note" value="{{$prod->note}}" placeholder="0" class="inputSale " required/>
         </div>
 
         <div class="flex flex-col">
@@ -77,7 +77,7 @@
        </div>
        <div class="flex flex-col bg-gray-200">
         <label for="warehouse_id" class="btn">اسم المخزن</label>
-        <select style="background-image: none ;" name="warehouse_id" id="warehouse_id" class="inputSale appearance-auto" required>
+        <select style="background-image: none ;" name="warehouse_id" id="warehouse_id" class="inputSale appearance-auto" >
             <option selected value=""></option>
            @forelse ($Warehouses as $Warehouse)
              <option @selected($Warehouse->warehouse_id==$prod->warehouse_id) value="{{$Warehouse->warehouse_id}}">{{$Warehouse->Store_name}}</option>
@@ -91,7 +91,7 @@
 
       <div class="flex flex-col bg-gray-200">
           <label for="cr" class="btn">العملة</label>
-          <select style="background-image: none ;" name="currency_id" id="currency_id" class="inputSale appearance-auto" required>
+          <select style="background-image: none ;" name="currency_id" id="currency_id" class="inputSale appearance-auto" >
               @forelse ($curr as $cur)
               <option @selected($cur->currency_id==$prod->currency_id) value="{{$cur->currency_id}}">{{$cur->currency_name}}</option>
               @empty

@@ -88,7 +88,10 @@ Route::get('/api/products/search', [PurchaseController::class, 'search']);
 Route::get('/Purchase', [PurchaseController::class,'create'])->name('Purchases.create');
 Route::post('/Purchases/storc', [PurchaseController::class, 'storc'])->name('Purchases.storc');
 Route::get('/Purchases/{id}/main-accounts', [PurchaseController::class, 'getMainAccounts'])->name('main-accounts');
+// Route::get('/print-receipt/{id}', [PurchaseController::class, 'printReceipt'])->name('receipt.print');
+Route::post('/invoicePurchases/saveAndPrint', [PurchaseController::class, 'saveAndPrint'])->name('invoicePurchases.saveAndPrint');
 
+Route::get('/invoice_purchases/{id}/print', [PurchaseController::class, 'print'])->name('invoicePurchases.print');
 
 Route::get('/balancing', [AccountCoctroller::class, 'balancing'])->name('accounts.balancing');
 Route::get('/invoice_sales', [AllBillsController::class, 'index'])->name('invoice_sales.index');

@@ -2,15 +2,14 @@
 @section('conm')
 <x-nav-products/>
 
-<div id="errorMessage" class="hidden fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
+<div id="successAlert" class="hidden fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
     <p class="font-bold">تم بنجاح!</p>
     <p>تمت إضافة المنتج بنجاح.</p>
   </div>
-  
-<div id="successMessage" class="hidden fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
-  <p class="font-bold">تم بنجاح!</p>
-  <p>تمت إضافة المنتج بنجاح.</p>
-</div>
+  <div id="successAlert1" class="hidden fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
+    <p class="font-bold">هناك خطاء</p>
+    <p id="re"></p>
+  </div>
 <form action="{{route('products.store')}}" method="POST" class="border-b text-sm  ">
     @csrf
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
@@ -159,7 +158,7 @@
                 setTimeout(function() {
                     $('#successAlert').addClass('hidden');
                 }, 3000);
-
+                location.reload ();
                 console.log('تمت الإضافة بنجاح');
             },
             error: function(xhr, status, error) {

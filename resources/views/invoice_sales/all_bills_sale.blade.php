@@ -99,7 +99,7 @@
                             <td class=" text-center  text-[#1ff823] ">$442</td>
                             <td class=" text-center">$442</td>
                             <td class=" text-center  text-[rgb(193,44,44)]">$442</td>
-                            <td class=" text-center text-indigo-700 "> <a href="{{route('print_bills_sale')}}" target="_blank">
+                            <td class=" text-center text-indigo-700 "> <a href="{{ route('print_bills_sale') }}" onclick="openSmallWindow(event)">
                             عرض مبيعات  الفاتورة   </a>
                         </td>
                         </tr>
@@ -112,14 +112,16 @@
     </div>
     </div>
 
-{{-- alert --}}
-
-
-
-
-{{-- alert --}}
 <br>
 <br>
 
 
 
+
+
+<script>
+    function openSmallWindow(event) {
+        event.preventDefault(); // لمنع الفتح الافتراضي للرابط
+        window.open("{{ route('print_bills_sale') }}", "_blank", "width=600,height=800,left=700,top=100");
+    }
+</script>

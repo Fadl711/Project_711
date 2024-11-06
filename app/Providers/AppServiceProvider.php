@@ -93,10 +93,11 @@ $ASSETSAccountType_id=AccountType::FIXED_ASSETS;
  $SubAccounts=SubAccount::all();
 
 //  $SubAccounts= SubAccount::where('Main_id',$ $MainAccount->main_account_id)->get();
-
+$currentDateTime = Carbon::now()->format('Y-m-d H:i:s');
  View::share([
     'SubAccounts'=>$SubAccounts,
     'TypesAccounts'=>$TypesAccountName,
+    'currentDateTime'=>$currentDateTime,
 
        'LIABILITIes_OPPONENtsAccountType_id'=>$LIABILITIes_OPPONENtsAccountType_id ,
        'LIABILITIes_OPPONENtsAccountType_name'=>$LIABILITIes_OPPONENtsAccountType_name ,

@@ -146,7 +146,7 @@ $oo = convertNumberToWords($number) . ' ريال  يمني';
 
               الرسال
         </button>
-        <a href="{{route('restrictions.print',$daily->entrie_id)}}" target="_blank" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-e-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white">
+        <a href="{{ route('restrictions.print',$daily->entrie_id) }}" onclick="openSmallWindow(event)" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-e-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white">
             <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linejoin="round" stroke-width="1.4" d="M16.444 18H19a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h2.556M17 11V5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v6h10ZM7 15h10v4a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-4Z"/>
               </svg>
@@ -158,6 +158,13 @@ $oo = convertNumberToWords($number) . ' ريال  يمني';
 
 
 <script>
+
+
+    function openSmallWindow(event) {
+        event.preventDefault(); // لمنع الفتح الافتراضي للرابط
+        window.open("{{ route('restrictions.print',$daily->entrie_id) }}", "_blank", "width=600,height=800,left=700,top=100");
+    }
+
 function datainvoices(){
 var maont = document.getElementById('crud-modal').value;
 }

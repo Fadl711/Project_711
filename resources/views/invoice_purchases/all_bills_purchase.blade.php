@@ -115,7 +115,7 @@
                         <td class=" text-center  ">{{$Purchase->Purchase_price}}</td>
                         <td class=" text-center">{{$Purchase->Selling_price}}</td>
                         <td class=" text-center  ">{{$Purchase->Total}}</td>
-                        <td class=" text-center text-indigo-700 "><a href="{{route('bills_purchase_show',$Purchase->purchase_id)}}">
+                        <td class=" text-center text-indigo-700 "><a href="{{ route('print_bills_sale',$Purchase->purchase_id )}}" onclick="openSmallWindow(event)">
                           عرض المشتريات  الفاتورة   </a>
                        </td>
                     </tr>
@@ -130,6 +130,13 @@
 </div>
 
 
+
 <br>
 </div>
 @endsection
+<script>
+    function openSmallWindow(event) {
+        event.preventDefault(); // لمنع الفتح الافتراضي للرابط
+        window.open("{{ route('print_bills_sale') }}", "_blank", "width=600,height=400,left=100,top=100");
+    }
+</script>

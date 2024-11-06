@@ -22,17 +22,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('transaction_type')->comment('يحدد نوع المعاملة');
             $table->integer('Supplier_id')->unsigned()->nullable();
             $table->integer('accounting_period_id')->unsigned();
-            // $table->integer('account_id')->unsigned()->nullable()->comment('الحساب المرتبط بالعملية');
-            // $table->unsignedTinyInteger('transaction_type')->comment('يحدد نوع المعاملة');
-            // $table->integer('warehouse_from_id')->unsigned()->nullable()->comment('المخزن المصدر (للتحويل المخزني)');
-            // $table->integer('warehouse_to_id')->unsigned()->nullable()->comment('المخزن الوجهة (للتحويل المخزني)');
-            //
-             $table->timestamps();
-            // $table->foreign('account_id')->references('sub_account_id')->on('sub_accounts')
-            // ->onDelete('cascade');
-            // $table->foreign('warehouse_to_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
-            // $table->foreign('warehouse_from_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
-          
+          $table->timestamps();
             $table->foreign('Supplier_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
             $table->foreign('User_id')->references('id')->on('users');
             
