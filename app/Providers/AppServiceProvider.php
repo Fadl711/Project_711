@@ -9,12 +9,10 @@ use App\Enum\IntOrderStatus;
 use App\Enum\TransactionType;
 use App\Models\BusinessData;
 use App\Models\Category;
-use App\Models\Currency;
 use App\Models\MainAccount;
 use App\Models\SubAccount;
 use App\Models\CurrencySetting;
 use App\Models\Default_customer;
-use App\Models\PaymentBond;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\View;
@@ -48,8 +46,8 @@ class AppServiceProvider extends ServiceProvider
 
         ];
         $accountClasses = AccountClass::cases();
-
-
+      
+        
             $transactionTypes = TransactionType::cases();
             View::share('transactionTypes', $transactionTypes);
         $users=User::all();
@@ -70,11 +68,6 @@ class AppServiceProvider extends ServiceProvider
             'cu'=>$cu,
             'buss'=>$buss,
             'Default_customers'=>$Default_customers,
-            $PaymentBonds=PaymentBond::all(),
-            $SubAccounts=SubAccount::all(),
-           $MainAccounts= MainAccount::all(),
-           $Currencies=Currency::all(),
-           'PaymentBonds'=>$PaymentBonds,'SubAccounts'=>$SubAccounts,'MainAccounts'=>$MainAccounts,'Currencies'=>$Currencies,
 
         ]);
         if(isset($buss)){
