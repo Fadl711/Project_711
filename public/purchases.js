@@ -127,8 +127,8 @@ function addToTable(account) {
        created_at.val(product.created_at).trigger('change');
        var total_cost = parseFloat($('#Total_cost').val()); // جلب القيمة من الحقل كرقم عشري
        if ( product.Selling_price > 0 && product.Purchase_price > 0) {
-        var profit = product.Selling_price - product.Purchase_price; // حساب التمويز
-        $('#Profit').val(profit).trigger('change'); // ��ضافة النتيجة مع تقريبها لخانتين عشريتين
+        var profi = product.Selling_price - product.Purchase_price; // حساب التمويز
+        $('#Profit').val(profi).trigger('change'); // ��ضافة النتيجة مع تقريبها لخانتين عشريتين
        }
        else {
 $('#Profit').val('');
@@ -162,31 +162,88 @@ $('#Cost').val(''); // في حال وجود خطأ أو قيم غير صالحة
                       $('#product_id').val('');
                       $('#Total_cost').val('');
                       $('#note').val('');
-                      $('#product_id').val('');
                       $('#QuantityPurchase').val('');
                       $('#purchase_id').val('');
+                      $('#product_id').select2('open');
+
+
                    
   };
  
 //   ___________________________________________حفظ المنتج ___________
-function openInvoiceWindow(e) {
-    const successMessage= $('#successMessage');
-    const invoiceField = document.getElementById('purchase_invoice_id').value; // الحصول على قيمة حقل رقم الفاتورة
-    if(invoiceField){
-        e.preventDefault(); // منع تحديث الصفحة
-    const url = `{{ route('invoicePurchases.print', ':invoiceField') }}`.replace(':invoiceField', invoiceField); // استبدال القيمة في الرابط
 
-    window.open(url, '_blank', 'width=600,height=800'); // فتح الرابط مع استبدال القيمة
-    }
-else{        
-
-    successMessage.text('لا توجد فاتورة').show();
-                      setTimeout(() => {
-                      successMessage.hide();
-                      }, 3000);
-}
-
-}
 
 // استدعاء الدالة عند الضغط على الزر
+
+
+function displayPurchases(purchases) {
+    let uniqueInvoices = []; // Array to store unique invoices
+    $('#mainAccountsTable tbody').empty(); // Clear existing data
+
+    purchases.forEach(function(purchase) {
+     
+
+        // Add purchase data to the table
+        $('#mainAccountsTable tbody').append(
+            `<tr id="row-${purchase.purchase_id}">
+                <td>${purchase.Product_name}</td>
+                <td>${purchase.Barcode}</td>
+                <td>${purchase.quantity}</td>
+                <td>${purchase.Purchase_price}</td>
+                <td>${purchase.Selling_price}</td>
+                <td>${purchase.Total}</td>
+                <td>${purchase.Cost}</td>
+                <td>${purchase.Discount_earned}</td>
+                <td>${purchase.note}</td>
+                <td class="flex">
+                    <button class="" onclick="editData(${purchase.purchase_id})">
+                        <svg class="w-6 h-6 text-[#2430d3] dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd" d="M11.32 6.176H5c-1.105 0-2 .949-2 2.118v10.588C3 20.052 3.895 21 5 21h11c1.105 0 2-.948 2-2.118v-7.75l-3.914 4.144A2.46 2.46 0 0 1 12.81 16l-2.681.568c-1.75.37-3.292-1.263-2.942-3.115l.536-2.839c.097-.512.335-.983.684-1.352l2.914-3.086Z" clip-rule="evenodd"/>
+                            <path fill-rule="evenodd" d="M19.846 4.318a2.148 2.148 0 0 0-.437-.692 2.014 2.014 0 0 0-.654-.463 1.92 1.92 0 0 0-1.544 0 2.014 2.014 0 0 0-.654.463l-.546.578 2.852 3.02.546-.579a2.14 2.14 0 0 0 .437-.692 2.244 2.244 0 0 0 0-1.635ZM17.45 8.721 14.597 5.7 9.82 10.76a.54.54 0 0 0-.137.27l-.536 2.84c-.07.37.239.696.588.622l2.682-.567a.492.492 0 0 0 .255-.145l4.778-5.06Z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>
+                    <button class="" onclick="deleteData(${purchase.purchase_id})">
+                        <svg class="" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path class="fill-red-600" d="M4.00031 5.49999V4.69999H3.20031V5.49999H4.00031ZM16.0003 5.49999H16.8003V4.69999H16.0003V5.49999ZM17.5003 5.49999L17.5003 6.29999C17.9421 6.29999 18.3003 5.94183 18.3003 5.5C18.3003 5.05817 17.9421 4.7 17.5003 4.69999L17.5003 5.49999ZM9.30029 9.24997C9.30029 8.80814 8.94212 8.44997 8.50029 8.44997C8.05847 8.44997 7.70029 8.80814 7.70029 9.24997H9.30029ZM7.70029 13.75C7.70029 14.1918 8.05847 14.55 8.50029 14.55C8.94212 14.55 9.30029 14.1918 9.30029 13.75H7.70029ZM12.3004 9.24997C12.3004 8.80814 11.9422 8.44997 11.5004 8.44997C11.0585 8.44997 10.7004 8.80814 10.7004 9.24997H12.3004ZM10.7004 13.75C10.7004 14.1918 11.0585 14.55 11.5004 14.55C11.9422 14.55 12.3004 14.1918 12.3004 13.75H10.7004ZM4.00031 6.29999H16.0003V4.69999H4.00031V6.29999ZM15.2003 5.49999V12.5H16.8003V5.49999H15.2003ZM11.0003 16.7H9.00031V18.3H11.0003V16.7ZM4.80031 12.5V5.49999H3.20031V12.5H4.80031ZM9.00031 16.7C7.79918 16.7 6.97882 16.6983 6.36373 16.6156C5.77165 16.536 5.49093 16.3948 5.29823 16.2021L4.16686 17.3334C4.70639 17.873 5.38104 18.0979 6.15053 18.2013C6.89702 18.3017 7.84442 18.3 9.00031 18.3V16.7ZM3.20031 12.5C3.20031 13.6559 3.19861 14.6033 3.29897 15.3498C3.40243 16.1193 3.62733 16.7939 4.16686 17.3334L5.29823 16.2021C5.10553 16.0094 4.96431 15.7286 4.88471 15.1366C4.80201 14.5215 4.80031 13.7011 4.80031 12.5H3.20031ZM15.2003 12.5C15.2003 13.7011 15.1986 14.5215 15.1159 15.1366C15.0363 15.7286 14.8951 16.0094 14.7024 16.2021L15.8338 17.3334C16.3733 16.7939 16.5982 16.1193 16.7016 15.3498C16.802 14.6033 16.8003 13.6559 16.8003 12.5H15.2003ZM11.0003 18.3C12.1562 18.3 13.1036 18.3017 13.8501 18.2013C14.6196 18.0979 15.2942 17.873 15.8338 17.3334L14.7024 16.2021C14.5097 16.3948 14.229 16.536 13.6369 16.6156C13.0218 16.6983 12.2014 16.7 11.0003 16.7V18.3Z" />
+                        </svg>
+                    </button>
+                </td>
+            </tr>`
+        );
+    });
+}
+$(document).on('keydown', function(event) {
+    if (event.ctrlKey && event.key === 'ArrowLeft') {
+        // الحصول على قيمة purchase_invoice_id من حقل الإدخال
+        let currentInvoiceId = $('#purchase_invoice_id').val();
+        
+        console.log('Current Invoice ID:', currentInvoiceId); // تحقق من القيمة
+
+        $.ajax({
+            url: '/get-purchases-by-invoice',
+            type: 'GET',
+            data: {
+                purchase_invoice_id: currentInvoiceId
+            },
+            success: function(data) {
+     
+                
+                console.log('Purchases Data:', data); // تحقق من البيانات المستلمة
+                if (data && data.length > 0) {
+                    // $('#purchase_invoice_id').val(data[1].purchase_invoice_id);
+                    $('#mainAccountsTable tbody').empty(); // مسح البيانات القديمة
+
+                    displayPurchases(data); // دالة لعرض المشتريات في الجدول
+                } else {
+                    console.log("No purchases found for this invoice.");
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching purchases:', xhr.responseText);
+            }
+        });
+
+        event.preventDefault();
+    }
+});
 

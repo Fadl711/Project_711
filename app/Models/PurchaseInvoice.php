@@ -39,4 +39,10 @@ class PurchaseInvoice extends Model
    {
        return $this->belongsTo(User::class, 'User_id');
    }
+   // في نموذج PurchaseInvoice
+public function purchases()
+{
+    return $this->hasMany(Purchase::class, 'purchase_invoice_id', 'purchase_invoice_id');
+}
+
 }

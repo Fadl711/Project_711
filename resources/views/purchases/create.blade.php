@@ -16,7 +16,32 @@ $(document).ready(function() {
     $('#main_account_debit_id').on('change', function() {
         const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي
         showAccounts(mainAccountId,null);
+        setTimeout(() => {
+            $('#main_account_debit_id').select2('close'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
+            $('#sub_account_debit_id').select2('open');
+        }, 1000);
+
     });
+    $('#account_debitid').on('change', function() {
+     
+        $('#account_debitid').select2('close'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
+        $('#main_account_debit_id').select2('open');
+
+
+    });
+    $('#sub_account_debit_id').on('change', function() {
+        $('#account_debitid').select2('close'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
+        $('#product_id').select2('open');
+
+
+ });
+ $('#product_id').on('change', function() {
+        $('#account_debitid').select2('close'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
+        // $('#product_id').select2('open');
+
+
+ });
+   
 });
 </script>
 <div id="successMessage" class="alert-success" style="display: none;"></div>
@@ -102,7 +127,7 @@ $(document).ready(function() {
                     </select>
                 </div>
                 <div >
-                    <label for="main_account_debit_id" class=" font-medium labelSale">  حساب التصدير </label>
+                    <label for="main_account_debit_id" class=" font-medium labelSale">  حساب التصدير  </label>
                    <select name="main_account_debit_id" id="main_account_debit_id" dir="ltr" class="input-field  select2 inputSale" >
                       @isset($mainAccounts)
                     <option value="" selected>اختر الحساب</option>
@@ -123,7 +148,7 @@ $(document).ready(function() {
                 <div >
                     <label for="product_id" class="block font-medium  labelSale">بحث عن المنتج</label>
                     <select name="product_id" id="product_id" dir="ltr" class="input-field select2 inputSale" required>
-                        <option value="" selected>اختر منتج</option>
+                        <option value="0" selected>اختر منتج</option>
                         @isset($products)
                             @foreach ($products as $product)
                                 <option value="{{$product->product_id}}">{{$product->product_name}}</option>
@@ -174,7 +199,7 @@ $(document).ready(function() {
                 </div>
                 <div class="">
                     <label for="Profit" class="labelSale">الربح</label>
-                    <input type="number" name="Profit" id="Profit" placeholder="0" class="inputSale" />
+                    <input type="number" name="Profit" id="Profit"  class="inputSale" />
                 </div>
             </div>
             <div class="flex gap-1 px-1">
@@ -211,7 +236,7 @@ $(document).ready(function() {
             </div>
             <div class="">
                 <label for="supplier_name" class="labelSale">رقم المورد</label>
-                <input type="number" name="supplier_name" id="supplier_name" placeholder="0" class="inputSale"  />
+                <input type="number" name="supplier_name" id="supplier_name" placeholder="0" class="inputSale" required />
             </div>
             <div class="">
                 <label for="purchase_id" class="labelSale">رقم القيد</label>
@@ -264,25 +289,29 @@ $(document).ready(function() {
     </div>
     <button onclick="openInvoiceWindow(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح الفاتورة</button>
 
-<script>
-    function openInvoiceWindow(e) {
-        const successMessage= $('#successMessage');
-        const invoiceField = document.getElementById('purchase_invoice_id').value; // الحصول على قيمة حقل رقم الفاتورة
-        if(invoiceField){
-            e.preventDefault(); // منع تحديث الصفحة
-        const url = `{{ route('invoicePurchases.print', ':invoiceField') }}`.replace(':invoiceField', invoiceField); // استبدال القيمة في الرابط
+    <script>
+        function openInvoiceWindow(e) {
+    const successMessage= $('#successMessage');
+    const invoiceField = document.getElementById('purchase_invoice_id').value; // الحصول على قيمة حقل رقم الفاتورة
+    if(invoiceField){
+        e.preventDefault(); // منع تحديث الصفحة
+    const url = `{{ route('invoicePurchases.print', ':invoiceField') }}`.replace(':invoiceField', invoiceField); // استبدال القيمة في الرابط
 
-        window.open(url, '_blank', 'width=600,height=800'); // فتح الرابط مع استبدال القيمة
-        }
-    else{        
+    window.open(url, '_blank', 'width=600,height=800'); // فتح الرابط مع استبدال القيمة
+    }
+else{        
 
-        successMessage.text('لا توجد فاتورة').show();
-                          setTimeout(() => {
-                          successMessage.hide();
-                          }, 3000);
-    }
-    
-    }
+    successMessage.text('لا توجد فاتورة').show();
+                      setTimeout(() => {
+                      successMessage.hide();
+                      }, 3000);
+}
+
+}
+
+
+
+
 </script>
 <button onclick="openAndPrintInvoice2(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح وطباعة الفاتورة</button>
 <div id="successMessage" style="display:none;" class="text-red-500 font-semibold mt-2"></div>
@@ -335,6 +364,7 @@ $(document).ready(function() {
               invoiceField = $('#purchase_invoice_id'), // حقل رقم الفاتورة
               supplier_id = $('#supplier_name'),
               account_debitid = $('#sub_account_debit_id'),
+              account_debitid1 = $('#account_debitid'),
 
             
               // حقل رقم الفاتورة
@@ -355,13 +385,18 @@ $(document).ready(function() {
         if (response.success) {
             const invoiceInput = $('#purchase_invoice_id');
             const invoiceInput2 = $('#supplier_name');
+
             if (invoiceInput.length || invoiceInput2.length) {
                 invoiceField.val(response.invoice_number).trigger('change');
                 supplier_id.val(response.supplier_id).trigger('change');
-                account_debitid.focus();
+                $('#mainAccountsTable tbody').empty(); // Clear existing data
+
             } else {
                 console.warn('حقل "رقم الفاتورة" غير موجود.');
             }
+            $('#account_debitid').select2('open');
+
+
             successMessage.text(response.message).show();
                           setTimeout(() => {
                           successMessage.hide();
@@ -452,12 +487,12 @@ $(document).ready(function() {
                           successMessage.hide();
                       }, 3000);
                       addToTable(data.purchase);
-                    //   $('#Total_invoice').val(data.Purchasesum);
                       $('#Total_invoice').val(data.Purchasesum);
 
-                      $('#product_id').focus();
                       
                       emptyData();
+
+                    //   $('#product_id').focus();
                   } else {
                       // إظهار رسالة عند وجود نفس الاسم
                       errorMessage.show().text(data.message);

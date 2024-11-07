@@ -269,15 +269,31 @@ $NewPurchase = Purchase::create(
     ]
 );
     }
+    $Invoice_type= $request->Payment_type;
     try {
         $Purchasesum = Purchase::where('purchase_invoice_id', $purchaseInvoice->purchase_invoice_id)->sum('Total');
         // $PurchaseInvoice = Purchase::where('purchase_invoice_id', $purchaseInvoice->purchase_invoice_id)->sum('Total');
+        $pamyment=0;
+        if( $Invoice_type==="نقدا")
+        {
+            $pamyment=$Purchasesum;
+        }
+        else
+        {
+
+            $pamyment=0;
+            // $pamyment=$request->Total_cost;
+ 
+        }
+
+
       PurchaseInvoice::where('purchase_invoice_id', $purchaseInvoice->purchase_invoice_id)
         ->update([
             'Invoice_type' => $request->Payment_type,
             'Receipt_number' => $request->Receipt_number,
             'Total_invoice' => $Purchasesum,
-            // 'Total_cost' => $request->Total_cost,
+            'Paid' =>  $pamyment,
+            'Total_cost' => $request->Total_cost,
            
         ]);
     
@@ -402,9 +418,32 @@ public function saveAndPrint(Request $request)
            'success' => 'لا توجد فاتورة موجودة!',
         ]);
     }
-
     return response()->json([
         'success' => 'تم الحفظ بنجاح!',
         'dailyEntrie' => $DataPurchaseInvoice ]);
 }
+public function getPurchasesByInvoice(Request $request)
+{
+    $invoiceId = $request->input('purchase_invoice_id'); // الحصول على purchase_invoice_id من الطلب
+// جلب الفاتورة بناءً على المعرف
+$user_id = auth()->id();
+
+// التحقق من وجود الفاتورة السابقة
+$previousInvoice = PurchaseInvoice::where('User_id', $user_id)
+                    ->where('purchase_invoice_id', '=', $invoiceId)
+                    ->orderBy('purchase_invoice_id', 'desc')
+                    ->first();
+
+// جلب المشتريات بناءً على المعرف
+$purchases = Purchase::where('User_id', $user_id)
+                    ->where('purchase_invoice_id', '=', $invoiceId)
+                    ->orderBy('purchase_invoice_id', 'desc')
+                    ->get();
+
+// إرجاع المشتريات مع الفاتورة السابقة بتنسيق JSON
+return response()->json($purchases
+);
+}
+
+
 }

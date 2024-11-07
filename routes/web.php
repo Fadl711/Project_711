@@ -90,6 +90,7 @@ Route::post('/Purchases/storc', [PurchaseController::class, 'storc'])->name('Pur
 Route::get('/Purchases/{id}/main-accounts', [PurchaseController::class, 'getMainAccounts'])->name('main-accounts');
 // Route::get('/print-receipt/{id}', [PurchaseController::class, 'printReceipt'])->name('receipt.print');
 Route::post('/invoicePurchases/saveAndPrint', [PurchaseController::class, 'saveAndPrint'])->name('invoicePurchases.saveAndPrint');
+Route::get('/get-purchases-by-invoice', [PurchaseController::class, 'getPurchasesByInvoice'])->name('getPurchasesByInvoice');
 
 Route::get('/invoice_purchases/{id}/print', [PurchaseController::class, 'print'])->name('invoicePurchases.print');
 

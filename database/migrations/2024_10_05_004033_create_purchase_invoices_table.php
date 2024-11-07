@@ -16,7 +16,7 @@ return new class extends Migration
             $table->integer('Receipt_number')->unsigned()->nullable();
             $table->decimal('Total_invoice', 15, 2)->nullable();
             $table->decimal('Total_cost', 15, 2)->nullable();
-            $table->decimal('Paid', 15, 2)->nullable();
+            $table->decimal('Paid',15, 2)->nullable();
             $table->integer('User_id')->unsigned();
             $table->string('Invoice_type')->nullable();
             $table->unsignedTinyInteger('transaction_type')->comment('يحدد نوع المعاملة');
