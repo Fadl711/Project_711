@@ -4,6 +4,7 @@ namespace App\Http\Controllers\purchases;
 
 use App\Enum\AccountClass;
 use App\Enum\AccountType;
+use App\Enum\TransactionType;
 use App\Http\Controllers\Controller;
 use App\Models\Currency;
 use App\Models\MainAccount;
@@ -90,20 +91,30 @@ $subAccount=SubAccount::where('Main_id',$mainAccount_Warehouse->main_account_id)
     return response()->json($subAccounts);}
     public function store(Request $request)
     {
+        // الحصول على الفترة المحاسبية المفتوحة
         $accountingPeriod = ModelsAccountingPeriod::where('is_closed', false)->first();
+    
+        // تنظيف الفواصل من القيم قبل حفظها
+        $totalInvoice = str_replace(',', '', $request->Total_invoice ?? 0);
+        $totalCost = str_replace(',', '', $request->Total_cost ?? 0);
+        $receiptNumber = str_replace(',', '', $request->Receipt_number ?? 0);
+        $receiptNumber = str_replace(',', '', $request->Receipt_number ?? 0);
+    
+        // إنشاء فاتورة الشراء
         $purchaseInvoice = new PurchaseInvoice();
-        $purchaseInvoice->Receipt_number = $request->Receipt_number ??0;
-        $purchaseInvoice->Total_invoice = $request->Total_invoice ?? 0;
-        $purchaseInvoice->Total_cost = $request->Total_cost ?? 0;
+        $purchaseInvoice->Receipt_number = $receiptNumber; // تم إزالة الفواصل
+        $purchaseInvoice->Total_invoice = $totalInvoice; // تم إزالة الفواصل
+        $purchaseInvoice->Total_cost = $totalCost; // تم إزالة الفواصل
         $purchaseInvoice->User_id = $request->User_id ?? auth()->id();
-        $purchaseInvoice->accounting_period_id = $accountingPeriod->accounting_period_id ;
+        $purchaseInvoice->accounting_period_id = $accountingPeriod->accounting_period_id;
         $purchaseInvoice->Invoice_type = $request->Payment_type ?? null;
         $purchaseInvoice->Supplier_id = $request->Supplier_id;
         $purchaseInvoice->transaction_type = $request->transaction_type;
     
-
         try {
+            // حفظ الفاتورة
             $purchaseInvoice->save();
+    
             return response()->json([
                 'success' => true,
                 'message' => 'تم الحفظ بنجاح',
@@ -399,14 +410,25 @@ public function print($id) {
     $DataPurchaseInvoice = PurchaseInvoice::where('purchase_invoice_id',  $id)->first();
  
     $mainc = MainAccount::all();
-    $suba = SubAccount::all();
-    $DataPurchase = Purchase::where('Purchase_invoice_id', $id)->get();
+    // $accountType = TransactionType::tryFrom($DataPurchaseInvoice->transaction_type );
+    $accountType=TransactionType::cases();
+
     $DataPurchaseInvoice = PurchaseInvoice::where('purchase_invoice_id', $id)->first();
+    // $SubAccount = SubAccount::all();
+    $SubAccount = SubAccount::where('sub_account_id', $DataPurchaseInvoice->Supplier_id)->get();
+    $DataPurchase = Purchase::where('Purchase_invoice_id', $id)->get();
+    $Purchase_priceSum = Purchase::where('purchase_invoice_id', $id)->sum('Purchase_price');
+    $Purchase_CostSum = Purchase::where('purchase_invoice_id', $id)->sum('Cost');
+
 
     return view('invoice_purchases.bills_purchase_show', [
         'DataPurchaseInvoice' => $DataPurchaseInvoice,
         'DataPurchase' => $DataPurchase,
-        'suba' => $suba
+        'SubAccounts' => $SubAccount,
+        'Purchase_CostSum' => $Purchase_CostSum,
+        'Purchase_priceSum' => $Purchase_priceSum,
+        'accountType' =>  $accountType,
+
     ]);
 }
 public function saveAndPrint(Request $request)
@@ -444,6 +466,19 @@ $purchases = Purchase::where('User_id', $user_id)
 return response()->json($purchases
 );
 }
+
+// public function getProduct(Request $request)
+// {
+//     $product_id = $request->product_id; // الحصول على النص المدخل
+//     // البحث عن المنتجات المطابقة باستخدام الحقول الثلاثة
+//     $subAccounts = Product::where('product_id', 'LIKE', "%$product_id%")
+//         ->orWhere('product_name', 'LIKE', "%$product_id%")
+//         ->orWhere('Barcode', 'LIKE', "%$product_id%")
+//         ->get();
+
+//     // إرجاع النتائج بصيغة JSON
+//     return response()->json($subAccounts);
+// }
 
 
 }

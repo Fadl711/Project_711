@@ -12,37 +12,7 @@
     }
   </style>
   <script>
-$(document).ready(function() {
-    $('#main_account_debit_id').on('change', function() {
-        const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي
-        showAccounts(mainAccountId,null);
-        setTimeout(() => {
-            $('#main_account_debit_id').select2('close'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
-            $('#sub_account_debit_id').select2('open');
-        }, 1000);
 
-    });
-    $('#account_debitid').on('change', function() {
-     
-        $('#account_debitid').select2('close'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
-        $('#main_account_debit_id').select2('open');
-
-
-    });
-    $('#sub_account_debit_id').on('change', function() {
-        $('#account_debitid').select2('close'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
-        $('#product_id').select2('open');
-
-
- });
- $('#product_id').on('change', function() {
-        $('#account_debitid').select2('close'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
-        // $('#product_id').select2('open');
-
-
- });
-   
-});
 </script>
 <div id="successMessage" class="alert-success" style="display: none;"></div>
 <div id="errorMessage" class="alert-errorMessage" style="display: none;"></div>
@@ -74,11 +44,10 @@ $(document).ready(function() {
                         <label for="Supplier_id" class="labelSale">اسم المورد</label>
                         <select name="Supplier_id" id="Supplier_id" dir="ltr" class="input-field w-full select2 inputSale" >
                             @isset($AllSubAccounts)
-                            {{-- <option value="" selected> </option> --}}
-
+                            <option value="" selected> </option>
                                 @foreach ($AllSubAccounts as $subAccount)
                                     @if ($subAccount->Main_id == $mainAccount_supplier->main_account_id)
-                                        <option value="{{$subAccount->Main_id}}">{{$subAccount->sub_name}}</option>
+                                        <option value="{{$subAccount->sub_account_id}}">{{$subAccount->sub_name}}</option>
                                     @endif
                                 @endforeach
                             @endisset
@@ -86,15 +55,20 @@ $(document).ready(function() {
                     </div>
                     <div >
                         <label for="Receipt_number" class="labelSale">رقم الإيصال</label>
-                        <input type="number" name="Receipt_number" id="Receipt_number" placeholder="0" class="inputSale" />
+                        <input type="text" name="Receipt_number" id="Receipt_number" placeholder="0" class="inputSale" />
+                    </div>
+                    <div>
+                        <label for="Total_cost" class="labelSale">اجمالي التكلفة</label>
+                        <input type="text" name="Total_cost" id="Total_cost" placeholder="0" class="inputSale" />
                     </div>
                     <div >
-                        <label for="Total_cost" class="labelSale">اجمالي التكلفة</label>
-                        <input type="number" name="Total_cost" id="Total_cost" placeholder="0" class="inputSale" />
+                        
+                        <label for="Yr_cost" class="labelSale">  اتكلفه الريال </label>
+                        <input type="number" name="Yr_cost" id="Yr_cost" placeholder="0" class="inputSale" />
                     </div>
                     <div >
                         <label for="Total_invoice" class="labelSale">أجمالي الفاتورة</label>
-                        <input type="number" name="Total_invoice" id="Total_invoice" placeholder="0" class="inputSale" />
+                        <input type="text" name="Total_invoice" id="Total_invoice" placeholder="0" class="inputSale" />
                     </div>
                     @auth
                     <input type="hidden" name="User_id"  id="User_id" value="{{Auth::user()->id}}">
@@ -163,7 +137,7 @@ $(document).ready(function() {
                 
                 <div class="">
                     <label for="Quantity" class="labelSale">الكمية</label>
-                    <input type="number" name="Quantity" id="Quantity" placeholder="0" class="inputSale english-numbers" required />
+                    <input type="text" name="Quantity" id="Quantity" placeholder="0" class="inputSale english-numbers" required />
                 </div>
                 <div class="">
                     <label for="QuantityPurchase" class="labelSale"> الكمية المتوفره</label>
@@ -174,32 +148,32 @@ $(document).ready(function() {
             <div class="flex gap-1 px-1">
                 <div class="">
                     <label for="Purchase_price" class="labelSale">سعر الشراء</label>
-                    <input type="number" name="Purchase_price" id="Purchase_price" placeholder="0" class="inputSale"  />
+                    <input type="text" name="Purchase_price" id="Purchase_price" placeholder="0" class="inputSale"  />
                 </div>
                 <div  class=" sm:col-span-3 labelSale mt-7">
                     <button class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700"  id="saveButton">اضافة </button>
                 </div>
                 <div class="">
                     <label for="Cost" class="labelSale">تكلفة الصنف</label>
-                    <input type="number" name="Cost" id="Cost" placeholder="0" class="inputSale" />
+                    <input type="text" name="Cost" id="Cost" placeholder="0" class="inputSale" />
                 </div>
                 <div class="">
                     <label for="Total" class="labelSale">الاجمالي</label>
-                    <input type="number" name="Total" id="Total" placeholder="0" class="inputSale" required />
+                    <input type="text" name="Total" id="Total" placeholder="0" class="inputSale" required />
                 </div>
             </div>
             <div class="flex gap-1 px-1">
                 <div class="">
                     <label for="Discount_earned" class="labelSale">الخصم المكتسب</label>
-                    <input type="number" name="Discount_earned" id="Discount_earned" placeholder="0" class="inputSale" />
+                    <input type="text" name="Discount_earned" id="Discount_earned" placeholder="0" class="inputSale" />
                 </div>
                 <div class="">
                     <label for="Selling_price" class="labelSale">سعر البيع</label>
-                    <input type="number" name="Selling_price" id="Selling_price" placeholder="0" class="inputSale" />
+                    <input type="text" name="Selling_price" id="Selling_price" placeholder="0" class="inputSale" />
                 </div>
                 <div class="">
                     <label for="Profit" class="labelSale">الربح</label>
-                    <input type="number" name="Profit" id="Profit"  class="inputSale" />
+                    <input type="text" name="Profit" id="Profit"  class="inputSale" />
                 </div>
             </div>
             <div class="flex gap-1 px-1">
@@ -371,8 +345,10 @@ else{
               csrfToken = $('input[name="_token"]').val();
         submitButton.click(function(e) {// عند الضغط على زر الحفظ
             e.preventDefault(); // منع تحديث الصفحة
-            submitButton.prop('disabled', true).text('جاري الإرسال...');            // تعطيل الزر لتجنب الضغط المكرر
+            submitButton.prop('disabled', true).text('جاري الإرسال...');   
+            
             const formData = new FormData(form[0]);// جمع بيانات النموذج باستخدام serialize
+      
             $.ajax({
         url: '{{ route("invoicePurchases.store") }}',
         method: 'POST',
@@ -466,7 +442,7 @@ else{
             const formData = new FormData($('#ajaxForm')[0]);
             const selectedPaymentType = $('input[name="Payment_type"]:checked').val();
     formData.append('Payment_type', selectedPaymentType || ''); // إضافة القيمة المختارة أو قيمة فارغة إذا لم يتم اختيار شيء
-
+ 
     // إذا كان هناك حقل Receipt_number، أضفه أيضًا
     formData.append('Receipt_number', $('#Receipt_number').val() || '');
             $.ajax({

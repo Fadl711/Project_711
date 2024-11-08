@@ -74,18 +74,43 @@
         <header class="flex justify-between items-center border-b-2 border-gray-800 pb-4 mb-4">
             <div>
                 <h2 class="text-lg font-bold">فاتورة الشراء</h2>
-                <p>اسم المورد: جمال علي احمد</p>
+                <p>اسم المورد:  
+                    @isset($SubAccounts)
+                    
+             
+
+                    @foreach ($SubAccounts as $SubAccount)
+                    @if($SubAccount->sub_account_id === $DataPurchaseInvoice->Supplier_id)
+
+                     {{$SubAccount->sub_name??null}}</p>
+                     @endif
+                    @endforeach
+
+                    @endisset
+
+                </p>
                 <p>التلفون: 776327938</p>
             </div>
             <div>
-                <h2 class="text-lg font-bold">فاتورة الشراء</h2>
+                <h2 class="text-lg font-bold">فاتورة :
+                    @isset($accountType)
+                    @foreach ($accountType as $accountTypes)
+                    @if($accountTypes->value === $DataPurchaseInvoice->transaction_type)
+
+                    {{ $accountTypes->label()}} 
+                     @endif
+                    @endforeach
+                    @endisset
+
+
+                </h2>
                 {{-- <p>اسم المورد: جمال علي احمد</p>
                 <p>التلفون: 776327938</p> --}}
             </div>
             <div>
                 <p>التاريخ: {{$DataPurchaseInvoice->created_at}}</p>
                 <p>رقم الإيصال:  {{$DataPurchaseInvoice->Receipt_number??0}}</p>
-                <p>الدفع: نقدًا</p>
+                <p>الدفع :{{$DataPurchaseInvoice->Invoice_type??null}}</p>
             </div>
         </header>
 
@@ -105,6 +130,10 @@
                 </tr>
             </thead>
             <tbody>
+                @isset($DataPurchase)
+                    
+             
+
                 @foreach ($DataPurchase as $Purchase)
                     <tr class="bg-white">
                         <td class="p-2 text-right">{{ $Purchase->Barcode }}</td>
@@ -118,6 +147,10 @@
                         <td class="p-2 text-right">{{ $Purchase->note }}</td>
                     </tr>
                 @endforeach
+                @php
+                    $Discount_earnedValue=$Purchase->Discount_earned ?? 0;
+                @endphp
+                @endisset
             </tbody>
         </table>
 
@@ -125,8 +158,15 @@
         <div class="totals-section bg-gray-100 p-4">
             <div class="flex justify-between">
                 <div>
-                    <p class="font-semibold">الخصم: {{$Purchase->Discount_earned}}</p>
+                    <p class="font-semibold">الخصم: {{$Discount_earnedValue}}</p>
                 </div>
+                <div>
+                    <p class="font-semibold">الجمالي تكلفة الشراء: {{$Purchase_priceSum ?? 0}}</p>
+                </div>
+                <div>
+                    <p class="font-semibold">الجمالي  المصاريف: {{$Purchase_CostSum ?? 0}}</p>
+                </div>
+                
                 <div>
                     <p class="font-semibold">صافي الفاتورة: 99,000 ريال يمني</p>
                     <p class="text-xs text-gray-600">الفين ومائتين وخمسين ريال يمني</p>

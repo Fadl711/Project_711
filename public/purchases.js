@@ -19,41 +19,62 @@ $('#Purchase_price, #Selling_price').on('input', function() {
 // دالة لحساب السعر ال��جمالي
 
 function TotalPrice() {
-    var price = parseFloat($('#Purchase_price').val()); // الحصول على القيمة التي تم إدخالها في الحقل
-    var quantity = parseInt($('#Quantity').val()); // الحصول على الكمية التي تم إدخالها في الحقل
-    // التأكد من أن القيم المدخلة صحيحة
+    // إزالة الفواصل من القيم المدخلة وتحويلها إلى أعداد عشرية
+    var price = parseFloat($('#Purchase_price').val().replace(/,/g, '')) || 0;
+    var quantity = parseFloat($('#Quantity').val().replace(/,/g, '')) || 0;
+    var Yr_cost = parseFloat($('#Yr_cost').val().replace(/,/g, '')) || 0;
+
+    // التأكد من أن القيم المدخلة صالحة وإيجابية
     if (price > 0 && quantity > 0) {
-        var total_price = price * quantity; // حساب السعر الإجمالي
+        // حساب السعر الإجمالي والتكلفة
+        var total_price = price * quantity;
+        var cost = Yr_cost * total_price;
+
+        // تقريب السعر الإجمالي والتكلفة إلى خانتين عشريتين
+        total_price = total_price.toFixed(2);
+        cost = cost.toFixed(2);
+
+        // تعيين القيم النهائية في الحقول المطلوبة وتفعيل التغيير
         $('#Total').val(total_price).trigger('change');
-        
-        // عرض السعر الإجمالي مع تقريب إلى خانت
-    }
-    else {
-        $('#Total').val(''); // تفريغ الحقل في حال وجود قيم ��ير ��الحة
+        $('#Cost').val(cost).trigger('change');
+    } else {
+        $('#Total').val(''); // تفريغ الحقل في حال وجود قيم غير صالحة
+        $('#Cost').val('');
     }
 }
 
+// إضافة الحدث لتحديث السعر الإجمالي عند تغيير السعر أو الكمية
+$('#Purchase_price, #Quantity, #Yr_cost').on('input', function() {
+    TotalPrice();
+});
+
+
 $('#Purchase_price, #Quantity').on('input', function() {
     TotalPrice(); // بد�� الحساب عند تغيير القيم في الحقول
+
 });
 
 // دالة لحساب التكلفة المتكررة
 
 function RepeatedCost() {
-    var total_cost = parseFloat($('#Total_cost').val()); // الحصول على القيمة المدخلة كعدد عشري
-    var purchase_price = parseFloat($('#Purchase_price').val()); // الحصول على سعر الشراء
-    // التأكد من أن السعر الإجمالي وسعر الشراء أرقام صالحة لتجنب قسمة على صفر أو أخطاء
-    if (!isNaN(total_cost) && !isNaN(purchase_price) && purchase_price > 0) {
-        var cost = total_cost / purchase_price; // حساب التكلفة
-        $('#Cost').val(cost); // إضافة السعر إلى الحقل مع تقريبه إلى خانتين عشريتين
+    // إزالة الفواصل وتحويل القيم إلى أعداد عشرية
+    var total_cost = parseFloat($('#Total_cost').val().replace(/,/g, '')) || 0; 
+    var Total_invoice = parseFloat($('#Total_invoice').val().replace(/,/g, '')) || 0;
+
+    if (!isNaN(total_cost) && !isNaN(Total_invoice) && Total_invoice > 0) {
+        var cost = total_cost / Total_invoice; // حساب النسبة
+        $('#Yr_cost').val(cost); // عرض النتيجة
     } else {
-        $('#Cost').val(''); // في حال وجود خطأ في المدخلات، يتم تفريغ الحقل
+        $('#Yr_cost').val(''); // تفريغ الحقل في حال وجود خطأ
     }
 }
 
-$('#Total_cost, #Purchase_price').on('input', function() {
-    RepeatedCost(); // بد�� الحساب عند تغيير القيم في الحقول
+
+// تحديث الحقل كلما تم إدخال قيمة جديدة
+$('#Total_cost, #Total_invoice').on('input', function() {
+    RepeatedCost(); 
 });
+
 $(document).ready(function() {
     $('.select2').select2();
 });
@@ -115,39 +136,59 @@ function addToTable(account) {
 
   // وظيفة لاستعراض تفاصيل المنتج
   function displayProductDetails(product) {
-    $('#Quantity').focus();
+    $('#Quantity').focus(); // تركيز المؤشر على الحقل
 
     const invoiceInput = $('#purchase_invoice_id');
     if (invoiceInput.length) {
-        Barcode.val(product.Barcode).trigger('change');
-       product_name  .val(product.product_name).trigger('change');
-       Selling_price .val(product.Selling_price).trigger('change');
-       Purchase_price.val(product.Purchase_price).trigger('change');
-       QuantityPurchase.val(product.QuantityPurchase).trigger('change');
-       created_at.val(product.created_at).trigger('change');
-       var total_cost = parseFloat($('#Total_cost').val()); // جلب القيمة من الحقل كرقم عشري
-       if ( product.Selling_price > 0 && product.Purchase_price > 0) {
-        var profi = product.Selling_price - product.Purchase_price; // حساب التمويز
-        $('#Profit').val(profi).trigger('change'); // ��ضافة النتيجة مع تقريبها لخانتين عشريتين
-       }
-       else {
-$('#Profit').val('');
-}
-//product.Purchase_price و total_cost التحقق من أن  قيم صالحة
-if (!isNaN(total_cost) && total_cost > 0 && product.Purchase_price > 0) {
-var cost = total_cost / product.Purchase_price; // حساب التكلفة
-$('#Cost').val(cost).trigger('change'); // إضافة النتيجة مع تقريبها لخانتين عشريتين
-} else {
-$('#Cost').val(''); // في حال وجود خطأ أو قيم غير صالحة، يتم تفريغ الحقل
-}
-if (!isNaN(total_cost) && total_cost > 0 && product.Purchase_price > 0) {
-var cost = total_cost / product.Purchase_price; // حساب التكلفة
-$('#Cost').val(cost).trigger('change'); // إضافة النتيجة مع تقريبها لخانتين عشريتين
-} else {
-$('#Cost').val(''); // في حال وجود خطأ أو قيم غير صالحة، يتم تفريغ الحقل
-}
+        // التأكد من أن العناصر موجودة قبل تحديثها
+        if ($('#Barcode').length) {
+            $('#Barcode').val(product.Barcode).trigger('change');
+        }
+        if ($('#product_name').length) {
+            $('#product_name').val(product.product_name).trigger('change');
+        }
+        if ($('#Selling_price').length) {
+            $('#Selling_price').val(product.Selling_price).trigger('change');
+        }
+        if ($('#Purchase_price').length) {
+            $('#Purchase_price').val(product.Purchase_price).trigger('change');
+        }
+        if ($('#QuantityPurchase').length) {
+            $('#QuantityPurchase').val(product.QuantityPurchase).trigger('change');
+        }
+        if ($('#created_at').length) {
+            $('#created_at').val(product.created_at).trigger('change');
+        }
+
+        // حساب التمويز بين البيع والشراء
+        var profit = 0;
+
+
+        if (product.Selling_price > 0 && product.Purchase_price > 0) {
+            profit = product.Selling_price - product.Purchase_price; // حساب التمويز بين البيع والشراء
+            profit = profit; // تقريب النتيجة إلى خانتين عشريتين
+        }
+
+        // إضافة التمويز إلى حقل الربح
+        if ($('#Profit').length) {
+            $('#Profit').val(profit).trigger('change');
+        }
+
+        // حساب التكلفة
+        var Yr_cost = parseFloat($('#Yr_cost').val()) || 0; 
+        // $Yr_cost=  $('#Yr_cost').val(); // عرض النتيجة
+        // جلب القيمة من الحقل كرقم عشري
+        if (!isNaN(Yr_cost) && Yr_cost > 0 && product.Purchase_price > 0) {
+            var cost = Yr_cost * product.Purchase_price; 
+            // حساب التكلفة
+            cost = cost.toFixed(2); // تقريب النتيجة لخانتين عشريتين
+            $('#Cost').val(cost).trigger('change'); // إضافة النتيجة
+        } else {
+            $('#Cost').val(''); // في حال وجود خطأ أو قيم غير صالحة، يتم تفريغ الحقل
+        }
     }
-  };
+}
+
   function emptyData(){
                   $('#product_name').val('');
                       $('#Barcode').val('');
@@ -160,7 +201,6 @@ $('#Cost').val(''); // في حال وجود خطأ أو قيم غير صالحة
                       $('#Profit').val('');
                       $('#Exchange_rate').val('');
                       $('#product_id').val('');
-                      $('#Total_cost').val('');
                       $('#note').val('');
                       $('#QuantityPurchase').val('');
                       $('#purchase_id').val('');
@@ -247,3 +287,64 @@ $(document).on('keydown', function(event) {
     }
 });
 
+    $('#main_account_debit_id').on('change', function() {
+        const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي
+        showAccounts(mainAccountId,null);
+        setTimeout(() => {
+            $('#main_account_debit_id').select2('close'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
+            $('#sub_account_debit_id').select2('open');
+        }, 1000);
+
+    });
+    $('#account_debitid').on('change', function() {
+     
+        $('#account_debitid').select2('close'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
+        $('#main_account_debit_id').select2('open');
+
+
+    });
+    $('#sub_account_debit_id').on('change', function() {
+        $('#account_debitid').select2('close'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
+        $('#product_id').select2('open');
+
+
+ });
+ $('#product_id').on('change', function() {
+        $('#account_debitid').select2('close');
+        $('#Quantity').val('');
+
+
+ });
+   
+     // عند الكتابة في حقل اجمالي التكلفة
+     $('#Total_cost, #Total_invoice,#Yr_cost,#Purchase_price,#Selling_price,#Cost,#Total,#Discount_earned,#Profit').on('input', function() {
+        let value = $(this).val();
+    
+        // إزالة أي شيء ليس رقماً أو فاصلة عشرية
+        value = value.replace(/[^0-9.]/g, '');
+    
+        // التأكد من أن الفاصلة العشرية تظهر مرة واحدة فقط
+        const parts = value.split('.');
+        if (parts.length > 2) {
+            value = parts[0] + '.' + parts.slice(1).join('');
+        }
+    
+        // إضافة الفاصلة بعد كل ثلاثة أرقام (فصل الآلاف) 
+        if (value) {
+            let [integer, decimal] = value.split('.');
+            integer = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ",");  // إضافة الفواصل بين الآلاف
+            value = decimal ? integer + '.' + decimal : integer;  // إعادة تركيب الرقم
+        }
+    
+        // تعيين القيمة المعدلة للحقل
+        $(this).val(value);
+    });
+     // إزالة الفواصل من الحقول قبل إرسالها
+     $('#Receipt_number,#Quantity').on('input', function() {
+        let value = $(this).val();
+    
+        // إزالة أي شيء ليس رقماً أو فاصلة عشرية
+        value = value.replace(/[^0-9.]/g, '');
+        $(this).val(value);
+
+    });

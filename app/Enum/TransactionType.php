@@ -11,8 +11,8 @@ enum TransactionType: int
     public function label(): string
     {
         return match($this) {
-            self::PURCHASE => 'عملية شراء',
-            self::RETURN => 'عملية مردود',
+            self::PURCHASE => 'شراء',
+            self::RETURN => 'مردود المشتريات',
             self::INVENTORY_TRANSFER => 'تحويل مخزني',
         };
     }
