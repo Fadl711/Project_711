@@ -100,17 +100,17 @@
      </ul>
     </div>
 
-<div class="flex place-content-center py-4 ">
+<div class="flex  py-4 ">
     <div class="mx-10"  >
         <button type="submit" id="submitButton" class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            حفظ القيد
+            حفظ 
         </button>
         </div>
-        <div class="mx-10" id="newInvoice" >
+{{--         <div class="mx-10" id="newInvoice" >
             <button type="button"  class="text-purple-700 hover:text-white border border-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-purple-400 dark:text-purple-400 dark:hover:text-white dark:hover:bg-purple-500 dark:focus:ring-purple-900">
                              الغاء الحساب
                   </button>
-            </div>
+            </div> --}}
     </div>
 
     @auth

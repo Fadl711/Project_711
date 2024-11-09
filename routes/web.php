@@ -109,13 +109,17 @@ Route::get('/Receip/create', [ReceipController::class, 'create'])->name('create.
 Route::post('/Receip', [ReceipController::class, 'store'])->name('Receip.store');
 Route::get('/Receip/show_all_receipt', [All_Receipt_BondController::class, 'show_all_receipt'])->name('show_all_receipt');
 Route::get('/Receips/{Receip}', [ReceipController::class, 'show'])->name('receip.show');
+Route::get('/Receips/{id}/print', [ReceipController::class, 'print'])->name('receip.print');
 Route::get('/Receip/edit', [ReceipController::class, 'edit'])->name('receip.edit');
 Route::delete('/Receips/{Receip}', [ReceipController::class, 'destroy'])->name('receip.destroy');
 
 Route::get('/exchange/index', [ExchangeController::class, 'index'])->name('exchange.index');
+Route::post('/exchange', [ExchangeController::class, 'store'])->name('exchange.store');
 Route::get('/exchange/all_exchange_bonds', [ExchangeController::class, 'all_exchange_bonds'])->name('all_exchange_bonds');
-Route::get('/exchange/show', [ExchangeController::class, 'show'])->name('exchange.show');
+Route::get('/exchanges/{exchange}', [ExchangeController::class, 'show'])->name('exchange.show');
+Route::get('/exchange/{id}/print', [ExchangeController::class, 'print'])->name('exchange.print');
 Route::get('/exchange/edit', [ExchangeController::class, 'edit'])->name('exchange.edit');
+Route::delete('/exchanges/{exchange}', [ExchangeController::class, 'destroy'])->name('exchange.destroy');
 
 Route::get('/restrictions/create', [RestrictionController::class, 'create'])->name('restrictions.create');
 Route::get('/restrictions/index', [RestrictionController::class, 'index'])->name('restrictions.index');

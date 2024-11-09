@@ -49,4 +49,8 @@ class ReceipController extends Controller
 
             return redirect()->route('show_all_receipt');
 }
+public function print($id){
+    $PaymentBond=PaymentBond::where('payment_bond_id',$id)->first();
+    return view('bonds.receipt_bonds.print',compact('PaymentBond'));
+}
 }
