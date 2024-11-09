@@ -106,9 +106,11 @@ Route::get('/invoice_purchases/index', [InvoicePurchaseController::class, 'index
 
 Route::get('/bonds', [BondController::class, 'bonds'])->name('bonds.index');
 Route::get('/Receip/create', [ReceipController::class, 'create'])->name('create.index');
+Route::post('/Receip', [ReceipController::class, 'store'])->name('Receip.store');
 Route::get('/Receip/show_all_receipt', [All_Receipt_BondController::class, 'show_all_receipt'])->name('show_all_receipt');
-Route::get('/Receip/show', [ReceipController::class, 'show'])->name('receip.show');
+Route::get('/Receips/{Receip}', [ReceipController::class, 'show'])->name('receip.show');
 Route::get('/Receip/edit', [ReceipController::class, 'edit'])->name('receip.edit');
+Route::delete('/Receips/{Receip}', [ReceipController::class, 'destroy'])->name('receip.destroy');
 
 Route::get('/exchange/index', [ExchangeController::class, 'index'])->name('exchange.index');
 Route::get('/exchange/all_exchange_bonds', [ExchangeController::class, 'all_exchange_bonds'])->name('all_exchange_bonds');
