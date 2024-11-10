@@ -58,9 +58,31 @@ class ExchangeController extends Controller
         $PaymentBond=ExchangeBond::where('payment_bond_id',$id)->first();
         return view('bonds.exchange_bonds.show',compact('PaymentBond'));
     }
-    public function edit(){
+    public function edit($id){
+        $ExchangeBond=ExchangeBond::where('payment_bond_id',$id)->first();
+        $mainAccount=MainAccount::all();
+        $SubAccounts=SubAccount::all();
+        $curr=Currency::all();
+        // الحصول على تاريخ اليوم
+        $today = Carbon::now()->toDateString(); // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
+        $dailyPage = GeneralJournal::whereDate('created_at', $today)->first(); // البحث عن الصفحة
+        $ExchangeBond=ExchangeBond::where('payment_bond_id',$id)->first();
+        return view('bonds.exchange_bonds.edit',compact('curr','dailyPage','ExchangeBond','SubAccounts'),['mainAccounts'=> $mainAccount,$dailyPage]);
+    }
+    public function update(Request $request){
+        ExchangeBond::where('payment_bond_id',$request->id)->update([
+            'Main_debit_account_id'=>$request->AccountReceivable,
+            'Debit_sub_account_id'=>$request->DepositAccount,
+            'Amount_debit'=>$request->Amount_debit,
+            'Main_Credit_account_id'=>$request->PaymentParty,
+            'Credit_sub_account_id'=>$request->CreditAmount,
+            'Statement'=>$request->Statement,
+            'Currency_id'=>$request->Currency,
+            'User_id'=>$request->User_id,
+            'created_at'=>$request->date,
+        ]);
 
-        return view('bonds.exchange_bonds.edit');
+        return redirect()->route('all_exchange_bonds');
     }
     public function destroy($id){
         ExchangeBond::where('payment_bond_id',$id)->delete();
@@ -71,4 +93,7 @@ public function print($id){
     $PaymentBond=ExchangeBond::where('payment_bond_id',$id)->first();
     return view('bonds.exchange_bonds.print',compact('PaymentBond'));
 }
+
+
+
 }
