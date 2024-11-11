@@ -125,6 +125,7 @@ Route::get('/exchange/{id}/print', [ExchangeController::class, 'print'])->name('
 Route::get('/exchange/{id}/edit', [ExchangeController::class, 'edit'])->name('exchange.edit');
 Route::put('/exchange/update', [ExchangeController::class, 'update'])->name('exchange.update');
 Route::delete('/exchanges/{exchange}', [ExchangeController::class, 'destroy'])->name('exchange.destroy');
+Route::post('/exchange/stor', [ReceipController::class, 'stor'])->name('exchange.stor');
 
 Route::get('/restrictions/create', [RestrictionController::class, 'create'])->name('restrictions.create');
 Route::get('/restrictions/index', [RestrictionController::class, 'index'])->name('restrictions.index');

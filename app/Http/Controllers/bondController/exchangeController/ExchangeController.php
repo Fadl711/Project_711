@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\bondController\exchangeController;
 
 use App\Http\Controllers\Controller;
+use App\Models\AccountingPeriod;
 use App\Models\Currency;
+use App\Models\DailyEntrie;
 use App\Models\ExchangeBond;
 use App\Models\GeneralJournal;
 use App\Models\MainAccount;
@@ -26,6 +28,8 @@ class ExchangeController extends Controller
         return view('bonds.exchange_bonds.index',compact('curr','dailyPage'),['mainAccounts'=> $mainAccount,$dailyPage]);
      }
      public function store(Request $request){
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+
         if($request->DepositAccount==$request->CreditAmount){
         return response()->json(['error' => ' لايمكن اختيار نفس الحساب']);
 
@@ -41,7 +45,34 @@ class ExchangeController extends Controller
                 'User_id'=>$request->User_id,
                 'created_at'=>$request->date,
             ]);
-            return response()->json(['success' => 'تم بنجاح']);
+
+
+                   // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
+        $today = Carbon::now()->toDateString();
+        $dailyPage = GeneralJournal::whereDate('created_at', $today)->first();
+
+        // إذا لم توجد صفحة، قم بإنشائها
+        if (!$dailyPage) {
+            $dailyPage = GeneralJournal::create([]);
+        }
+        // حفظ القيد اليومي
+        $dailyEntrie = new DailyEntrie();
+
+
+    $dailyEntrie->account_debit_id = $request->DepositAccount;
+    $dailyEntrie->Amount_debit = $request->Amount_debit;
+    $dailyEntrie->account_Credit_id = $request->CreditAmount;
+    $dailyEntrie->Amount_Credit = 0;
+    $dailyEntrie->Statement =
+    $dailyEntrie->Currency_name = $request->Statement; // استخدم الاسم الصحيح هنا
+    $dailyEntrie->accounting_period_id = $accountingPeriod->accounting_period_id;
+    $dailyEntrie->Daily_page_id = $dailyPage->page_id; // حفظ معرف الصفحة اليومية
+    $dailyEntrie->User_id = $request->User_id;
+    $dailyEntrie->save();
+
+
+        return response()->json(['success' => 'تم بنجاح']);
+
         }
 
 
@@ -94,6 +125,31 @@ public function print($id){
     return view('bonds.exchange_bonds.print',compact('PaymentBond'));
 }
 
+public function stor(Request $request){
+    $today = Carbon::now()->toDateString(); // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
+    $dailyPage = GeneralJournal::whereDate('created_at', $today)->first(); // البحث عن الصفحة
+    if ($dailyPage) {
+            $generalJournal1=GeneralJournal::all();
+            $mainAccount=MainAccount::all();
+        $curr=Currency::all();
+        return view('bonds.exchange_bonds.index',compact('curr','dailyPage'),['mainAccounts'=> $mainAccount]);
+    } else {
+        $Statement=$request->Statement;
+             GeneralJournal::create([
+            ]);
+            // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
+            $today = Carbon::now()->toDateString();
+            $dailyPage = GeneralJournal::whereDate('created_at', $today)->first(); // البحث عن الصفحة
+            if ($dailyPage) {
+                // إذا تم العثور على الصفحة، عرض رقم الصفحة
+                $generalJournal1=GeneralJournal::all();
+                $mainAccount=MainAccount::all();
+            // dd($generalJournal1);
+            $curr=Currency::all();
+            return view('bonds.exchange_bonds.index',compact('curr','dailyPage'),['mainAccounts'=> $mainAccount]);
+            }
+    }
 
+}
 
 }

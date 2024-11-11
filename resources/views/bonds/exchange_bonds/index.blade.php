@@ -5,7 +5,21 @@
   </div>
   <br>
   {{-- <button onclick="window.history.back()">رجوع</button> --}}
+  <form action="{{route('exchange.stor')}}" method="POST"  enctype="multipart/form-data">
+    @csrf
+    <div class="mb-4">
+        <label for="page_id" class="block font-medium mb-2">رقم الصفحة</label>
+@auth
+@isset($dailyPage->page_id)
+<input type="text" name="page_id" id="page_id" class=" rounded-md w-[10%]"  value="{{$dailyPage['page_id']}}">
+@endisset
 
+
+@endauth
+
+    </div>
+    <button type="submit">إنشاء صفحة جديدة</button>
+</form>
   <form method="POST" id="Receip">
     @csrf
 
@@ -105,7 +119,7 @@
 <div class="flex  py-4 ">
     <div class="mx-10"  >
         <button type="submit" id="submitButton" class="px-6 py-2  bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            حفظ 
+            حفظ
         </button>
         </div>
 {{--         <div class="mx-10" id="newInvoice" >
@@ -251,9 +265,9 @@ $(document).ready(function() {
     function datainvoices(){
         var maont = document.getElementById('crud-modal').value;
     }
-   
+
     function invoices() {
-    
+
 
 
 
@@ -268,7 +282,7 @@ $(document).ready(function() {
                      document.body.innerHTML = originalContents;
                      window.focus();
                      window.location.reload(); // reload the page after printing
-    
+
                      // Add this line to close the modal window
                      document.getElementById('crud-modal').classList.add('hidden');
                  };

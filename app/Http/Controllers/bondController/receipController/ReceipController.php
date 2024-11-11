@@ -25,6 +25,9 @@ class ReceipController extends Controller
     }
     public function store(Request $request){
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+        if($request->DepositAccount==$request->CreditAmount){
+            return response()->json(['error' => ' لايمكن اختيار نفس الحساب']);
+        }
         PaymentBond::create([
             'Main_debit_account_id'=>$request->AccountReceivable,
             'Debit_sub_account_id'=>$request->DepositAccount,

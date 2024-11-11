@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\AccountingPeriod;
 use App\Models\Currency;
 use App\Models\DailyEntrie;
+use App\Models\ExchangeBond;
 use App\Models\GeneralJournal;
 use App\Models\MainAccount;
+use App\Models\PaymentBond;
 use App\Models\SubAccount;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -174,41 +176,58 @@ public function stor(Request $request){
         $eail=DailyEntrie::where('entrie_id',$id)->first();
         $mainAccount=MainAccount::all();
         $curr=Currency::all();
+        $SubAccount=SubAccount::all();
         // الحصول على تاريخ اليوم
         $today = Carbon::now()->toDateString(); // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
         $dailyPage = GeneralJournal::whereDate('created_at', $today)->first(); // البحث عن الصفحة
-        return view('daily_restrictions.edit',compact('curr','dailyPage','eail'),['mainAccounts'=> $mainAccount,$dailyPage,]);
+        return view('daily_restrictions.edit',compact('curr','dailyPage','eail','SubAccount'),['mainAccounts'=> $mainAccount,$dailyPage,]);
     }
 
     public function update(Request $request,$id){
         $today = Carbon::now()->toDateString();
         $dailyPage = GeneralJournal::whereDate('created_at', $today)->first();
-        $validated = $request->validate([
-            'sub_account_debit_id' => 'required|integer',
-            'Amount_debit' => 'required|numeric',
-            'account_Credit_id' => 'required|integer',
-            'sub_account_Credit_id' => 'required|integer',
-            'Statement' => 'required|string',
-            'Currency_name' => 'required|string', // تأكد من استخدام الاسم الصحيح هنا
-            'User_id' => 'required|integer', // تأكد من إضافة User_id إذا كان مطلوباً
-        ]);
+        $Currency=Currency::where('currency_name',$request->Currency_name)->value('currency_id');
 
-        $dailyEntrie =DailyEntrie::where('entrie_id',$id)->update([
-            'account_debit_id'=>$validated['sub_account_debit_id'],
-            'Amount_debit'=>$validated['Amount_debit'],
-            'account_Credit_id'=>$validated['sub_account_Credit_id'],
-            'Amount_Credit'=>$validated['Amount_debit'],
-            'Statement'=> $validated['Statement'],
-            'Currency_name'=>$validated['Currency_name'],
+
+        $DailyEntrie =DailyEntrie::where('entrie_id',$id)->first();
+$ct=$DailyEntrie->Daily_page_id;
+        ExchangeBond::where('created_at',$DailyEntrie->created_at)->update([
+            'Debit_sub_account_id'=>$request['sub_account_debit_id'],
+            'Amount_debit'=>$request['Amount_debit'],
+            'Credit_sub_account_id'=>$request['sub_account_Credit_id'],
+            'Statement'=> $request['Statement'],
+            'Currency_id'=>$Currency,
+
+            'User_id'=>$request['User_id'],
+        ]);
+        PaymentBond::where('created_at',$DailyEntrie->created_at)->update([
+            'Debit_sub_account_id'=>$request['sub_account_debit_id'],
+            'Amount_debit'=>$request['Amount_debit'],
+            'Credit_sub_account_id'=>$request['sub_account_Credit_id'],
+            'Statement'=> $request['Statement'],
+            'Currency_id'=>$Currency,
+            'User_id'=>$request['User_id'],
+        ]);
+        $DailyEntrie->update([
+            'account_debit_id'=>$request['sub_account_debit_id'],
+            'Amount_debit'=>$request['Amount_debit'],
+            'account_Credit_id'=>$request['sub_account_Credit_id'],
+            'Amount_Credit'=>$request['Amount_debit'],
+            'Statement'=> $request['Statement'],
+            'Currency_name'=>$request['Currency_name'],
             'Daily_page_id'=>$dailyPage->page_id,
-            'User_id'=>$validated['User_id'],
+            'User_id'=>$request['User_id'],
         ]);
 
-        return redirect()->route('all_restrictions_show');
+        return redirect()->route('all_restrictions_show',$ct);
     }
     public function  destroy($id){
-        DailyEntrie::where('entrie_id',$id)->delete();
-        return view('daily_restrictions.all_restrictions_show');
+        $DailyEntrie=DailyEntrie::where('entrie_id',$id)->first();
+        ExchangeBond::where('created_at',$DailyEntrie->created_at)->delete();
+        PaymentBond::where('created_at',$DailyEntrie->created_at)->delete();
+        $DailyEntrie->delete();
+
+        return back();
     }
     public function show($id)
     {

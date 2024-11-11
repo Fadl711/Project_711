@@ -43,7 +43,16 @@
 
                       <option value="" selected>اختر الحساب</option>
                       @foreach ($mainAccounts as $mainAccount)
-                           <option @selected($eail->account_debit_id==$mainAccount['main_account_id']) value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
+                      @foreach ($SubAccounts as $item)
+                      @if ($eail->account_debit_id==$item->sub_account_id)
+                      @if ($item->Main_id==$mainAccount->main_account_id)
+                      <option
+                      @selected($mainAccount->where('main_account_id',$item->Main_id)->first()->account_name) value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
+                      @endif
+
+                      @endif
+                      @endforeach
+
                       @endforeach
                       @endauth
                     </select>
@@ -57,7 +66,10 @@
                         <!-- سيتم تعبئة الخيارات بناءً على الحساب الرئيسي المحدد -->
                         <option value="" selected>اختر الحساب الفرعي</option>
 
+                        @foreach ($SubAccounts as $item)
+                        <option @selected($eail->account_debit_id==$item['sub_account_id']) value="{{$item['sub_account_id']}}">{{$item->sub_name}}-{{$item->sub_account_id}}</option>
 
+                        @endforeach
                         </select>
                     @endauth
                 </div>
@@ -72,12 +84,24 @@
                     <select name="account_Credit_id" id="account_Credit_id" class=" select2 inputSale" required>
                         <option value="" selected>اختر الحساب</option>
 
-@auth
 
-                       @foreach ($mainAccounts as $mainAccount)
-                             <option  @selected($eail->account_Credit_id==$mainAccount['main_account_id']) value="{{$mainAccount->main_account_id}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
+
+                        <option value="" selected>اختر الحساب</option>
+                        @foreach ($mainAccounts as $mainAccount)
+                        @foreach ($SubAccounts as $item)
+                        @if ($eail->account_Credit_id==$item->sub_account_id)
+                        @if ($item->Main_id==$mainAccount->main_account_id)
+                        <option
+                        @selected($mainAccount->where('main_account_id',$item->Main_id)->first()->account_name) value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
+                        @endif
+
+                        @endif
                         @endforeach
-                        @endauth
+
+                        @endforeach
+
+                      </select>
+
                                             </select>
                 </div>
                 <div class="mb-4 ">
@@ -85,6 +109,11 @@
                     <select name="sub_account_Credit_id"  step="0.01" id="sub_account_Credit_id" class="block w-full select2 p-2 border rounded-md inputSale">
                         <option value="" selected>اختر الحساب الفرعي</option>
                         <!-- سيتم تعبئة الخيارات بناءً على الحساب الرئيسي المحدد -->
+
+                        @foreach ($SubAccounts as $item)
+                        <option @selected($eail->account_Credit_id==$item['sub_account_id']) value="{{$item['sub_account_id']}}">{{$item->sub_name}}-{{$item->sub_account_id}}</option>
+
+                        @endforeach
                     </select>
                 </div>
 
@@ -156,52 +185,8 @@
         // إضافة مؤشر تحميل
 
         // إرسال النموذج باستخدام AJAX بدون تحديث الصفحة
-        $(document).ready(function() {
-          $('#dailyRestrictionsForm').on('submit', function(event) {
-              event.preventDefault(); // منع إعادة تحميل الصفحة
 
-              // تجميع البيانات من النموذج
-              var formData = $(this).serialize();
 
-              // إرسال الطلب باستخدام AJAX
-              $.ajax({
-                  url: '{{ route("daily_restrictions.update",$eail->entrie_id) }}',
-                  method: 'POST',
-                  data: formData,
-                  success: function(data) {
-                      if (data.success) {
-                          // إظهار رسالة النجاح
-                          $('#successMessage').show().text(data.success);
-                          $('#dailyRestrictionsForm')[0].reset(); // إعادة تعيين النموذج
-                          // إخفاء الرسالة بعد 3 ثوانٍ
-                          setTimeout(function() {
-                              $('#successMessage').hide();
-                          }, 3000);
-                      }else
-                       {
-                          $('#successMessage').show().text(data.success);
-                          setTimeout(function() {
-                              $('#successMessage').hide();
-                          }, 3000);
-
-                      }
-                  },
-                  error: function(xhr) {
-                      if (xhr.status === 422) {
-                          // إظهار الأخطاء عند وجود أخطاء في التحقق
-                          var errors = xhr.responseJSON.errors;
-                          var errorMessage = '';
-                          $.each(errors, function(key, value) {
-                              errorMessage += value[0] + '<br>'; // إضافة الأخطاء
-                          });
-                          $('#errorMessage').show().html(errorMessage);
-                      } else {
-                          $('#errorMessage').show().text('حدث خطأ أثناء الحفظ.');
-                      }
-                  }
-              });
-          });
-      });
         // عند اختيار الحساب الرئيسي (المدين)
   // عند اختيار الحساب الرئيسي (المدين)
 $('#account_debit_id').on('change', function() {

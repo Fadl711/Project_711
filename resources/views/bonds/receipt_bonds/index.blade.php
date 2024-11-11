@@ -1,6 +1,8 @@
 @extends('bonds.index')
 @section('bonds')
-
+<div id="successAlert" style="display: none" class=" fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
+    <p></p>
+  </div>
   <br>
   {{-- <button onclick="window.history.back()">رجوع</button> --}}
   <form action="{{route('Receip.stor')}}" method="POST"  enctype="multipart/form-data">
@@ -220,22 +222,28 @@ $(document).ready(function() {
                 method: 'POST',
                 data: formData,
                 success: function(data) {
-                    if (data.success) {
-                        // إظهار رسالة النجاح
-                        $('#successMessage').show().text(data.success);
+                        if(data.error){
+                            $('#successAlert').show().text(data.error);
                         $('#Amount_debit').val(""); // إعادة تعيين النموذج
                         // إخفاء الرسالة بعد 3 ثوانٍ
                         setTimeout(function() {
-                            $('#successMessage').hide();
-                        }, 3000);
-                    }else
-                     {
-                        $('#successMessage').show().text(data.success);
-                        setTimeout(function() {
-                            $('#successMessage').hide();
+                            $('#successAlert').hide();
                         }, 3000);
 
-                    }
+                        }else if(data.success){
+                            $('#successAlert').show().show().text(data.success);
+                            $('#Amount_debit').val(""); // إعادة تعيين النموذج
+                            // إخفاء الرسالة بعد 3 ثوانٍ
+                            setTimeout(function() {
+                                $('#successAlert').hide();
+                            }, 3000);
+                            setTimeout(function() {
+                                location.reload ();
+                            }, 3000);
+
+                        }
+                        // إظهار رسالة النجاح
+
                 },
                 error: function(xhr) {
                     if (xhr.status === 422) {
