@@ -24,9 +24,10 @@
 
 
 }
-.NavTagA{
-   @apply flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-200
+.NavTagA {
+   @apply flex items-center w-full h-10 px-4 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ease-in-out duration-200;
 }
+
 .navIndex{
    @apply shadow-md py-1  rounded  flex items-center justify-between
 }
@@ -34,7 +35,7 @@
   @apply block mb-2 text-sm  text-gray-700 dark:text-white text-center font-bold
 }
 .inputSale{
-@apply w-full rounded-md border border-[#d2d0d0] bg-white py-2 px-2 text-base font-medium text-[#07074D] outline-none focus:border-[#6A64F1] focus:shadow-md 
+@apply w-full rounded-md border border-[#d2d0d0] bg-white py-2 px-2   text-[#07074D] outline-none focus:border-[#6A64F1] focus:shadow-md 
 }
 .divProducte {
    @apply flex items-center w-full px-1 py-1 text-base  text-black bg-white  rounded-l-md  md:col-span-3

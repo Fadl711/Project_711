@@ -157,9 +157,9 @@
         <!-- الإجماليات -->
         <div class="totals-section bg-gray-100 p-4">
             <div class="flex justify-between">
-                <div>
+                {{-- <div>
                     <p class="font-semibold">الخصم: {{$Discount_earnedValue}}</p>
-                </div>
+                </div> --}}
                 <div>
                     <p class="font-semibold">الجمالي تكلفة الشراء: {{$Purchase_priceSum ?? 0}}</p>
                 </div>

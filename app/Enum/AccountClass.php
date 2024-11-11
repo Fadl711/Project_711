@@ -13,10 +13,10 @@ enum AccountClass: int
     public function label(): string
 {
     return match($this) {
-        self::CUSTOMER => 'العملاء',
-        self::SUPPLIER => 'الموردين',
+        self::CUSTOMER => 'العيل',
+        self::SUPPLIER =>'المورد',
 
-        self::STORE=>'مخزن',
+        self::STORE=>'المخزن',
         self::OTHER   => 'أخرى',
        };
 }

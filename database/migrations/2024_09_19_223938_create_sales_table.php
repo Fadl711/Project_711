@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('Product_name');
             $table->integer('accounting_period_id')->unsigned();
 
-            $table->string('Barcode');
+            $table->bigInteger('Barcode')->unsigned()->nullable(); // إضافة العمود Barcode
             $table->integer('Quantity');
             $table->decimal('Selling_price', 15, 2); // Adjust precision as needed
             $table->decimal('Total', 15, 2); // Adjust precision as needed

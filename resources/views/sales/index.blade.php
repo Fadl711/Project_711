@@ -361,4 +361,64 @@ function NewProduct(){
 
 }
 </script>
+
+<button id="start-scanner">تشغيل الكاميرا لمسح الباركود</button>
+<div id="camera" style="width: 640px; height: 480px;"></div>
+<p id="barcode-result">الباركود: </p>
+
+<script>
+    $(document).ready(function() {
+        $('#start-scanner').on('click', function() {
+            startBarcodeScanner();
+        });
+
+        function startBarcodeScanner() {
+            Quagga.init({
+                inputStream: {
+                    name: "Live",
+                    type: "LiveStream",
+                    target: document.querySelector('#camera'),
+                    constraints: {
+                        width: 1280,
+                        height: 720,
+                        facingMode: "environment"  // "environment" للكاميرا الخلفية، و"user" للكاميرا الأمامية
+                    }
+                },
+                decoder: {
+                    readers: ["code_128_reader", "ean_reader", "ean_8_reader", "code_39_reader", "upc_reader"],
+                    multiple: false
+                },
+                locate: true
+            }, function(err) {
+                if (err) {
+                    console.error(err);
+                    alert("حدث خطأ في الوصول إلى الكاميرا. تأكد من منح الأذونات.");
+                    return;
+                }
+                console.log("تم تشغيل الكاميرا.");
+                Quagga.start();
+            });
+
+            Quagga.onDetected(function(data) {
+                const code = data.codeResult.code;
+                $('#product_id').val(code).trigger('change');   
+                $.ajax({
+        url: `/api/products/search?id=${code}`, // استدعاء API بناءً على product_id
+        method: 'GET',
+        data:account_debitid,
+        success: function(product) {
+            displayProductDetails(product); // استعراض تفاصيل المنتج إذا تمت الاستجابة بنجاح
+        },
+        error: function(xhr) {
+            console.error('Error:', xhr.responseText); // عرض الخطأ إذا حدث خطأ في الاستدعاء
+        }
+    });
+                                 Quagga.stop();
+                alert("تم قراءة الباركود: " + code);
+            });
+        }
+    });
+</script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+
 @endsection

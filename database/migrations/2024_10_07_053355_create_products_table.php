@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->increments('product_id')->unsigned();
-            $table->integer('Barcode')->unsigned()->unique()->nullable();
-            $table->string('product_name')->unique();
+            $table->bigInteger('Barcode')->unsigned()->nullable(); // إضافة العمود Barcode
+            $table->unique('Barcode'); 
+                        $table->string('product_name')->unique();
             $table->integer('Quantity')->nullable();
             $table->double('Purchase_price')->nullable()->unsigned();;
            $table->double('Selling_price')->nullable()->unsigned();;

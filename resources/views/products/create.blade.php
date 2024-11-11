@@ -28,14 +28,15 @@
           <select style="background-image: none ;" name="Categorie_id" id="Categorie_id" class="inputSale appearance-auto" required>
 
             <option selected value=""></option>
-            @auth
-            @foreach ($cate as $cat)
+            @isset($cate)
+                
+\            @foreach ($cate as $cat)
 
 
             <option value="{{$cat->categorie_id}}">{{$cat->Categorie_name}}</option>
 
             @endforeach
-            @endauth
+            @endisset
 
           </select>
         </div>

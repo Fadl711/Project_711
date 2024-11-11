@@ -15,7 +15,8 @@ $('#Purchase_price, #Selling_price').on('input', function() {
     Profitproduct(); // بدء الحساب عند تغيير القيم في الحقول
 });
 
-
+const successMessage = $('#successMessage');
+const errorMessage = $('#errorMessage');
 // دالة لحساب السعر ال��جمالي
 
 function TotalPrice() {
@@ -74,6 +75,7 @@ function RepeatedCost() {
 $('#Total_cost, #Total_invoice').on('input', function() {
     RepeatedCost(); 
 });
+
 
 $(document).ready(function() {
     $('.select2').select2();
@@ -144,6 +146,7 @@ function addToTable(account) {
         if ($('#Barcode').length) {
             $('#Barcode').val(product.Barcode).trigger('change');
         }
+       
         if ($('#product_name').length) {
             $('#product_name').val(product.product_name).trigger('change');
         }
@@ -225,7 +228,8 @@ function displayPurchases(purchases) {
 
         // Add purchase data to the table
         $('#mainAccountsTable tbody').append(
-            `<tr id="row-${purchase.purchase_id}">
+            `
+            <tr id="row-${purchase.purchase_id}">
                 <td>${purchase.Product_name}</td>
                 <td>${purchase.Barcode}</td>
                 <td>${purchase.quantity}</td>
@@ -270,7 +274,6 @@ $(document).on('keydown', function(event) {
                 
                 console.log('Purchases Data:', data); // تحقق من البيانات المستلمة
                 if (data && data.length > 0) {
-                    // $('#purchase_invoice_id').val(data[1].purchase_invoice_id);
                     $('#mainAccountsTable tbody').empty(); // مسح البيانات القديمة
 
                     displayPurchases(data); // دالة لعرض المشتريات في الجدول
@@ -287,20 +290,10 @@ $(document).on('keydown', function(event) {
     }
 });
 
-    $('#main_account_debit_id').on('change', function() {
-        const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي
-        showAccounts(mainAccountId,null);
-        setTimeout(() => {
-            $('#main_account_debit_id').select2('close'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
-            $('#sub_account_debit_id').select2('open');
-        }, 1000);
-
-    });
+  
     $('#account_debitid').on('change', function() {
-     
         $('#account_debitid').select2('close'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
         $('#main_account_debit_id').select2('open');
-
 
     });
     $('#sub_account_debit_id').on('change', function() {
@@ -311,11 +304,21 @@ $(document).on('keydown', function(event) {
  });
  $('#product_id').on('change', function() {
         $('#account_debitid').select2('close');
-        $('#Quantity').val('');
+        // $('#Quantity').val('');
 
 
  });
-   
+ $('#transaction_type').on('change', function() {
+    // $('#transaction_type').close(); // إغلاق حقل الحساب الرئيسي بشكل صحيح
+    $('#mainaccount_debit_id').select2('open');
+
+});
+$('#mainaccount_debit_id').on('change', function() {
+    $('#mainaccount_debit_id').select2('close');
+    $('#Supplier_id').select2('open');
+
+});
+
      // عند الكتابة في حقل اجمالي التكلفة
      $('#Total_cost, #Total_invoice,#Yr_cost,#Purchase_price,#Selling_price,#Cost,#Total,#Discount_earned,#Profit').on('input', function() {
         let value = $(this).val();
@@ -348,3 +351,143 @@ $(document).on('keydown', function(event) {
         $(this).val(value);
 
     });
+
+   
+    function deleteInvoice()  {
+        CsrfToken();
+        const invoiceId = $('#purchase_invoice_id').val();        // الحصول على معرف الفاتورة من الحقل
+        if (!invoiceId) {
+            $('#errorMessage').show().text('لم يتم العثور على معرف الفاتورة.');
+            setTimeout(() => {
+                errorMessage.hide();
+              }, 5000);
+            return;
+        }
+
+        // تأكيد الحذف
+        if (!confirm('هل أنت متأكد من حذف الفاتورة وجميع المشتريات المرتبطة بها؟')) {
+            return;
+        }
+        // إرسال طلب الحذف باستخدام Ajax
+        $.ajax({
+            url: `/purchase-invoices/${invoiceId}`, // مسار الحذف
+            type: 'DELETE',
+            success: function(response) {
+                if (response.success) {
+                    window.location.reload();
+                    successMessage.show().text(response.message);
+                    setTimeout(() => {
+                        successMessage.hide();
+                    }, 5000); // هذا سيقوم بإعادة تحميل الصفحة بالكامل
+                    // إزالة الصف المرتبط بالفاتورة من الجدول بدون إعادة تحميل الصفحة
+                } else {
+                    // alert('خطأ: ' + response.message);
+                    $('#errorMessage').show().text(response.message);
+                    setTimeout(() => {
+                      errorMessage.hide();
+                    }, 5000);
+                }
+            },
+            error: function(xhr, status, error) {
+                $('#errorMessage').show().text(response.message);
+                    setTimeout(() => {
+                      errorMessage.hide();
+                    }, 5000);   }
+        });
+};
+function deleteData(id) {
+    var successMessage = $('#successMessage');
+    CsrfToken();
+    if (confirm('هل أنت متأكد من حذف البيانات؟')) {
+        $.ajax({
+            type: 'DELETE',
+            url: `/purchases/${id}`, // مسار الحذف
+            success: function(response) {
+                // إزالة الصف من DOM بدون إعادة تحميل الصفحة
+                $('#row-' + id).remove();
+                successMessage.text('تم حذف البيانات بنجاح!').show();
+                setTimeout(() => {
+                    successMessage.hide();
+                }, 500);
+            },
+            error: function(xhr, status, error) {
+                errorMessage.text('حدث خطأ أثناء الحذف. الرجاء المحاولة مرة أخرى.').show();
+                setTimeout(() => {
+                    errorMessage.hide();
+                }, 500);            }
+        });
+    }
+};
+function CsrfToken(){
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+};
+
+
+  
+Barcode        = $('#Barcode'),
+QuantityPurchase = $('#QuantityPurchase'),
+account_debitid = $('#account_debitid'),
+product_name   = $('#product_name'),
+Selling_price  = $('#Selling_price'),
+Purchase_price = $('#Purchase_price'),
+Quantity       = $('#Quantity'),
+Total_cost     = $('#Total_cost').val(),
+Cost           = $('#Cost').val(),
+    $('#product_id').on('change', function() {    // عند تغيير المنتج المختار في القائمة
+        var productId = $(this).val(); // الحصول على قيمة المنتج المختار
+
+    if (productId) { // تحقق من وجود منتج محدد
+        $.ajax({
+            url: `/api/products/search?id=${productId}`, // استدعاء API بناءً على product_id
+            method: 'GET',
+            data:account_debitid,
+            success: function(product) {
+                displayProductDetails(product); // استعراض تفاصيل المنتج إذا تمت الاستجابة بنجاح
+            },
+            error: function(xhr) {
+                console.error('Error:', xhr.responseText); // عرض الخطأ إذا حدث خطأ في الاستدعاء
+            }
+        });
+    } else {
+        $('#productDetails').hide(); // إخفاء التفاصيل إذا لم يتم اختيار منتج
+    }
+});
+
+
+function editData(id) {
+
+    $.ajax({
+        type: 'GET',
+        url: `/purchases/${id}`, // استدعاء API بناءً على product_id
+        success: function(data) {
+            $('#product_name').val(data.Product_name);
+            $('#Barcode').val(data.Barcode);
+            $('#Quantity').val(data.quantity);
+            $('#Purchase_price').val(data.Purchase_price);
+            $('#Selling_price').val(data.Selling_price);
+            $('#Total').val(data.Total);
+            $('#Cost').val(data.Cost);
+            $('#Discount_earned').val(data.Discount_earned);
+            $('#Profit').val(data.Profit);
+            $('#Exchange_rate').val(data.Exchange_rate);
+            $('#product_id').val(data.product_id);
+            $('#Total_cost').val(data.Total_cost);
+            $('#note').val(data.note);
+            $('#purchase_invoice_id').val(data.Purchase_invoice_id);
+            $('#supplier_name').val(data.Supplier_id);
+            $('#purchase_id').val(data.purchase_id);
+            
+  },
+        error: function(xhr, status, error) {
+            // console.error("خطأ في جلب بيانات التعديل:", error);
+            errorMessage.show().text(data.message);
+            setTimeout(() => {
+              errorMessage.hide();
+            }, 5000);
+        }
+    });
+}

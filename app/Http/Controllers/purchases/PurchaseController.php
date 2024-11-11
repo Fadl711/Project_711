@@ -18,6 +18,7 @@ use App\Models\AccountingPeriod as ModelsAccountingPeriod;
 use App\Models\DailyEntrie;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\EscposImage;
 
@@ -43,7 +44,15 @@ class PurchaseController extends Controller
         $Currency_name=Currency::all();
         $products = Product::all();
         $mainAccount_Warehouse=MainAccount::where('AccountClass',AccountClass::STORE->value)->first();
-$subAccount=SubAccount::where('Main_id',$mainAccount_Warehouse->main_account_id)->get();
+        if ($mainAccount_Warehouse) 
+        {
+            $subAccount=SubAccount::where('Main_id',$mainAccount_Warehouse->main_account_id)->get();
+
+        }
+        else
+        {
+            $subAccount=null; 
+        }
         $mainAccount_supplier=MainAccount::where('AccountClass',AccountClass::SUPPLIER->value)->first();
         if(  $latestInvoice1)
         {
@@ -51,8 +60,7 @@ $subAccount=SubAccount::where('Main_id',$mainAccount_Warehouse->main_account_id)
 
         }
  
-        if($mainAccount_supplier)
-        {
+       
 
             $allSubAccounts = SubAccount::all();
                 return view('Purchases.create',
@@ -66,7 +74,7 @@ $subAccount=SubAccount::where('Main_id',$mainAccount_Warehouse->main_account_id)
 
             ]);
 
-                 }
+                 
         return view('Purchases.create');
 
     }
@@ -105,6 +113,7 @@ $subAccount=SubAccount::where('Main_id',$mainAccount_Warehouse->main_account_id)
         $purchaseInvoice->Receipt_number = $receiptNumber; // تم إزالة الفواصل
         $purchaseInvoice->Total_invoice = $totalInvoice; // تم إزالة الفواصل
         $purchaseInvoice->Total_cost = $totalCost; // تم إزالة الفواصل
+        $purchaseInvoice->Paid = 0; // تم إزالة الفواصل
         $purchaseInvoice->User_id = $request->User_id ?? auth()->id();
         $purchaseInvoice->accounting_period_id = $accountingPeriod->accounting_period_id;
         $purchaseInvoice->Invoice_type = $request->Payment_type ?? null;
@@ -118,209 +127,157 @@ $subAccount=SubAccount::where('Main_id',$mainAccount_Warehouse->main_account_id)
             return response()->json([
                 'success' => true,
                 'message' => 'تم الحفظ بنجاح',
-                'invoice_number' => $purchaseInvoice->id,
+                'invoice_number' => $purchaseInvoice->purchase_invoice_id,
                 'supplier_id' => $purchaseInvoice->Supplier_id
-            ], 201);
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'خطأ أثناء الحفظ: ' . $e->getMessage()
-            ], 500);
+            ]);
         }
     }
     
     public function storc(Request $request)
     {
-        $Product_name=$request->product_name;
-        $product = Product::where('product_name', $Product_name)->first();
-
-       if (!$product) {
-    return response()->json([
-        'success' => false,
-        'message' => 'هذا المنتج غير موجود في النظام. يجب عليك إضافته من صفحة المنتجات.'
-    ]);
-
-
-        }  
-           
-            if ($request->account_debitid == null) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'يجب عليك تحديد حساب مخزن.'
-                ],201);
-            }
-        if ($request->sub_account_debit_id == null) {
+        // التحقق من عدم تطابق الحسابات
+        if ($request->account_debitid === $request->sub_account_debit_id) {
             return response()->json([
                 'success' => false,
-                'message' => 'يجب عليك تحديد حساب الدائن.'
-            ],201);
-        }
-        if ($request->Quantity == null) {
-            return response()->json([
-                'success' => false,
-                'message' => 'يجب عليك تحديد الكمية المواد.'
+                'message' => 'يجب عليك تحديد مخازن مختلفة.'
             ]);
         }
-     
+    
+        // التحقق من وجود المنتج في النظام
+        $product = Product::where('product_name', $request->product_name)->first();
+        if (!$product) {
+            return response()->json([
+                'success' => false,
+                'message' => 'هذا المنتج غير موجود في النظام. يجب عليك إضافته من صفحة المنتجات.'
+            ]);
+        }
+    
+        // التحقق من صحة الحقول
+        $validationRules = [
+            'account_debitid' => 'required',
+            'sub_account_debit_id' => 'required',
+            'Quantity' => 'required|numeric|min:1',
+        ];
+    
+        $validator = Validator::make($request->all(), $validationRules);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first(),
+            ], 422);
+        }
+    
         // الحصول على الفترة المحاسبية المفتوحة
         $accountingPeriod = ModelsAccountingPeriod::where('is_closed', false)->first();
-        
+        if (!$accountingPeriod) {
+            return response()->json([
+                'success' => false,
+                'message' => 'لا توجد فترة محاسبية مفتوحة.'
+            ]);
+        }
+    
         // التحقق من وجود الفاتورة
-        $purchaseInvoice = PurchaseInvoice::where('purchase_invoice_id', $request->purchase_invoice_id)->first();
+        $purchaseInvoice = PurchaseInvoice::where('purchase_invoice_id', $request->purchase_invoice_id)
+            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+            ->first();
+    
         if (!$purchaseInvoice) {
             return response()->json([
                 'success' => false,
                 'message' => 'الفاتورة غير موجودة.'
-            ], 201);
+            ], 404);
         }
     
-        // تعيين الحسابات والمستودعات حسب نوع العملية
-        // $account_id = $request->sub_account_debit_id;
-      
-        // تحديد المستودعات بناءً على نوع العملية
-        if ($purchaseInvoice->transaction_type == 1) {
-            $warehouse_to_id = $request->account_debitid;
-            $account_id = $request->sub_account_debit_id;
-            $warehouse_from_id = null;
-        } 
-        if ($purchaseInvoice->transaction_type == 2) {
-            $warehouse_from_id = $request->account_debitid;
-            $account_id = $request->sub_account_debit_id;
-            $warehouse_to_id = null;
-        } 
-       
-        
-        if ($purchaseInvoice->transaction_type == 3) {
-          
-            if ($request->account_debitid == $request->sub_account_debit_id) {
+        // تعيين الحسابات والمستودعات بناءً على نوع العملية
+        $transactionType = $purchaseInvoice->transaction_type;
+        $warehouse_to_id = $warehouse_from_id = $account_id = null;
+    
+        switch ($transactionType) {
+            case 1: // عملية دخول المخزون
+                $warehouse_to_id = $request->account_debitid;
+                $account_id = $request->sub_account_debit_id;
+                break;
+            case 2: // عملية خروج المخزون
+                $warehouse_from_id = $request->account_debitid;
+                $account_id = $request->sub_account_debit_id;
+                break;
+            case 3: // عملية تحويل المخزون
+                if ($request->account_debitid === $request->sub_account_debit_id) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'يجب عليك تحديد مخازن مختلفة.'
+                    ]);
+                }
+                $warehouse_from_id = $request->account_debitid;
+                $warehouse_to_id = $request->sub_account_debit_id;
+                break;
+            default:
                 return response()->json([
                     'success' => false,
-                    'message' => 'يجب عليك تحديد مخازن مختلفة.'
-                ], 201);
-            } 
-                $warehouse_from_id= $request->account_debitid;
-                $warehouse_to_id = $request->sub_account_debit_id;
-                $account_id = null;
-        }    
-        // إنشاء سجل الشراء الجديد
-        
-        $currentDateTime = Carbon::now()->format('Y-m-d H:i:s');
-        if($request->purchase_id)
-        {
-         
-            $purchase = Purchase::where('purchase_id', $request->purchase_id)->first();
-            $NewPurchase = Purchase::updateOrCreate(
-                [
-                    'created_at' => $purchase->created_at,
-                    'accounting_period_id' => $accountingPeriod->accounting_period_id,
-                    'purchase_id' => $request->purchase_id,
-                ],
-                [
-                'Purchase_invoice_id' => $purchaseInvoice->purchase_invoice_id,
+                    'message' => 'نوع العملية غير معروف.'
+                ]);
+        }
+        // إنشاء أو تحديث سجل الشراء
+        $purchase = Purchase::updateOrCreate(
+            ['purchase_id' => $request->purchase_id,
+            'Purchase_invoice_id' => $purchaseInvoice->purchase_invoice_id,
+            'accounting_period_id' => $accountingPeriod->accounting_period_id,
+
+
+        ],
+            
+            [
                 'Product_name' => $request->product_name,
-                'accounting_period_id' => $accountingPeriod->accounting_period_id,
-                'Barcode' => $request->input('Barcode', ''),
-                'quantity' => $request->input('Quantity', 0),
-                'Purchase_price' => $request->input('Purchase_price', 0),
-                'Selling_price' => $request->input('Selling_price', 0),
-                'Total' => $request->input('Total', 0),
-                'Cost' => $request->input('Cost', 0),
-                'Currency_id' => $request->input('Currency_id', null),
+                'Barcode' => $request->Barcode ?? '',
+                'quantity' => $request->Quantity,
+                'Purchase_price' => $request->Purchase_price,
+                'Selling_price' => $request->Selling_price,
+                'Total' => $request->Total,
+                'Cost' => $request->Cost,
+                'Currency_id' => $request->Currency_id,
                 'Supplier_id' => $purchaseInvoice->Supplier_id ?? null,
-                'User_id' => $request->input('User_id', auth()->id()),
+                'User_id' => $request->User_id ?? auth()->id(),
                 'warehouse_to_id' => $warehouse_to_id,
                 'warehouse_from_id' => $warehouse_from_id,
-                'Discount_earned' => $request->input('Discount_earned', 0),
-                'Profit' => $request->input('Profit', 0),
-                'Exchange_rate' => $request->input('Exchange_rate', 1.0),
-                'note' => $request->input('note', ''),
+                'Discount_earned' => $request->Discount_earned ?? 0,
+                'Profit' => $request->Profit ?? 0,
+                'Exchange_rate' => $request->Exchange_rate ?? 1.0,
+                'note' => $request->note ?? '',
                 'product_id' => $request->product_id,
                 'account_id' => $account_id,
-                'transaction_type' => $purchaseInvoice->transaction_type
+                'transaction_type' => $transactionType
+            ]
+        );
+        // تحديث الفاتورة
+        $Purchasesum = $purchase->sum('Total');
+        $Invoice_type = $request->Payment_type;
+        $pamyment = $Invoice_type === "نقدا" ? $Purchasesum : 0;
+        try {
+            $purchaseInvoice->update([
+                'Invoice_type' => $Invoice_type,
+                'Receipt_number' => $request->Receipt_number,
+                'Total_invoice' => $Purchasesum,
+                'Paid' => $pamyment,
+                'Total_cost' => $request->Total_cost,
             ]);
-        
-            $Purchasesum = Purchase::where('purchase_invoice_id', $purchaseInvoice->purchase_invoice_id)->sum('Total');
-            
-        
+    
             return response()->json([
                 'success' => true,
-                'message' => 'تم التحديث بنجاح',
-                'purchase' => $NewPurchase,
+                'message' => 'تم الحفظ بنجاح وتحديث الفاتورة.',
+                'purchase' => $purchase,
                 'Purchasesum' => $Purchasesum,
-                'created_at' => $currentDateTime,
-            ], 201);
-      
-    }
-    else {
-
-$NewPurchase = Purchase::create(
-    [
-        'Purchase_invoice_id' => $purchaseInvoice->purchase_invoice_id,
-        'Product_name' => $request->product_name,
-        'purchase_id' => $request->purchase_id ,
-        'accounting_period_id' => $accountingPeriod->accounting_period_id,
-        'Barcode' => $request->Barcode ?? '',
-        'quantity' => $request->Quantity ?? 0,
-        'Purchase_price' => $request->Purchase_price ?? 0,
-        'Selling_price' => $request->Selling_price ?? 0,
-        'Total' => $request->Total ?? 0,
-        'Cost' => $request->Cost ?? 0,
-        'Currency_id' => $request->Currency_id ?? null,
-        'Supplier_id' => $purchaseInvoice->Supplier_id ?? null,
-        'User_id' => $request->User_id ?? auth()->id(),
-        'warehouse_to_id' => $warehouse_to_id,
-        'warehouse_from_id' => $warehouse_from_id,
-        'Discount_earned' => $request->Discount_earned ?? 0,
-        'Profit' => $request->Profit ?? 0,
-        'Exchange_rate' => $request->Exchange_rate ?? 1.0,
-        'note' => $request->note ?? '',
-        'product_id' => $request->product_id,
-        'account_id' => $account_id,
-        'transaction_type' => $purchaseInvoice->transaction_type
-    ]
-);
-    }
-    $Invoice_type= $request->Payment_type;
-    try {
-        $Purchasesum = Purchase::where('purchase_invoice_id', $purchaseInvoice->purchase_invoice_id)->sum('Total');
-        // $PurchaseInvoice = Purchase::where('purchase_invoice_id', $purchaseInvoice->purchase_invoice_id)->sum('Total');
-        $pamyment=0;
-        if( $Invoice_type==="نقدا")
-        {
-            $pamyment=$Purchasesum;
+                'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'حدث خطأ أثناء التحديث.']);
         }
-        else
-        {
-
-            $pamyment=0;
-            // $pamyment=$request->Total_cost;
- 
-        }
-
-
-      PurchaseInvoice::where('purchase_invoice_id', $purchaseInvoice->purchase_invoice_id)
-        ->update([
-            'Invoice_type' => $request->Payment_type,
-            'Receipt_number' => $request->Receipt_number,
-            'Total_invoice' => $Purchasesum,
-            'Paid' =>  $pamyment,
-            'Total_cost' => $request->Total_cost,
-           
-        ]);
-    
-    
-        return response()->json([
-            'success' => true,
-            'message' => 'تم الحفظ بنجاح والتحديث الفاتوره',
-            'purchase' => $NewPurchase,
-            'Purchasesum' => $Purchasesum,
-            'created_at' => $currentDateTime,
-        ]);
-    } catch (\Exception $e) {
-        return response()->json(['success' => false, 'message' => 'حدث خطأ أثناء التحديث.']);
     }
-
-}
+    
  private function convertArabicNumbersToEnglish($value)
     {
         $arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
@@ -339,7 +296,10 @@ public function search(Request $request)
     $warehouse_to_id = $request->account_debitid;
     
     // التحقق من وجود المنتج
-    $productData = Product::where('product_id', $id)->first();
+    $productData = Product::where('product_id', $id)
+    ->orWhere('Barcode',$id)
+
+    ->first();
     if (!$productData) {
         return response()->json(['success' => false, 'message' => 'المنتج غير موجود'], 404);
     }
@@ -466,19 +426,39 @@ $purchases = Purchase::where('User_id', $user_id)
 return response()->json($purchases
 );
 }
+public function deleteInvoice($id)
+{
+    try {
+      
+        $invoice = PurchaseInvoice::where('purchase_invoice_id', $id)->first();
+        if (!$invoice) {
+            return response()->json([
+                'success' => false,
+                'message' => 'لم يتم العثور على معرف الفاتورة.'
+            ]);        }
 
-// public function getProduct(Request $request)
-// {
-//     $product_id = $request->product_id; // الحصول على النص المدخل
-//     // البحث عن المنتجات المطابقة باستخدام الحقول الثلاثة
-//     $subAccounts = Product::where('product_id', 'LIKE', "%$product_id%")
-//         ->orWhere('product_name', 'LIKE', "%$product_id%")
-//         ->orWhere('Barcode', 'LIKE', "%$product_id%")
-//         ->get();
+        // حذف جميع المشتريات المرتبطة إن وجدت
+        if ($invoice->purchases()->exists()) {
+            $invoice->purchases()->delete();
+        }
 
-//     // إرجاع النتائج بصيغة JSON
-//     return response()->json($subAccounts);
-// }
+        // حذف الفاتورة نفسها
+        $invoice->delete();
 
+        // DB::commit();
+        return response()->json([
+            'success' => true,
+            'message' => 'تم حذف الفاتورة وجميع المشتريات المرتبطة بها بنجاح'
+        ]);
+
+    } catch (\Exception $e) {
+        // DB::rollBack();
+
+        return response()->json([
+            'success' => false,
+            'message' => 'حدث خطأ أثناء الحذف: ' . $e->getMessage()
+        ]);
+    }
+}
 
 }

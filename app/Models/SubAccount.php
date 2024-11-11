@@ -25,6 +25,10 @@ protected $primaryKey = 'sub_account_id';
      
     ];
  
+    public function mainAccount()
+    {
+        return $this->belongsTo(MainAccount::class, 'Main_id', 'main_account_id');
+    }
   
     public function daily_entries()
 {
@@ -40,7 +44,10 @@ public function purchase_invoices()
     return $this->belongsTo(PurchaseInvoice::class, 'Supplier_id', 'sub_account_id');
 }
 
-
+public function getMainAccountClassLabelAttribute()
+{
+    return $this->mainAccount->accountClassLabel() ?? 'غير معروف';
+}
 
 // علاقة belongsTo بين الحساب الفرعي والحساب الرئيسي
 
@@ -60,9 +67,7 @@ public function dailyEntries()
 {
     return $this->hasMany(DailyEntrie::class, 'account_Credit_id', 'sub_account_id');
 }
-public function mainAccount() {
-    return $this->belongsTo(MainAccount::class, 'Main_id', 'main_account_id');
-}
+
 
 public function debitEntries()
     {

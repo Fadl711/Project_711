@@ -5,8 +5,8 @@
 
 <form action="{{route('daily_restrictions.stor')}}" method="POST"  enctype="multipart/form-data">
     @csrf
-    <div class="mb-4">
-        <label for="page_id" class="block font-medium mb-2">رقم الصفحة</label>
+    <div class="">
+        <label for="page_id" class="block font-medium ">رقم الصفحة</label>
 @auth
 @isset($dailyPage->page_id)
 <input type="text" name="page_id" id="page_id" class=" rounded-md w-[10%]"  value="{{$dailyPage['page_id']}}">
@@ -23,14 +23,13 @@
 
 <form id="dailyRestrictionsForm" method="POST" class="space-y-6">
     @csrf
-    <h2 class="text-1xl font-bold text-center ">إضافة قيد يومي</h2>
     <div class="container mx-auto  px-4">
         <!-- Title -->
 
         <!-- Form Layout -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="shadow-lg rounded-lg p-4 bg-white border">
-                <label for="Invoice_type" class="block font-medium mb-2 ">  نوع المستند</label>
+            <div class="shadow-lg rounded-lg p-1 bg-white border">
+                <label for="Invoice_type" class="block font-medium  ">  نوع المستند</label>
                 <select name="Invoice_type" dir="ltr" class=" select2 inputSale" id="Invoice_type">
                     <!-- سيتم تعبئة الخيارات بناءً على الحساب الرئيسي المحدد -->
                     <option value="قيد" selected>اختر  نوع المستند</option>
@@ -43,10 +42,10 @@
                     </select>
             </div>
             <!-- حساب المدين -->
-            <div class="shadow-lg rounded-lg p-4 bg-white border">
-                <h3 class="text-lg font-semibold mb-4">المدين</h3>
-                <div class="mb-4">
-                    <label for="account_debit_id" class="block font-medium mb-2">حساب المدين/الرئيسي</label>
+            <div class="shadow-lg rounded-lg p-1 bg-white border">
+                <h3 class=" font-semibold">المدين</h3>
+                <div class="">
+                    <label for="account_debit_id" class="block font-medium ">حساب المدين/الرئيسي</label>
                     <select name="account_debit_id" id="account_debit_id" dir="ltr" class="input-field  select2 inputSale" required>
                        <!-- إضافة خيارات الحسابات -->
                        @isset($mainAccounts)
@@ -57,8 +56,8 @@
                       @endisset
                     </select>
                 </div>
-                <div class="mb-4">
-                    <label for="sub_account_debit_id" class="block font-medium mb-2 ">حساب المدين/الفرعي</label>
+                <div class="">
+                    <label for="sub_account_debit_id" class="block font-medium  ">حساب المدين/الفرعي</label>
                     <select name="sub_account_debit_id" id="sub_account_debit_id" dir="ltr" class="input-field select2 inputSale" >
                         <!-- سيتم تعبئة الخيارات بناءً على الحساب الرئيسي المحدد -->
                         <option value="" selected>اختر الحساب الفرعي</option>
@@ -66,10 +65,10 @@
                 </div>
             </div>
             <!-- حساب الدائن -->
-            <div class="shadow-lg rounded-lg p-4 bg-white border">
-                <h3 class="text-lg font-semibold mb-4">الدائن</h3>
-                <div class="mb-4">
-                    <label for="account_Credit_id" class="block font-medium mb-2">حساب الدائن/الرئيسي</label>
+            <div class="shadow-lg rounded-lg p-1 bg-white border">
+                <h3 class=" font-semibold ">الدائن</h3>
+                <div class="">
+                    <label for="account_Credit_id" class="block font-medium ">حساب الدائن/الرئيسي</label>
                     <select name="account_Credit_id" id="account_Credit_id" class=" select2 inputSale" required>
                         <option value="" selected>اختر الحساب</option>
 
@@ -79,8 +78,8 @@
                         @endforeach
                         @endisset                                             </select>
                 </div>
-                <div class="mb-4 ">
-                    <label for="sub_account_Credit_id" class="block font-medium mb-2">حساب الدائن/الفرعي</label>
+                <div class=" ">
+                    <label for="sub_account_Credit_id" class="block font-medium ">حساب الدائن/الفرعي</label>
                     <select name="sub_account_Credit_id"  step="0.01" id="sub_account_Credit_id" class="block w-full select2 p-2 border rounded-md inputSale">
                        </select>
                 </div>
@@ -88,8 +87,8 @@
             </div>
         </div>
         <!-- تفاصيل إضافية -->
-        <div class="shadow-lg rounded-lg p-4 bg-white border">
-          <h3 class="text-lg font-semibold mb-4">تفاصيل إضافية</h3>
+        <div class="shadow-lg rounded-lg p-1 bg-white border">
+          <h3 class="text-lg font-semibold mb-">تفاصيل إضافية</h3>
           <div class="grid grid-cols-2 md:grid-cols-2 gap-4">
           <div>
             <label for="Amount_debit" class="block font-medium mb-2">المبلغ المدين</label>

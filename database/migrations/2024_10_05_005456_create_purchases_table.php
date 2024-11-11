@@ -15,7 +15,8 @@ return new class extends Migration
             $table->increments('purchase_id')->unsigned();
             $table->string('Product_name');
             $table->integer('product_id');
-            $table->string('Barcode')->nullable();
+            $table->bigInteger('Barcode')->unsigned()->nullable(); // إضافة العمود Barcode
+
             $table->double('Purchase_price', 15, 2)->nullable();
             $table->double('Selling_price', 15, 2)->nullable();
             $table->double('Total', 15, 2);

@@ -68,6 +68,8 @@ Route::delete('/Category/{Category}',[CategoryController::class,'destroy'])->nam
 
 Route::get('/purchases/{id}',[PurchaseController::class,'edit'])->name('purchases.edit');
 Route::delete('/purchases/{id}',[PurchaseController::class,'destroy'])->name('purchases.destroy');
+// Route::delete('/purchases/destroyInvoice/{id}',[PurchaseController::class,'destroyInvoice'])->name('purchases.destroyInvoice');
+Route::delete('/purchase-invoices/{id}', [PurchaseController::class, 'deleteInvoice'])->name('purchase-invoice.delete');
 
 
 

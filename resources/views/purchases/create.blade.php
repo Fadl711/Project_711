@@ -23,12 +23,12 @@
                 @csrf
                 <div class="flex gap-4">
                     <div class="flex">
-                        <label for="" class="labelSale">نقدا</label>
-                        <input type="radio" name="Payment_type"   value="نقدا"  >
-                    </div>
-                    <div class="flex">
                         <label for="" class="labelSale">اجل</label>
                         <input type="radio" name="Payment_type" value="اجل"   >
+                    </div>
+                    <div class="flex">
+                        <label for="" class="labelSale">نقدا</label>
+                        <input type="radio" name="Payment_type"   value="نقدا"  required >
                     </div>
                 </div>
                 <div class="md:justify- text-right grid md:grid-cols-8 gap-2">
@@ -40,22 +40,25 @@
                             @endforeach
                         </select>
                         </div>
+                        <div >
+                            <label for="mainaccount_debit_id" class=" font-medium labelSale">  حساب التصدير  </label>
+                           <select name="mainaccount_debit_id" id="mainaccount_debit_id" dir="ltr" class="input-field  select2 inputSale" required >
+                              @isset($mainAccounts)
+                            <option value="" selected>اختر الحساب</option>
+                             @foreach ($mainAccounts as $mainAccount)
+                                  <option value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
+                             @endforeach
+                             @endisset 
+                           </select>
+                       </div>
                     <div>
                         <label for="Supplier_id" class="labelSale">اسم المورد</label>
                         <select name="Supplier_id" id="Supplier_id" dir="ltr" class="input-field w-full select2 inputSale" >
-                            @isset($AllSubAccounts)
-                            <option value="" selected> </option>
-                                @foreach ($AllSubAccounts as $subAccount)
-                                    @if ($subAccount->Main_id == $mainAccount_supplier->main_account_id)
-                                        <option value="{{$subAccount->sub_account_id}}">{{$subAccount->sub_name}}</option>
-                                    @endif
-                                @endforeach
-                            @endisset
                         </select>
                     </div>
                     <div >
                         <label for="Receipt_number" class="labelSale">رقم الإيصال</label>
-                        <input type="text" name="Receipt_number" id="Receipt_number" placeholder="0" class="inputSale" />
+                        <input type="text" name="Receipt_number" id="Receipt_number" placeholder="0" class="inputSale english-numbers" />
                     </div>
                     <div>
                         <label for="Total_cost" class="labelSale">اجمالي التكلفة</label>
@@ -102,7 +105,7 @@
                 </div>
                 <div >
                     <label for="main_account_debit_id" class=" font-medium labelSale">  حساب التصدير  </label>
-                   <select name="main_account_debit_id" id="main_account_debit_id" dir="ltr" class="input-field  select2 inputSale" >
+                   <select name="main_account_debit_id" id="main_account_debit_id" dir="ltr" class="input-field  select2 inputSale" required >
                       @isset($mainAccounts)
                     <option value="" selected>اختر الحساب</option>
                      @foreach ($mainAccounts as $mainAccount)
@@ -122,11 +125,11 @@
                 <div >
                     <label for="product_id" class="block font-medium  labelSale">بحث عن المنتج</label>
                     <select name="product_id" id="product_id" dir="ltr" class="input-field select2 inputSale" required>
-                        <option value="0" selected>اختر منتج</option>
                         @isset($products)
-                            @foreach ($products as $product)
-                                <option value="{{$product->product_id}}">{{$product->product_name}}</option>
-                            @endforeach
+                        <option value="9505070441001"  >اختر منتج</option>
+                        @foreach ($products as $product)
+                        <option value="{{$product->product_id}}">{{$product->product_name}}</option>
+                        @endforeach
                         @endisset
                     </select>
                 </div>
@@ -141,14 +144,14 @@
                 </div>
                 <div class="">
                     <label for="QuantityPurchase" class="labelSale"> الكمية المتوفره</label>
-                    <input type="number" name="QuantityPurchase" id="QuantityPurchase" placeholder="0" class="inputSale english-numbers"  />
+                    <input type="number" name="QuantityPurchase" id="QuantityPurchase" placeholder="0" class="inputSale english-numbers"   />
                 </div>
             </div>
            
             <div class="flex gap-1 px-1">
                 <div class="">
                     <label for="Purchase_price" class="labelSale">سعر الشراء</label>
-                    <input type="text" name="Purchase_price" id="Purchase_price" placeholder="0" class="inputSale"  />
+                    <input type="text" name="Purchase_price" id="Purchase_price" placeholder="0" class="inputSale"  required/>
                 </div>
                 <div  class=" sm:col-span-3 labelSale mt-7">
                     <button class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700"  id="saveButton">اضافة </button>
@@ -198,12 +201,12 @@
                     <label for="Exchange_rate" class="labelSale"> سعر الصرف</label>
                     <input type="number" name="Exchange_rate" id="Exchange_rate" class="inputSale" />
                 </div>
-            </div>
+            </div>            <div class="flex px-1 gap-1">
+
                 <div class="px-1">
                     <label for="note" class="labelSale">الوصف</label>
                     <textarea name="note" id="note" placeholder="0" class="inputSale"></textarea>
             </div>
-            <div class="flex px-1 gap-1">
                 <div>
                 <label for="purchase_invoice_id" class="labelSale">رقم الفاتورة</label>
                 <input type="number" name="purchase_invoice_id" id="purchase_invoice_id" placeholder="0" class="inputSale" required />
@@ -230,11 +233,11 @@
                         <input type="hidden" name="User_id" value="{{Auth::user()->id}}"/>
                       </div>
                 <div class="col-span-6 sm:col-span-3" >
-                <button class="flex inputSale mt-2 " type="submit" >
+                <button class="flex inputSale mt-2 " type="button" onclick="deleteInvoice()" >
                         <svg class="w-6 h-5 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M11 16h2m6.707-9.293-2.414-2.414A1 1 0 0 0 16.586 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V7.414a1 1 0 0 0-.293-.707ZM16 20v-6a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v6h8ZM9 4h6v3a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V4Z"/>
                         </svg>
-                        <span class="textNav mr-1"> حفظ</span>
+                        <span class="textNav mr-1"> حذف</span>
                 </button>
                 </div>
             </div>
@@ -322,12 +325,15 @@ else{
             }, 3000);
         }
     }
-</script>
 
 
    
     </script>
+    
+ 
 <script type="text/javascript">
+
+
    $(function() {
 
         const form = $('#invoicePurchases'),
@@ -339,9 +345,6 @@ else{
               supplier_id = $('#supplier_name'),
               account_debitid = $('#sub_account_debit_id'),
               account_debitid1 = $('#account_debitid'),
-
-            
-              // حقل رقم الفاتورة
               csrfToken = $('input[name="_token"]').val();
         submitButton.click(function(e) {// عند الضغط على زر الحفظ
             e.preventDefault(); // منع تحديث الصفحة
@@ -397,9 +400,19 @@ else{
         });
     });
     $(document).ready(function () {
+        $('#Supplier_id').on('change', function() {
+    const receipt_number = $('#Receipt_number');
+
+    // receipt_number.focus();
+    $('#Receipt_number').focus(); // تركيز المؤشر على الحقل
+
+    $('#Supplier_id').select2('close');
+  // الانتقال إلى الحقل التالي
+
+
+});
       const form = $('#ajaxForm');
-      const successMessage = $('#successMessage');
-      const errorMessage = $('#errorMessage');
+   
       const inputs = $('.input-field'); // تحديد جميع الحقول
       const Product_name = $('#product_name');
       const selectedPaymentType = $('input[name="Payment_type"]');
@@ -430,19 +443,19 @@ else{
       $(document).keydown(function(event) {
             if (event.ctrlKey && event.shiftKey) {
                 event.preventDefault(); // منع السلوك الافتراضي (حفظ الصفحة)
-                saveData(); // استدعاء دالة الحفظ
+                saveData(event); // استدعاء دالة الحفظ
             }
         });
         $('#saveButton').click(function() {
-            saveData(); // استدعاء دالة الحفظ
+            saveData(event); // استدعاء دالة الحفظ
         });
        
-      function saveData() {
+      function saveData(event) {
         event.preventDefault(); // منع تحديث الصفحة
             const formData = new FormData($('#ajaxForm')[0]);
             const selectedPaymentType = $('input[name="Payment_type"]:checked').val();
     formData.append('Payment_type', selectedPaymentType || ''); // إضافة القيمة المختارة أو قيمة فارغة إذا لم يتم اختيار شيء
- 
+
     // إذا كان هناك حقل Receipt_number، أضفه أيضًا
     formData.append('Receipt_number', $('#Receipt_number').val() || '');
             $.ajax({
@@ -458,23 +471,19 @@ else{
                   if (data.success) {
                        successMessage.show().text(data.message);
                        errorMessage.hide();
-
                       setTimeout(() => {
                           successMessage.hide();
                       }, 3000);
                       addToTable(data.purchase);
                       $('#Total_invoice').val(data.Purchasesum);
-
-                      
                       emptyData();
-
-                    //   $('#product_id').focus();
                   } else {
                       // إظهار رسالة عند وجود نفس الاسم
                       errorMessage.show().text(data.message);
                       setTimeout(() => {
                         errorMessage.hide();
                       }, 5000);
+                      
                       Product_name.focus();
                   }
               },
@@ -503,102 +512,6 @@ else{
     }
   </style>
 
-<script>
-$(document).ready(function() {
-        Barcode        = $('#Barcode'),
-        QuantityPurchase = $('#QuantityPurchase'),
-        account_debitid = $('#account_debitid'),
-        product_name   = $('#product_name'),
-        Selling_price  = $('#Selling_price'),
-        Purchase_price = $('#Purchase_price'),
-        Quantity       = $('#Quantity'),
-        Total_cost     = $('#Total_cost').val(),
-        Cost           = $('#Cost').val(),
 
-    $('#product_id').on('change', function() {    // عند تغيير المنتج المختار في القائمة
 
-        var productId = $(this).val(); // الحصول على قيمة المنتج المختار
-        if (productId) { // تحقق من وجود منتج محدد
-            $.ajax({
-                url: `/api/products/search?id=${productId}`, // استدعاء API بناءً على product_id
-                method: 'GET',
-                data:account_debitid,
-                success: function(product) {
-                    displayProductDetails(product); // استعراض تفاصيل المنتج إذا تمت الاستجابة بنجاح
-                },
-                error: function(xhr) {
-                    console.error('Error:', xhr.responseText); // عرض الخطأ إذا حدث خطأ في الاستدعاء
-                }
-            });
-        } else {
-            $('#productDetails').hide(); // إخفاء التفاصيل إذا لم يتم اختيار منتج
-        }
-    });
-  var total_cost = parseFloat($('#Total_cost').val());
-    var purchase_price = parseFloat($('#Purchase_price').val());
-    if (!isNaN(total_cost) && !isNaN(purchase_price) && purchase_price > 0) {    // التأكد من أن السعر الإجمالي وسعر الشراء أرقام صالحة لتجنب قسمة على صفر أو أخطاء
-        var cost = total_cost / purchase_price; // حساب التكلفة
-        $('#Cost').val(cost); // إضافة السعر إلى الحقل مع تقريبه إلى خانتين عشريتين
-    } else {
-        $('#Cost').val(''); // في حال وجود خطأ في المدخلات، يتم تفريغ الحقل
-    }
-});
-</script>
-  <script>
-  
-  function editData(id) {
-
-    $.ajax({
-        type: 'GET',
-        url: '{{ route("purchases.edit", ":id") }}'.replace(':id', id),
-        success: function(data) {
-            // تحديث الحقول في النموذج
-            $('#product_name').val(data.Product_name);
-            $('#Barcode').val(data.Barcode);
-            $('#Quantity').val(data.quantity);
-            $('#Purchase_price').val(data.Purchase_price);
-            $('#Selling_price').val(data.Selling_price);
-            $('#Total').val(data.Total);
-            $('#Cost').val(data.Cost);
-            $('#Discount_earned').val(data.Discount_earned);
-            $('#Profit').val(data.Profit);
-            $('#Exchange_rate').val(data.Exchange_rate);
-            $('#product_id').val(data.product_id);
-            $('#Total_cost').val(data.Total_cost);
-            $('#note').val(data.note);
-            $('#purchase_invoice_id').val(data.Purchase_invoice_id);
-            $('#supplier_name').val(data.Supplier_id);
-            $('#purchase_id').val(data.purchase_id);
-  },
-        error: function(xhr, status, error) {
-            console.error("خطأ في جلب بيانات التعديل:", error);
-        }
-    });
-}
-
-function deleteData(id) {
-    var successMessage = $('#successMessage');
-    if (confirm('هل أنت متأكد من حذف البيانات؟')) {
-        $.ajax({
-            type: 'DELETE',
-            url: '{{ route("purchases.destroy", ":id") }}'.replace(':id', id),
-            data: {
-                _token: '{{ csrf_token() }}'
-            },
-            success: function(response) {
-                // إزالة الصف من DOM بدون إعادة تحميل الصفحة
-                $('#row-' + id).remove();
-                successMessage.text('تم حذف البيانات بنجاح!').show();
-                      setTimeout(() => {
-                      successMessage.hide();
-                      }, 500);
-            },
-            error: function(xhr, status, error) {
-                alert('حدث خطأ أثناء الحذف. الرجاء المحاولة مرة أخرى.');
-                console.error('Error:', error);
-            }
-        });
-    }
-}
-  </script>
 @endsection
