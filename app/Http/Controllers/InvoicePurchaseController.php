@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 class InvoicePurchaseController extends Controller
 {
 
+    
 
     public function index()
     {
@@ -30,31 +31,31 @@ class InvoicePurchaseController extends Controller
             'supplier.mainAccount',
             'user'
         ])->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-          ->whereIn('transaction_type', [TransactionType::PURCHASE->value, TransactionType::RETURN->value]) // هنا نستخدم القيم مباشرة من enum
+          ->whereIn('transaction_type', [TransactionType::PURCHASE->value, TransactionType::RETURN->value, TransactionType::INVENTORY_TRANSFER->value]) // هنا نستخدم القيم مباشرة من enum
           ->get();
         
         // استخدام map لتنسيق البيانات
-        $purchaseInvoices = $purchaseInvoices->map(function ($invoice) {
+        $purchaseInvoices = $purchaseInvoices->transform(function ($invoice) {
             return [
-                'formatted_date' => $invoice->formatted_date,
-                'supplier_name' => $invoice->supplier->sub_name ?? 'غير معروف',
-                'main_account_class' => $invoice->supplier->mainAccount->accountClassLabel() ?? 'غير معروف',  // استخدام دالة label هنا
-                'transaction_type' => TransactionType::from($invoice->transaction_type)->label(), // استخدام enum للحصول على التسمية
-                'invoice_number' => $invoice->purchase_invoice_id,
-                'receipt_number' => $invoice->Receipt_number,
-                'Invoice_type' => $invoice->Invoice_type,
-
-                'total_invoice' => $invoice->Total_invoice,
-                'total_cost' => $invoice->Total_cost,
-                'paid' => $invoice->Paid,
-                'user_name' => $invoice->userName,
-                'updated_at' => $invoice->updated_at->format('Y-m-d')
+                'formatted_date' => $invoice->formatted_date ?? 'غير متاح',
+                'supplier_name' => optional($invoice->supplier)->sub_name ?? 'غير معروف',
+                'main_account_class' => optional($invoice->supplier?->mainAccount)->accountClassLabel() ?? 'غير معروف',
+                'transaction_type' => TransactionType::tryFrom($invoice->transaction_type)?->label() ?? 'غير معروف',
+                'invoice_number' => $invoice->purchase_invoice_id ?? 'غير متاح',
+                'receipt_number' => $invoice->Receipt_number ?? 'غير متاح',
+                'Invoice_type' => $invoice->Invoice_type ?? 'غير متاح',
+                'total_invoice' => $invoice->Total_invoice ?? 0,
+                'total_cost' => $invoice->Total_cost ?? 0,
+                'paid' => $invoice->Paid ?? 0,
+                'user_name' => $invoice->userName ?? 'غير معروف',
+                'updated_at' => optional($invoice->updated_at)->format('Y-m-d') ?? 'غير متاح'
             ];
         });
-    
-        return view('invoice_purchases.all_bills_purchase', compact('purchaseInvoices'));
+        
+        return view('invoice_purchases.all_bills_purchase', ['purchaseInvoices'=>$purchaseInvoices]);
     }
     
+
 
 public function bills_purchase_show($id){
     $Purchase=Purchase::where('purchase_id',$id)->first();
