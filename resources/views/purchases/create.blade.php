@@ -290,6 +290,8 @@ else{
 
 
 </script>
+<a href="tel:+776327938">اتصل بالرقم</a>
+
 <button onclick="openAndPrintInvoice2(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح وطباعة الفاتورة</button>
 <div id="successMessage" style="display:none;" class="text-red-500 font-semibold mt-2"></div>
 

@@ -73,7 +73,7 @@
 
         <header class="flex justify-between items-center border-b-2 border-gray-800 pb-4 mb-4">
             <div>
-                <h2 class="text-lg font-bold">فاتورة الشراء</h2>
+                {{-- <h2 class="text-lg font-bold">فاتورة الشراء</h2> --}}
                 <p>اسم المورد:  
                     @isset($SubAccounts)
                     
@@ -139,9 +139,9 @@
                         <td class="p-2 text-right">{{ $Purchase->Barcode }}</td>
                         <td class="p-2 text-right">{{ $Purchase->Product_name }}</td>
                         <td class="p-2 text-center">{{ $Purchase->quantity }}</td>
-                        <td class="p-2 text-right">{{ $Purchase->Purchase_price }}</td>
-                        <td class="p-2 text-right">{{ $Purchase->Selling_price }}</td>
-                        <td class="p-2 text-right">{{ $Purchase->Total }}</td>
+                        <td class="p-2 text-right">{{number_format( $Purchase->Purchase_price) }}</td>
+                        <td class="p-2 text-right">{{number_format( $Purchase->Selling_price )}}</td>
+                        <td class="p-2 text-right">{{ number_format($Purchase->Total )}}</td>
                         <td class="p-2 text-right">{{ $Purchase->Cost }}</td>
                         <td class="p-2 text-right">{{ $Purchase->Discount_earned }}</td>
                         <td class="p-2 text-right">{{ $Purchase->note }}</td>
