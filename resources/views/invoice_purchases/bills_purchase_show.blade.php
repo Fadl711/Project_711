@@ -73,7 +73,6 @@
 
         <header class="flex justify-between items-center border-b-2 border-gray-800 pb-4 mb-4">
             <div>
-                {{-- <h2 class="text-lg font-bold">فاتورة الشراء</h2> --}}
                 <p>اسم المورد:  
                     @isset($SubAccounts)
                     
@@ -90,6 +89,7 @@
 
                 </p>
                 <p>التلفون: 776327938</p>
+                <p>العملة: 776327938</p>
             </div>
             <div>
                 <h2 class="text-lg font-bold">فاتورة :
@@ -118,15 +118,15 @@
         <table class="w-full mb-4 text-sm">
             <thead>
                 <tr class="bg-blue-100">
-                    <th class="p-2 text-right">الباركود</th>
+                    <th class="p-2 text-right">م</th>
                     <th class="p-2 text-right">اسم الصنف</th>
+                    <th class="p-2 text-right"> الوحده</th>
+
                     <th class="p-2 text-center">الكمية</th>
                     <th class="p-2 text-right">سعر الشراء</th>
-                    <th class="p-2 text-right">سعر البيع</th>
+                    <th class="border border-black px-2 py-1">المخزن</th>
                     <th class="p-2 text-right">الإجمالي</th>
-                    <th class="p-2 text-right">التكلفة</th>
-                    <th class="p-2 text-right">التخفيض</th>
-                    <th class="p-2 text-right">العلامة التجارية</th>
+                    {{-- <th class="p-2 text-right">التكلفة</th> --}}
                 </tr>
             </thead>
             <tbody>
@@ -136,15 +136,24 @@
 
                 @foreach ($DataPurchase as $Purchase)
                     <tr class="bg-white">
-                        <td class="p-2 text-right">{{ $Purchase->Barcode }}</td>
+                        <td>{{$loop->iteration}}</td>
                         <td class="p-2 text-right">{{ $Purchase->Product_name }}</td>
+                        <td class="p-2 text-right">
+                            @isset($Categorys)
+                            @foreach ($Categorys as $Category)
+                            @if($Category->categorie_id === $Purchase->categorie_id)
+                            {{ $Category->Categorie_name }}
+                            @endif
+                            @endforeach
+                         
+                            @endisset
+
+                            </td>
                         <td class="p-2 text-center">{{ $Purchase->quantity }}</td>
                         <td class="p-2 text-right">{{number_format( $Purchase->Purchase_price) }}</td>
-                        <td class="p-2 text-right">{{number_format( $Purchase->Selling_price )}}</td>
+                        <td class="p-2 text-right">{{ $Purchase->warehouse_to_id }}</td>
                         <td class="p-2 text-right">{{ number_format($Purchase->Total )}}</td>
-                        <td class="p-2 text-right">{{ $Purchase->Cost }}</td>
-                        <td class="p-2 text-right">{{ $Purchase->Discount_earned }}</td>
-                        <td class="p-2 text-right">{{ $Purchase->note }}</td>
+                        {{-- <td class="p-2 text-right">{{ $Purchase->Cost }}</td> --}}
                     </tr>
                 @endforeach
                 @php
@@ -161,16 +170,16 @@
                     <p class="font-semibold">الخصم: {{$Discount_earnedValue}}</p>
                 </div> --}}
                 <div>
-                    <p class="font-semibold">الجمالي تكلفة الشراء: {{$Purchase_priceSum ?? 0}}</p>
+                    <p class="font-semibold">الجمالي تكلفة الشراء: {{number_format($Purchase_priceSum) ?? 0}}</p>
                 </div>
                 <div>
-                    <p class="font-semibold">الجمالي  المصاريف: {{$Purchase_CostSum ?? 0}}</p>
+                    <p class="font-semibold">الجمالي  المصاريف: {{ number_format($Purchase_CostSum ?? 0)}}</p>
                 </div>
                 
-                <div>
+                {{-- <div>
                     <p class="font-semibold">صافي الفاتورة: 99,000 ريال يمني</p>
                     <p class="text-xs text-gray-600">الفين ومائتين وخمسين ريال يمني</p>
-                </div>
+                </div> --}}
             </div>
         </div>
 

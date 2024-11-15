@@ -19,6 +19,9 @@ return new class extends Migration
             $table->decimal('Paid',15, 2)->nullable();
             $table->integer('User_id')->unsigned();
             $table->string('Invoice_type')->nullable();
+            $table->integer('Currency_id')->unsigned()->nullable();
+            $table->string('currency_symbol')->unique()->nullable();
+            $table->decimal('exchange_rate',8,2)->unsigned()->nullable();
             $table->unsignedTinyInteger('transaction_type')->comment('يحدد نوع المعاملة');
             $table->integer('Supplier_id')->unsigned()->nullable();
             $table->integer('accounting_period_id')->unsigned();

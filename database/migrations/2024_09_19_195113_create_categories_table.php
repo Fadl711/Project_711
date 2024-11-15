@@ -13,9 +13,13 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->increments('categorie_id')->unsigned();
-            $table->string('Categorie_name')->unique();
+            $table->integer('product_id')->unsigned();
+            $table->string('Categorie_name');
             $table->integer('user_id')->unsigned()->nullable();
             $table->timestamps();
+            // $table->foreign('product_id')->references('product_id')->on('products');
+
+
 
             $table->foreign('user_id')->references('id')->on('users');
         });

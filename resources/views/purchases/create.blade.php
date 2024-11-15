@@ -1,5 +1,13 @@
 @extends('layout')
 @section('conm')
+
+@if($errors->any())
+    @foreach ($errors()->all() as $error)
+    <div class="alert alert-danger">{{$error}}</div>
+    @endforeach
+
+
+@endif
 <style>
     /* تثبيت الأرقام بالإنجليزية */
     .english-numbers {
@@ -14,13 +22,18 @@
   <script>
 
 </script>
-<div id="successMessage" class="alert-success" style="display: none;"></div>
-<div id="errorMessage" class="alert-errorMessage" style="display: none;"></div>
+{{-- <div id="successMessage" class="alert-success" style="display: none;"></div> --}}
+{{-- <div id="errorMessage" class="alert-errorMessage" style="display: none;"></div> --}}
+
+<div id="errorMessage" style="display: none;" class="alert alert-danger"></div>
+<div id="successMessage" style="display: none;" class="alert alert-success"></div>
+
 <div class="min-w-[20%] px-1  bg-white rounded-xl ">
     <div class=" flex items-center">
         <div class="w-full min-w-full  py-1">
-            <form id="invoicePurchases">
+            <form id="invoicePurchases" action="{{ route('invoicePurchases.store') }}" method="POST">
                 @csrf
+              
                 <div class="flex gap-4">
                     <div class="flex">
                         <label for="" class="labelSale">اجل</label>
@@ -31,7 +44,7 @@
                         <input type="radio" name="Payment_type"   value="نقدا"  required >
                     </div>
                 </div>
-                <div class="md:justify- text-right grid md:grid-cols-8 gap-2">
+                <div class="md:justify- text-right grid md:grid-cols-9 gap-2">
                     <div>
                         <label for="transaction_type" class="labelSale">نوع العملية </label>
                         <select dir="ltr" id="transaction_type" class="inputSale input-field" name="transaction_type">
@@ -51,7 +64,7 @@
                              @endisset 
                            </select>
                        </div>
-                    <div>
+                       <div>
                         <label for="Supplier_id" class="labelSale">اسم المورد</label>
                         <select name="Supplier_id" id="Supplier_id" dir="ltr" class="input-field w-full select2 inputSale" >
                         </select>
@@ -76,7 +89,19 @@
                     @auth
                     <input type="hidden" name="User_id"  id="User_id" value="{{Auth::user()->id}}">
                     @endauth
-  
+                    <div>
+                        <label for="Currency_id" class="labelSale">العملة الشراء</label>
+                        <select   dir="ltr" id="Currency_id" class="inputSale input-field " name="Currency_id"  >
+                            @isset($Currency_name)
+                          @foreach ($Currency_name as $cur)
+                          <option @isset($cu)
+                          @selected($cur->currency_id==$cu->Currency_id)
+                          @endisset
+                          value="{{$cur->currency_id}}">{{$cur->currency_name}}</option>
+                           @endforeach
+                           @endisset
+                          </select>
+                        </div>
                     <div id="newInvoice1" style="display: block">
                         <button  id="newInvoice" class="inputSale flex font-bold">
                             اضافة الفاتورة
@@ -133,6 +158,7 @@
                         @endisset
                     </select>
                 </div>
+                 
                 <div class="">
                     <label for="product_name" class="labelSale">اسم المنتج</label>
                     <input type="text" name="product_name" id="product_name" class="inputSale " required />
@@ -142,10 +168,17 @@
                     <label for="Quantity" class="labelSale">الكمية</label>
                     <input type="text" name="Quantity" id="Quantity" placeholder="0" class="inputSale english-numbers" required />
                 </div>
-                <div class="">
+                {{-- <div class="">
                     <label for="QuantityPurchase" class="labelSale"> الكمية المتوفره</label>
                     <input type="number" name="QuantityPurchase" id="QuantityPurchase" placeholder="0" class="inputSale english-numbers"   />
-                </div>
+                </div> --}}
+                <div>
+
+                <label for="Categorie_name" class="block font-medium  labelSale">الوحده  </label>
+                <select name="Categorie_name" id="Categorie_name" dir="ltr" class="input-field select2 inputSale" required>
+                 
+                </select>
+            </div>
             </div>
            
             <div class="flex gap-1 px-1">
@@ -184,19 +217,7 @@
                     <label for="Barcode" class="labelSale">الباركود</label>
                     <input type="number" name="Barcode" id="Barcode" placeholder="0" class="inputSale" />
                 </div>
-                <div>
-                <label for="Currency_id" class="labelSale">العملة الشراء</label>
-                <select   dir="ltr" id="Currency_id" class="inputSale input-field " name="Currency_id"  >
-                    @isset($Currency_name)
-                  @foreach ($Currency_name as $cur)
-                  <option @isset($cu)
-                  @selected($cur->currency_id==$cu->Currency_id)
-                  @endisset
-                  value="{{$cur->currency_id}}">{{$cur->currency_name}}</option>
-                   @endforeach
-                   @endisset
-                  </select>
-                </div>
+               
                 <div>
                     <label for="Exchange_rate" class="labelSale"> سعر الصرف</label>
                     <input type="number" name="Exchange_rate" id="Exchange_rate" class="inputSale" />
@@ -250,15 +271,15 @@
 
                 <thead>
                     <tr class="bg-blue-100">
-                        <th class="border border-black px-2 py-1">الباركود</th>
+                        <th class="border border-black px-2 py-1">م</th>
                         <th class="border border-black px-2 py-1">اسم الصنف</th>
                         <th class="border border-black px-2 py-1">الكمية</th>
                         <th class="border border-black px-2 py-1">السعر الشراء</th>
-                        <th class="border border-black px-2 py-1">السعر البيع</th>
+                        {{-- <th class="border border-black px-2 py-1">السعر البيع</th> --}}
                         <th class="border border-black px-2 py-1">الإجمالي</th>
                         <th class="border border-black px-2 py-1">التكلفة</th>
-                        <th class="border border-black px-2 py-1">التخفيض</th>
-                        <th class="border border-black px-2 py-1">العلامة التجارية</th>
+                        <th class="border border-black px-2 py-1">المخزن</th>
+                        {{-- <th class="border border-black px-2 py-1">العلامة التجارية</th> --}}
                     </tr>
                 </thead>
                 <tbody>       
@@ -329,76 +350,85 @@ else{
 
    
     </script>
-    
+ <script>
+  $(function() {
+    const form = $('#invoicePurchases'),
+          submitButton = $('#newInvoice'),
+          successMessage = $('#successMessage'),
+          errorMessage = $('#errorMessage'),
+          invoiceField = $('#purchase_invoice_id'),
+          supplierField = $('#supplier_name'),
+          csrfToken = $('input[name="_token"]').val();
+    submitButton.click(function(e) {
+        e.preventDefault();
+        submitButton.prop('disabled', true).text('جاري الإرسال...');
+        // إخفاء الرسائل السابقة
+        successMessage.hide();
+        errorMessage.hide();
+        const formData = new FormData(form[0]);
+      
+        $.ajax({
+            url: '{{ route("invoicePurchases.store") }}',
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': csrfToken },
+            data: formData,
+            processData: false,
+            contentType: false,
+        })
+        .done(function(response) {
+            if (response.success) {
+                // تحديث الحقول وإظهار رسالة النجاح
+                if (invoiceField.length) {
+                    invoiceField.val(response.invoice_number).trigger('change');
+                }
+                if (supplierField.length) {
+                    supplierField.val(response.supplier_id).trigger('change');
+                }
+
+                $('#mainAccountsTable tbody').empty();
+                successMessage.text(response.message).show();
+
+                setTimeout(() => {
+                    successMessage.hide();
+                }, 2000); // إخفاء الرسالة بعد 2 ثانية
+            }else {
+                errorMessage.text(response.message || 'حدث خطأ غير معروف.').show();
+            }
+        })
+        .fail(function(xhr) {
+            if (xhr.status === 422) {
+    const errors = xhr.responseJSON.errors;
+    const firstErrorField = Object.keys(errors)[0];
+    const firstErrorMessage = errors[firstErrorField][0];
+
+    // إظهار الرسالة مع اسم الحقل
+    errorMessage.html(`<strong>${firstErrorMessage}</strong>`).show();
+
+    // تسليط الضوء على الحقل الخاطئ
+    const errorField = $(`[name="${firstErrorField}"]`);
+    errorField.focus();
+
+    // فتح `select2` إذا كان الحقل من نوع `select2`
+    if (errorField.hasClass('select2')) {
+        errorField.select2('open');
+    }
+}
+ else {
+                errorMessage.text('حدث خطأ أثناء إرسال الطلب. حاول مرة أخرى لاحقاً.').show();
+            }
+        })
+        .always(function() {
+            submitButton.prop('disabled', false).text('إضافة الفاتورة');
+        });
+    });
+});
+
+    </script>
  
 <script type="text/javascript">
 
 
-   $(function() {
 
-        const form = $('#invoicePurchases'),
-              submitButton = $('#newInvoice'),
-              product_id   = $('#product_id'),
-               successMessage = $('#successMessage'),
-               errorMessage =   $('#errorMessage'),
-              invoiceField = $('#purchase_invoice_id'), // حقل رقم الفاتورة
-              supplier_id = $('#supplier_name'),
-              account_debitid = $('#sub_account_debit_id'),
-              account_debitid1 = $('#account_debitid'),
-              csrfToken = $('input[name="_token"]').val();
-        submitButton.click(function(e) {// عند الضغط على زر الحفظ
-            e.preventDefault(); // منع تحديث الصفحة
-            submitButton.prop('disabled', true).text('جاري الإرسال...');   
-            
-            const formData = new FormData(form[0]);// جمع بيانات النموذج باستخدام serialize
-      
-            $.ajax({
-        url: '{{ route("invoicePurchases.store") }}',
-        method: 'POST',
-        headers: { 'X-CSRF-TOKEN': csrfToken },
-        data: formData,
-        processData: false,
-        contentType: false,
-    })
-    .done(function(response) {
-        if (response.success) {
-            const invoiceInput = $('#purchase_invoice_id');
-            const invoiceInput2 = $('#supplier_name');
-
-            if (invoiceInput.length || invoiceInput2.length) {
-                invoiceField.val(response.invoice_number).trigger('change');
-                supplier_id.val(response.supplier_id).trigger('change');
-                $('#mainAccountsTable tbody').empty(); // Clear existing data
-
-            } else {
-                console.warn('حقل "رقم الفاتورة" غير موجود.');
-            }
-            $('#account_debitid').select2('open');
-
-
-            successMessage.text(response.message).show();
-                          setTimeout(() => {
-                          successMessage.hide();
-                          }, 500);
-        } else {
-            alert('خطأ: ' + (response.message || 'حدث خطأ غير معروف.'));
-        }
-    })
-    .fail(function(xhr) {
-        console.error('خطأ:', xhr.responseText);
-        alert('حدث خطأ أثناء إرسال الطلب. حاول مرة أخرى لاحقاً.');
-    })
-    .always(function() {
-        submitButton.prop('disabled', false).text('إضافة الفاتورة');
-    });
-        });
-        form.find('input').keydown(function(e) {
-            if (e.key === "Enter") {
-                e.preventDefault(); // منع حفظ النموذج عند الضغط على Enter
-                $(this).next('input').focus(); // الانتقال إلى الحقل التالي
-            }
-        });
-    });
     $(document).ready(function () {
         $('#Supplier_id').on('change', function() {
     const receipt_number = $('#Receipt_number');

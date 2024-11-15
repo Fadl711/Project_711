@@ -59,6 +59,7 @@
                     <div class="text-right">
                         <div>رقم الفاتورة: <span class="text-sm">{{ $purchase['invoice_number'] }}</span></div>
                         <div>رقم الإيصال: <span class="text-sm">{{ $purchase['receipt_number'] }}</span></div>
+                        {{-- <div> العملة: <span class="text-sm">{{ $purchase['receipt_number'] }}</span></div> --}}
                     </div>
                 </div>
                 <table class="w-full text-center border-collapse text-sm">
@@ -72,9 +73,9 @@
                     </thead>
                     <tbody>
                         <tr class="bg-gray-50">
-                            <td class="py-1 px-4">{{ $purchase['total_invoice'] }}</td>
-                            <td class="py-1 px-4">{{ $purchase['total_cost'] }}</td>
-                            <td class="py-1 px-4">{{ $purchase['paid'] }}</td>
+                            <td class="py-1 px-4">{{ number_format($purchase['total_invoice']) }}</td>
+                            <td class="py-1 px-4">{{ number_format($purchase['total_cost']) }}</td>
+                            <td class="py-1 px-4">{{number_format($purchase['paid'] )}}</td>
                             <td class="py-1 px-4">
                                 <button value="{{ $purchase['invoice_number'] }}" onclick="openInvoiceWindow(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح الفاتورة</button>
                             </td>

@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('Product_name');
             $table->integer('product_id');
             $table->bigInteger('Barcode')->unsigned()->nullable(); // إضافة العمود Barcode
-
             $table->double('Purchase_price', 15, 2)->nullable();
             $table->double('Selling_price', 15, 2)->nullable();
             $table->double('Total', 15, 2);
@@ -35,7 +34,9 @@ return new class extends Migration
             $table->integer('warehouse_from_id')->unsigned()->nullable()->comment('المخزن المصدر (للتحويل المخزني)');
             $table->integer('warehouse_to_id')->unsigned()->nullable()->comment('المخزن الوجهة (للتحويل المخزني)');
             $table->integer('Supplier_id')->unsigned()->nullable();
+            $table->integer('categorie_id')->unsigned();
             $table->timestamps();
+            // $table->foreign('categorie_id')->references('categorie_id')->on('categories')->onDelete('set null');
             $table->foreign('Purchase_invoice_id')->references('Purchase_invoice_id')->on('purchase_invoices')
             ->onDelete('cascade');
             $table->foreign('account_id')->references('sub_account_id')->on('sub_accounts')

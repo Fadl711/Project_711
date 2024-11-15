@@ -1,4 +1,4 @@
-<nav class=" ">
+<nav class=" shadow-md bg-white ">
     <div class="flex ">
  <a href="{{route('Main_Account.create')}}"   class="py-2 px-4 {{ Request::is('accounts/Main_Account/create') ? '   border-b-2   text-[#0a0aeec6]' : 'border-b-0' }} border-[#0a0aeec6]   leading-none rounded hover:bg-gray-50" >اضافة حساب رئيسي</a>
         <a href="{{route('Main_Account.create-sub-account')}}"  class="py-2 px-4 {{ Request::is('accounts/Main_Account/create-sub-account') ? '   border-b-2   text-[#0a0aeec6]' : 'border-b-0' }} border-[#0a0aeec6]   leading-none rounded hover:bg-gray-50" > اضافة حساب فرعي</a>

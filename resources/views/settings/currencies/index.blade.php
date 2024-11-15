@@ -16,6 +16,7 @@
             @endisset
             value="{{$cur->currency_id}}">{{$cur->currency_name}}</option>
              @endforeach
+             
         </select>
     </div>
 
@@ -38,8 +39,8 @@
      </div>
 
      <div  class=" text-center grow ">
-      <label for="" class=" text-center"  > سعر الصرف  </label>
-      <input id="maont" type="number" class="inputSale " required>
+      <label for="exchange_rate" class=" text-center"  > سعر الصرف  </label>
+      {{-- <input id="exchange_rate" type="number" class="inputSale " value="{{$cur->exchange_rate}}" required> --}}
      </div>
 
       <div class="text-center grow">

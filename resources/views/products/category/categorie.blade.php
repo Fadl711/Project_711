@@ -21,6 +21,17 @@
                     <label for="barcod" class="btn">اسم الوحدة</label>
                     <input name="cate" type="text" placeholder="" class="inputSale" />
                     </div>
+                    <div class="px-1">
+                        <label for="product_id" class="block font-medium ">حساب الدائن/الرئيسي</label>
+                        <select name="product_id" id="product_id" class=" select2 inputSale" required>
+                            <option value="" selected>اختر الحساب</option>
+    
+                            @isset($products)
+                           @foreach ($products as $product)
+                                 <option value="{{$product->product_id}}">{{$product->product_name}}</option>
+                            @endforeach
+                            @endisset                                             </select>
+                    </div>
                 <div id="newProduc" class="py-2 mr-1 flex justify-between ml-1">
                     <button class="flex bg-green-500 hover:bg-green-700 text-white font-bold  py-2 px-4 rounded">
                         <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -18,6 +18,10 @@
                             <label for="namecurr" class="btn">رمز العملة</label>
                         <input  id="namecurr" name="symbol" type="text"  class="inputSale" value="{{$curr->currency_symbol}}" />
                         </div>
+                        <div>
+                            <label for="exchange_rate" class="btn"> سعر الصرف</label>
+                        <input  id="exchange_rate" name="exchange_rate" type="number"  class="inputSale" value="{{$curr->exchange_rate}}" />
+                        </div>
                     </div>
                 <div class="py-2 mr-1 flex justify-between ml-1">
                     <button class="flex bg-green-500 hover:bg-green-700 text-white font-bold  py-2 px-4 rounded">

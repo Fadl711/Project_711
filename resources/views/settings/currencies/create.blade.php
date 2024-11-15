@@ -26,6 +26,10 @@
                             <label for="namecurr" class="btn">رمز العملة</label>
                         <input  id="namecurr" name="symbol" type="text"  class="inputSale" />
                         </div>
+                        <div>
+                            <label for="exchange_rate" class="btn"> سعر الصرف</label>
+                        <input  id="exchange_rate" name="exchange_rate" type="number"  class="inputSale" />
+                        </div>
                     </div>
                 <div id="newProduc" class="py-2 mr-1 flex justify-between ml-1">
                     <button  class="flex bg-green-500 hover:bg-green-700 text-white font-bold  py-2 px-4 rounded">
@@ -54,6 +58,7 @@
                     <th scope="col" class="leading-2   ">#</th>
                     <th scope="col" class="leading-2  text-center ">اسم العملة</th>
                     <th scope="col" class="leading-2  text-center ">رمز العملة</th>
+                    <th scope="col" class="leading-2  text-center "> سعر الصرف</th>
                     <th scope="col" class="leading-2   text-right">تعديل العملة</th>
                 </tr>
             </thead>
@@ -67,6 +72,7 @@
                     <td>{{$loop->iteration}}</td>
                     <td class="text-center">{{$cur->currency_name}}</td>
                     <td class="text-center">{{$cur->currency_symbol}}</td>
+                    <td class="text-center">{{$cur->exchange_rate}}</td>
                     <td class=" ">
                             <div class="flex items-center gap-1">
 

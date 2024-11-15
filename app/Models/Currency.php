@@ -13,6 +13,6 @@ class Currency extends Model
         "currency_name",
         "currency_id",
         "currency_symbol",
-        "exchange rate",
+        "exchange_rate",
     ];
 }

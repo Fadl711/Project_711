@@ -25,7 +25,7 @@ class PurchaseInvoice extends Model
        'accounting_period_id',
         'transaction_type',
     //    'account_debit_id',
-    //    'Currency_id',
+       'Currency_id',
     //    'Store_id',
       
    ];

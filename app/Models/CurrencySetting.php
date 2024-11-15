@@ -13,5 +13,8 @@ protected $primaryKey = 'currency_settings_id';
     protected $fillable =[
         'currency_settings_id',
         'Currency_id',
+        "currency_name",
+        "currency_symbol",
+        "exchange_rate",
     ];
 }

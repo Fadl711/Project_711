@@ -96,7 +96,7 @@ function addToTable(account) {
         $(`${rowId} td:nth-child(5)`).text(account.Selling_price ? Number(account.Selling_price).toLocaleString() : '0');
         $(`${rowId} td:nth-child(6)`).text(account.Total ? Number(account.Total).toLocaleString() : '0');
         $(`${rowId} td:nth-child(7)`).text(account.Cost ? Number(account.Cost).toLocaleString() : '0');
-        $(`${rowId} td:nth-child(8)`).text(account.Discount_earned ? Number(account.Discount_earned).toLocaleString() : '0');
+        $(`${rowId} td:nth-child(8)`).text(account.warehouse_to_id ? Number(account.Discount_earned).toLocaleString() : '0');
         $(`${rowId} td:nth-child(9)`).text(account.note || '');
     } else {
         // إضافة الصف الجديد إلى الجدول إذا لم يكن موجودًا
@@ -109,7 +109,7 @@ function addToTable(account) {
                 <td class="text-right tagTd">${account.Selling_price ? Number(account.Selling_price).toLocaleString() : '0'}</td>
                 <td class="text-right tagTd">${account.Total ? Number(account.Total).toLocaleString() : '0'}</td>
                 <td class="text-right tagTd">${account.Cost ? Number(account.Cost).toLocaleString() : '0'}</td>
-                <td class="text-right tagTd">${account.Discount_earned ? Number(account.Discount_earned).toLocaleString() : '0'}</td>
+                <td class="text-right tagTd">${account.warehouse_to_id ? Number(account.warehouse_to_id).toLocaleString() : '0'}</td>
                 <td class="text-right tagTd">${account.note || ''}</td>
                 
              <td class="flex">
@@ -162,6 +162,13 @@ function addToTable(account) {
         if ($('#created_at').length) {
             $('#created_at').val(product.created_at).trigger('change');
         }
+       // تعبئة قائمة الفئات (الوحدات)
+       const categorieSelect = $('#Categorie_name');
+       categorieSelect.empty(); // تفريغ القائمة السابقة
+       product.Categorie_names.forEach(categorie => {
+           categorieSelect.append(new Option(categorie.Categorie_name, categorie.categorie_id));
+       });
+       categorieSelect.trigger('change');
 
         // حساب التمويز بين البيع والشراء
         var profit = 0;
@@ -224,21 +231,17 @@ function displayPurchases(purchases) {
     $('#mainAccountsTable tbody').empty(); // Clear existing data
 
     purchases.forEach(function(purchase) {
-     
-
         // Add purchase data to the table
         $('#mainAccountsTable tbody').append(
             `
             <tr id="row-${purchase.purchase_id}">
+            <td>${purchase.Barcode}</td>
                 <td>${purchase.Product_name}</td>
-                <td>${purchase.Barcode}</td>
                 <td>${purchase.quantity}</td>
                 <td>${purchase.Purchase_price}</td>
-                <td>${purchase.Selling_price}</td>
                 <td>${purchase.Total}</td>
                 <td>${purchase.Cost}</td>
                 <td>${purchase.Discount_earned}</td>
-                <td>${purchase.note}</td>
                 <td class="flex">
                     <button class="" onclick="editData(${purchase.purchase_id})">
                         <svg class="w-6 h-6 text-[#2430d3] dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">

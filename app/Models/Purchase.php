@@ -33,6 +33,7 @@ protected $fillable = [
     'warehouse_from_id',
     'warehouse_to_id',
     'Supplier_id',
+    'categorie_id',
 ];
 
 // تعريف العلاقات (إذا لزم الأمر)

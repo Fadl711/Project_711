@@ -23,7 +23,7 @@
           <input type="text" name="product_name" id="product_name" placeholder="name" class="inputSale" required />
         </div>
 
-        <div class="flex flex-col bg-gray-200 ">
+        {{-- <div class="flex flex-col bg-gray-200 ">
           <label for="Categorie_id" class="btn">وحدة الصنف</label>
           <select style="background-image: none ;" name="Categorie_id" id="Categorie_id" class="inputSale appearance-auto" required>
 
@@ -39,7 +39,7 @@
             @endisset
 
           </select>
-        </div>
+        </div> --}}
 
         <div class="flex flex-col">
           <label for="Selling_price" class="btn">سعر المنتج </label>
@@ -83,10 +83,10 @@
           <input type="number" name="Cost" id="Cost" placeholder="0" class="inputSale" required/>
         </div>
         <div class="flex flex-col">
-          <label for="Profit" class="btn"> الربح </label>
+2          <label for="Profit" class="btn"> الربح </label>
           <input type="number" name="Profit" id="Profit" placeholder="0" class="inputSale" required/>
         </div>
-        <div class="flex flex-col bg-gray-200">
+        {{-- <div class="flex flex-col bg-gray-200">
           <label for="warehouse_id" class="btn">اسم المخزن</label>
           <select style="background-image: none ;" name="warehouse_id" id="warehouse_id" class="inputSale appearance-auto" required>
              <option selected value=""></option>
@@ -97,7 +97,7 @@
               @endforelse
 
           </select>
-      </div>
+      </div> --}}
 
 
         <div class="flex flex-col bg-gray-200">
@@ -110,7 +110,7 @@
                 @endforelse
 
             </select>
-        </div>
+ 2       </div>
     </div>
 
     @auth

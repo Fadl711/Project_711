@@ -4,12 +4,15 @@ namespace App\Http\Controllers\productController;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
     public function create(){
-        return view('products.category.categorie');
+        $product=Product::all();
+
+        return view('products.category.categorie',['products'=>$product]);
     }
     public function store(Request $request){
         if (Category::where('Categorie_name', $request->input('cate'))->exists()) {
@@ -19,6 +22,7 @@ class CategoryController extends Controller
 
     $Post = new Category;
     $Post->Categorie_name=$request->cate;
+    $Post->product_id=$request->product_id;
     $Post->user_id=$request->user_id;
     $Post->save();
 /*         Category::createOrFirst([

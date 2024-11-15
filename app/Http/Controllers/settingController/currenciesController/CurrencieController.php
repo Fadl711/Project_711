@@ -23,6 +23,7 @@ class CurrencieController extends Controller
         Currency::create([
 
             'currency_name'=>$request->namecurr,
+            'exchange_rate'=>$request->exchange_rate,
             'currency_symbol'=>$request->symbol
 
         ]);
@@ -35,6 +36,7 @@ class CurrencieController extends Controller
     public function update(Request $request,$id){
             Currency::where('currency_id',$id)->update([
             'currency_name'=>$request->namecurr,
+            'exchange_rate'=>$request->exchange_rate,
             'currency_symbol'=>$request->symbol
         ]);
 
@@ -47,11 +49,19 @@ class CurrencieController extends Controller
 
     public function setDefaultCurrency(Request $request){
         $currencyId = $request->input('currency_id');
+        $curr=Currency::where('currency_id',$currencyId)->first();
+
         // Update the default currency in the database
         // For example, using Eloquent :
         CurrencySetting::updateOrCreate(
             ['currency_settings_id' => 1], // assuming the ID is 1, adjust accordingly
-            ['Currency_id' => $currencyId]
+            ['Currency_id' =>$curr->currency_id,
+            'currency_name'=>$curr->currency_name,
+            'exchange_rate'=>$curr->exchange_rate,
+            'currency_symbol'=>$curr->currency_symbol,
+
+            
+            ]
         );
 
         return response()->json(['success' => true]);
