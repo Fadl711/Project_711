@@ -24,9 +24,7 @@ class PurchaseInvoice extends Model
        'Supplier_id',
        'accounting_period_id',
         'transaction_type',
-    //    'account_debit_id',
        'Currency_id',
-    //    'Store_id',
       
    ];
    public function invoicePurchases()

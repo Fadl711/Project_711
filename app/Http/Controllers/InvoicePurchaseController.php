@@ -66,5 +66,6 @@ public function bills_purchase_show($id){
 }
 
 
+
     //
 }

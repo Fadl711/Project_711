@@ -90,7 +90,7 @@
                     <input type="hidden" name="User_id"  id="User_id" value="{{Auth::user()->id}}">
                     @endauth
                     <div>
-                        <label for="Currency_id" class="labelSale">العملة الشراء</label>
+                        <label for="Currency_id" class="labelSale">العملة الفاتورة</label>
                         <select   dir="ltr" id="Currency_id" class="inputSale input-field " name="Currency_id"  >
                             @isset($Currency_name)
                           @foreach ($Currency_name as $cur)
@@ -168,10 +168,7 @@
                     <label for="Quantity" class="labelSale">الكمية</label>
                     <input type="text" name="Quantity" id="Quantity" placeholder="0" class="inputSale english-numbers" required />
                 </div>
-                {{-- <div class="">
-                    <label for="QuantityPurchase" class="labelSale"> الكمية المتوفره</label>
-                    <input type="number" name="QuantityPurchase" id="QuantityPurchase" placeholder="0" class="inputSale english-numbers"   />
-                </div> --}}
+
                 <div>
 
                 <label for="Categorie_name" class="block font-medium  labelSale">الوحده  </label>
@@ -242,6 +239,10 @@
             </div>
             </div>
             <div class="flex" id="printEndSave">
+                                <div class="">
+                    <label for="QuantityPurchase" class="labelSale"> الكمية المتوفره</label>
+                    <input type="number" name="QuantityPurchase" id="QuantityPurchase" placeholder="0" class="inputSale english-numbers"   />
+                </div>
                 <div class="col-span-6 sm:col-span-3">
                     <button class="inputSale mt-2 flex " type="button" id="savaAndPrint" >
                         <svg class="w-6 h-5 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -271,14 +272,17 @@
 
                 <thead>
                     <tr class="bg-blue-100">
-                        <th class="border border-black px-2 py-1">م</th>
-                        <th class="border border-black px-2 py-1">اسم الصنف</th>
-                        <th class="border border-black px-2 py-1">الكمية</th>
-                        <th class="border border-black px-2 py-1">السعر الشراء</th>
-                        {{-- <th class="border border-black px-2 py-1">السعر البيع</th> --}}
-                        <th class="border border-black px-2 py-1">الإجمالي</th>
-                        <th class="border border-black px-2 py-1">التكلفة</th>
-                        <th class="border border-black px-2 py-1">المخزن</th>
+                        <th class=" px-2 py-1  tagTd">م</th>
+                        <th class=" px-2 py-1  tagTd">اسم الصنف</th>
+                        <th class=" px-2 py-1  tagTd"> الوحدة</th>
+                        <th class=" px-2 py-1  tagTd">الكمية</th>
+                        <th class=" px-2 py-1  tagTd">السعر الشراء</th>
+                        {{-- <th clblack px-2  tagTd py-1">السعر البيع</th> --}}
+                        <th class=" px-2 py-1  tagTd">التكلفة</th>
+                        <th class=" px-2 py-1  tagTd">المخزن</th>
+                        <th class=" px-2 py-1  tagTd">الإجمالي</th>
+                        <th class=" px-2 py-1  tagTd"></th>
+                        <th class=" px-2 py-1  tagTd "></th>
                         {{-- <th class="border border-black px-2 py-1">العلامة التجارية</th> --}}
                     </tr>
                 </thead>

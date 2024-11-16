@@ -35,6 +35,7 @@ protected $fillable = [
     'Supplier_id',
     'categorie_id',
 ];
+// في Purchase.php
 
 // تعريف العلاقات (إذا لزم الأمر)
 

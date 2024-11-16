@@ -81,15 +81,15 @@
                     @foreach ($SubAccounts as $SubAccount)
                     @if($SubAccount->sub_account_id === $DataPurchaseInvoice->Supplier_id)
 
-                     {{$SubAccount->sub_name??null}}</p>
+                     {{$SubAccount->sub_name??null}} {{$SubAccount->Phoen."/"??null}} {{$SubAccount->name_The_known."/"??null}}</p>
                      @endif
                     @endforeach
 
                     @endisset
 
                 </p>
-                <p>التلفون: 776327938</p>
-                <p>العملة: 776327938</p>
+                {{-- <p>التلفون: {{$SubAccount->??null}}</p> --}}
+                <p>العملة: {{$currency->currency_symbol}}</p>
             </div>
             <div>
                 <h2 class="text-lg font-bold">فاتورة :
@@ -97,7 +97,7 @@
                     @foreach ($accountType as $accountTypes)
                     @if($accountTypes->value === $DataPurchaseInvoice->transaction_type)
 
-                    {{ $accountTypes->label()}} 
+                    {{ $accountTypes->label()}} /{{$DataPurchaseInvoice->Invoice_type??null}}
                      @endif
                     @endforeach
                     @endisset
@@ -110,7 +110,7 @@
             <div>
                 <p>التاريخ: {{$DataPurchaseInvoice->created_at}}</p>
                 <p>رقم الإيصال:  {{$DataPurchaseInvoice->Receipt_number??0}}</p>
-                <p>الدفع :{{$DataPurchaseInvoice->Invoice_type??null}}</p>
+                {{-- <p>الدفع :{{$DataPurchaseInvoice->Invoice_type??null}}</p> --}}
             </div>
         </header>
 
@@ -151,7 +151,16 @@
                             </td>
                         <td class="p-2 text-center">{{ $Purchase->quantity }}</td>
                         <td class="p-2 text-right">{{number_format( $Purchase->Purchase_price) }}</td>
-                        <td class="p-2 text-right">{{ $Purchase->warehouse_to_id }}</td>
+                        <td class="p-2 text-right">
+                            @isset($warehouses)
+                            @foreach ($warehouses as $warehouse)
+                            @if($warehouse->sub_account_id === $Purchase->warehouse_to_id)
+                            {{ $warehouse->sub_name }}
+                            @endif
+                            @endforeach
+                            @endisset
+
+                        </td>
                         <td class="p-2 text-right">{{ number_format($Purchase->Total )}}</td>
                         {{-- <td class="p-2 text-right">{{ $Purchase->Cost }}</td> --}}
                     </tr>
@@ -166,21 +175,23 @@
         <!-- الإجماليات -->
         <div class="totals-section bg-gray-100 p-4">
             <div class="flex justify-between">
-                {{-- <div>
-                    <p class="font-semibold">الخصم: {{$Discount_earnedValue}}</p>
-                </div> --}}
+              
                 <div>
                     <p class="font-semibold">الجمالي تكلفة الشراء: {{number_format($Purchase_priceSum) ?? 0}}</p>
+                    <p>الإجمالي كتابة: {{ $priceInWords }}</p>
                 </div>
                 <div>
                     <p class="font-semibold">الجمالي  المصاريف: {{ number_format($Purchase_CostSum ?? 0)}}</p>
                 </div>
                 
-                {{-- <div>
-                    <p class="font-semibold">صافي الفاتورة: 99,000 ريال يمني</p>
-                    <p class="text-xs text-gray-600">الفين ومائتين وخمسين ريال يمني</p>
-                </div> --}}
             </div>
+        </div>
+        <div class=" bg-white p-4">
+
+              
+                    <p class=" text-sm" dir="ltr">  مسؤول الشراء: {{($UserName) ?? 0}}</p>
+              
+                
         </div>
 
         <!-- زر الطباعة -->

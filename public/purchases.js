@@ -89,28 +89,29 @@ function addToTable(account) {
     // التحقق مما إذا كان الصف موجودًا بالفعل
     if ($(rowId).length) {
         // تحديث الصف في الجدول بناءً على القيم الجديدة
-        $(`${rowId} td:nth-child(1)`).text(account.Product_name);
-        $(`${rowId} td:nth-child(2)`).text(account.Barcode);
-        $(`${rowId} td:nth-child(3)`).text(account.quantity ? Number(account.quantity).toLocaleString() : '0');
-        $(`${rowId} td:nth-child(4)`).text(account.Purchase_price ? Number(account.Purchase_price).toLocaleString() : '0');
-        $(`${rowId} td:nth-child(5)`).text(account.Selling_price ? Number(account.Selling_price).toLocaleString() : '0');
-        $(`${rowId} td:nth-child(6)`).text(account.Total ? Number(account.Total).toLocaleString() : '0');
-        $(`${rowId} td:nth-child(7)`).text(account.Cost ? Number(account.Cost).toLocaleString() : '0');
-        $(`${rowId} td:nth-child(8)`).text(account.warehouse_to_id ? Number(account.Discount_earned).toLocaleString() : '0');
-        $(`${rowId} td:nth-child(9)`).text(account.note || '');
+        $(`${rowId} td:nth-child(1)`).text(account.Barcode);
+        $(`${rowId} td:nth-child(2)`).text(account.Product_name);
+        $(`${rowId} td:nth-child(3)`).text(account.category_name);
+        $(`${rowId} td:nth-child(4)`).text(account.quantity ? Number(account.quantity).toLocaleString() : '0');
+        $(`${rowId} td:nth-child(5)`).text(account.Purchase_price ? Number(account.Purchase_price).toLocaleString() : '0');
+        $(`${rowId} td:nth-child(6)`).text(account.Cost ? Number(account.Cost).toLocaleString() : '0');
+        $(`${rowId} td:nth-child(7)`).text(account.warehouse_to_id ? Number(account.Discount_earned).toLocaleString() : '0');
+        $(`${rowId} td:nth-child(8)`).text(account.Total ? Number(account.Total).toLocaleString() : '0');
+
+        // $(`${rowId} td:nth-child(9)`).text(account.purchase_id ? Number(account.purchase_id).toLocaleString() : '0');
+        // $(`${rowId} td:nth-child(10)`).text(account.purchase_id ? Number(account.purchase_id).toLocaleString() : '0');
     } else {
         // إضافة الصف الجديد إلى الجدول إذا لم يكن موجودًا
         const newRow = `
             <tr id="row-${account.purchase_id}">
-                <td class="text-right tagTd">${account.Product_name}</td>
                 <td class="text-right tagTd">${account.Barcode}</td>
+                <td class="text-right tagTd">${account.Product_name}</td>
+                <td class="text-right tagTd">${account.category_name}</td>
                 <td class="text-right tagTd">${account.quantity ? Number(account.quantity).toLocaleString() : '0'}</td>
                 <td class="text-right tagTd">${account.Purchase_price ? Number(account.Purchase_price).toLocaleString() : '0'}</td>
-                <td class="text-right tagTd">${account.Selling_price ? Number(account.Selling_price).toLocaleString() : '0'}</td>
-                <td class="text-right tagTd">${account.Total ? Number(account.Total).toLocaleString() : '0'}</td>
                 <td class="text-right tagTd">${account.Cost ? Number(account.Cost).toLocaleString() : '0'}</td>
                 <td class="text-right tagTd">${account.warehouse_to_id ? Number(account.warehouse_to_id).toLocaleString() : '0'}</td>
-                <td class="text-right tagTd">${account.note || ''}</td>
+                <td class="text-right tagTd">${account.Total ? Number(account.Total).toLocaleString() : '0'}</td>
                 
              <td class="flex">
 
@@ -227,38 +228,47 @@ function addToTable(account) {
 
 
 function displayPurchases(purchases) {
-    let uniqueInvoices = []; // Array to store unique invoices
-    $('#mainAccountsTable tbody').empty(); // Clear existing data
+    let uniqueInvoices = new Set(); // Set لتخزين الفواتير الفريدة
+    let rows = ''; // متغير لتخزين الصفوف
 
-    purchases.forEach(function(purchase) {
-        // Add purchase data to the table
-        $('#mainAccountsTable tbody').append(
-            `
-            <tr id="row-${purchase.purchase_id}">
-            <td>${purchase.Barcode}</td>
-                <td>${purchase.Product_name}</td>
-                <td>${purchase.quantity}</td>
-                <td>${purchase.Purchase_price}</td>
-                <td>${purchase.Total}</td>
-                <td>${purchase.Cost}</td>
-                <td>${purchase.Discount_earned}</td>
-                <td class="flex">
-                    <button class="" onclick="editData(${purchase.purchase_id})">
-                        <svg class="w-6 h-6 text-[#2430d3] dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                            <path fill-rule="evenodd" d="M11.32 6.176H5c-1.105 0-2 .949-2 2.118v10.588C3 20.052 3.895 21 5 21h11c1.105 0 2-.948 2-2.118v-7.75l-3.914 4.144A2.46 2.46 0 0 1 12.81 16l-2.681.568c-1.75.37-3.292-1.263-2.942-3.115l.536-2.839c.097-.512.335-.983.684-1.352l2.914-3.086Z" clip-rule="evenodd"/>
-                            <path fill-rule="evenodd" d="M19.846 4.318a2.148 2.148 0 0 0-.437-.692 2.014 2.014 0 0 0-.654-.463 1.92 1.92 0 0 0-1.544 0 2.014 2.014 0 0 0-.654.463l-.546.578 2.852 3.02.546-.579a2.14 2.14 0 0 0 .437-.692 2.244 2.244 0 0 0 0-1.635ZM17.45 8.721 14.597 5.7 9.82 10.76a.54.54 0 0 0-.137.27l-.536 2.84c-.07.37.239.696.588.622l2.682-.567a.492.492 0 0 0 .255-.145l4.778-5.06Z" clip-rule="evenodd"/>
-                        </svg>
-                    </button>
-                    <button class="" onclick="deleteData(${purchase.purchase_id})">
-                        <svg class="" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path class="fill-red-600" d="M4.00031 5.49999V4.69999H3.20031V5.49999H4.00031ZM16.0003 5.49999H16.8003V4.69999H16.0003V5.49999ZM17.5003 5.49999L17.5003 6.29999C17.9421 6.29999 18.3003 5.94183 18.3003 5.5C18.3003 5.05817 17.9421 4.7 17.5003 4.69999L17.5003 5.49999ZM9.30029 9.24997C9.30029 8.80814 8.94212 8.44997 8.50029 8.44997C8.05847 8.44997 7.70029 8.80814 7.70029 9.24997H9.30029ZM7.70029 13.75C7.70029 14.1918 8.05847 14.55 8.50029 14.55C8.94212 14.55 9.30029 14.1918 9.30029 13.75H7.70029ZM12.3004 9.24997C12.3004 8.80814 11.9422 8.44997 11.5004 8.44997C11.0585 8.44997 10.7004 8.80814 10.7004 9.24997H12.3004ZM10.7004 13.75C10.7004 14.1918 11.0585 14.55 11.5004 14.55C11.9422 14.55 12.3004 14.1918 12.3004 13.75H10.7004ZM4.00031 6.29999H16.0003V4.69999H4.00031V6.29999ZM15.2003 5.49999V12.5H16.8003V5.49999H15.2003ZM11.0003 16.7H9.00031V18.3H11.0003V16.7ZM4.80031 12.5V5.49999H3.20031V12.5H4.80031ZM9.00031 16.7C7.79918 16.7 6.97882 16.6983 6.36373 16.6156C5.77165 16.536 5.49093 16.3948 5.29823 16.2021L4.16686 17.3334C4.70639 17.873 5.38104 18.0979 6.15053 18.2013C6.89702 18.3017 7.84442 18.3 9.00031 18.3V16.7ZM3.20031 12.5C3.20031 13.6559 3.19861 14.6033 3.29897 15.3498C3.40243 16.1193 3.62733 16.7939 4.16686 17.3334L5.29823 16.2021C5.10553 16.0094 4.96431 15.7286 4.88471 15.1366C4.80201 14.5215 4.80031 13.7011 4.80031 12.5H3.20031ZM15.2003 12.5C15.2003 13.7011 15.1986 14.5215 15.1159 15.1366C15.0363 15.7286 14.8951 16.0094 14.7024 16.2021L15.8338 17.3334C16.3733 16.7939 16.5982 16.1193 16.7016 15.3498C16.802 14.6033 16.8003 13.6559 16.8003 12.5H15.2003ZM11.0003 18.3C12.1562 18.3 13.1036 18.3017 13.8501 18.2013C14.6196 18.0979 15.2942 17.873 15.8338 17.3334L14.7024 16.2021C14.5097 16.3948 14.229 16.536 13.6369 16.6156C13.0218 16.6983 12.2014 16.7 11.0003 16.7V18.3Z" />
-                        </svg>
-                    </button>
-                </td>
-            </tr>`
-        );
+    $('#mainAccountsTable tbody').empty(); // تنظيف الجدول
+
+    purchases.forEach(function (purchase) {
+        // إضافة شرط للتأكد من عدم تكرار البيانات
+        if (!uniqueInvoices.has(purchase.purchase_id)) {
+            uniqueInvoices.add(purchase.purchase_id);
+
+            rows += `
+                <tr id="row-${purchase.purchase_id}">
+                    <td class="text-right tagTd">${purchase.Barcode}</td>
+                    <td class="text-right tagTd">${purchase.Product_name}</td>
+                    <td class="text-right tagTd">${purchase.categorie_id}</td>
+                    <td class="text-right tagTd">${purchase.quantity}</td>
+                    <td class="text-right tagTd">${purchase.Purchase_price}</td>
+                    <td class="text-right tagTd">${purchase.Cost}</td>
+                    <td class="text-right tagTd">${purchase.warehouse_to_id}</td>
+                    <td class="text-right tagTd">${purchase.Total}</td>
+                    <td class="flex">
+                        <button class="" onclick="editData(${purchase.purchase_id})">
+                            <svg class="w-6 h-6 text-[#2430d3] dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                <path fill-rule="evenodd" d="M11.32 6.176H5c-1.105 0-2 .949-2 2.118v10.588C3 20.052 3.895 21 5 21h11c1.105 0 2-.948 2-2.118v-7.75l-3.914 4.144A2.46 2.46 0 0 1 12.81 16l-2.681.568c-1.75.37-3.292-1.263-2.942-3.115l.536-2.839c.097-.512.335-.983.684-1.352l2.914-3.086Z" clip-rule="evenodd"/>
+                                <path fill-rule="evenodd" d="M19.846 4.318a2.148 2.148 0 0 0-.437-.692 2.014 2.014 0 0 0-.654-.463 1.92 1.92 0 0 0-1.544 0 2.014 2.014 0 0 0-.654.463l-.546.578 2.852 3.02.546-.579a2.14 2.14 0 0 0 .437-.692 2.244 2.244 0 0 0 0-1.635ZM17.45 8.721 14.597 5.7 9.82 10.76a.54.54 0 0 0-.137.27l-.536 2.84c-.07.37.239.696.588.622l2.682-.567a.492.492 0 0 0 .255-.145l4.778-5.06Z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                        <button class="" onclick="deleteData(${purchase.purchase_id})">
+                            <svg class="" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path class="fill-red-600" d="M4.00031 5.49999V4.69999H3.20031V5.49999H4.00031ZM16.0003 5.49999H16.8003V4.69999H16.0003V5.49999ZM17.5003 5.49999L17.5003 6.29999C17.9421 6.29999 18.3003 5.94183 18.3003 5.5C18.3003 5.05817 17.9421 4.7 17.5003 4.69999L17.5003 5.49999ZM9.30029 9.24997C9.30029 8.80814 8.94212 8.44997 8.50029 8.44997C8.05847 8.44997 7.70029 8.80814 7.70029 9.24997H9.30029ZM7.70029 13.75C7.70029 14.1918 8.05847 14.55 8.50029 14.55C8.94212 14.55 9.30029 14.1918 9.30029 13.75H7.70029ZM12.3004 9.24997C12.3004 8.80814 11.9422 8.44997 11.5004 8.44997C11.0585 8.44997 10.7004 8.80814 10.7004 9.24997H12.3004ZM10.7004 13.75C10.7004 14.1918 11.0585 14.55 11.5004 14.55C11.9422 14.55 12.3004 14.1918 12.3004 13.75H10.7004ZM4.00031 6.29999H16.0003V4.69999H4.00031V6.29999ZM15.2003 5.49999V12.5H16.8003V5.49999H15.2003ZM11.0003 16.7H9.00031V18.3H11.0003V16.7ZM4.80031 12.5V5.49999H3.20031V12.5H4.80031ZM9.00031 16.7C7.79918 16.7 6.97882 16.6983 6.36373 16.6156C5.77165 16.536 5.49093 16.3948 5.29823 16.2021L4.16686 17.3334C4.70639 17.873 5.38104 18.0979 6.15053 18.2013C6.89702 18.3017 7.84442 18.3 9.00031 18.3V16.7ZM3.20031 12.5C3.20031 13.6559 3.19861 14.6033 3.29897 15.3498C3.40243 16.1193 3.62733 16.7939 4.16686 17.3334L5.29823 16.2021C5.10553 16.0094 4.96431 15.7286 4.88471 15.1366C4.80201 14.5215 4.80031 13.7011 4.80031 12.5H3.20031ZM15.2003 12.5V5.49999H14.4003V12.5H15.2003ZM16.8003 12.5H16.0003V5.49999H16.8003V12.5ZM13.0003 16.7H14.0003V18.3H13.0003V16.7ZM12.2003 12.5C12.2003 13.6559 12.1986 14.6033 12.2989 15.3498C12.4024 16.1193 12.6273 16.7939 13.1669 17.3334L14.2982 16.2021C14.1055 16.0094 13.9643 15.7286 13.8847 15.1366C13.802 14.5215 13.8003 13.7011 13.8003 12.5H12.2003Z" fill="#ffffff"/>
+                            </svg>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }
     });
+
+    $('#mainAccountsTable tbody').append(rows);
 }
+
 $(document).on('keydown', function(event) {
     if (event.ctrlKey && event.key === 'ArrowLeft') {
         // الحصول على قيمة purchase_invoice_id من حقل الإدخال
@@ -483,6 +493,17 @@ function editData(id) {
             $('#purchase_invoice_id').val(data.Purchase_invoice_id);
             $('#supplier_name').val(data.Supplier_id);
             $('#purchase_id').val(data.purchase_id);
+            // $('#Categorie_name').val(data.categorie_id);
+            var categorie_name   =$('#Categorie_name');
+
+            categorie_name.empty();
+            const  subAccountOptions = 
+                  `<option value="${data.categorie_id}">${data.categorie_id}</option>`
+             ;
+  
+          // إضافة الخيارات الجديدة إلى القائمة الفرعية
+          categorie_name.append(subAccountOptions);
+     
             
   },
         error: function(xhr, status, error) {
