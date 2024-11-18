@@ -11,27 +11,43 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sales', function (Blueprint $table) {
-            $table->increments('sale_id');
-            $table->string('Product_name');
-            $table->integer('accounting_period_id')->unsigned();
+        Schema::disableForeignKeyConstraints();
 
+        Schema::create('sales', function (Blueprint $table) {
+            $table->increments('sale_id')->unsigned();
+            $table->string('Product_name');
+            $table->integer('product_id')->unsigned();
+            $table->string('Category_name')->nullable();;
+            $table->integer('accounting_period_id')->unsigned();
             $table->bigInteger('Barcode')->unsigned()->nullable(); // إضافة العمود Barcode
-            $table->integer('Quantity');
+            $table->decimal('quantity', 10, 2); // حيث 10 هو العدد الإجمالي للأرقام و 2 هو عدد الأرقام بعد الفاصلة العشرية
             $table->decimal('Selling_price', 15, 2); // Adjust precision as needed
-            $table->decimal('Total', 15, 2); // Adjust precision as needed
-            $table->decimal('Allowed_discount', 15, 2); // Adjust precision as needed
             $table->string('note');
-            $table->integer('Store_id')->unsigned();
+            $table->decimal('total_amount', 15, 2); // إجمالي المبلغ
+            $table->decimal('net_amount', 15, 2); // المبلغ الصافي
+            $table->decimal('unit_price', 15, 2); // سعر الوحدة للمنتج
+            $table->decimal('discount_rate', 5, 2)->nullable(); // نسبة الخصم (٪)
+            $table->decimal('tax_rate', 5, 2)->nullable(); // نسبة الضريبة (٪)
+            $table->decimal('discount', 15, 2)->nullable(); // خصم المطبقة (إن وجد)
+            $table->decimal('tax', 15, 2)->nullable(); // ضريبة المطبقة (إن وجدت)
+            $table->decimal('total_price', 15, 2); // إجمالي السعر بعد الخصم والضريبة
+            $table->string('currency')->nullable(); // العملة المستخدمة في الفاتورة
+            $table->decimal('shipping_cost', 10, 2)->nullable(); // تكلفة الشحن (إن وجدت)
+            $table->integer('financial_account_id')->unsigned()->nullable()->comment('المخزني)');
+            $table->integer('warehouse_to_id')->unsigned()->nullable()->comment('المخزن الوجهة (للتحويل المخزني)');
+            $table->integer('Customer_id')->unsigned()->nullable();// الرقم التعريفي للحساب المالي
             $table->integer('User_id')->unsigned();
             $table->integer('Invoice_id')->unsigned();
 
             $table->timestamps();
-
-            $table->foreign('Store_id')->references('warehouse_id')->on('warehouses');
+            $table->foreign('warehouse_to_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
+            $table->foreign('financial_account_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
+            $table->foreign('Customer_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
             $table->foreign('User_id')->references('id')->on('users');
             $table->foreign('Invoice_id')->references('sales_invoice_id')->on('sales_invoices');
         });
+        Schema::enableForeignKeyConstraints();
+
     }
 
     /**

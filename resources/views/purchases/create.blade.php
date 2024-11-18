@@ -1,13 +1,10 @@
 @extends('layout')
 @section('conm')
-
-@if($errors->any())
+{{-- @if($errors->any())
     @foreach ($errors()->all() as $error)
     <div class="alert alert-danger">{{$error}}</div>
     @endforeach
-
-
-@endif
+@endif --}}
 <style>
     /* تثبيت الأرقام بالإنجليزية */
     .english-numbers {
@@ -18,20 +15,26 @@
     td{
       text-align: right;
     }
+   
+.select2-container--default .select2-dropdown {
+    max-height: 200px; /* ارتفاع القائمة */
+    overflow-y: auto; /* تمكين التمرير إذا تجاوز المحتوى الارتفاع */
+}
+.select2-container--default .select2-selection--single {
+    height: 40px; /* ارتفاع العنصر الأساسي */
+    line-height: 45px; لتوسيط النص عموديًا
+}
+.select2-container--default .select2-selection__rendered {
+    padding-top: 5px; /* تحسين النصوص */
+}
   </style>
-  <script>
-
-</script>
-{{-- <div id="successMessage" class="alert-success" style="display: none;"></div> --}}
-{{-- <div id="errorMessage" class="alert-errorMessage" style="display: none;"></div> --}}
-
 <div id="errorMessage" style="display: none;" class="alert alert-danger"></div>
 <div id="successMessage" style="display: none;" class="alert alert-success"></div>
 
 <div class="min-w-[20%] px-1  bg-white rounded-xl ">
     <div class=" flex items-center">
         <div class="w-full min-w-full  py-1">
-            <form id="invoicePurchases" action="{{ route('invoicePurchases.store') }}" method="POST">
+            <form id="invoicePurchases" action="{{ route('invoiceSales.store') }}" method="POST">
                 @csrf
               
                 <div class="flex gap-4">
@@ -54,8 +57,8 @@
                         </select>
                         </div>
                         <div >
-                            <label for="mainaccount_debit_id" class=" font-medium labelSale">  حساب التصدير  </label>
-                           <select name="mainaccount_debit_id" id="mainaccount_debit_id" dir="ltr" class="input-field  select2 inputSale" required >
+                            <label for="mainaccount_debit_id" class="  labelSale">  حساب التصدير  </label>
+                           <select name="mainaccount_debit_id"  id="mainaccount_debit_id" dir="ltr" class="input-field  select2 inputSale" required >
                               @isset($mainAccounts)
                             <option value="" selected>اختر الحساب</option>
                              @foreach ($mainAccounts as $mainAccount)
@@ -118,7 +121,7 @@
             @csrf 
             <div  class=" gap-2 grid grid-cols-3 px-1  ">
                 <div>
-                    <label for="account_debitid" class="labelSale font-medium ">  مخازن الستيراد</label>
+                    <label for="account_debitid" class="labelSale  ">  مخازن الستيراد</label>
                     <select name="account_debitid" id="account_debitid" dir="ltr" class="input-field  select2 inputSale" required>
                        @isset($Warehouse)
                      <option value="" selected>اختر المخزن</option>
@@ -129,7 +132,7 @@
                     </select>
                 </div>
                 <div >
-                    <label for="main_account_debit_id" class=" font-medium labelSale">  حساب التصدير  </label>
+                    <label for="main_account_debit_id" class="  labelSale">  حساب التصدير  </label>
                    <select name="main_account_debit_id" id="main_account_debit_id" dir="ltr" class="input-field  select2 inputSale" required >
                       @isset($mainAccounts)
                     <option value="" selected>اختر الحساب</option>
@@ -140,7 +143,7 @@
                    </select>
                </div>
                <div >
-                   <label for="sub_account_debit_id" class="labelSale font-medium  ">  تحديد الدائن</label>
+                   <label for="sub_account_debit_id" class="labelSale   ">  تحديد الدائن</label>
                    <select name="sub_account_debit_id" id="sub_account_debit_id" dir="ltr" class="input-field select2 inputSale" required>
                        <option value="" selected>اختر الحساب الفرعي</option>
                        </select>
@@ -148,7 +151,7 @@
             </div>
             <div class="flex gap-1 px-1"> 
                 <div >
-                    <label for="product_id" class="block font-medium  labelSale">بحث عن المنتج</label>
+                    <label for="product_id" class="block   labelSale">بحث  </label>
                     <select name="product_id" id="product_id" dir="ltr" class="input-field select2 inputSale" required>
                         @isset($products)
                         <option value="9505070441001"  >اختر منتج</option>
@@ -171,7 +174,7 @@
 
                 <div>
 
-                <label for="Categorie_name" class="block font-medium  labelSale">الوحده  </label>
+                <label for="Categorie_name" class="block  labelSale">الوحده  </label>
                 <select name="Categorie_name" id="Categorie_name" dir="ltr" class="input-field select2 inputSale" required>
                  
                 </select>
@@ -183,9 +186,7 @@
                     <label for="Purchase_price" class="labelSale">سعر الشراء</label>
                     <input type="text" name="Purchase_price" id="Purchase_price" placeholder="0" class="inputSale"  required/>
                 </div>
-                <div  class=" sm:col-span-3 labelSale mt-7">
-                    <button class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700"  id="saveButton">اضافة </button>
-                </div>
+                
                 <div class="">
                     <label for="Cost" class="labelSale">تكلفة الصنف</label>
                     <input type="text" name="Cost" id="Cost" placeholder="0" class="inputSale" />
@@ -215,16 +216,17 @@
                     <input type="number" name="Barcode" id="Barcode" placeholder="0" class="inputSale" />
                 </div>
                
-                <div>
-                    <label for="Exchange_rate" class="labelSale"> سعر الصرف</label>
-                    <input type="number" name="Exchange_rate" id="Exchange_rate" class="inputSale" />
+                <div class="">
+                    <label for="QuantityPurchase" class="labelSale"> الكمية المتوفره</label>
+                    <input type="number" name="QuantityPurchase" id="QuantityPurchase" placeholder="0" class="inputSale english-numbers"   />
                 </div>
-            </div>            <div class="flex px-1 gap-1">
-
                 <div class="px-1">
                     <label for="note" class="labelSale">الوصف</label>
-                    <textarea name="note" id="note" placeholder="0" class="inputSale"></textarea>
+                    <textarea name="note" id="note"  class="inputSale"></textarea>
             </div>
+            </div>            <div class="flex px-1 gap-1">
+
+                
                 <div>
                 <label for="purchase_invoice_id" class="labelSale">رقم الفاتورة</label>
                 <input type="number" name="purchase_invoice_id" id="purchase_invoice_id" placeholder="0" class="inputSale" required />
@@ -239,21 +241,12 @@
             </div>
             </div>
             <div class="flex" id="printEndSave">
-                                <div class="">
-                    <label for="QuantityPurchase" class="labelSale"> الكمية المتوفره</label>
-                    <input type="number" name="QuantityPurchase" id="QuantityPurchase" placeholder="0" class="inputSale english-numbers"   />
-                </div>
-                <div class="col-span-6 sm:col-span-3">
-                    <button class="inputSale mt-2 flex " type="button" id="savaAndPrint" >
-                        <svg class="w-6 h-5 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M16.444 18H19a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h2.556M17 11V5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v6h10ZM7 15h10v4a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-4Z" />
-                        </svg>
-                        <span class="textNav mr-1">حفظ وطباعة</span>
-                    </button>
-                    </div>
                     <div class="flex flex-col">
                         <input type="hidden" name="User_id" value="{{Auth::user()->id}}"/>
                       </div>
+                      <div class="col-span-6 sm:col-span-3 mt-2 px-4" >
+                        <button class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700"  id="saveButton">اضافة </button>
+                    </div>
                 <div class="col-span-6 sm:col-span-3" >
                 <button class="flex inputSale mt-2 " type="button" onclick="deleteInvoice()" >
                         <svg class="w-6 h-5 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -265,11 +258,9 @@
             </div>
         </form>
     </div>
-
     <div class="container mx-auto  " id="mainAccountsTable">
         <div class="w-full overflow-y-auto max-h-[80vh]  bg-white">
             <table id="mainAccountsTable"   class="w-full mb-4 text-sm">
-
                 <thead >
                     <tr class="bg-blue-100">
                         <th class=" px-2 py-1  tagTd">م</th>
@@ -283,7 +274,6 @@
                         <th class=" px-2 py-1  tagTd">الإجمالي</th>
                         <th class=" px-2 py-1  tagTd"></th>
                         <th class=" px-2 py-1  tagTd "></th>
-                        {{-- <th class="border border-black px-2 py-1">العلامة التجارية</th> --}}
                     </tr>
                 </thead>
                 <tbody>       
@@ -317,6 +307,7 @@ else{
 </script>
 <button onclick="openAndPrintInvoice2(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح وطباعة الفاتورة</button>
 <div id="successMessage" style="display:none;" class="text-red-500 font-semibold mt-2"></div>
+</div>
 
 <script>
     function openAndPrintInvoice2(e) {
@@ -325,7 +316,6 @@ else{
         if (invoiceField) {
             e.preventDefault(); // منع تحديث الصفحة
             const url = `{{ route('invoicePurchases.print', ':invoiceField') }}`.replace(':invoiceField', invoiceField); // استبدال القيمة في الرابط
-            
             // فتح الرابط في نافذة جديدة
             const newWindow = window.open(url, '_blank', 'width=600,height=800');
 
@@ -350,9 +340,6 @@ else{
             }, 3000);
         }
     }
-
-
-   
     </script>
  <script>
   $(function() {
@@ -532,7 +519,6 @@ else{
       };
     });
     </script>
-
 <script src="{{url('purchases/purchases.js')}}"></script>
 <script src="{{ url('purchases.js') }}"></script>
 <style>
@@ -545,7 +531,6 @@ else{
         font-weight: bold;
     }
   </style>
-
 
 
 @endsection

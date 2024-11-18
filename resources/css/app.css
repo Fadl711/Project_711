@@ -32,7 +32,7 @@
    @apply shadow-md py-1  rounded  flex items-center justify-between
 }
 .labelSale{
-  @apply block mb-2 text-sm  text-gray-700 dark:text-white text-center font-bold
+  @apply block    text-gray-700 dark:text-white text-center font-sans 
 }
 .inputSale{
 @apply w-full rounded-md border border-[#d2d0d0] bg-white py-2 px-2   text-[#07074D] outline-none focus:border-[#6A64F1] focus:shadow-md 

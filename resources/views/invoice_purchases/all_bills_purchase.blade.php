@@ -47,205 +47,108 @@
         </div>
 </div>
 <script>
-$(document).ready(function () {
-    const searchTypeSelect = $('select[name="searchType"]'); // قائمة البحث
-    const searchInput = $('input[name="search"]'); // مدخل البحث
-    let debounceTimeout; // لتخزين التوقيت بين عمليات البحث
-    const displayContainer = $('#displayContainer'); // الحاوية الأولى
-    const displayContainer2 = $('#displayContainer2'); // الحاوية الثانية
+    $(document).ready(function () {
+    const searchTypeSelect = $('select[name="searchType"]');
+    const searchInput = $('input[name="search"]');
+    const radioInput = $('input[name="list-radio"]');
+    const displayContainer = $('#displayContainer');
+    const displayContainer2 = $('#displayContainer2');
+    let debounceTimeout;
 
-    // استماع لتغيير قيمة مدخل البحث (input)
+    // استدعاء البحث بناءً على المدخل أو الاختيار
+    function fetchInvoices(url, container) {
+        $.ajax({
+            url: url,
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+            },
+            success: function (data) {
+                container.empty();
+                if (data.purchaseInvoices.length > 0) {
+                    data.purchaseInvoices.forEach((purchase) => {
+                        container.append(renderInvoiceCard(purchase));
+                    });
+                } else {
+                    container.append('<p class="text-center text-gray-500">لا توجد فواتير لعرضها.</p>');
+                }
+            },
+            error: function (error) {
+                console.error('Error fetching invoices:', error.responseText);
+            }
+        });
+    }
+
+    // إنشاء كارت الفاتورة
+    function renderInvoiceCard(purchase) {
+        return `
+            <div class="mb-3 border border-gray-300 rounded-lg px-4 py-2 shadow-sm">
+                <div class="flex justify-between items-center">
+                    <div class="text-right">
+                        <div class="text-gray-700 text-right">تاريخ الفاتورة: <span class="text-sm">${purchase.formatted_date}</span></div>
+                        <div class="text-gray-700 text-right">اسم ${purchase.main_account_class}: <span class="text-sm">${purchase.supplier_name}</span></div>
+                    </div>
+                    <div class="text-gray-700">فاتورة ${purchase.transaction_type}: <span class="text-sm">${purchase.Invoice_type}</span></div>
+                    <div class="text-right">
+                        <div>رقم الفاتورة: <span class="text-sm">${purchase.invoice_number}</span></div>
+                        <div>رقم الإيصال: <span class="text-sm">${purchase.receipt_number}</span></div>
+                    </div>
+                </div>
+                <table class="w-full text-center border-collapse text-sm">
+                    <thead class="bg-indigo-600 text-white text-sm">
+                        <tr>
+                            <th class="py-1 px-4">إجمالي تكلفة الفاتورة</th>
+                            <th class="py-1 px-4">إجمالي المصاريف</th>
+                            <th class="py-1 px-4">المدفوع</th>
+                            <th class="py-1 px-4">عرض الفاتورة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="bg-gray-50">
+                            <td class="py-1 px-4">${purchase.total_invoice.toLocaleString()}</td>
+                            <td class="py-1 px-4">${purchase.total_cost.toLocaleString()}</td>
+                            <td class="py-1 px-4">${purchase.paid.toLocaleString()}</td>
+                            <td class="py-1 px-4">
+                                <button value="${purchase.invoice_number}" onclick="openInvoiceWindow(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح الفاتورة</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="grid grid-cols-2">
+                    <div class="text-gray-700 text-right text-sm">تاريخ التحديث: <span>${purchase.updated_at}</span></div>
+                    <div class="text-gray-700 text-sm  text-left">المستخدم: <span>${purchase.user_name}</span></div>
+                </div>
+            </div>`;
+    }
+
+    // البحث بالمدخل
     searchInput.on('input', function () {
-        const searchQuery = searchInput.val().trim(); // الحصول على قيمة البحث بعد التصفية
-
-        clearTimeout(debounceTimeout); // إلغاء البحث السابق إذا كان هناك تأخير
+        const searchQuery = searchInput.val().trim();
+        clearTimeout(debounceTimeout);
 
         if (searchQuery !== "") {
-            // إذا كان المدخل يحتوي على نص
-            displayContainer.addClass("hidden"); // إظهار الحاوية الأولى
-            displayContainer2.removeClass("hidden"); // إظهار الحاوية الثانية
-            debounceTimeout = setTimeout(performSearch, 500); // تأخير البحث لمدة 500 مللي ثانية
+            displayContainer.addClass("hidden");
+            displayContainer2.removeClass("hidden");
+            debounceTimeout = setTimeout(() => {
+                const searchType = searchTypeSelect.val();
+                const url = `/api/purchase-invoices?searchType=${searchType}&searchQuery=${searchQuery}`;
+                fetchInvoices(url, displayContainer2);
+            }, 500);
         } else {
-            // إذا كان المدخل فارغًا
-            displayContainer.removeClass("hidden"); // إظهار الحاوية الأولى
-            displayContainer2.addClass("hidden"); // إخفاء الحاوية الثانية
-            resetSearchResults(); // إعادة تهيئة الحاويات أو البيانات عند إفراغ المدخل
+            displayContainer.removeClass("hidden");
+            displayContainer2.addClass("hidden");
+            displayContainer2.empty();
         }
     });
 
-    // وظيفة performSearch لتنفيذ البحث بناءً على نص المدخل
-    function performSearch() {
-        const searchType = searchTypeSelect.val(); // قيمة البحث (كل الفواتير، أول فاتورة، آخر فاتورة)
-        const searchQuery = searchInput.val().trim(); // الحصول على قيمة البحث بعد التصفية
-
-        // بناء رابط API مع القيم
-        let url = `/api/purchase-invoices?searchType=${searchType}&searchQuery=${searchQuery}`;
-
-        $.ajax({
-            url: url,
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-            },
-            success: function (data) {
-                displayContainer2.empty(); // تفريغ الحاوية قبل عرض البيانات الجديدة
-
-                if (data.purchaseInvoices.length > 0) {
-                    // عرض الفواتير في الحاوية الثانية
-                    data.purchaseInvoices.forEach((purchase) => {
-                        displayContainer2.append(`
-                            <div class="mb-3 border border-gray-300 rounded-lg px-4 py-2 shadow-sm">
-                                <div class="flex justify-between items-center">
-                                    <div class="text-right">
-                                        <div class="text-gray-700 text-right">
-                                            تاريخ الفاتورة: <span class="text-sm">${purchase.formatted_date}</span>
-                                        </div>
-                                        <div class="text-gray-700 text-right">
-                                            اسم ${purchase.main_account_class}: <span class="text-sm">${purchase.supplier_name}</span>
-                                        </div>
-                                    </div>
-                                    <div class="text-gray-700">
-                                        فاتورة ${purchase.transaction_type}: <span class="text-sm">${purchase.Invoice_type}</span>
-                                    </div>
-                                    <div class="text-right">
-                                        <div>رقم الفاتورة: <span class="text-sm">${purchase.invoice_number}</span></div>
-                                        <div>رقم الإيصال: <span class="text-sm">${purchase.receipt_number}</span></div>
-                                    </div>
-                                </div>
-                                <table class="w-full text-center border-collapse text-sm">
-                                    <thead class="bg-indigo-600 text-white text-sm">
-                                        <tr>
-                                            <th class="py-1 px-4">إجمالي تكلفة الفاتورة</th>
-                                            <th class="py-1 px-4">إجمالي المصاريف</th>
-                                            <th class="py-1 px-4">المدفوع</th>
-                                            <th class="py-1 px-4">عرض الفاتورة</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr class="bg-gray-50">
-                                            <td class="py-1 px-4">${purchase.total_invoice.toLocaleString()}</td>
-                                            <td class="py-1 px-4">${purchase.total_cost.toLocaleString()}</td>
-                                            <td class="py-1 px-4">${purchase.paid.toLocaleString()}</td>
-                                            <td class="py-1 px-4">
-                                                <button value="${purchase.invoice_number}" onclick="openInvoiceWindow(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح الفاتورة</button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <div class="grid grid-cols-2">
-                                    <div class="text-gray-700 text-sm text-right">
-                                        المستخدم: <span>${purchase.user_name}</span>
-                                    </div>
-                                    <div class="text-gray-700 text-left text-sm">
-                                        تاريخ التحديث: <span>${purchase.updated_at}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        `);
-                    });
-
-                } else {
-                    // إذا لم توجد فواتير
-                    displayContainer2.append('<p class="text-center text-gray-500">لا توجد فواتير لعرضها.</p>');
-                }
-            },
-            error: function (error) {
-                console.error('Error fetching invoices:', error.responseText);
-            }
-        });
-    }
-
-    // وظيفة لإعادة تهيئة الحاويات أو البيانات عند إفراغ المدخل
-    function resetSearchResults() {
-        displayContainer2.empty(); // تفريغ المحتوى في الحاوية الثانية
-    }
-});
-
-</script>
-
-<script>
-   $(document).ready(function () {
-    const displayContainer = $('.overflow-y-auto'); // العنصر الذي سيعرض البيانات
-
-    // الاستماع لأي تغييرات في الاختيار بين الأزرار الراديوية
-    $('input[name="list-radio"]').on('click', function () {
-        const value = $(this).val(); // القيمة المختارة
-        const url = `/api/purchase-invoices/${value}`; // بناء الرابط بناءً على القيمة
-
-        $.ajax({
-            url: url,
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-            },
-            success: function (data) {
-                displayContainer.empty(); // تفريغ الحاوية قبل عرض البيانات الجديدة
-
-                if (data.purchaseInvoices.length > 0) {
-                    data.purchaseInvoices.forEach((purchase) => {
-                        displayContainer.append(`
-                            <div class="mb-3 border border-gray-300 rounded-lg px-4 py-2 shadow-sm">
-                                <div class="flex justify-between items-center">
-                                    <div class="text-right">
-                                        <div class="text-gray-700 text-right">
-                                            تاريخ الفاتورة: <span class="text-sm">${purchase.formatted_date}</span>
-                                        </div>
-                                        <div class="text-gray-700 text-right">
-                                            اسم ${purchase.main_account_class}: <span class="text-sm">${purchase.supplier_name}</span>
-                                        </div>
-                                    </div>
-                                    <div class="text-gray-700">
-                                        فاتورة ${purchase.transaction_type}: <span class="text-sm">${purchase.Invoice_type}</span>
-                                    </div>
-                                    <div class="text-right">
-                                        <div>رقم الفاتورة: <span class="text-sm">${purchase.invoice_number}</span></div>
-                                        <div>رقم الإيصال: <span class="text-sm">${purchase.receipt_number}</span></div>
-                                    </div>
-                                </div>
-                                <table class="w-full text-center border-collapse text-sm">
-                                    <thead class="bg-indigo-600 text-white text-sm">
-                                        <tr>
-                                            <th class="py-1 px-4">إجمالي تكلفة الفاتورة</th>
-                                            <th class="py-1 px-4">إجمالي المصاريف</th>
-                                            <th class="py-1 px-4">المدفوع</th>
-                                            <th class="py-1 px-4">عرض الفاتورة</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr class="bg-gray-50">
-                                            <td class="py-1 px-4">${purchase.total_invoice.toLocaleString()}</td>
-                                            <td class="py-1 px-4">${purchase.total_cost.toLocaleString()}</td>
-                                            <td class="py-1 px-4">${purchase.paid.toLocaleString()}</td>
-                                            <td class="py-1 px-4">
-                                                <button value="${purchase.invoice_number}" onclick="openInvoiceWindow(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح الفاتورة</button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <div class="grid grid-cols-2">
-                                    <div class="text-gray-700 text-sm text-right">
-                                        المستخدم: <span>${purchase.user_name}</span>
-                                    </div>
-                                    <div class="text-gray-700 text-left text-sm">
-                                        تاريخ التحديث: <span>${purchase.updated_at}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        `);
-                    });
-                } else {
-                    displayContainer.html('<p class="text-center text-gray-500">لا توجد فواتير لعرضها.</p>');
-                }
-            },
-            error: function (error) {
-                console.error('Error fetching invoices:', error.responseText);
-            }
-        });
+    // البحث بالاختيار
+    radioInput.on('click', function () {
+        const value = $(this).val();
+        const url = `/api/purchase-invoices/${value}`;
+        fetchInvoices(url, displayContainer);
     });
 });
-
 
 </script>
 
