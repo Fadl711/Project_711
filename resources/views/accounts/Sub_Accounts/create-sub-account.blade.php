@@ -6,7 +6,7 @@
 {{-- @dd($subAccountId); --}}
 {{-- @isset($subAccountId)
 @dd($subAccountId)
-    
+
 @endisset --}}
 <script src="{{url('payments.js')}}">   </script>
 
@@ -65,7 +65,7 @@ $('#Known_phone').val('');        // إعادة تعيين حقل الهاتف �
                     if (xhr.status === 400) {
                         // إظهار رسالة خطأ عند وجود نفس الاسم
                         $('#successMessage').show().text(xhr.responseJSON.message);
-                    } 
+                    }
                     //else {
                     //     $('#errorMessage').show().text('حدث خطأ أثناء الحفظ.');
                     // }
@@ -95,7 +95,7 @@ $('#Known_phone').val('');        // إعادة تعيين حقل الهاتف �
         });
 
         // منع السلوك الافتراضي لزر السهم
-      
+
     });
 </script>
 

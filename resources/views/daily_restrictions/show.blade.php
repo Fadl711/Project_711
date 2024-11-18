@@ -15,7 +15,7 @@
         </div>
         <div class="p-3 w-52 bg-gray-100 border-black   h-16 my-1 text-center text-2xl font-bold underline underline-offset-8">
 
-            <p >  القيد /نقد</p>
+            <p >  {{$daily->daily_entries_type}} /نقد</p>
         </div>
         <div class=" w-52 bg-gray-100  my-1 text-center font-bold space-y-2">
             <div>

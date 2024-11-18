@@ -130,7 +130,7 @@
     </div>
 
     @auth
-
+    <input type="hidden" name="daily_entries_type" value="سند صرف">
     <input type="hidden" name="User_id" value="{{ Auth::user()->id }}">
     @endauth
 </form>

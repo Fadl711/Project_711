@@ -128,6 +128,7 @@
                   </button>
             </div> --}}
     </div>
+    <input type="hidden" name="daily_entries_type" value="سند قبض">
 
     @auth
 

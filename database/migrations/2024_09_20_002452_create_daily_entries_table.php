@@ -22,18 +22,19 @@ return new class extends Migration
             $table->string('Currency_name')->nullable();
             $table->unsignedInteger('User_id');
             $table->string('Invoice_type')->nullable();
+            $table->string('daily_entries_type');
             // $table->integer('Type_migration')->nullable();
-            $table->integer('Invoice_id')->nullable()->unsigned(); 
+            $table->integer('Invoice_id')->nullable()->unsigned();
 
             $table->integer('accounting_period_id')->unsigned();
-            $table->enum('status_debit', ['مرحل', 'غير مرحل'])->default('غير مرحل'); //المدين        
-            $table->enum('status', ['مرحل', 'غير مرحل'])->default('غير مرحل');   //الدئن      
+            $table->enum('status_debit', ['مرحل', 'غير مرحل'])->default('غير مرحل'); //المدين
+            $table->enum('status', ['مرحل', 'غير مرحل'])->default('غير مرحل');   //الدئن
                $table->timestamps();
 
             //    $table->foreign('accounting_period_id')->references('accounting_period_id')->on('accounting_periods');
                $table->foreign('account_Credit_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
                $table->foreign('account_debit_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
-             
+
 
             $table->foreign('User_id')->references('id')->on('users');
             $table->foreign('Daily_page_id')->references('page_id')->on('general_journal');
