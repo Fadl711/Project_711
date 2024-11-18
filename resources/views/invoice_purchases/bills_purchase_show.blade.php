@@ -73,44 +73,32 @@
 
         <header class="flex justify-between items-center border-b-2 border-gray-800 pb-4 mb-4">
             <div>
-                <p>اسم المورد:  
+                <p>اسم@isset($accountCla){{$accountCla}}@endisset:  
                     @isset($SubAccounts)
-                    
-             
-
-                    @foreach ($SubAccounts as $SubAccount)
-                    @if($SubAccount->sub_account_id === $DataPurchaseInvoice->Supplier_id)
-
-                     {{$SubAccount->sub_name??null}} {{$SubAccount->Phoen."/"??null}} {{$SubAccount->name_The_known."/"??null}}</p>
-                     @endif
-                    @endforeach
-
+                                {{$SubAccounts->sub_name??null}} </p>
                     @endisset
 
                 </p>
-                {{-- <p>التلفون: {{$SubAccount->??null}}</p> --}}
-                <p>العملة: {{$currency->currency_symbol}}</p>
+                <p>العملة: 
+                    @isset($currency->currency_symbol)
+                    {{$currency->currency_symbol}}</p>
+                    @endisset
+
             </div>
             <div>
                 <h2 class="text-lg font-bold">فاتورة :
                     @isset($accountType)
                     @foreach ($accountType as $accountTypes)
                     @if($accountTypes->value === $DataPurchaseInvoice->transaction_type)
-
                     {{ $accountTypes->label()}} /{{$DataPurchaseInvoice->Invoice_type??null}}
                      @endif
                     @endforeach
                     @endisset
-
-
                 </h2>
-                {{-- <p>اسم المورد: جمال علي احمد</p>
-                <p>التلفون: 776327938</p> --}}
             </div>
             <div>
                 <p>التاريخ: {{$DataPurchaseInvoice->created_at}}</p>
                 <p>رقم الإيصال:  {{$DataPurchaseInvoice->Receipt_number??0}}</p>
-                {{-- <p>الدفع :{{$DataPurchaseInvoice->Invoice_type??null}}</p> --}}
             </div>
         </header>
 
@@ -126,7 +114,6 @@
                     <th class="p-2 text-right">سعر الشراء</th>
                     <th class="border border-black px-2 py-1">المخزن</th>
                     <th class="p-2 text-right">الإجمالي</th>
-                    {{-- <th class="p-2 text-right">التكلفة</th> --}}
                 </tr>
             </thead>
             <tbody>
@@ -162,7 +149,6 @@
 
                         </td>
                         <td class="p-2 text-right">{{ number_format($Purchase->Total )}}</td>
-                        {{-- <td class="p-2 text-right">{{ $Purchase->Cost }}</td> --}}
                     </tr>
                 @endforeach
                 @php
@@ -189,7 +175,7 @@
         <div class=" bg-white p-4">
 
               
-                    <p class=" text-sm" dir="ltr">  مسؤول الشراء: {{($UserName) ?? 0}}</p>
+                    <p class=" text-sm" dir="ltr">  المسؤول : {{($UserName) ?? 0}}</p>
               
                 
         </div>

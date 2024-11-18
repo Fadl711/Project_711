@@ -112,7 +112,7 @@
         </div>
     </div>
 </div>
-<div class="flex max-md:block p-1  ">
+<div class="flex max-md:block p-1 ">
     <div class="min-w-[30%] border-x bg-white   rounded-xl">
         <form   id="ajaxForm">
             @csrf 
@@ -266,11 +266,11 @@
         </form>
     </div>
 
-    <div class="container mx-auto " id="mainAccountsTable">
-        <div class="w-full overflow-x-auto bg-white">
+    <div class="container mx-auto  " id="mainAccountsTable">
+        <div class="w-full overflow-y-auto max-h-[80vh]  bg-white">
             <table id="mainAccountsTable"   class="w-full mb-4 text-sm">
 
-                <thead>
+                <thead >
                     <tr class="bg-blue-100">
                         <th class=" px-2 py-1  tagTd">م</th>
                         <th class=" px-2 py-1  tagTd">اسم الصنف</th>

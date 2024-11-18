@@ -4,7 +4,7 @@
 
 
 {{-- alert --}}
-<div id="crud-moda" tabindex="-1" aria-hidden="true" class=" bg-black bg-opacity-50  hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0  h-full">
+<div id="crud-moda" tabindex="-1" aria-hidden="true" class="  bg-black bg-opacity-50  hidden  fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0  h-full">
     <div class="relative p-4 w-full max-w-md max-h-full">
         <!-- Modal content -->
         <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
@@ -141,7 +141,7 @@
 {{-- alert --}}
 <br>
      <div class="flex ">
-     <div class=" min-w-[20%] px-1  border-x border-y border-orange-950 rounded-xl p-2 ">
+     <div class=" min-w-[20%] px-1 overflow-y-auto max-h-[80vh] border-x border-y border-orange-950 rounded-xl p-2 ">
             <form action="" class="min-w-[15%]">
             <div class="col-span-6 sm:col-span-3">
                 <label for="product-name" class="labelSale">اسم الصنف</label>
@@ -222,7 +222,7 @@
 
     </form>
     </div>
-    <div class="min-w-[85%] px-3 ">
+    <div class="min-w-[85%] px-3 overflow-y-auto max-h-[80vh] ">
         <table class=" min-w-[85%]  ">
             <thead>
                 <tr class="bgcolor">
@@ -362,9 +362,6 @@ function NewProduct(){
 }
 </script>
 
-<button id="start-scanner">تشغيل الكاميرا لمسح الباركود</button>
-<div id="camera" style="width: 640px; height: 480px;"></div>
-<p id="barcode-result">الباركود: </p>
 
 <script>
     $(document).ready(function() {

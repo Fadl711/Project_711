@@ -56,11 +56,11 @@ public function subAccount()
 {
     return $this->belongsTo(SubAccount::class, 'sub_account_id');
 }
-public function supplier()
-{
-    return $this->belongsTo(SubAccount::class, 'Supplier_id', 'sub_account_id');
-}
 
+public function supplier()
+    {
+        return $this->belongsTo(SubAccount::class, 'Supplier_id', 'sub_account_id');
+    }
 public function user()
 {
     return $this->belongsTo(User::class, 'User_id', 'id');
@@ -82,4 +82,6 @@ public function user()
   {
       return $this->created_at->format('Y-m-d');
   }
+
+
 }

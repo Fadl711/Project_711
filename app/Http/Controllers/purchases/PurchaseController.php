@@ -215,6 +215,11 @@ class PurchaseController extends Controller
                 $account_id = $request->sub_account_debit_id;
                 $warehouse_from_id = null;
                 break;
+            case 4: // عملية دخول المخزون
+                $warehouse_to_id = $request->account_debitid;
+                $account_id = $request->sub_account_debit_id;
+                $warehouse_from_id = null;
+                break;
             case 2: // عملية خروج المخزون
                 $warehouse_from_id = $request->account_debitid;
             $account_id = $request->sub_account_debit_id;
@@ -353,6 +358,7 @@ public function search(Request $request)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->where('transaction_type', 1)
         ->sum('quantity');
+
     
     $warehouseFromid = Purchase::where('product_id', $id)
         ->where('warehouse_from_id', $warehouse_to_id)
@@ -371,11 +377,16 @@ public function search(Request $request)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->where('transaction_type', 3)
         ->sum('quantity');
+        $warehouse_Fromid4 = Purchase::where('product_id', $id)
+        ->where('warehouse_to_id', $warehouse_to_id)
+        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        ->where('transaction_type', 4)
+        ->sum('quantity');
  // جلب الفئات مع ID
  $categories = Category::where('product_id', $id)
  ->select('categorie_id', 'Categorie_name')
  ->get();        // حساب الكمية النهائية المتاحة في المخزن
-    $productPurchase = $Purchase_warehouse_to_id - $warehouseFromid - $warehouse_Fromid+$warehouse_Fromid2;
+    $productPurchase = $Purchase_warehouse_to_id - $warehouseFromid - $warehouse_Fromid+$warehouse_Fromid2+$warehouse_Fromid4;
     
 
     if ($productData) {
@@ -417,13 +428,30 @@ public function print($id)
 {
     $DataPurchaseInvoice = PurchaseInvoice::where('purchase_invoice_id', $id)->first();
     $accountType = TransactionType::cases();
-    $SubAccount = SubAccount::where('sub_account_id', $DataPurchaseInvoice->Supplier_id)->get();
+    $SubAccount = SubAccount::where('sub_account_id', $DataPurchaseInvoice->Supplier_id)->first();
     $UserName = User::where('id', $DataPurchaseInvoice->User_id)->pluck('name')->first();
 
     if (!$UserName) {
         $UserName = 'اسم غير موجود';
     }
         $SubName = SubAccount::all();
+// $accountClasss=AccountClass::where('value',$SubAccount->AccountClass)->get();
+    if($SubAccount->AccountClass===1)
+    {
+        $AccountClassName="العيل";
+    }
+    if($SubAccount->AccountClass===2)
+    {
+        $AccountClassName="المورد";
+    }
+    if($SubAccount->AccountClass===3)
+    {
+        $AccountClassName="المخزن";
+    }
+    if($SubAccount->AccountClass===4)
+    {
+        $AccountClassName="الحساب";
+    }
 
     $DataPurchase = Purchase::where('Purchase_invoice_id', $id)->get();
     $Categorys = Category::all();
@@ -451,6 +479,7 @@ public function print($id)
         'currency' => $currency,
         'warehouses' => $SubName,
         'UserName' => $UserName,
+        'accountCla' => $AccountClassName,
     ]);
 }
 private function numberToWords($number, $currency = 'ريال')

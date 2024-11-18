@@ -83,9 +83,13 @@ Route::delete('/purchase-invoices/{id}', [PurchaseController::class, 'deleteInvo
     Route::get('/Default_customer', [default_customerController::class, 'index'])->name('default_customers.index');
     Route::post('Default_customer/store', [default_customerController::class, 'store'])->name('default_customers.store');
     Route::delete('/Default_customer/{id}/destroy', [default_customerController::class, 'destroy'])->name('default_customers.destroy');
-Route::post('/invoicePurchases/store', [PurchaseController::class, 'store'])->name('invoicePurchases.store');
-Route::get('/api/products/search', [PurchaseController::class, 'search']);
+   Route::post('/invoicePurchases/store', [PurchaseController::class, 'store'])->name('invoicePurchases.store');
+   Route::get('/api/products/search', [PurchaseController::class, 'search']);
 
+   Route::get('/invoice_purchases/show/{id}', [InvoicePurchaseController::class, 'bills_purchase_show'])->name('bills_purchase_show');
+   Route::get('/invoice_purchases/index', [InvoicePurchaseController::class, 'index'])->name('invoice_purchase.index');
+   Route::get('/api/purchase-invoices/{filterType}', [InvoicePurchaseController::class, 'getPurchaseInvoices']);
+   Route::get('/api/purchase-invoices', [InvoicePurchaseController::class, 'searchInvoices']);
 
 Route::get('/Purchase', [PurchaseController::class,'create'])->name('Purchases.create');
 Route::post('/Purchases/storc', [PurchaseController::class, 'storc'])->name('Purchases.storc');
@@ -93,7 +97,6 @@ Route::get('/Purchases/{id}/main-accounts', [PurchaseController::class, 'getMain
 // Route::get('/print-receipt/{id}', [PurchaseController::class, 'printReceipt'])->name('receipt.print');
 Route::post('/invoicePurchases/saveAndPrint', [PurchaseController::class, 'saveAndPrint'])->name('invoicePurchases.saveAndPrint');
 Route::get('/get-purchases-by-invoice', [PurchaseController::class, 'getPurchasesByInvoice'])->name('getPurchasesByInvoice');
-
 Route::get('/invoice_purchases/{id}/print', [PurchaseController::class, 'print'])->name('invoicePurchases.print');
 
 Route::get('/balancing', [AccountCoctroller::class, 'balancing'])->name('accounts.balancing');
@@ -101,8 +104,7 @@ Route::get('/invoice_sales', [AllBillsController::class, 'index'])->name('invoic
 Route::get('/all_bills_sale', [AllBillsController::class, 'all_bills_sale'])->name('invoice_sales.all_bills_sale');
 Route::get('/print_bills_sale', [AllBillsController::class, 'print_bills_sale'])->name('print_bills_sale');
 Route::get('/bills_sale_show', [AllBillsController::class, 'bills_sale_show'])->name('invoice_sales.bills_sale_show');
-Route::get('/invoice_purchases/show/{id}', [InvoicePurchaseController::class, 'bills_purchase_show'])->name('bills_purchase_show');
-Route::get('/invoice_purchases/index', [InvoicePurchaseController::class, 'index'])->name('invoice_purchase.index');
+
 
 
 
@@ -149,9 +151,6 @@ Route::post('/transfer_restrictions/store', [AccountCoctroller::class, 'store'])
 
 Route::get('/Locks_financial_period/index', [LocksFinancialPeriodsController::class, 'index'])->name('Locks_financial_period.index');
 Route::get('/Locks_financial_period/getProfitAndLossData', [LocksFinancialPeriodsController::class, 'getProfitAndLossData'])->name('Locks_financial_period.getProfitAndLossData');
-
-
-
 Route::get('/refunds/index', [Sale_RefundController::class, 'index'])->name('refunds.index');
 Route::get('/refunds/create/sale', [Sale_RefundController::class, 'create'])->name('sale_refunds.create');
 Route::get('/refunds/show_purchase_refund', [Purchase_RefundController::class, 'show_purchase_refund'])->name('show_purchase_refund');
