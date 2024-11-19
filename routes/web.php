@@ -217,6 +217,10 @@ Route::get('/accounts/large-main-accounts/{largeAccountType}', [TreeAccountContr
 Route::get('/main-accounts/{id}/sub-accounts', [MainAccountController::class, 'getSubAccounts'])->name('sub-accounts');
 Route::get('/accounts', [AccountCoctroller::class, 'index'])->name('accounts.index');
 Route::get('/accounts/Main_Account/create-sub-account', [SubaccountController::class, 'create'])->name('Main_Account.create-sub-account');
+Route::get('/accounts/subAccount/allShow', [SubaccountController::class, 'allShow'])->name('subAccounts.allShow');
+Route::get('/accounts/subAccount/{id}/edit', [SubaccountController::class, 'edit'])->name('subAccounts.edit');
+Route::post('/accounts/subAccount', [SubaccountController::class, 'update'])->name('subAccounts.update');
+Route::delete('/accounts/subAccount/{id}', [SubaccountController::class, 'destroy'])->name('subAccounts.destroy');
 Route::get('/accounts/account_tree/index_account_tree', [AccountCoctroller::class, 'index_account_tree'])->name('index_account_tree');
 Route::get('/accounts/show/main-accounts', [AccountCoctroller::class, 'showMainAccount'])->name('showMainAccount');
 Route::get('/search-sub-accounts', [TreeAccountController::class, 'searchSubAccounts'])->name('search.sub.accounts');

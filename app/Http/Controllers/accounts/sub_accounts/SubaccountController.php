@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 class SubaccountController extends Controller
 {
     //
-    
+
     public function create(){
         $dataDeportattons=[
             ['Deportatton'=> (Deportatton::FINANCAL_CENTER_LIST ),'id'=>(IntOrderStatus::FINANCAL_CENTER_LIST )],
@@ -32,7 +32,7 @@ class SubaccountController extends Controller
 
 //  dd( $MainAccounts);
 
- return view('accounts.Main_Account.create-sub-account',['MainAccounts'=> $MainAccounts,'TypesAccounts'=> $TypesAccountName,'Deportattons'=> $dataDeportattons]);
+ return view('accounts.Sub_Accounts.create-sub-account',['MainAccounts'=> $MainAccounts,'TypesAccounts'=> $TypesAccountName,'Deportattons'=> $dataDeportattons]);
          }
     public function convertArabicToEnglish($number)
     {
@@ -41,9 +41,9 @@ class SubaccountController extends Controller
         $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
         return str_replace($arabicNumbers, $englishNumbers, $number);
     }
-    
+
     public function store(Request $request)
-    { 
+    {
          $MainAccounts=MainAccount::all();
              $sub_name=$request->sub_name;
 
@@ -57,7 +57,7 @@ class SubaccountController extends Controller
         $debtor1 = $request->input('debtor', '٠١٢٣٤٥٦٧٨٩');
         $creditor1 = $request->input('creditor', '٠١٢٣٤٥٦٧٨٩');
         $Phone1 = $request->input('Phone', '٠١٢٣٤٥٦٧٨٩');
-        $User_id= $request->User_id; 
+        $User_id= $request->User_id;
          $sub_name=$request->sub_name;
         $name_The_known=$request->name_The_known;
         $Known_phone=$request->Known_phone;
@@ -70,17 +70,17 @@ class SubaccountController extends Controller
 
     // $data1=SubAccount::where($data->Main_id);
     //  dd($data1);
- 
-           
+
+
     // $account_nametExists = MainAccount::where('sub_name', $sub_name)->where('')->exists();
     // if ($account_nametExists)
     //   {
     //    return response()->json(['message'=>' هذا الاسم موجود من قبل']);
     //    }
         $DataSubAccount=new SubAccount();
-           $DataSubAccount->Main_id=$Main_id; 
+           $DataSubAccount->Main_id=$Main_id;
            $DataSubAccount->sub_name=$sub_name;
-           $DataSubAccount->User_id= $User_id; 
+           $DataSubAccount->User_id= $User_id;
            $DataSubAccount->debtor = !empty($debtor) ? $debtor :0;
            $DataSubAccount-> creditor= !empty($creditor ) ? $creditor :0;
            $DataSubAccount->Phone = !empty ($Phone1 ) ?$Phone1 :null ;
@@ -90,6 +90,28 @@ class SubaccountController extends Controller
     }
         $post=MainAccount::all();
     return response()->json(['message'=>'تمت العملية بنجاح"' ,'posts'=>$DataSubAccount ,'pos'=>$post]);
-       
+
+    }
+    public function edit($id){
+        $SubAccount=SubAccount::where('sub_account_id',$id)->first();
+        return view('accounts.Sub_Accounts.edit',compact('SubAccount'));
+    }
+    public function update(Request $request){
+        SubAccount::where('sub_account_id',$request->sub_id)->update([
+            'sub_name'=>$request->sub_name,
+            'Main_id'=>$request->Main_id,
+            'User_id'=>$request->User_id,
+            'debtor_amount'=>$request->debtor_amount,
+            'creditor_amount'=>$request->creditor_amount,
+        ]);
+        return redirect()->route('subAccounts.allShow');
+    }
+    public function destroy($id){
+        SubAccount::where('sub_account_id',$id)->delete();
+        return back();
+    }
+    public function allShow(){
+        $SubAccounts=SubAccount::all();
+        return view('accounts.Sub_Accounts.all_show_subAccount',compact('SubAccounts'));
     }
 }

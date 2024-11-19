@@ -30,6 +30,7 @@
                 </tr>
                 <tr>
                     <th class="py-1 border text-right">رقم القيد</th>
+                    <th class="py-1 border text-right">نوع القيد</th>
                     <th class="py-1 border text-right">من حساب/</th>
                     <th class="py-1 border text-right">مدين</th>
                     <th class="py-1 border text-right">الى حساب/</th>
@@ -54,6 +55,7 @@
 
                     <tr class="transition-all duration-500">
                         <td class="border text-right">{{ $eai->entrie_id }}</td>
+                        <td class="border text-right">{{ $eai->daily_entries_type }}</td>
                         <td class="border text-right">({{ $resultDebit->account_name }}) - ({{ $resultDebit1->sub_name }})</td>
                         <td class="border text-right">{{ $eai->Amount_debit }} ريال</td>
                         <td class="border text-right">({{ $resultCredit->account_name }}) - ({{ $resultCredit1->sub_name }})</td>

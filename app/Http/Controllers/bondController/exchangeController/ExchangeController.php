@@ -62,12 +62,13 @@ class ExchangeController extends Controller
     $dailyEntrie->account_debit_id = $request->DepositAccount;
     $dailyEntrie->Amount_debit = $request->Amount_debit;
     $dailyEntrie->account_Credit_id = $request->CreditAmount;
-    $dailyEntrie->Amount_Credit = 0;
+    $dailyEntrie->Amount_Credit = $request->Amount_debit;
     $dailyEntrie->Statement =
     $dailyEntrie->Currency_name = $request->Statement; // استخدم الاسم الصحيح هنا
     $dailyEntrie->accounting_period_id = $accountingPeriod->accounting_period_id;
     $dailyEntrie->Daily_page_id = $dailyPage->page_id; // حفظ معرف الصفحة اليومية
     $dailyEntrie->User_id = $request->User_id;
+    $dailyEntrie->daily_entries_type = $request->daily_entries_type;
     $dailyEntrie->save();
 
 
@@ -101,6 +102,10 @@ class ExchangeController extends Controller
         return view('bonds.exchange_bonds.edit',compact('curr','dailyPage','ExchangeBond','SubAccounts'),['mainAccounts'=> $mainAccount,$dailyPage]);
     }
     public function update(Request $request){
+        $today = Carbon::now()->toDateString();
+        $dailyPage = GeneralJournal::whereDate('created_at', $today)->first();
+        $PaymentBond=ExchangeBond::where('payment_bond_id',$request->id)->first();
+        $Currency=Currency::where('currency_id',$request->Currency)->value('currency_name');
         ExchangeBond::where('payment_bond_id',$request->id)->update([
             'Main_debit_account_id'=>$request->AccountReceivable,
             'Debit_sub_account_id'=>$request->DepositAccount,
@@ -112,10 +117,23 @@ class ExchangeController extends Controller
             'User_id'=>$request->User_id,
             'created_at'=>$request->date,
         ]);
+        DailyEntrie::where('updated_at',$PaymentBond->updated_at)->update([
+            'account_debit_id'=>$request['DepositAccount'],
+            'Amount_debit'=>$request['Amount_debit'],
+            'account_Credit_id'=>$request['CreditAmount'],
+            'Amount_Credit'=>$request['Amount_debit'],
+            'Statement'=> $request['Statement'],
+            'Currency_name'=>$Currency,
+            'Daily_page_id'=>$dailyPage->page_id,
+            'User_id'=>$request['User_id'],
+        ]);
 
         return redirect()->route('all_exchange_bonds');
     }
     public function destroy($id){
+        $ExchangeBond=ExchangeBond::where('payment_bond_id',$id)->first();
+
+        DailyEntrie::where('updated_at',$ExchangeBond->updated_at)->delete();
         ExchangeBond::where('payment_bond_id',$id)->delete();
 
         return redirect()->route('all_exchange_bonds');
