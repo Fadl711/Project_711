@@ -15,6 +15,7 @@ use App\Models\SubAccount;
 use App\Models\CurrencySetting;
 use App\Models\Default_customer;
 use App\Models\PaymentBond;
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\View;
@@ -47,6 +48,28 @@ class AppServiceProvider extends ServiceProvider
            ['TypesAccountName' => Deportatton::REVENUE, 'id' => AccountType::REVENUE],
 
         ];
+        $mainAccount_Warehouse=MainAccount::where('AccountClass',AccountClass::STORE->value)->first();
+        if ($mainAccount_Warehouse) 
+        {
+            $subAccount=SubAccount::where('Main_id',$mainAccount_Warehouse->main_account_id)->get();
+        }
+        $products = Product::all();
+        if(isset($products)){
+            View::share([
+                'products' => $products,
+
+               
+            ]);
+        }
+
+        if(isset($subAccount)){
+            View::share([
+                'Warehouse'=>$subAccount,
+
+               
+            ]);
+        }
+
         $accountClasses = AccountClass::cases();
       
         

@@ -19,12 +19,12 @@
 <div class="min-w-[20%] px-1  bg-white rounded-xl ">
     <div class=" flex items-center">
         <div class="w-full min-w-full  py-1">
-            <form id="invoiceSales" action="{{ route('invoiceSales.store') }}" method="POST">
+            <form id="invoiceSales" method="POST" action="{{route('invoiceSales.store')}}"  >
                 @csrf
                 <div class="flex gap-4">
                     <div class="flex">
                         <label for="" class="labelSale">آجل</label>
-                        <input type="radio" name="payment_type" value="on_credit">
+                        <input type="radio" name="payment_type" value="on_credit" required>
                     </div>
                     <div class="flex">
                         <label for="" class="labelSale">نقداً</label>
@@ -33,8 +33,8 @@
                 </div>
                 <div class="grid md:grid-cols-8 gap-2 text-right">
                     <div class="md:ml-6 relative ">
-                        <label for="Customer_id" class="labelSale">اسم العميل</label>
-                        <select name="Customer_id" id="Customer_id" class="inputSale select2 input-field">
+                        <label for="Customer_name_id" class="labelSale">اسم العميل</label>
+                        <select name="Customer_name_id" id="Customer_name_id" class="inputSale select2 input-field">
                             @isset($customers)
                             @foreach ($customers as $cur)
                             <option @isset($DefaultCustomer)
@@ -49,46 +49,48 @@
                         </button>
                     </div>
                     <div>
-                        <label for="shipping_cost" class="labelSale">تكلفة الشحن</label>
-                        <input type="number" name="shipping_cost" id="shipping_cost" class="inputSale" step="0.01" placeholder="0.00">
-                    </div>
-                    <div>
                         <label for="shipping_bearer" class="labelSale">جهة تحمل الشحن</label>
-                        <select name="shipping_bearer" id="shipping_bearer" class="inputSale input-field">
+                        <select name="shipping_bearer" id="shipping_bearer" class="inputSale select2 input-field">
                             <option value="customer">العميل</option>
                             <option value="merchant">التاجر</option>
                         </select>
                     </div>
                     <div>
-                        <label for="total_sale" class="labelSale">الإجمالي</label>
-                        <input type="number" name="total_sale" id="total_sale" class="inputSale" step="0.01" placeholder="0.00">
-                    </div>
+                        <label for="currency_id" class="labelSale">العملة الفاتورة</label>
+                         <select   dir="ltr" id="currency_id" class="inputSale input-field select2" name="currency_id"   >
+                            @isset($Currency_name)
+                            @foreach ($Currency_name as $cur)
+                            <option @isset($cu)
+                            @selected($cur->currency_id==$cu->Currency_id)
+                            @endisset
+                            value="{{$cur->currency_id}}">{{$cur->currency_name}}</option>
+                             @endforeach
+                             @endisset
+                          </select>
+                     </div>
                     <div>
-                        <label for="total_price_sale" class="labelSale">الإجمالي  الخصومات</label>
+                        <label for="shipping_amount" class="labelSale">تكلفة الشحن</label>
+                        <input type="number" name="shipping_amount" id="shipping_amount" class="inputSale" step="0.01" placeholder="0.00">
+                    </div>
+                  
+                    <div>
+                        <label for="total_price_sale" class="labelSale">الإجمالي</label>
                         <input type="number" name="total_price_sale" id="total_price_sale" class="inputSale" step="0.01" placeholder="0.00">
                     </div>
                     <div>
-                        <label for="total_price" class="labelSale"> الإجمالي بعد الخصم </label>
-                        <input type="text" name="total_price" id="total_price" placeholder="0" class="inputSale" required />
+                        <label for="discount" class="labelSale">الخصم  الممنوح</label>
+                        <input type="number" name="discount" id="discount" class="inputSale"  placeholder="0.00">
                     </div>
-                      <div>
-                        <label for="Currency_id" class="labelSale">العملة الفاتورة</label>
-                         <select   dir="ltr" id="Currency_id" class="inputSale input-field " name="Currency_id"  >
-                            @isset($Currency_name)
-                          @foreach ($Currency_name as $cur)
-                          <option @isset($cu)
-                          @selected($cur->currency_id==$cu->Currency_id)
-                          @endisset
-                          value="{{$cur->currency_id}}">{{$cur->currency_name}}</option>
-                           @endforeach
-                           @endisset
-                          </select>
-                     </div>
+                    <div>
+                        <label for="net_total_after_discount" class="labelSale"  > الإجمالي بعد الخصم </label>
+                        <input type="text" name="net_total_after_discount" id="net_total_after_discount"   class="inputSale"  />
+                    </div>
+                     
                     @auth
                         <input type="hidden" name="User_id" id="User_id" value="{{ Auth::user()->id }}">
                     @endauth
                     <div id="newInvoice1" style="display: block">
-                        <button id="newInvoice" class="inputSale flex font-bold">
+                        <button type="submit" class="inputSale flex font-bold">
                             إضافة الفاتورة
                         </button>
                     </div>
@@ -97,6 +99,7 @@
         </div>
     </div>
 </div>
+
 {{-- alert --}}
 <div id="crud-modal" tabindex="-1" aria-hidden="true" class=" bg-black bg-opacity-50  hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0  h-full">
     <div class="relative p-4 w-full max-w-md max-h-full">
@@ -137,9 +140,9 @@
                 <div>
                     <label for="financial_account_id_main" class="labelSale"> حساب الدفع</label>
                     <select name="financial_account_id_main" id="financial_account_id_main" dir="ltr" class="input-field select2 inputSale" required>
-                        @isset($mainAccounts)
+                        @isset($MainAccounts)
                             <option value="" selected>اختر الحساب</option>
-                            @foreach ($mainAccounts as $mainAccount)
+                            @foreach ($MainAccounts as $mainAccount)
                                 <option value="{{ $mainAccount['main_account_id'] }}">{{ $mainAccount->account_name }} - {{ $mainAccount->main_account_id }}</option>
                             @endforeach
                         @endisset
@@ -181,7 +184,9 @@
                 </div>
                 <div>
                     <label for="discount_rate" class="labelSale">نسبة الخصم</label>
-                    <input type="text" name="discount_rate" id="discount_rate" placeholder="0" class="inputSale" />
+                    <select name="discount_rate" id="discount_rate" dir="ltr" class="input-field select2 inputSale" required>
+                    </select>
+                    {{-- <input type="text" name="discount_rate" id="discount_rate" placeholder="0" class="inputSale" /> --}}
                 </div>
                 <div>
                     <label for="discount" class="labelSale">الخصم</label>
@@ -218,8 +223,8 @@
                     <input type="number" name="sales_invoice_id" id="sales_invoice_id" placeholder="0" class="inputSale" required />
                 </div>
                 <div>
-                    <label for="customer_id" class="labelSale">العميل</label>
-                    <input type="number" name="customer_id" id="customer_id" class="inputSale" required />
+                    <label for="Customer_id" class="labelSale">العميل</label>
+                    <input type="number" name="Customer_id" id="Customer_id" class="inputSale" required />
                 </div>
                 <div>
                     <label for="sale_id" class="labelSale">رقم القيد</label>
@@ -252,7 +257,69 @@
 </div>
  <script>
     $(document).ready(function() {
+        $('#Categorie_name').on('change', function() {
+     Quantit= $('#Quantity');
+     Quantit.focus(); // تركيز المؤشر على الحقل
+     $('#Categorie_name').select2('close');
+
+
+ });
     $('.select2').select2();
+    const form = $('#invoiceSales');
+        form.on('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // منع الحفظ عند الضغط على زر Enter
+            }
+        });
+
+        $('#invoiceSales').on('submit', function (e) {
+    successMessage = $('#successMessage'),
+          errorMessage = $('#errorMessage'),
+          invoiceField = $('#sales_invoice_id'),
+          CustomeridField = $('#Customer_id'),
+    e.preventDefault();
+    let formData = $(this).serialize();
+
+    $.ajax({
+        url: "{{ route('invoiceSales.store') }}",
+        method: 'POST',
+        data: formData,
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // إرسال رمز CSRF
+        },
+        success: function(response) {
+            if (response.success) {
+                // تحديث الحقول وإظهار رسالة النجاح
+                if (invoiceField.length) {
+                    invoiceField.val(response.invoice_number).trigger('change');
+                }
+                if (CustomeridField.length) {
+                    CustomeridField.val(response.customer_number).trigger('change');
+                }
+
+                $('#mainAccountsTable tbody').empty();
+                successMessage.text(response.message).show();
+
+                setTimeout(() => {
+                    successMessage.hide();
+                }, 2000); // إخفاء الرسالة بعد 2 ثانية
+            }else {
+                errorMessage.text(response.message || 'حدث خطأ غير معروف.').show();
+            }    
+        },
+        error: function(xhr) {
+            // عرض الأخطاء إذا وجدت
+            alert('حدث خطأ: ' + xhr.responseJSON.message);
+        }
+    });
+
+    return false; // منع التنفيذ التلقا��ي للنموذج
+
+ 
+});
+
+
+     
 });
  </script>
 
@@ -310,5 +377,10 @@
     });
 </script>
      <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+     <script src="{{ url('sales.js') }}"></script>
+     <script src="{{ url('purchases.js') }}"></script>
+     <script src="{{url('purchases/purchases.js')}}"></script>
+
+
 
 @endsection

@@ -16,7 +16,6 @@ use App\Models\Warehouse;
 use App\Http\Controllers\purchases\AccountingPeriod;
 use App\Models\AccountingPeriod as ModelsAccountingPeriod;
 use App\Models\Category;
-use App\Models\DailyEntrie;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -40,41 +39,18 @@ class PurchaseController extends Controller
 
 
     public function create() {
-        $mainAccount= MainAccount::all();
-        $latestInvoice1 = PurchaseInvoice::latest('purchase_invoice_id')->first();
-
         $Currency_name=Currency::all();
-        $products = Product::all();
-        $mainAccount_Warehouse=MainAccount::where('AccountClass',AccountClass::STORE->value)->first();
-        if ($mainAccount_Warehouse) 
-        {
-            $subAccount=SubAccount::where('Main_id',$mainAccount_Warehouse->main_account_id)->get();
-
-        }
-        else
-        {
-            $subAccount=null; 
-        }
-        $mainAccount_supplier=MainAccount::where('AccountClass',AccountClass::SUPPLIER->value)->first();
-        if(  $latestInvoice1)
-        {
-            $latestInvoices=   $latestInvoice1->purchase_invoice_id;
-        }
+    
             $allSubAccounts = SubAccount::all();
                 return view('Purchases.create',
                  ['AllSubAccounts'=>$allSubAccounts,
-                'mainAccount_supplier'=>$mainAccount_supplier,
-                'products' => $products,
                 'Currency_name'=>$Currency_name,
-                'Warehouse'=>$subAccount,
-                'mainAccounts'=>$mainAccount,
             ]);
         return view('Purchases.create');
     }
 
     public function getMainAccounts(Request $request,$id)
     {
-        // $mainAccountId = $request->input('Payment_type');
 
         $accountType = AccountType::tryFrom($id );
         if (!$accountType) {
@@ -396,6 +372,8 @@ public function search(Request $request)
             'Selling_price' => $productData->Selling_price, // لا حاجة لتحويله هنا
             'Purchase_price' => $productData->Purchase_price, // لا حاجة لتحويله هنا
             'Categorie_id' => $productData->Categorie_id, // لا حاجة لتحويله هنا
+            'Special_discount' => $productData->Special_discount, // لا حاجة لتحويله هنا
+            'Regular_discount' => $productData->Regular_discount, // لا حاجة لتحويله هنا
             'Quantity' => $productData->quantity,
             'QuantityPurchase'=> $productPurchase,
             'Categorie_names' => $categories, // أسماء الفئات كقائمة
@@ -407,6 +385,7 @@ public function search(Request $request)
         $product['Purchase_price'] = $this->convertArabicNumbersToEnglish($product['Purchase_price']);
         $product['Categorie_id'] = $this->convertArabicNumbersToEnglish($product['Categorie_id']);
         $product['quantity'] = $this->convertArabicNumbersToEnglish($product['Quantity']);
+        $product['Special_discount'] = $this->convertArabicNumbersToEnglish($product['Special_discount']);
         return response()->json($product); // إرجاع تفاصيل المنتج إذا تم العثور عليه
     }
 

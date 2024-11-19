@@ -13,20 +13,27 @@ class SaleInvoice extends Model
     protected $primaryKey = 'sales_invoice_id';
 
     protected $fillable = [
-        'Customer_id',
-        'payment_status',
-        'shipping_cost',
-        'total_price',
-        'total_price_sale',
-        'User_id',
-        'paid_amount',
-        'remaining_amount',
-        'payment_type',
+        'Customer_id', 'payment_status', 'total_price', 'total_price_sale',
+        'User_id', 'paid_amount', 'remaining_amount', 'payment_type',
         'currency_id',
-        'exchange_rate',
-        'accounting_period_id',
+         'exchange_rate', 'transaction_type',
         'shipping_bearer',
+        'shipping_amount',
+         'accounting_period_id', 'discount', 
+        'net_total_after_discount'
     ];
+
+    // عند حفظ الفاتورة، نقوم بحساب الإجمالي الصافي بعد الخصم
+    public static function boot()
+    {
+        parent::boot();
+
+        // عند حفظ الفاتورة، يتم حساب الإجمالي الصافي بعد الخصم
+        static::saving(function ($invoice) {
+            // حساب الإجمالي الصافي بعد الخصم
+            $invoice->net_total_after_discount = $invoice->total_price_sale - $invoice->discount;
+        });
+    }
 
     // العلاقة مع SubAccount (العملاء)
     public function customer()

@@ -34,7 +34,7 @@
 <div class="min-w-[20%] px-1  bg-white rounded-xl ">
     <div class=" flex items-center">
         <div class="w-full min-w-full  py-1">
-            <form id="invoicePurchases" action="{{ route('invoiceSales.store') }}" method="POST">
+            <form id="invoicePurchases" action="{{ route('invoicePurchases.store') }}" method="POST" >
                 @csrf
               
                 <div class="flex gap-4">
@@ -59,9 +59,9 @@
                         <div >
                             <label for="mainaccount_debit_id" class="  labelSale">  حساب التصدير  </label>
                            <select name="mainaccount_debit_id"  id="mainaccount_debit_id" dir="ltr" class="input-field  select2 inputSale" required >
-                              @isset($mainAccounts)
+                              @isset($MainAccounts)
                             <option value="" selected>اختر الحساب</option>
-                             @foreach ($mainAccounts as $mainAccount)
+                             @foreach ($MainAccounts as $mainAccount)
                                   <option value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
                              @endforeach
                              @endisset 
@@ -134,9 +134,9 @@
                 <div >
                     <label for="main_account_debit_id" class="  labelSale">  حساب التصدير  </label>
                    <select name="main_account_debit_id" id="main_account_debit_id" dir="ltr" class="input-field  select2 inputSale" required >
-                      @isset($mainAccounts)
+                      @isset($MainAccounts)
                     <option value="" selected>اختر الحساب</option>
-                     @foreach ($mainAccounts as $mainAccount)
+                     @foreach ($MainAccounts as $mainAccount)
                           <option value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
                      @endforeach
                      @endisset 
@@ -424,7 +424,6 @@ else{
         $('#Supplier_id').on('change', function() {
     const receipt_number = $('#Receipt_number');
 
-    // receipt_number.focus();
     $('#Receipt_number').focus(); // تركيز المؤشر على الحقل
 
     $('#Supplier_id').select2('close');

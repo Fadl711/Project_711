@@ -34,6 +34,7 @@ use App\Http\Controllers\refundsController\purchasesController\Purchase_RefundCo
 use App\Http\Controllers\refundsController\saleController\RefundController as SaleControllerRefundController;
 use App\Http\Controllers\refundsController\salesController\Sale_RefundController;
 use App\Http\Controllers\reportsConreoller;
+use App\Http\Controllers\Sale\InvoiceSaleController;
 use App\Http\Controllers\SaleCoctroller\SaleController;
 use App\Http\Controllers\settingController\company_dataController\Company_DataController;
 use App\Http\Controllers\settingController\currenciesController\CurrencieController;
@@ -45,12 +46,12 @@ use App\Http\Controllers\Transfers\TransferController;
 use App\Http\Controllers\UsersController\UsersController;
 use App\Models\DefaultSupplier;
 use App\Models\MainAccount;
+use App\Models\SaleInvoice;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Route;
 
 
 
-Route::get('/sales', [SaleController::class, 'index'])->name('sales.index');
 
 Route::get('/products', [ProductCoctroller::class, 'index'])->name('products.index');
 Route::get('/products/create', [ProductCoctroller::class, 'create'])->name('products.create');
@@ -73,24 +74,22 @@ Route::delete('/purchase-invoices/{id}', [PurchaseController::class, 'deleteInvo
 
 
 
-    Route::get('/Default_Supplier', [default_supplierController::class, 'index'])->name('default_suppliers.index');
-    Route::get('/Default_Supplier/create', [default_supplierController::class, 'create'])->name('default_suppliers.create');
-    Route::post('Default_Supplier/store', [default_supplierController::class, 'store'])->name('default_suppliers.store');
-    Route::get('/Default_Supplier/{id}/edit', [default_supplierController::class, 'edit'])->name('default_suppliers.edit');
-    Route::put('/Default_Supplier/{id}/update', [default_supplierController::class, 'update'])->name('default_suppliers.update');
-    Route::delete('/Default_Supplier/{id}/destroy', [default_supplierController::class, 'destroy'])->name('default_suppliers.destroy');
+Route::get('/Default_Supplier', [default_supplierController::class, 'index'])->name('default_suppliers.index');
+Route::get('/Default_Supplier/create', [default_supplierController::class, 'create'])->name('default_suppliers.create');
+Route::post('Default_Supplier/store', [default_supplierController::class, 'store'])->name('default_suppliers.store');
+Route::get('/Default_Supplier/{id}/edit', [default_supplierController::class, 'edit'])->name('default_suppliers.edit');
+Route::put('/Default_Supplier/{id}/update', [default_supplierController::class, 'update'])->name('default_suppliers.update');
+Route::delete('/Default_Supplier/{id}/destroy', [default_supplierController::class, 'destroy'])->name('default_suppliers.destroy');
 
-    Route::get('/Default_customer', [default_customerController::class, 'index'])->name('default_customers.index');
-    Route::post('Default_customer/store', [default_customerController::class, 'store'])->name('default_customers.store');
-    Route::delete('/Default_customer/{id}/destroy', [default_customerController::class, 'destroy'])->name('default_customers.destroy');
-   Route::post('/invoicePurchases/store', [PurchaseController::class, 'store'])->name('invoicePurchases.store');
-   Route::get('/api/products/search', [PurchaseController::class, 'search']);
-
-   Route::get('/invoice_purchases/show/{id}', [InvoicePurchaseController::class, 'bills_purchase_show'])->name('bills_purchase_show');
-   Route::get('/invoice_purchases/index', [InvoicePurchaseController::class, 'index'])->name('invoice_purchase.index');
+Route::get('/Default_customer', [default_customerController::class, 'index'])->name('default_customers.index');
+Route::post('Default_customer/store', [default_customerController::class, 'store'])->name('default_customers.store');
+Route::delete('/Default_customer/{id}/destroy', [default_customerController::class, 'destroy'])->name('default_customers.destroy');
+Route::post('/invoicePurchases/store', [PurchaseController::class, 'store'])->name('invoicePurchases.store');
+Route::get('/api/products/search', [PurchaseController::class, 'search']);
+Route::get('/invoice_purchases/show/{id}', [InvoicePurchaseController::class, 'bills_purchase_show'])->name('bills_purchase_show');
+Route::get('/invoice_purchases/index', [InvoicePurchaseController::class, 'index'])->name('invoice_purchase.index');
    Route::get('/api/purchase-invoices/{filterType}', [InvoicePurchaseController::class, 'getPurchaseInvoices']);
    Route::get('/api/purchase-invoices', [InvoicePurchaseController::class, 'searchInvoices']);
-
 Route::get('/Purchase', [PurchaseController::class,'create'])->name('Purchases.create');
 Route::post('/Purchases/storc', [PurchaseController::class, 'storc'])->name('Purchases.storc');
 Route::get('/Purchases/{id}/main-accounts', [PurchaseController::class, 'getMainAccounts'])->name('main-accounts');
@@ -100,7 +99,10 @@ Route::get('/get-purchases-by-invoice', [PurchaseController::class, 'getPurchase
 Route::get('/invoice_purchases/{id}/print', [PurchaseController::class, 'print'])->name('invoicePurchases.print');
 
 Route::get('/balancing', [AccountCoctroller::class, 'balancing'])->name('accounts.balancing');
-Route::get('/invoice_sales', [AllBillsController::class, 'index'])->name('invoice_sales.index');
+
+Route::get('/sales', [SaleController::class, 'create'])->name('sales.create');
+Route::post('/invoiceSales/store', [InvoiceSaleController::class, 'store'])->name('invoiceSales.store');
+Route::get('/invoice_sales', [AllBillsController::class, 'create'])->name('invoice_sales.create');
 Route::get('/all_bills_sale', [AllBillsController::class, 'all_bills_sale'])->name('invoice_sales.all_bills_sale');
 Route::get('/print_bills_sale', [AllBillsController::class, 'print_bills_sale'])->name('print_bills_sale');
 Route::get('/bills_sale_show', [AllBillsController::class, 'bills_sale_show'])->name('invoice_sales.bills_sale_show');

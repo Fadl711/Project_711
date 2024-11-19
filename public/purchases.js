@@ -10,31 +10,25 @@ function Profitproduct() {
         $('#Profit').val(''); // تفريغ الحقل في حال وجود قيم غير صالحة
     }
 }
-
 $('#Purchase_price, #Selling_price').on('input', function() {
     Profitproduct(); // بدء الحساب عند تغيير القيم في الحقول
 });
-
 const successMessage = $('#successMessage');
 const errorMessage = $('#errorMessage');
 // دالة لحساب السعر ال��جمالي
-
 function TotalPrice() {
     // إزالة الفواصل من القيم المدخلة وتحويلها إلى أعداد عشرية
     var price = parseFloat($('#Purchase_price').val().replace(/,/g, '')) || 0;
     var quantity = parseFloat($('#Quantity').val().replace(/,/g, '')) || 0;
     var Yr_cost = parseFloat($('#Yr_cost').val().replace(/,/g, '')) || 0;
-
     // التأكد من أن القيم المدخلة صالحة وإيجابية
     if (price > 0 && quantity > 0) {
         // حساب السعر الإجمالي والتكلفة
         var total_price = price * quantity;
         var cost = Yr_cost * total_price;
-
         // تقريب السعر الإجمالي والتكلفة إلى خانتين عشريتين
         total_price = total_price.toFixed(2);
         cost = cost.toFixed(2);
-
         // تعيين القيم النهائية في الحقول المطلوبة وتفعيل التغيير
         $('#Total').val(total_price).trigger('change');
         $('#Cost').val(cost).trigger('change');
@@ -43,25 +37,19 @@ function TotalPrice() {
         $('#Cost').val('');
     }
 }
-
 // إضافة الحدث لتحديث السعر الإجمالي عند تغيير السعر أو الكمية
 $('#Purchase_price, #Quantity, #Yr_cost').on('input', function() {
     TotalPrice();
 });
-
-
 $('#Purchase_price, #Quantity').on('input', function() {
     TotalPrice(); // بد�� الحساب عند تغيير القيم في الحقول
-
 });
 
 // دالة لحساب التكلفة المتكررة
-
 function RepeatedCost() {
     // إزالة الفواصل وتحويل القيم إلى أعداد عشرية
     var total_cost = parseFloat($('#Total_cost').val().replace(/,/g, '')) || 0; 
     var Total_invoice = parseFloat($('#Total_invoice').val().replace(/,/g, '')) || 0;
-
     if (!isNaN(total_cost) && !isNaN(Total_invoice) && Total_invoice > 0) {
         var cost = total_cost / Total_invoice; // حساب النسبة
         $('#Yr_cost').val(cost); // عرض النتيجة
@@ -69,8 +57,6 @@ function RepeatedCost() {
         $('#Yr_cost').val(''); // تفريغ الحقل في حال وجود خطأ
     }
 }
-
-
 // تحديث الحقل كلما تم إدخال قيمة جديدة
 $('#Total_cost, #Total_invoice').on('input', function() {
     RepeatedCost(); 
@@ -80,12 +66,9 @@ $('#Total_cost, #Total_invoice').on('input', function() {
 $(document).ready(function() {
     $('.select2').select2();
 });
-
-
 function addToTable(account) {
     const rowId = `#row-${account.purchase_id}`;
     const tableBody = $('#mainAccountsTable tbody');
-
     // التحقق مما إذا كان الصف موجودًا بالفعل
     if ($(rowId).length) {
         // تحديث الصف في الجدول بناءً على القيم الجديدة
@@ -97,7 +80,6 @@ function addToTable(account) {
         $(`${rowId} td:nth-child(6)`).text(account.Cost ? Number(account.Cost).toLocaleString() : '0');
         $(`${rowId} td:nth-child(7)`).text(account.warehouse_to_id ? Number(account.Discount_earned).toLocaleString() : '0');
         $(`${rowId} td:nth-child(8)`).text(account.Total ? Number(account.Total).toLocaleString() : '0');
-
         // $(`${rowId} td:nth-child(9)`).text(account.purchase_id ? Number(account.purchase_id).toLocaleString() : '0');
         // $(`${rowId} td:nth-child(10)`).text(account.purchase_id ? Number(account.purchase_id).toLocaleString() : '0');
     } else {
@@ -112,7 +94,6 @@ function addToTable(account) {
                 <td class="text-right tagTd">${account.Cost ? Number(account.Cost).toLocaleString() : '0'}</td>
                 <td class="text-right tagTd">${account.warehouse_to_id ? Number(account.warehouse_to_id).toLocaleString() : '0'}</td>
                 <td class="text-right tagTd">${account.Total ? Number(account.Total).toLocaleString() : '0'}</td>
-                
              <td class="flex">
 
               <button class="" onclick="editData(${account.purchase_id})">                        <svg class="w-6 h-6 text-[#2430d3] dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
@@ -134,20 +115,15 @@ function addToTable(account) {
         tableBody.append(newRow); // إضافة الصف الجديد إلى الجدول
     }
 }
-
-            // tableBody.append(newRow); // إضافة الصف الجديد إلى الجدول
-
   // وظيفة لاستعراض تفاصيل المنتج
   function displayProductDetails(product) {
-    $('#Quantity').focus(); // تركيز المؤشر على الحقل
-
-    const invoiceInput = $('#purchase_invoice_id');
+    const invoiceInput = $('#purchase_invoice_id,#sales_invoice_id');
     if (invoiceInput.length) {
         // التأكد من أن العناصر موجودة قبل تحديثها
         if ($('#Barcode').length) {
             $('#Barcode').val(product.Barcode).trigger('change');
         }
-       
+
         if ($('#product_name').length) {
             $('#product_name').val(product.product_name).trigger('change');
         }
@@ -160,26 +136,38 @@ function addToTable(account) {
         if ($('#QuantityPurchase').length) {
             $('#QuantityPurchase').val(product.QuantityPurchase).trigger('change');
         }
+        if ($('#discount_rate').length) {
+            const discountSelect = $('#discount_rate');
+            discountSelect.empty();
+            if (product.Regular_discount && product.Special_discount) {
+                const discountOptions = `
+                <option value="">لم يتم التحديد  </option>
+                    <option value="${product.Regular_discount}">الخصم العادي: ${product.Regular_discount}%</option>
+                    <option value="${product.Special_discount}">الخصم الخاص: ${product.Special_discount}%</option>
+                `;
+                discountSelect.append(discountOptions);
+            } else {
+                discountSelect.append('<option value="">لا توجد خصومات متاحة</option>');
+            }
+        }
+        
         if ($('#created_at').length) {
             $('#created_at').val(product.created_at).trigger('change');
         }
        // تعبئة قائمة الفئات (الوحدات)
        const categorieSelect = $('#Categorie_name');
-       categorieSelect.empty(); // تفريغ القائمة السابقة
+       categorieSelect.empty();
+        // تفريغ القائمة السابقة
        product.Categorie_names.forEach(categorie => {
            categorieSelect.append(new Option(categorie.Categorie_name, categorie.categorie_id));
        });
        categorieSelect.trigger('change');
-
         // حساب التمويز بين البيع والشراء
         var profit = 0;
-
-
         if (product.Selling_price > 0 && product.Purchase_price > 0) {
             profit = product.Selling_price - product.Purchase_price; // حساب التمويز بين البيع والشراء
             profit = profit; // تقريب النتيجة إلى خانتين عشريتين
         }
-
         // إضافة التمويز إلى حقل الربح
         if ($('#Profit').length) {
             $('#Profit').val(profit).trigger('change');
@@ -226,18 +214,14 @@ function addToTable(account) {
 
 // استدعاء الدالة عند الضغط على الزر
 
-
 function displayPurchases(purchases) {
     let uniqueInvoices = new Set(); // Set لتخزين الفواتير الفريدة
     let rows = ''; // متغير لتخزين الصفوف
-
     $('#mainAccountsTable tbody').empty(); // تنظيف الجدول
-
     purchases.forEach(function (purchase) {
         // إضافة شرط للتأكد من عدم تكرار البيانات
         if (!uniqueInvoices.has(purchase.purchase_id)) {
             uniqueInvoices.add(purchase.purchase_id);
-
             rows += `
                 <tr id="row-${purchase.purchase_id}">
                     <td class="text-right tagTd">${purchase.Barcode}</td>
@@ -309,15 +293,25 @@ $(document).on('keydown', function(event) {
         $('#main_account_debit_id').select2('open');
 
     });
-    $('#sub_account_debit_id').on('change', function() {
-        $('#account_debitid').select2('close'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
+    $('#sub_account_debit_id,#financial_account_id').on('change', function() {
+        $('#account_debitid,#financial_account_id').select2('close'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
         $('#product_id').select2('open');
 
 
  });
  $('#product_id').on('change', function() {
         $('#account_debitid').select2('close');
-        // $('#Quantity').val('');
+        $('#product_id').select2('close');
+        $('#Categorie_name').select2('open');
+
+    });
+ $('#Categorie_name').on('change', function() {
+     $('#Categorie_name').select2('close');
+     const selectedPaymentType = $('input[name="Quantity"]');
+
+     selectedPaymentType.focus();
+    //  Quantit= $('#Quantity');
+    //  Quantit.focus(); // تركيز المؤشر على الحقل
 
 
  });
@@ -329,22 +323,17 @@ $(document).on('keydown', function(event) {
 $('#mainaccount_debit_id').on('change', function() {
     $('#mainaccount_debit_id').select2('close');
     $('#Supplier_id').select2('open');
-
 });
-
      // عند الكتابة في حقل اجمالي التكلفة
      $('#Total_cost, #Total_invoice,#Yr_cost,#Purchase_price,#Selling_price,#Cost,#Total,#Discount_earned,#Profit').on('input', function() {
         let value = $(this).val();
-    
         // إزالة أي شيء ليس رقماً أو فاصلة عشرية
         value = value.replace(/[^0-9.]/g, '');
-    
         // التأكد من أن الفاصلة العشرية تظهر مرة واحدة فقط
         const parts = value.split('.');
         if (parts.length > 2) {
             value = parts[0] + '.' + parts.slice(1).join('');
         }
-    
         // إضافة الفاصلة بعد كل ثلاثة أرقام (فصل الآلاف) 
         if (value) {
             let [integer, decimal] = value.split('.');
@@ -438,9 +427,6 @@ function CsrfToken(){
         }
     });
 };
-
-
-  
 Barcode        = $('#Barcode'),
 QuantityPurchase = $('#QuantityPurchase'),
 account_debitid = $('#account_debitid'),
@@ -493,12 +479,13 @@ function editData(id) {
             $('#purchase_invoice_id').val(data.Purchase_invoice_id);
             $('#supplier_name').val(data.Supplier_id);
             $('#purchase_id').val(data.purchase_id);
-            // $('#Categorie_name').val(data.categorie_id);
-            var categorie_name   =$('#Categorie_name');
+            $('#Categorie_name').val(data.categorie_id);
+            // var categorie_name   =$('#Categorie_name');
 
             categorie_name.empty();
             const  subAccountOptions = 
-                  `<option value="${data.categorie_id}">${data.categorie_id}</option>`
+                  `
+                  <option value="${data.categorie_id}">${data.categorie_id}</option>`
              ;
   
           // إضافة الخيارات الجديدة إلى القائمة الفرعية
