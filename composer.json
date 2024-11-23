@@ -10,7 +10,8 @@
         "itsgoingd/clockwork": "^5.2",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
-        "mpdf/mpdf": "*"
+        "mpdf/mpdf": "*",
+        "spatie/laravel-permission": "^6.8"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -65,5 +66,11 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://mirrors.aliyun.com/composer/"
+        }
+    }
 }

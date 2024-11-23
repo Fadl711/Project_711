@@ -16,59 +16,32 @@
         <p > تقارير كشف حساب  من 2024/5/10 الى 2023/4/5</p>
     </div>
 
-    <table class="min-w-full  text-[7px] text-nowrap bg-white border border-gray-200">
+    <table class="min-w-full bg-white border border-gray-200">
         <thead class="bg-gray-200 text-center">
             <tr>
                 <th class="py-2 px-4 border-b">رقم الحساب</th>
                 <th class="py-2 px-4 border-b">اسم الحساب</th>
                 <th class="py-2 px-4 border-b">مدين/عليه</th>
                 <th class="py-2 px-4 border-b">دائن/له</th>
-                <th class="py-2 px-4 border-b">الرصيد</th>
+
             </tr>
         </thead>
-        <tbody>
-            <tr class="text-[7px]">
-                <td class="py-2 px-4 border-b text-center">1</td>
-                <td class="py-2 px-4 border-b text-center">الصندوق الرئيسي </td>
-                <td class="py-2 px-4 border-b text-center">1000</td>
-                <td class="py-2 px-4 border-b text-center">500</td>
-                <td class="py-2 px-4 border-b text-center">500</td>
+        <tbody >
+            @foreach ($MainAccounts as $MainAccount)
+
+            <tr>
+                <td class="py-2 px-4 border-b text-center">{{$MainAccount->main_account_id}}</td>
+                <td class="py-2 px-4 border-b text-center"> {{$MainAccount->account_name}} </td>
+                @foreach ($SubAccounts as $SubAccount)
+                @if ($SubAccount->where('Main_id',$MainAccount->main_account_id)->get())
+                <td class="py-2 px-4 border-b text-center">{{$SubAccount->where('Main_id',$MainAccount->main_account_id)->sum('debtor_amount')}}</td>
+                <td class="py-2 px-4 border-b text-center">{{$SubAccount->where('Main_id',$MainAccount->main_account_id)->sum('creditor_amount')}}</</td>
+                @break
+                @endif
+                @endforeach
+
             </tr>
-            <tr class="text-[7px]">
-                <td class="py-2 px-4 border-b text-center">2</td>
-                <td class="py-2 px-4 border-b text-center">حساب المخزون</td>
-                <td class="py-2 px-4 border-b text-center">2000</td>
-                <td class="py-2 px-4 border-b text-center">1500</td>
-                <td class="py-2 px-4 border-b text-center">500</td>
-            </tr>
-            <tr class="text-[7px]">
-                <td class="py-2 px-4 border-b text-center">2</td>
-                <td class="py-2 px-4 border-b text-center">حساب المبيعات</td>
-                <td class="py-2 px-4 border-b text-center">2000</td>
-                <td class="py-2 px-4 border-b text-center">1500</td>
-                <td class="py-2 px-4 border-b text-center">500</td>
-            </tr>
-            <tr class="text-[7px]">
-                <td class="py-2 px-4 border-b text-center">2</td>
-                <td class="py-2 px-4 border-b text-center">حساب المشتريات</td>
-                <td class="py-2 px-4 border-b text-center">2000</td>
-                <td class="py-2 px-4 border-b text-center">1500</td>
-                <td class="py-2 px-4 border-b text-center">500</td>
-            </tr>
-            <tr class="text-[7px]">
-                <td class="py-2 px-4 border-b text-center">2</td>
-                <td class="py-2 px-4 border-b text-center">حساب راس المال</td>
-                <td class="py-2 px-4 border-b text-center">2000</td>
-                <td class="py-2 px-4 border-b text-center">1500</td>
-                <td class="py-2 px-4 border-b text-center">500</td>
-            </tr>
-            <tr class="text-[7px]">
-                <td class="py-2 px-4 border-b text-center">2</td>
-                <td class="py-2 px-4 border-b text-center">حساب الأرباح والخسائر </td>
-                <td class="py-2 px-4 border-b text-center">2000</td>
-                <td class="py-2 px-4 border-b text-center">1500</td>
-                <td class="py-2 px-4 border-b text-center">500</td>
-            </tr>
+            @endforeach
         </tbody>
     </table>
 </div>

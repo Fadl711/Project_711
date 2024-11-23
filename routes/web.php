@@ -84,6 +84,10 @@ Route::delete('/Default_Supplier/{id}/destroy', [default_supplierController::cla
 Route::get('/Default_customer', [default_customerController::class, 'index'])->name('default_customers.index');
 Route::post('Default_customer/store', [default_customerController::class, 'store'])->name('default_customers.store');
 Route::delete('/Default_customer/{id}/destroy', [default_customerController::class, 'destroy'])->name('default_customers.destroy');
+Route::post('Default_warehouse/store', [default_customerController::class, 'storeWarehouse'])->name('default_warehouse.store');
+Route::delete('/Default_warehouse/{id}/destroy', [default_customerController::class, 'destroyWarehouse'])->name('default_warehouse.destroy');
+Route::post('Default_financial/store', [default_customerController::class, 'storeFinancial'])->name('default_financial.store');
+Route::delete('/Default_financial/{id}/destroy', [default_customerController::class, 'destroyFinancial'])->name('default_financial.destroy');
 Route::post('/invoicePurchases/store', [PurchaseController::class, 'store'])->name('invoicePurchases.store');
 Route::get('/api/products/search', [PurchaseController::class, 'search']);
 Route::get('/invoice_purchases/show/{id}', [InvoicePurchaseController::class, 'bills_purchase_show'])->name('bills_purchase_show');

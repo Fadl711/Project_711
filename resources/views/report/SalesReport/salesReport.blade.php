@@ -36,6 +36,8 @@
                         </tr>
                     </thead>
                     <tbody >
+                        @foreach ($SaleInvoice as $item)
+
                         <tr>
                             <td class="py-2 px-4 border-b text-center">1</td>
                             <td class="py-2 px-4 border-b text-center">سلك كهرباء</td>
@@ -44,14 +46,8 @@
                             <td class="py-2 px-4 border-b text-center">3</td>
                             <td class="py-2 px-4 border-b text-center">3000</td>
                         </tr>
-                        <tr>
-                            <td class="py-2 px-4 border-b text-center">1</td>
-                            <td class="py-2 px-4 border-b text-center">سلك كهرباء</td>
-                            <td class="py-2 px-4 border-b text-center">متر</td>
-                            <td class="py-2 px-4 border-b text-center">1000</td>
-                            <td class="py-2 px-4 border-b text-center">3</td>
-                            <td class="py-2 px-4 border-b text-center">3000</td>
-                        </tr>
+                        @endforeach
+
                     </tbody>
                 </table>
             </div>

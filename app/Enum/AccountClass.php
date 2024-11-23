@@ -9,6 +9,7 @@ enum AccountClass: int
     case SUPPLIER =2;
     case STORE=3;
     case OTHER = 4;
+    case BOX = 5;
 
     public function label(): string
 {
@@ -18,6 +19,7 @@ enum AccountClass: int
 
         self::STORE=>'المخزن',
         self::OTHER   => 'أخرى',
+        self::BOX   => 'الصندوق',
        };
 }
 }
