@@ -169,7 +169,7 @@
                 
                 <div class="">
                     <label for="Quantity" class="labelSale">الكمية</label>
-                    <input type="text" name="Quantity" id="Quantity" placeholder="0" class="inputSale english-numbers" required />
+                    <input type="number" name="Quantity" id="Quantity" placeholder="0" class="inputSale quantity-field english-numbers" required />
                 </div>
 
                 <div>
@@ -193,7 +193,7 @@
                 </div>
                 <div class="">
                     <label for="Total" class="labelSale">الاجمالي</label>
-                    <input type="text" name="Total" id="Total" placeholder="0" class="inputSale" required />
+                    <input type="text" name="Total" id="Total" placeholder="0" class="inputSale total-field" required />
                 </div>
             </div>
             <div class="flex gap-1 px-1">
@@ -242,7 +242,11 @@
             </div>
             <div class="flex" id="printEndSave">
                     <div class="flex flex-col">
+                        @auth
+                            
                         <input type="hidden" name="User_id" value="{{Auth::user()->id}}"/>
+                        @endauth
+
                       </div>
                       <div class="col-span-6 sm:col-span-3 mt-2 px-4" >
                         <button class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700"  id="saveButton">اضافة </button>
@@ -431,10 +435,10 @@ else{
 
 
 });
+const Product_name = $('#product_name');
       const form = $('#ajaxForm');
    
       const inputs = $('.input-field'); // تحديد جميع الحقول
-      const Product_name = $('#product_name');
       const selectedPaymentType = $('input[name="Payment_type"]');
 
       selectedPaymentType.focus();
@@ -489,8 +493,8 @@ else{
                 contentType: false, // ضروري مع FormData
               success: function (data) {
                   if (data.success) {
+                      errorMessage.hide();
                        successMessage.show().text(data.message);
-                       errorMessage.hide();
                       setTimeout(() => {
                           successMessage.hide();
                       }, 3000);

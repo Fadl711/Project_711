@@ -60,4 +60,3 @@ function showAccounts(mainAccountId2,mainAccountId1)
     });
 };
 }
-

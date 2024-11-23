@@ -240,12 +240,11 @@ if ($DataSubAccount->debtor_amount>0 || $DataSubAccount->creditor_amount>0) {
 
         'account_Credit_id' => $DSubAccount->sub_account_id ,
         'Statement' => 'إدخال رصيد افتتاحي',
-        'Daily_page_id' => 2,
+        'Daily_page_id' =>$dailyPage->page_id,
         'Currency_name' => 'ر',
         'User_id' =>1,
         'Invoice_type' => 'رصيد افتتاحي',
         'Invoice_id' => null,
-        'accounting_period_id' => 1,
         'status_debit' => 'غير مرحل',
         'status' => 'غير مرحل',
     ]);

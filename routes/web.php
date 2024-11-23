@@ -102,7 +102,18 @@ Route::get('/balancing', [AccountCoctroller::class, 'balancing'])->name('account
 
 Route::get('/sales', [SaleController::class, 'create'])->name('sales.create');
 Route::post('/invoiceSales/store', [InvoiceSaleController::class, 'store'])->name('invoiceSales.store');
-Route::get('/invoice_sales', [AllBillsController::class, 'create'])->name('invoice_sales.create');
+Route::get('/invoice_sales', [AllBillsController::class, 'all_invoices_sale'])->name('invoice_sales.all_invoices_sale');
+Route::post('/sales/store', [SaleController::class, 'store'])->name('sales.store');
+Route::get('/sales/{id}',[SaleController::class,'edit'])->name('sales.edit');
+Route::delete('/sales/{id}',[SaleController::class,'destroy'])->name('sales.destroy');
+Route::delete('/sales-invoices/{id}', [SaleController::class, 'deleteInvoice'])->name('sales-invoice.delete');
+Route::get('/get-sales-by-invoice/ArrowRight', [SaleController::class, 'getSalesByInvoiceArrowRight'])->name('getSalesByInvoiceArrowRight');
+Route::get('/get-sales-by-invoice/ArrowLeft', [SaleController::class, 'getSalesByInvoiceArrowLeft'])->name('getSalesByInvoiceArrowLeft');
+Route::get('/invoiceSales/{id}/print', [SaleController::class, 'print'])->name('invoiceSales.print');
+
+
+
+
 Route::get('/all_bills_sale', [AllBillsController::class, 'all_bills_sale'])->name('invoice_sales.all_bills_sale');
 Route::get('/print_bills_sale', [AllBillsController::class, 'print_bills_sale'])->name('print_bills_sale');
 Route::get('/bills_sale_show', [AllBillsController::class, 'bills_sale_show'])->name('invoice_sales.bills_sale_show');

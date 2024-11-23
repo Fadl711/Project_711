@@ -8,13 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class DailyEntrie extends Model
 {
     use HasFactory;
-
-
     protected $table = 'daily_entries';
-
     // المفتاح الأساسي
     protected $primaryKey = 'entrie_id';
-
     // الحقول القابلة للتعبئة
    // الحقول التي يمكن ملؤها
    protected $fillable = [
@@ -31,6 +27,7 @@ class DailyEntrie extends Model
     'accounting_period_id',
     'status_debit',
     'status',
+    'daily_entries_type',
 ];
        // تحديد أنواع الحقول
        protected $casts = [

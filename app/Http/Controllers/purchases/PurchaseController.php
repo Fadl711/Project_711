@@ -16,6 +16,7 @@ use App\Models\Warehouse;
 use App\Http\Controllers\purchases\AccountingPeriod;
 use App\Models\AccountingPeriod as ModelsAccountingPeriod;
 use App\Models\Category;
+use App\Models\Sale;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -97,7 +98,6 @@ class PurchaseController extends Controller
                 'message' => 'لا توجد فترة محاسبية مفتوحة'
             ], 400);
         }
-    
         try {
             $purchaseInvoice = new PurchaseInvoice();
             $purchaseInvoice->Receipt_number = str_replace(',', '', $request->Receipt_number ?? 0);
@@ -109,11 +109,8 @@ class PurchaseController extends Controller
             $purchaseInvoice->Invoice_type = $request->Payment_type;
             $purchaseInvoice->Supplier_id = $request->Supplier_id;
             $purchaseInvoice ->Currency_id= $request->Currency_id;
-
             $purchaseInvoice->transaction_type = $request->transaction_type;
-    
             $purchaseInvoice->save();
-    
             return response()->json([
                 'success' => true,
                 'message' => 'تم الحفظ بنجاح',
@@ -130,7 +127,6 @@ class PurchaseController extends Controller
     
     public function storc(Request $request)
     {
-       
         // التحقق من عدم تطابق الحسابات
         if ($request->account_debitid === $request->sub_account_debit_id) {
             return response()->json([
@@ -232,7 +228,10 @@ class PurchaseController extends Controller
             ]);
         }
         
-    
+        $categorieId = Category::where('Categorie_name', $request->Categorie_name)
+        ->where('product_id', $request->product_id)
+        ->value('categorie_id');
+
         // إنشاء أو تحديث سجل الشراء
         $purchase = Purchase::updateOrCreate(
             [
@@ -260,7 +259,7 @@ class PurchaseController extends Controller
                 'product_id' => $request->product_id,
                 'account_id' => $account_id,
                 'transaction_type' => $transactionType,
-                'categorie_id' => $request->Categorie_name,
+                'categorie_id' => $categorieId,
             ]
         );
         
@@ -317,7 +316,9 @@ public function search(Request $request)
     
     // الحصول على id المنتج من الطلب
     $id = $request->query('id');
-    $warehouse_to_id = $request->account_debitid;
+   
+        $warehouse_to_id = $request->account_debitid;
+
     
     // التحقق من وجود المنتج
     $productData = Product::where('product_id', $id)
@@ -358,11 +359,15 @@ public function search(Request $request)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->where('transaction_type', 4)
         ->sum('quantity');
+        $warehouse_Fromid_Sale = Sale::where('product_id', $id)
+        ->where('warehouse_to_id', $warehouse_to_id)
+        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        ->sum('quantity');
  // جلب الفئات مع ID
  $categories = Category::where('product_id', $id)
  ->select('categorie_id', 'Categorie_name')
  ->get();        // حساب الكمية النهائية المتاحة في المخزن
-    $productPurchase = $Purchase_warehouse_to_id - $warehouseFromid - $warehouse_Fromid+$warehouse_Fromid2+$warehouse_Fromid4;
+    $productPurchase = $Purchase_warehouse_to_id - $warehouseFromid -$warehouse_Fromid_Sale- $warehouse_Fromid+$warehouse_Fromid2+$warehouse_Fromid4;
     
 
     if ($productData) {
@@ -402,7 +407,6 @@ public function destroy($id)
     return response()->json(['message' => 'تم حذف البيانات بنجاح']);
 }
 
-
 public function print($id)
 {
     $DataPurchaseInvoice = PurchaseInvoice::where('purchase_invoice_id', $id)->first();
@@ -414,10 +418,9 @@ public function print($id)
         $UserName = 'اسم غير موجود';
     }
         $SubName = SubAccount::all();
-// $accountClasss=AccountClass::where('value',$SubAccount->AccountClass)->get();
     if($SubAccount->AccountClass===1)
     {
-        $AccountClassName="العيل";
+        $AccountClassName="العميل";
     }
     if($SubAccount->AccountClass===2)
     {
@@ -437,15 +440,12 @@ public function print($id)
    $currency=Currency::where('currency_id', $DataPurchaseInvoice->Currency_id)->first();
    $curre=Currency::where('currency_id', $DataPurchaseInvoice->Currency_id)->pluck('currency_name')->first();
 
-
-
     // حساب مجموع السعر والتكلفة
     $Purchase_priceSum = Purchase::where('purchase_invoice_id', $id)->sum('Total');
     $Purchase_CostSum = Purchase::where('purchase_invoice_id', $id)->sum('Cost');
 
     // تحويل القيمة إلى نص مكتوب
     $priceInWords = $this->numberToWords($Purchase_priceSum,$curre ?? 'ريال');
-
     return view('invoice_purchases.bills_purchase_show', [
         'DataPurchaseInvoice' => $DataPurchaseInvoice,
         'DataPurchase' => $DataPurchase,
@@ -461,7 +461,8 @@ public function print($id)
         'accountCla' => $AccountClassName,
     ]);
 }
-private function numberToWords($number, $currency = 'ريال')
+
+private function numberToWords($number, $currency = 'ريال') 
 {
     if (!is_numeric($number)) {
         return "الرقم المدخل غير صالح";
@@ -478,7 +479,7 @@ private function numberToWords($number, $currency = 'ريال')
     $ones = ['', 'واحد', 'اثنان', 'ثلاثة', 'أربعة', 'خمسة', 'ستة', 'سبعة', 'ثمانية', 'تسعة'];
     $teens = ['عشرة', 'أحد عشر', 'اثنا عشر', 'ثلاثة عشر', 'أربعة عشر', 'خمسة عشر', 'ستة عشر', 'سبعة عشر', 'ثمانية عشر', 'تسعة عشر'];
     $tens = ['', 'عشرة', 'عشرون', 'ثلاثون', 'أربعون', 'خمسون', 'ستون', 'سبعون', 'ثمانون', 'تسعون'];
-    $hundreds = ['', 'مائة', 'مائتين', 'ثلاثمائة', 'أربعمائة', 'خمسمائة', 'ستمائة', 'سبعمائة', 'ثمانمائة', 'تسعمائة']; // مئات مع الأرقام الخاصة
+    $hundreds = ['', 'مائة', 'مائتين', 'ثلاثمائة', 'أربعمائة', 'خمسمائة', 'ستمائة', 'سبعمائة', 'ثمانمائة', 'تسعمائة'];
 
     $parts = [];
     $unitIndex = 0;
@@ -490,104 +491,39 @@ private function numberToWords($number, $currency = 'ريال')
         if ($chunk > 0) {
             $words = '';
 
-            // التعامل مع المئات
-            if ($chunk >= 100) {
-                $words .= $hundreds[intdiv($chunk, 100)] . ' ';
-                $chunk %= 100;
+            // معاملة خاصة لـ 1000
+            if ($chunk == 1 && $unitIndex == 1) { // إذا كان 1 في خانة الألف
+                $words = $units[$unitIndex];
+            } else {
+                // التعامل مع المئات
+                if ($chunk >= 100) {
+                    $words .= $hundreds[intdiv($chunk, 100)] . ' ';
+                    $chunk %= 100;
+                }
+
+                // التعامل مع الأرقام بين 10 و 19
+                if ($chunk >= 10 && $chunk < 20) {
+                    $words .= $teens[$chunk - 10] . ' ';
+                    $chunk = 0;
+                } else if ($chunk >= 20) {
+                    $words .= $tens[intdiv($chunk, 10)] . ' ';
+                    $chunk %= 10;
+                }
+
+                if ($chunk > 0) {
+                    $words .= $ones[$chunk] . ' ';
+                }
+
+                $words = trim($words) . ' ' . $units[$unitIndex];
             }
 
-            // التعامل مع الأرقام بين 10 و 19
-            if ($chunk >= 10 && $chunk < 20) {
-                $words .= $teens[$chunk - 10] . ' ';
-                $chunk = 0;
-            } else if ($chunk >= 20) {
-                $words .= $tens[intdiv($chunk, 10)] . ' ';
-                $chunk %= 10;
-            }
-
-            if ($chunk > 0) {
-                $words .= $ones[$chunk] . ' ';
-            }
-
-            $parts[] = trim($words) . ' ' . $units[$unitIndex];
+            $parts[] = trim($words);
         }
 
         $unitIndex++;
     }
 
     return implode(' و', array_reverse($parts)) . " $currency";
-}
-
-
-public function saveAndPrint(Request $request)
-{
-
-    $DataPurchaseInvoice = PurchaseInvoice::where('purchase_invoice_id',  $request->purchase_invoice_id)->first();
-    if(!$DataPurchaseInvoice ){
-        return response()->json([
-           'success' => 'لا توجد فاتورة موجودة!',
-        ]);
-    }
-    return response()->json([
-        'success' => 'تم الحفظ بنجاح!',
-        'dailyEntrie' => $DataPurchaseInvoice ]);
-}
-public function getPurchasesByInvoice(Request $request)
-{
-    $invoiceId = $request->input('purchase_invoice_id'); // الحصول على purchase_invoice_id من الطلب
-// جلب الفاتورة بناءً على المعرف
-$user_id = auth()->id();
-
-// التحقق من وجود الفاتورة السابقة
-
-$previousInvoice = PurchaseInvoice::where('User_id', $user_id)
-                    ->where('purchase_invoice_id', '=', $invoiceId)
-                    ->orderBy('purchase_invoice_id', 'desc')
-                    ->first();
-
-// جلب المشتريات بناءً على المعرف
-$purchases = Purchase::where('User_id', $user_id)
-                    ->where('purchase_invoice_id', '=', $invoiceId)
-                    ->orderBy('purchase_invoice_id', 'desc')
-                    ->get();
-
-// إرجاع المشتريات مع الفاتورة السابقة بتنسيق JSON
-return response()->json($purchases
-);
-}
-public function deleteInvoice($id)
-{
-    try {
-      
-        $invoice = PurchaseInvoice::where('purchase_invoice_id', $id)->first();
-        if (!$invoice) {
-            return response()->json([
-                'success' => false,
-                'message' => 'لم يتم العثور على معرف الفاتورة.'
-            ]);        }
-
-        // حذف جميع المشتريات المرتبطة إن وجدت
-        if ($invoice->purchases()->exists()) {
-            $invoice->purchases()->delete();
-        }
-
-        // حذف الفاتورة نفسها
-        $invoice->delete();
-
-        // DB::commit();
-        return response()->json([
-            'success' => true,
-            'message' => 'تم حذف الفاتورة وجميع المشتريات المرتبطة بها بنجاح'
-        ]);
-
-    } catch (\Exception $e) {
-        // DB::rollBack();
-
-        return response()->json([
-            'success' => false,
-            'message' => 'حدث خطأ أثناء الحذف: ' . $e->getMessage()
-        ]);
-    }
 }
 
 }

@@ -53,7 +53,8 @@ return new class extends Migration
    $table->decimal('exchange_rate', 15, 2)->nullable()->comment('سعر الصرف للعملة');
 
    // عمود نوع العملية
-   $table->string('transaction_type')->comment('نوع العملية');
+   $table->string('transaction_type')->default('مبيعات')->comment('نوع العملية');
+
 
    // عمود الدافع للشحن
    $table->enum('shipping_bearer', ['customer', 'merchant'])->default('customer')->comment('الطرف المسؤول عن الشحن: العميل أو التاجر');
@@ -61,7 +62,6 @@ return new class extends Migration
 
    // عمود ID الفترة المحاسبية
    $table->integer('accounting_period_id')->unsigned()->comment('معرف الفترة المحاسبية');
-
    // الطوابع الزمنية لإنشاء وتحديث السجلات
    $table->timestamps();
    
