@@ -11,4 +11,12 @@ class CustomerCoctroller extends Controller
 
         return view('customers.index');
     }
+    public function show(){
+
+        return view('customers.show');
+    }
+    public function create(){
+
+        return view('customers.create');
+    }
 }

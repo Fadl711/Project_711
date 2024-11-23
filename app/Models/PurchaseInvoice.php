@@ -31,19 +31,7 @@ class PurchaseInvoice extends Model
    {
        return $this->hasMany(Purchase::class);
    }
-   
-//    // تعريف العلاقة مع المورد (الحساب الفرعي)
-//    public function supplier()
-//    {
-//        return $this->belongsTo(SubAccount::class, 'sub_account_id','Supplier_id');
-//    }
-
-   // تعريف العلاقة مع المستخدم
-//    public function user()
-//    {
-//        return $this->belongsTo(User::class, 'User_id');
-//    }
-//    // في نموذج PurchaseInvoice
+ 
 public function transactionType()
 {
     return $this->belongsTo(TransactionType::class, 'transaction_type', 'value');

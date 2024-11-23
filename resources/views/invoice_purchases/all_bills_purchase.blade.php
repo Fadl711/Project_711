@@ -146,6 +146,8 @@
     radioInput.on('click', function () {
         const value = $(this).val();
         const url = `/api/purchase-invoices/${value}`;
+        displayContainer.removeClass("hidden");
+
         fetchInvoices(url, displayContainer);
     });
 });

@@ -288,11 +288,7 @@
     </div>
     
 </div>
-
-
 <!-- إطار الطباعة -->
-
-
 <script>
     function openInvoiceWindow(e) {
 const successMessage= $('#successMessage');
@@ -312,9 +308,6 @@ successMessage.text('لا توجد فاتورة').show();
 }
 
 }
-
-
-
 
 </script>
 <script>

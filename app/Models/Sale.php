@@ -38,6 +38,7 @@ class Sale extends Model
         'Invoice_id',
     ];
 
+   
     // العلاقة مع SalesInvoice
     public function invoice()
     {
