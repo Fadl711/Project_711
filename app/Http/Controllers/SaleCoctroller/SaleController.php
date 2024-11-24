@@ -192,7 +192,7 @@ class SaleController extends Controller
                     'Invoice_type' => $saleInvoice->payment_type,
 
                     'Currency_name' => 'ر',
-                    'User_id' =>1,
+                    'User_id' =>auth()->user()->id,
                     'status_debit' => 'غير مرحل',
                     'status' => 'غير مرحل',
                 ]

@@ -6,6 +6,7 @@ use App\Enum\AccountType;
 use App\Enum\Deportatton;
 use App\Enum\IntOrderStatus;
 use App\Http\Controllers\Controller;
+use App\Models\DailyEntrie;
 use App\Models\MainAccount;
 use App\Models\SubAccount;
 use Illuminate\Http\Request;
@@ -108,6 +109,14 @@ class SubaccountController extends Controller
     }
     public function destroy($id){
         SubAccount::where('sub_account_id',$id)->delete();
+        $transaction_type="رصيد افتتاحي";
+        // إعداد بيانات الإدخالات اليومية
+
+        $Getentrie_id = DailyEntrie::where('Invoice_id',$id)
+        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        ->where('daily_entries_type',$transaction_type)
+            ->value('entrie_id');
+
         return back();
     }
     public function allShow(){

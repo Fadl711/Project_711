@@ -45,21 +45,31 @@
             </thead>
             <tbody id="products-table">
                 @forelse ($eail as $eai)
-                    @php
-                        $resultDebit1 = $suba->where('sub_account_id', $eai->account_debit_id)->first();
-                        $resultDebit = $mainc->where('main_account_id', $resultDebit1->Main_id)->first();
-
-                        $resultCredit1 = $suba->where('sub_account_id', $eai->account_Credit_id)->first();
-                        $resultCredit = $mainc->where('main_account_id', $resultCredit1->Main_id)->first();
-                    @endphp
-
+                @php
+                $resultDebit1 = $suba->where('sub_account_id', $eai->account_debit_id)->first();
+                $resultDebit = $resultDebit1
+                    ? $mainc->where('main_account_id', $resultDebit1->Main_id)->first()
+                    : 'لا يوجد حساب مدين';
+            
+                $resultCredit1 = $suba->where('sub_account_id', $eai->account_Credit_id)->first();
+                $resultCredit = $resultCredit1
+                    ? $mainc->where('main_account_id', $resultCredit1->Main_id)->first()
+                    : 'لا يوجد حساب دائن';
+            @endphp
+            
                     <tr class="transition-all duration-500">
                         <td class="border text-right">{{ $eai->entrie_id }}</td>
                         <td class="border text-right">{{ $eai->daily_entries_type }}</td>
-                        <td class="border text-right">({{ $resultDebit->account_name }}) - ({{ $resultDebit1->sub_name }})</td>
-                        <td class="border text-right">{{ $eai->Amount_debit }} ريال</td>
-                        <td class="border text-right">({{ $resultCredit->account_name }}) - ({{ $resultCredit1->sub_name }})</td>
-                        <td class="border text-right">{{ $eai->Amount_Credit }} ريال</td>
+                        <td class="border text-right">
+                            ({{ $resultDebit->account_name ?? 'لا يوجد حساب مدين' }})
+                            -
+                            ({{ $resultDebit1->sub_name ?? '' }})
+                        </td>                          <td class="border text-right">{{ $eai->Amount_debit }} ريال</td>
+                        <td class="border text-right">
+                            ({{ $resultCredit->account_name ?? 'لا يوجد حساب دائن' }})
+                            -
+                            ({{ $resultCredit1->sub_name ?? '' }})
+                        </td>                        <td class="border text-right">{{ $eai->Amount_Credit }} ريال</td>
                         <td class="border text-right">{{ $eai->Statement }}</td>
                         <td class="border text-right">{{ $eai->created_at }}</td>
                         <td class="border text-right">

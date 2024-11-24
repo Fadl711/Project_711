@@ -15,7 +15,6 @@ enum AccountClass: int
     return match($this) {
         self::CUSTOMER => 'العميل',
         self::SUPPLIER =>'المورد',
-
         self::STORE=>'المخزن',
         self::OTHER   => 'أخرى',
        };

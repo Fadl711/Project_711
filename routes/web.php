@@ -86,7 +86,8 @@ Route::post('Default_customer/store', [default_customerController::class, 'store
 Route::delete('/Default_customer/{id}/destroy', [default_customerController::class, 'destroy'])->name('default_customers.destroy');
 Route::get('/customers', [CustomerCoctroller::class, 'index'])->name('customers.index');
 Route::get('/customers/create', [CustomerCoctroller::class, 'create'])->name('customers.create');
-Route::get('/customers/store', [CustomerCoctroller::class, 'store'])->name('customers.store');
+Route::post('/customers/store', [CustomerCoctroller::class, 'store'])->name('customers.store');
+
 Route::get('/customers/show', [CustomerCoctroller::class, 'show'])->name('customers.show');
 
 Route::post('/invoicePurchases/store', [PurchaseController::class, 'store'])->name('invoicePurchases.store');
@@ -117,8 +118,6 @@ Route::get('/get-sales-by-invoice/ArrowLeft', [SaleController::class, 'getSalesB
 Route::get('/invoiceSales/{id}/print', [InvoiceSaleController::class, 'print'])->name('invoiceSales.print');
 Route::get('/api/sale-invoices/{filterType}', [InvoiceSaleController::class, 'getSaleInvoice']);
 Route::get('/api/sale-invoices', [InvoiceSaleController::class, 'searchInvoices']);
-
-
 
 
 Route::get('/all_bills_sale', [AllBillsController::class, 'all_bills_sale'])->name('invoice_sales.all_bills_sale');

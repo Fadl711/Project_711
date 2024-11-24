@@ -33,28 +33,33 @@
 
 <div class="container p-3 relative space-y-2  text-base bg-gray-200 border-black  rounded-lg  my-2 text-right font-bold mx-auto">
     @php
-    $resultDebit;
-    $resultDebit1;
-    $resultDebit1=$suba->where('sub_account_id',$daily->account_debit_id);
-    foreach ($resultDebit1 as $key) {
-        $resultDebit=$mainc->where('main_account_id',$key->Main_id)->first();
-        if ($key->sub_name!=$resultDebit->account_name) {
-            $resultDebit1=$key;
-            break;
-
+        $resultDebit1 = $suba->where('sub_account_id', $daily->account_debit_id); // البحث عن الحساب المدين
+        $debitSubName = null; // تهيئة المتغير
+    
+        foreach ($resultDebit1 as $key) {
+            $resultDebit = $mainc->where('main_account_id', $key->Main_id)->first(); // البحث عن الحساب الرئيسي
+            if ($resultDebit && $key->sub_name != $resultDebit->account_name) {
+                $debitSubName = $key->sub_name; // تعيين اسم الحساب الفرعي
+                break;
+            }
         }
-    }
-    $resultCredit;
-    $resultCredit1;
-    $resultCredit1=$suba->where('sub_account_id',$daily->account_Credit_id);
-    foreach ($resultCredit1 as $key) {
-        $resultCredit=$mainc->where('main_account_id',$key->Main_id)->first();
-        if ($key->sub_name!=$resultCredit->account_name) {
-            $resultCredit1=$key;
-            break;
+    
+        // التحقق من وجود قيمة للحساب الفرعي
+        $debitSubName = $debitSubName ?? 'اسم الحساب غير موجود'; // تعيين قيمة افتراضية إذا لم يتم العثور على الحساب
+    
+        $resultCredit1 = $suba->where('sub_account_id', $daily->account_Credit_id); // البحث عن الحساب الدائن
+        $creditSubName = null; // تهيئة المتغير
+    
+        foreach ($resultCredit1 as $key) {
+            $resultCredit = $mainc->where('main_account_id', $key->Main_id)->first(); // البحث عن الحساب الرئيسي
+            if ($resultCredit && $key->sub_name != $resultCredit->account_name) {
+                $creditSubName = $key->sub_name; // تعيين اسم الحساب الفرعي
+                break;
+            }
         }
-        # code...
-    }
+    
+        // التحقق من وجود قيمة للحساب الفرعي
+        $creditSubName = $creditSubName ?? 'اسم الحساب غير موجود'; // تعيين قيمة افتراضية إذا لم يتم العثور على الحساب
     @endphp
 
     <div class="container">
@@ -72,15 +77,15 @@
             <tbody>
                 <tr class="text-right">
                     <td class="py-2 px-2 border-black border-2">1</td>
-                    <td class="py-2 px-2 border-black border-2">{{$resultDebit1->sub_name}}</td>
-                     <td class="py-2 px-2 border-black border-2">{{number_format($daily->Amount_debit)}}</td>
+                    <td class="py-2 px-2 border-black border-2">{{ $debitSubName }}</td>
+                    <td class="py-2 px-2 border-black border-2">{{number_format($daily->Amount_debit)}}</td>
                     <td class="py-2 px-2 border-black border-2">0</td>
                     <td class="py-2 px-2 ">{{$daily->Statement}}</td>
 
                 </tr>
                 <tr class="text-right">
                     <td class="py-2 px-2 border-black border-2">2</td>
-                    <td class="py-2 px-2 border-black border-2">{{$resultCredit1->sub_name}}</td>
+                    <td class="py-2 px-2 border-black border-2">{{ $creditSubName }}</td>
                     <td class="py-2 px-2 border-black border-2">0</td>
                     <td class="py-2 px-2 border-black border-2">{{number_format($daily->Amount_Credit)}}</td>
                     <td class="py-2 px-2 "> </td>

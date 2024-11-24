@@ -15,8 +15,8 @@ return new class extends Migration
             $table->increments('entrie_id')->unsigned();
             $table->decimal('Amount_debit',15,2)->nullable();
             $table->decimal('Amount_Credit',15,2)->nullable();
-            $table->unsignedInteger('account_debit_id')->nullable();
-            $table->unsignedInteger('account_Credit_id')->nullable();
+            $table->integer('account_debit_id')->unsigned()->nullable();
+            $table->integer('account_Credit_id')->unsigned()->nullable();
             $table->text('Statement')->nullable();
             $table->integer('Daily_page_id')->unsigned();
             $table->string('Currency_name')->nullable();
