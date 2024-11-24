@@ -13,5 +13,7 @@ class Default_customer extends Model
     protected $fillable =[
         'id',
         'subaccount_id',
+        'warehouse_id',
+        'financial_account_id',
     ];
 }
