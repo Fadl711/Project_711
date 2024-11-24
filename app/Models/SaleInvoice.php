@@ -22,6 +22,7 @@ class SaleInvoice extends Model
          'accounting_period_id', 'discount', 
         'net_total_after_discount'
     ];
+  
 
     // عند حفظ الفاتورة، نقوم بحساب الإجمالي الصافي بعد الخصم
     public static function boot()
@@ -53,4 +54,15 @@ class SaleInvoice extends Model
         return $this->hasMany(Sale::class, 'Invoice_id', 'sales_invoice_id');
     }
 
+    public function getUserNameAttribute()
+    {
+        return $this->user->name ?? 'غير معروف';
+    }
+  
+    // تنسيق تاريخ الإنشاء
+    public function getFormattedDateAttribute()
+    {
+        return $this->created_at->format('Y-m-d');
+    }
+  
 }

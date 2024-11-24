@@ -84,6 +84,11 @@ Route::delete('/Default_Supplier/{id}/destroy', [default_supplierController::cla
 Route::get('/Default_customer', [default_customerController::class, 'index'])->name('default_customers.index');
 Route::post('Default_customer/store', [default_customerController::class, 'store'])->name('default_customers.store');
 Route::delete('/Default_customer/{id}/destroy', [default_customerController::class, 'destroy'])->name('default_customers.destroy');
+Route::get('/customers', [CustomerCoctroller::class, 'index'])->name('customers.index');
+Route::get('/customers/create', [CustomerCoctroller::class, 'create'])->name('customers.create');
+Route::get('/customers/store', [CustomerCoctroller::class, 'store'])->name('customers.store');
+Route::get('/customers/show', [CustomerCoctroller::class, 'show'])->name('customers.show');
+
 Route::post('/invoicePurchases/store', [PurchaseController::class, 'store'])->name('invoicePurchases.store');
 Route::get('/api/products/search', [PurchaseController::class, 'search']);
 Route::get('/invoice_purchases/show/{id}', [InvoicePurchaseController::class, 'bills_purchase_show'])->name('bills_purchase_show');
@@ -109,7 +114,9 @@ Route::delete('/sales/{id}',[SaleController::class,'destroy'])->name('sales.dest
 Route::delete('/sales-invoices/{id}', [SaleController::class, 'deleteInvoice'])->name('sales-invoice.delete');
 Route::get('/get-sales-by-invoice/ArrowRight', [SaleController::class, 'getSalesByInvoiceArrowRight'])->name('getSalesByInvoiceArrowRight');
 Route::get('/get-sales-by-invoice/ArrowLeft', [SaleController::class, 'getSalesByInvoiceArrowLeft'])->name('getSalesByInvoiceArrowLeft');
-Route::get('/invoiceSales/{id}/print', [SaleController::class, 'print'])->name('invoiceSales.print');
+Route::get('/invoiceSales/{id}/print', [InvoiceSaleController::class, 'print'])->name('invoiceSales.print');
+Route::get('/api/sale-invoices/{filterType}', [InvoiceSaleController::class, 'getSaleInvoice']);
+Route::get('/api/sale-invoices', [InvoiceSaleController::class, 'searchInvoices']);
 
 
 
@@ -262,7 +269,6 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
-Route::get('/customers', [CustomerCoctroller::class, 'index'])->name('customers.index');
 Route::get('/suppliers', [SupplierCoctroller::class, 'index'])->name('suppliers.index');
 
 

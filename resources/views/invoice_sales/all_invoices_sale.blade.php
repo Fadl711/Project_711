@@ -54,70 +54,76 @@
     const displayContainer = $('#displayContainer');
     const displayContainer2 = $('#displayContainer2');
     let debounceTimeout;
-
-    // استدعاء البحث بناءً على المدخل أو الاختيار
     function fetchInvoices(url, container) {
-        $.ajax({
-            url: url,
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-            },
-            success: function (data) {
-                container.empty();
-                if (data.purchaseInvoices.length > 0) {
-                    data.purchaseInvoices.forEach((purchase) => {
-                        container.append(renderInvoiceCard(purchase));
-                    });
-                } else {
-                    container.append('<p class="text-center text-gray-500">لا توجد فواتير لعرضها.</p>');
-                }
-            },
-            error: function (error) {
-                console.error('Error fetching invoices:', error.responseText);
+    console.log(`Fetching invoices from ${url}`);
+    $.ajax({
+        url: url,
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+        },
+        success: function (data) {
+            container.empty();
+            if (data.saleInvoice && data.saleInvoice.length > 0) {
+                data.saleInvoice.forEach((sale) => {
+                    container.append(renderInvoiceCard(sale));
+                });
+            } else {
+                container.append('<p class="text-center text-gray-500">لا توجد فواتير لعرضها.</p>');
             }
-        });
-    }
+        },
+        error: function (error) {
+            console.error('Error fetching invoices:', error.responseText);
+        },
+    });
+}
 
     // إنشاء كارت الفاتورة
-    function renderInvoiceCard(purchase) {
+    function renderInvoiceCard(sale) {
         return `
             <div class="mb-3 border border-gray-300 rounded-lg px-4 py-2 shadow-sm">
-                <div class="flex justify-between items-center">
+                <div class="flex justify-between items-center ">
                     <div class="text-right">
-                        <div class="text-gray-700 text-right">تاريخ الفاتورة: <span class="text-sm">${purchase.formatted_date}</span></div>
-                        <div class="text-gray-700 text-right">اسم .${" "}.${purchase.main_account_class}: <span class="text-sm">${purchase.supplier_name}</span></div>
+                        <div class="text-gray-700 text-right">تاريخ الفاتورة: <span class="text-sm">${sale.formatted_date}</span></div>
+                        <div class="text-gray-700 text-right">اسم .${" "}.${sale.main_account_class}: <span class="text-sm">${sale.Customer_name}</span></div>
                     </div>
-                    <div class="text-gray-700">فاتورة ${purchase.transaction_type}: <span class="text-sm">${purchase.Invoice_type}</span></div>
+                    <div class="text-gray-700">فاتورة ${sale.transaction_type}: <span class="text-sm">${sale.payment_type === 'cash' ? 'نقداً' : sale.payment_type === 'on_credit' ? 'آجلة' : 'غير معروف'}
+</span></div>
                     <div class="text-right">
-                        <div>رقم الفاتورة: <span class="text-sm">${purchase.invoice_number}</span></div>
-                        <div>رقم الإيصال: <span class="text-sm">${purchase.receipt_number}</span></div>
+                        <div>رقم الفاتورة: <span class="text-sm">${sale.invoice_number}</span></div>
+                        <div>رقم الإيصال: <span class="text-sm">${sale.receipt_number??0}</span></div>
                     </div>
                 </div>
                 <table class="w-full text-center border-collapse text-sm">
                     <thead class="bg-indigo-600 text-white text-sm">
-                        <tr>
-                            <th class="py-1 px-4">إجمالي تكلفة الفاتورة</th>
-                            <th class="py-1 px-4">إجمالي المصاريف</th>
-                            <th class="py-1 px-4">المدفوع</th>
-                            <th class="py-1 px-4">عرض الفاتورة</th>
+                         <tr >
+                            <td class="py-1 px-4"> إجمالي سعر البيع </td>
+                            <td class="py-1 px-4"> قيمة الخصم الممنوح</td>
+                            <td class="py-1 px-4">مبلغ الشحن </td>
+                            <td class="py-1 px-4"> المسؤول عن الشحن </td>
+                            <td class="py-1 px-4"> الإجمالي الصافي   </td>
+                            <td class="py-1 px-4">المدفوع</td>
+                            <td class="py-1 px-4">عرض الفاتورة</td>
                         </tr>
                     </thead>
                     <tbody>
                         <tr class="bg-gray-50">
-                            <td class="py-1 px-4">${purchase.total_invoice.toLocaleString()}</td>
-                            <td class="py-1 px-4">${purchase.total_cost.toLocaleString()}</td>
-                            <td class="py-1 px-4">${purchase.paid.toLocaleString()}</td>
+                            <td class="py-1 px-4">${sale.total_price_sale.toLocaleString()}</td>
+                            <td class="py-1 px-4">${sale.discount.toLocaleString()}</td>
+                            <td class="py-1 px-4">${sale.shipping_amount.toLocaleString()}</td>
+                            <td class="py-1 px-4">${sale.shipping_bearer === 'customer' ? 'العميل' : sale.shipping_bearer === 'customer' ? 'التاجر':'غير محدد'}</td>
+                            <td class="py-1 px-4">${sale.net_total_after_discount.toLocaleString()}</td>
+                            <td class="py-1 px-4">${sale.paid_amount.toLocaleString()}</td>
                             <td class="py-1 px-4">
-                                <button value="${purchase.invoice_number}" onclick="openInvoiceWindow(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح الفاتورة</button>
+                                <button value="${sale.invoice_number}" onclick="openInvoiceWindow(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح الفاتورة</button>
                             </td>
                         </tr>
                     </tbody>
                 </table>
                 <div class="grid grid-cols-2">
-                    <div class="text-gray-700 text-right text-sm">تاريخ التحديث: <span>${purchase.updated_at}</span></div>
-                    <div class="text-gray-700 text-sm  text-left">المستخدم: <span>${purchase.user_name}</span></div>
+                    <div class="text-gray-700 text-right text-sm">تاريخ التحديث: <span>${sale.updated_at}</span></div>
+                    <div class="text-gray-700 text-sm  text-left">المستخدم: <span>${sale.user_name}</span></div>
                 </div>
             </div>`;
     }
@@ -126,13 +132,14 @@
     searchInput.on('input', function () {
         const searchQuery = searchInput.val().trim();
         clearTimeout(debounceTimeout);
+        
 
         if (searchQuery !== "") {
             displayContainer.addClass("hidden");
             displayContainer2.removeClass("hidden");
             debounceTimeout = setTimeout(() => {
                 const searchType = searchTypeSelect.val();
-                const url = `/api/purchase-invoices?searchType=${searchType}&searchQuery=${searchQuery}`;
+                const url = `/api/sale-invoices?searchType=${searchType}&searchQuery=${searchQuery}`;
                 fetchInvoices(url, displayContainer2);
             }, 500);
         } else {
@@ -145,7 +152,9 @@
     // البحث بالاختيار
     radioInput.on('click', function () {
         const value = $(this).val();
-        const url = `/api/purchase-invoices/${value}`;
+        const url = `/api/sale-invoices/${value}`;
+        displayContainer.removeClass("hidden");
+
         fetchInvoices(url, displayContainer);
     });
 });
@@ -163,7 +172,7 @@
             e.preventDefault(); // منع تحديث الصفحة
 
             // استبدال القيمة في الرابط
-            const url = `{{ route('invoicePurchases.print', ':invoiceField') }}`.replace(':invoiceField', invoiceField);
+            const url = `{{ route('invoiceSales.print', ':invoiceField') }}`.replace(':invoiceField', invoiceField);
 
             window.open(url, '_blank', 'width=600,height=800'); // فتح الرابط مع استبدال القيمة
         } else {
