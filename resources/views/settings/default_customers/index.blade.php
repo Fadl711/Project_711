@@ -63,8 +63,7 @@
 </div>
 <div class="container mx-auto">
     <h1 class="text-2xl font-bold mb-4">المخزن الافتراضي</h1>
-    <form  method="POST" class="w-1/2">
-        {{-- action="{{ route('default_warehouse.store') }}" --}}
+    <form action="{{ route('default_warehouse.store') }}" method="POST" class="w-1/2">
         @csrf
         <div class="mb-4">
             <label for="warehouse_id" class="block text-sm font-medium text-gray-700">المخزن الفرعي</label>
@@ -106,8 +105,7 @@
                     <td class="py-2 px-4 border-b">{{ $SubAccount->sub_name }}</td>
                     <td class="py-2 px-4 border-b">{{ $SubAccount->Phone }}</td>
                     <td class="py-2 px-4 border-b">
-                        <form method="POST" class="inline">
-                            {{-- action="{{ route('default_warehouse.destroy', $Default_customers->warehouse_id) }}" --}}
+                        <form action="{{ route('default_warehouse.destroy', $Default_customers->warehouse_id) }}" method="POST" class="inline">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="text-red-500">حذف</button>
@@ -124,10 +122,9 @@
         </tbody>
     </table>
 </div>
-<div class="container mx-auto"> 
-    {{-- action="{{ route('default_financial.store') }}" --}}
+<div class="container mx-auto">
     <h1 class="text-2xl font-bold mb-4">الصندوق الافتراضي</h1>
-    <form method="POST" class="w-1/2">
+    <form action="{{ route('default_financial.store') }}" method="POST" class="w-1/2">
         @csrf
         <div class="mb-4">
             <label for="financial_account_id" class="block text-sm font-medium text-gray-700">الصندوق الفرعي</label>
@@ -169,11 +166,11 @@
                     <td class="py-2 px-4 border-b">{{ $SubAccount->sub_name }}</td>
                     <td class="py-2 px-4 border-b">{{ $SubAccount->Phone }}</td>
                     <td class="py-2 px-4 border-b">
-                        {{-- <form action="{{ route('default_financial.destroy', $Default_customers->financial_account_id) }}" method="POST" class="inline">
+                        <form action="{{ route('default_financial.destroy', $Default_customers->financial_account_id) }}" method="POST" class="inline">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="text-red-500">حذف</button>
-                        </form> --}}
+                        </form>
                     </td>
                 </tr>
 
@@ -203,6 +200,35 @@
 
         });
     });
- 
+    $('#warehouse_id').on('change', function() {
+        var warehouse_id = $(this).val();
+        var token = '{{ csrf_token() }}'; // Add this line
+        $.ajax({
+            type: 'POST',
+            url: '{{ route('default_warehouse.store') }}',
+            data: {
+                _token: token, // Add this line
+                warehouse_id: warehouse_id
+            },
+            success: function(data) {
+                location.reload();            }
+
+        });
+    });
+    $('#financial_account_id').on('change', function() {
+        var financial_account_id = $(this).val();
+        var token = '{{ csrf_token() }}'; // Add this line
+        $.ajax({
+            type: 'POST',
+            url: '{{ route('default_financial.store') }}',
+            data: {
+                _token: token, // Add this line
+                financial_account_id: financial_account_id
+            },
+            success: function(data) {
+                location.reload();            }
+
+        });
+    });
     </script>
 @endsection
