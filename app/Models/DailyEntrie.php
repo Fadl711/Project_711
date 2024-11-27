@@ -9,7 +9,6 @@ class DailyEntrie extends Model
 {
     use HasFactory;
     protected $table = 'daily_entries';
-    // المفتاح الأساسي
     protected $primaryKey = 'entrie_id';
     // الحقول القابلة للتعبئة
    // الحقول التي يمكن ملؤها

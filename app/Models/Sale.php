@@ -36,6 +36,8 @@ class Sale extends Model
         'Customer_id',
         'User_id',
         'Invoice_id',
+        'Quantityprice',
+
     ];
 
    

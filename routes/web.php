@@ -60,7 +60,7 @@ Route::get('/products/{product}/edit',[ProductCoctroller::class,'edit'])->name('
 Route::put('/products/{product}',[ProductCoctroller::class,'update'])->name('products.update');
 Route::delete('/products/{product}',[ProductCoctroller::class,'destroy'])->name('products.destroy');
 Route::get('/search', [ProductCoctroller::class,'search'])->name('search.products');
-Route::get('/GetProduct/{id}/price', [ProductCoctroller::class, 'price'])->name('GetProduct.price');
+Route::get('/GetProduct/{categoryId}/price', [CategoryController::class, 'getUnitPrice'])->name('price.getUnitPrice');
 
 Route::get('/products/Category', [CategoryController::class, 'create'])->name('Category.create');
 Route::post('/Category/store',[CategoryController::class,'store'])->name('Category.store');

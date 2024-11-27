@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('Categorie_name');
             $table->decimal('Purchase_price', 15, 2)->nullable();
             $table->decimal('Selling_price', 15, 2)->nullable();
+            $table->decimal('Quantityprice', 15, 2)->default(1);
+            
             $table->integer('user_id')->unsigned()->nullable();
             $table->timestamps();
             // $table->foreign('product_id')->references('product_id')->on('products');

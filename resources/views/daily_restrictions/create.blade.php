@@ -25,20 +25,25 @@
     @csrf
     <div class="container mx-auto  px-4">
         <!-- Title -->
-
+        <div>
+            <label for="transaction_type" class="labelSale">نوع العملية </label>
+            <select dir="ltr" id="transaction_type" class="inputSale input-field" name="transaction_type">
+                @foreach ($transactionTypes as $transactionType)
+                    <option value="{{ $transactionType->value }}">{{ $transactionType->label() }}</option>
+                @endforeach
+            </select>
+            </div>
+            <div >
         <!-- Form Layout -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="shadow-lg rounded-lg p-1 bg-white border">
                 <label for="Invoice_type" class="block font-medium  ">  نوع المستند</label>
                 <select name="Invoice_type" dir="ltr" class=" select2 inputSale" id="Invoice_type">
-                    <!-- سيتم تعبئة الخيارات بناءً على الحساب الرئيسي المحدد -->
-                    <option value="قيد" selected>اختر  نوع المستند</option>
-                    <option value="مبيعات" > مبيعات</option>
-                    <option value="مشتريات" > مشتريات</option>
-                    <option value="خصم مكتسب" > خصم مكتسب</option>
-
-
-
+                    <option value="" selected>اختر  نوع المستند</option>
+                    @foreach ($transactionTypes as $transactionType)
+                    <option value="{{ $transactionType->value }}">{{ $transactionType->label() }}</option>
+                @endforeach
+            </select>
                     </select>
             </div>
             <!-- حساب المدين -->

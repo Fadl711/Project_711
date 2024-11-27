@@ -56,8 +56,9 @@ class SaleController extends Controller
             'total_discount_rate' => 'required|numeric|min:0',
             'note' => 'nullable|string|max:500',
         ]);
-    
+        
         try {
+            $Categorie_name=Category::where('categorie_id',$request->Categorie_name)->value('Categorie_name');
             // الحصول على اسم المنتج
             $productName = Product::where('product_id', $request->product_id)->value('Product_name');
             $total_Purchase_price = Product::where('product_id', $request->product_id)->value('Purchase_price');
@@ -86,7 +87,8 @@ class SaleController extends Controller
                     'Product_name' => $productName,
                     'product_id' => $request->product_id,
                     'Barcode' => $request->Barcode ?? '',
-                    'quantity' => $request->Quantity,
+                    'Quantityprice' => $request->Quantity,
+                    'quantity' => $request->Quantityprice,
                     'Selling_price' => $request->Selling_price,
                     'discount_rate' => $request->discount_rate ?? 0,
                     'discount' => $request->total_discount_rate ?? 0,
@@ -99,7 +101,7 @@ class SaleController extends Controller
                     'financial_account_id' => $request->financial_account_id,
                     'shipping_cost' => $request->shipping_cost ?? 0,
                     'note' => $request->note ?? '',
-                    'Category_name' => $request->Categorie_name,
+                    'Category_name' => $Categorie_name,
                 ]
             );
             $total_price_sale = Sale::where('Invoice_id', $saleInvoice->sales_invoice_id )

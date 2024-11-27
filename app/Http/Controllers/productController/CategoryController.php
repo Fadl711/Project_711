@@ -25,6 +25,7 @@ class CategoryController extends Controller
     $Post->product_id=$request->product_id;
     $Post->Purchase_price=$request->Purchase_price;
     $Post->Selling_price=$request->Selling_price ;
+    $Post->Quantityprice=$request->Quantityprice ??1 ;
     $Post->user_id=$request->user_id;
     $Post->save();
 /*         Category::createOrFirst([
@@ -53,11 +54,33 @@ class CategoryController extends Controller
         ]);
 
 
-
         return redirect()->route('Category.create');
     }
     public function destroy($id){
         Category::where('categorie_id',$id)->delete();
         return back();
     }
+    public function getUnitPrice($categoryId)
+    {
+        // البحث عن المنتج بناءً على $categoryId
+        $product = Category::where('categorie_id', $categoryId)->first();
+
+    
+        if ($product && $product->Selling_price) {
+            return response()->json($product);
+        }
+    
+        return response()->json([
+            'error' => 'لم يتم العثور على المنتج أو سعر البيع غير متوفر.'
+        ], 404);
+        if ($product && $product->Purchase_price) {
+            return response()->json($product);
+        }
+        return response()->json([
+            'error' => 'لم يتم العثور على المنتج أو سعر الشراء غير متوفر.'
+        ], 404);
+    }
+  
+    
+    
 }

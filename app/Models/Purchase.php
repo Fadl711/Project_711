@@ -32,6 +32,8 @@ protected $fillable = [
     'transaction_type',
     'warehouse_from_id',
     'warehouse_to_id',
+    'Quantityprice',
+
     'Supplier_id',
     'categorie_id',
 ];

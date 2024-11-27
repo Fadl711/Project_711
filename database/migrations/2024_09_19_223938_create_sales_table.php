@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('accounting_period_id')->unsigned();
             $table->string('Barcode')->nullable(); // إضافة العمود Barcode
             $table->decimal('quantity', 10, 2); // حيث 10 هو العدد الإجمالي للأرقام و 2 هو عدد الأرقام بعد الفاصلة العشرية
+            $table->decimal('Quantityprice', 9, 2)->comment('كمية المنتج  المباعه حسب الوحدة');
             $table->decimal('Selling_price', 15, 2);  // سعر الوحدة للمنتج
             $table->string('note')->nullable();
             $table->decimal('total_amount', 15, 2); // إجمالي المبلغ

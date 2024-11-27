@@ -26,7 +26,9 @@ return new class extends Migration
             $table->string('note')->nullable();
             $table->integer('Currency_id')->unsigned()->nullable();
             $table->integer('User_id')->unsigned();
-            $table->integer('quantity')->default(0)->comment('كمية المنتج في المعاملة');
+            $table->decimal('quantity',9,2)->default(0)->comment('كمية المنتج في المعاملة');
+            $table->decimal('Quantityprice', 9, 2)->comment('كمية المنتج  المباعه حسب الوحدة');
+
             $table->integer('Purchase_invoice_id')->unsigned();
             $table->integer('accounting_period_id')->unsigned();
             $table->unsignedTinyInteger('transaction_type')->comment('نوع المعاملة: 1 للشراء، 2 للبيع، 3 للترحيل المخزني');

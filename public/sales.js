@@ -7,7 +7,7 @@ function addToTableSale(account) {
         $(`${rowId} td:nth-child(1)`).text(account.Barcode);
         $(`${rowId} td:nth-child(2)`).text(account.Product_name);
         $(`${rowId} td:nth-child(3)`).text(account.Category_name);
-        $(`${rowId} td:nth-child(4)`).text(account.quantity ? Number(account.quantity).toLocaleString() : '0');
+        $(`${rowId} td:nth-child(4)`).text(account.Quantityprice ? Number(account.Quantityprice).toLocaleString() : '0');
         $(`${rowId} td:nth-child(5)`).text(account.Selling_price ? Number(account.Selling_price).toLocaleString() : '0');
         $(`${rowId} td:nth-child(6)`).text(account.warehouse_to_id ? Number(account.warehouse_to_id).toLocaleString() : '0');
         $(`${rowId} td:nth-child(7)`).text(account.total_amount ? Number(account.total_amount).toLocaleString() : '0');
@@ -20,7 +20,7 @@ function addToTableSale(account) {
                 <td class="text-right tagTd">${account.Barcode}</td>
                 <td class="text-right tagTd">${account.Product_name}</td>
                 <td class="text-right tagTd">${account.Category_name}</td>
-                <td class="text-right tagTd">${account.quantity ? Number(account.quantity).toLocaleString() : '0'}</td>
+                <td class="text-right tagTd">${account.Quantityprice ? Number(account.Quantityprice).toLocaleString() : '0'}</td>
                 <td class="text-right tagTd">${account.Selling_price ? Number(account.Selling_price).toLocaleString() : '0'}</td>
                 <td class="text-right tagTd">${account.warehouse_to_id ? Number(account.warehouse_to_id).toLocaleString() : '0'}</td>
                 <td class="text-right tagTd">${account.total_amount ? Number(account.total_amount).toLocaleString() : '0'}</td>
@@ -74,7 +74,8 @@ function editDataSale(id) {
         success: function(data) {
             $('#product_id').val(data.product_id);
             $('#Barcode').val(data.Barcode);
-            $('#Quantity').val(data.quantity);
+            $('#Quantity').val(data.Quantityprice);
+            $('#Quantityprice').val(data.quantity);
             $('#Selling_price').val(data.Selling_price);
             $('#Total').val(data.total_amount);
             $('#loss').val(data.loss);
@@ -202,7 +203,7 @@ function displaySales(sales) {
             <td  class="text-right tagTd">${sale.Barcode || '-'}</td>
             <td  class="text-right tagTd">${sale.Product_name || '-'}</td>
             <td  class="text-right tagTd">${sale.Category_name || '-'}</td>
-            <td  class="text-right tagTd">${sale.quantity || '0'}</td>
+            <td  class="text-right tagTd">${sale.Quantityprice || '0'}</td>
             <td  class="text-right tagTd">${sale.Selling_price || '0.00'}</td>
             <td  class="text-right tagTd">${sale.warehouse_to_id || '-'}</td>
             <td  class="text-right tagTd">${sale.total_price || '0.00'}</td>

@@ -161,26 +161,39 @@
                     </select>
                 </div>
             </div>
-            <div class="grid grid-cols-3 gap-1 px-1">
+            <div class="grid grid-cols-1 gap-1 px-1">
                 <div>
-                    <label for="product_id" class="block labelSale">بحث عن المنتج</label>
+                    {{-- <label for="product_id" class="block labelSale">بحث عن المنتج</label> --}}
                     <select name="product_id" id="product_id" dir="ltr" class="input-field select2 inputSale" required>
                         @isset($products)
-                            <option value="">اختر منتج</option>
+                            <option value=""> بحث عن المنتج</option>
                             @foreach ($products as $product)
                                 <option value="{{ $product->product_id }}">{{ $product->product_name }}</option>
                             @endforeach
                         @endisset
                     </select>
                 </div>
+            </div>
+
+            <div class="grid grid-cols-4 gap-1 px-1">
+              
                 <div>
                     <label for="Categorie_name" class="block labelSale">الوحدة </label>
                     <select name="Categorie_name" id="Categorie_name" dir="ltr" class="input-field select2 inputSale" required>
                     </select>
                 </div>
                 <div>
+                    <label for="QuantityCategorie" class="labelSale">الكمية الوحدة</label>
+                    <input type="text" name="QuantityCategorie" id="QuantityCategorie" placeholder="0" class="inputSale  english-numbers" required />
+               
+                </div>
+                <div>
                     <label for="Quantity" class="labelSale">الكمية</label>
                     <input type="text" name="Quantity" id="Quantity" placeholder="0" class="inputSale quantity-field english-numbers" required />
+                </div>
+                <div>
+                    <label for="Quantityprice" class="labelSale">الجمالي الكميه</label>
+                    <input type="text" name="Quantityprice" id="Quantityprice" placeholder="0" class="inputSale english-numbers" required />
                 </div>
             </div>      
             <div class="grid grid-cols-3 gap-1 px-1">
@@ -292,8 +305,13 @@
     </div>
     
 </div>
+
 <!-- إطار الطباعة -->
 <script>
+    $(document).ready(function () {
+    // الاستماع لتغيير القيمة في قائمة التصنيفات
+   
+});
     function openInvoiceWindow(e) {
 const successMessage= $('#successMessage');
 const invoiceField = document.getElementById('sales_invoice_id').value; // الحصول على قيمة حقل رقم الفاتورة
@@ -340,7 +358,7 @@ form.on('keydown', function (event) {
         // الوظيفة الرئيسية للحفظ
         function handleSave() {
             const quantityAvailable = parseFloat($('#QuantityPurchase').val()) || 0;
-            const quantityRequested = parseFloat($('#Quantity').val()) || 0;
+            const quantityRequested = parseFloat($('#Quantityprice').val()) || 0;
     
             // التحقق من الكمية المتوفرة
             if (quantityRequested > quantityAvailable) {

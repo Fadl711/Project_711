@@ -125,10 +125,20 @@
                 @isset($entries)
                     @foreach ($entries as $entrie)
                         <tr class="bg-white">
+                            @php
+                        if ($entrie->Invoice_type=="on_credit") {
+                            $Invoice_type  = "آجلة"   ;
+
+                                         }
+                                         if ($entrie->Invoice_type=="cash") {
+                            $Invoice_type  = "نقد"   ;
+
+                                         }
+                        @endphp
                             <td class=" text-right ">
                                 {{ $entrie->created_at ? $entrie->created_at->format('Y-m-d') : __('غير متوفر') }}
                             </td>
-                            <td class=" text-right ">{{ $entrie->daily_entries_type }}</td>
+                            <td class=" text-right ">{{ $entrie->daily_entries_type }} {{ $Invoice_type }}</td>
                             <td class=" text-center">{{ $entrie->Invoice_id }}</td>
                             <td class=" text-right ">{{ $entrie->Statement }}</td>
                             <td class=" text-center">{{ $entrie->entrie_id }}</td>
@@ -182,16 +192,13 @@
                 <tr class="bg-blue-100">
                     <th class="px-2 text-right w-">
                         @php
-                        $sum=$SumDebtor_amount-$SumCredit_amount;
-
-                        
+                        $sum=$SumDebtor_amount-$SumCredit_amount;                        
                         if ($sum>=0) {
                             $commintString  = "عليكم/ رصيد"   ;
 
                                          }
                                          if ($sum<0) {
                                             $commintString  = "لكم/ رصيد"   ;
-
                                          }
                         @endphp
                         <p class="">{{ $commintString }}</p>

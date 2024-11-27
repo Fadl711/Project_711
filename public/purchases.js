@@ -26,8 +26,11 @@ function TotalPrice() {
     var quantity = parseNumber($('.quantity-field').val());
     var Yr_cost = parseNumber($('#Yr_cost').val());
     var discount_rate = parseNumber($('#discount_rate').val());
+    var QuantityCategorie= parseNumber($('#QuantityCategorie').val());
     if ((price > 0 || sellingPrice > 0) && quantity > 0) {
+        let Quantityprice = QuantityCategorie * quantity ||quantity * QuantityCategorie;
         let total_price = price * quantity;
+        let total_price2 = sellingPrice * quantity;
         let total_priceS = sellingPrice * quantity;
         let discount = (discount_rate > 0 && sellingPrice > 0) ? (total_priceS * discount_rate) / 100 : 0;
         let cost = Yr_cost * total_price;
@@ -37,12 +40,14 @@ function TotalPrice() {
         // total_price = total_price.toFixed(2);
         total_price = total_price.toFixed(2);
         discount = discount.toFixed(2);
+        Quantityprice = Quantityprice.toFixed(2);
         cost = cost.toFixed(2);
         loss = loss.toFixed(2);
 
         // تحديث القيم
         $('#total_Purchase_price').val(total_price).trigger('change');
-        $('#Total').val(total_price).trigger('change');
+        $('#Quantityprice').val(Quantityprice).trigger('change');
+        $('#Total').val(total_price2).trigger('change');
         $('#total_price').val(total_priceS - discount).trigger('change');
         $('#total_discount_rate').val(discount).trigger('change');
         $('#Cost').val(cost).trigger('change');
@@ -72,6 +77,7 @@ function TotalPrice() {
         $('#total_price').val('').trigger('change');
         $('#loss').val('').trigger('change');
         $('#Cost').val('').trigger('change');
+        $('#Quantityprice').val('').trigger('change');
     }
 }
 
@@ -364,11 +370,32 @@ $(document).on('keydown', function(event) {
     $(this).select2('close');
         $('#Categorie_name').select2('open');
     });
-    $('#Categorie_name').on('change', function() {
+    // $('#Categorie_name').on('change', function() {
+        
 
+    //     $(this).select2('close');
+
+    //     // تركيز المؤشر على حقل Quantity بعد تأخير بسيط
+        setTimeout(function() {
+            $('#Quantity').focus();
+            console.log('Focused on Quantity'); // للتأكد من التركيز
+        }, 100); // تأخير 100 مللي ثانية
+    // });
+    $('#Categorie_name').on('change', function () {
+        const CategorieId = $(this).val(); // الحصول على معرف التصنيف المحدد
         $(this).select2('close');
+        if (!CategorieId) {
+            console.warn('لم يتم اختيار تصنيف.');
+            return; // إنهاء التنفيذ إذا لم يتم اختيار تصنيف
+        }
 
-        // تركيز المؤشر على حقل Quantity بعد تأخير بسيط
+        // استدعاء الدالة لجلب المنتج بناءً على التصنيف
+        GetProduct(CategorieId);
+        // إغلاق القائمة المنسدلة بعد التأخير
+        setTimeout(() => {
+            $('#Categorie_name').select2('close');
+            
+        }, 1000);
         setTimeout(function() {
             $('#Quantity').focus();
             console.log('Focused on Quantity'); // للتأكد من التركيز
