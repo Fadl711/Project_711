@@ -85,6 +85,10 @@ Route::delete('/Default_Supplier/{id}/destroy', [default_supplierController::cla
 Route::get('/Default_customer', [default_customerController::class, 'index'])->name('default_customers.index');
 Route::post('Default_customer/store', [default_customerController::class, 'store'])->name('default_customers.store');
 Route::delete('/Default_customer/{id}/destroy', [default_customerController::class, 'destroy'])->name('default_customers.destroy');
+Route::post('Default_warehouse/store', [default_customerController::class, 'storeWarehouse'])->name('default_warehouse.store');
+Route::delete('/Default_warehouse/{id}/destroy', [default_customerController::class, 'destroyWarehouse'])->name('default_warehouse.destroy');
+Route::post('Default_financial/store', [default_customerController::class, 'storeFinancial'])->name('default_financial.store');
+Route::delete('/Default_financial/{id}/destroy', [default_customerController::class, 'destroyFinancial'])->name('default_financial.destroy');
 Route::get('/customers', [CustomerCoctroller::class, 'index'])->name('customers.index');
 Route::get('/customers/create', [CustomerCoctroller::class, 'create'])->name('customers.create');
 Route::post('/customers/store', [CustomerCoctroller::class, 'store'])->name('customers.store');
