@@ -72,6 +72,7 @@ return new class extends Migration
 Schema::enableForeignKeyConstraints();
 
     }
+    
 
     /**
      * Reverse the migrations.

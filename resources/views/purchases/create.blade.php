@@ -166,19 +166,17 @@
                     <label for="product_name" class="labelSale">اسم المنتج</label>
                     <input type="text" name="product_name" id="product_name" class="inputSale " required />
                 </div>
-                
+                <div>
+                    <label for="Categorie_name" class="block  labelSale">الوحده  </label>
+                    <select name="Categorie_name" id="Categorie_name" dir="ltr" class="input-field select2 inputSale" >
+                    </select>
+                </div>
                 <div class="">
                     <label for="Quantity" class="labelSale">الكمية</label>
                     <input type="number" name="Quantity" id="Quantity" placeholder="0" class="inputSale quantity-field english-numbers" required />
                 </div>
 
-                <div>
-
-                <label for="Categorie_name" class="block  labelSale">الوحده  </label>
-                <select name="Categorie_name" id="Categorie_name" dir="ltr" class="input-field select2 inputSale" required>
-                 
-                </select>
-            </div>
+               
             </div>
            
             <div class="flex gap-1 px-1">
@@ -272,7 +270,6 @@
                         <th class=" px-2 py-1  tagTd"> الوحدة</th>
                         <th class=" px-2 py-1  tagTd">الكمية</th>
                         <th class=" px-2 py-1  tagTd">السعر الشراء</th>
-                        {{-- <th clblack px-2  tagTd py-1">السعر البيع</th> --}}
                         <th class=" px-2 py-1  tagTd">التكلفة</th>
                         <th class=" px-2 py-1  tagTd">المخزن</th>
                         <th class=" px-2 py-1  tagTd">الإجمالي</th>
@@ -304,10 +301,6 @@ else{
 }
 
 }
-
-
-
-
 </script>
 <button onclick="openAndPrintInvoice2(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح وطباعة الفاتورة</button>
 <div id="successMessage" style="display:none;" class="text-red-500 font-semibold mt-2"></div>

@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class PaymentBond extends Model
 {
     use HasFactory;
+    protected $table = 'payment_bonds';
+    protected $primaryKey = 'payment_bond_id';
+
     protected $fillable = [
         'Main_debit_account_id',
         'Debit_sub_account_id',

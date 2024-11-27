@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Enum\AccountClass;
 use App\Models\AccountingPeriod;
+use App\Models\Currency;
+use App\Models\CurrencySetting;
 use App\Models\DailyEntrie;
 use App\Models\GeneralJournal;
 use App\Models\MainAccount;
 use App\Models\SubAccount;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -19,9 +22,78 @@ class CustomerCoctroller extends Controller
         return view('customers.index');
     }
     public function show(){
+ // استعلام لجمع البيانات المدينة والدائنة
+ $balances = DailyEntrie::selectRaw(
+    'sub_accounts.sub_account_id,
+     sub_accounts.sub_name,
+     sub_accounts.Phone,
+     SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_debit ELSE 0 END) as total_debit,
+     SUM(CASE WHEN daily_entries.account_Credit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_Credit ELSE 0 END) as total_credit'
+)
+->join('sub_accounts', function ($join) {
+    $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')
+         ->orOn('daily_entries.account_Credit_id', '=', 'sub_accounts.sub_account_id');
+})
+->where('sub_accounts.AccountClass', 1) // إضافة شرط AccountClass = 1
+->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name', 'sub_accounts.Phone')
+->get();
 
-        return view('customers.show');
+// معالجة البيانات لإضافة الفارق ونوعه
+$balances = $balances->map(function ($balance) {
+    $difference = $balance->total_debit - $balance->total_credit;
+    $balance->difference = $difference;
+    $balance->difference_type = $difference > 0 ? 'مدين' : ($difference < 0 ? 'دائن' : 'متوازن');
+    return $balance;
+});
+
+return view('customers.show', compact('balances'));
+        // return view('customers.show');
     }
+    public function showStatement($id)
+{
+    $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+    $customer = SubAccount::where('sub_account_id',$id)->first(); // استرجاع بيانات العميل
+    $idCurr=1;
+    $curre=CurrencySetting::where('currency_settings_id',$idCurr)->first(); 
+    $UserName = User::where('id',auth()->user()->id,)->pluck('name')->first();
+    
+    // $curre2=Currency::where('currency_id',$curre->Currency_id)->first();
+    
+    $currencysettings=$curre->currency_name;
+
+    $SumDebtor_amount=DailyEntrie::where('account_debit_id',$customer->sub_account_id)->sum('Amount_debit');
+    $SumCredit_amount=DailyEntrie::where('account_Credit_id',$customer->sub_account_id)->sum('Amount_Credit');
+    $Sale_priceSum=$SumDebtor_amount-$SumCredit_amount;
+    $priceInWords = $this->numberToWords($Sale_priceSum,$curre->currency_name);
+
+
+    $entries = DailyEntrie::where('account_debit_id', $id)
+                           ->orWhere('account_Credit_id', $id)
+                           ->get(); // استرجاع القيود المرتبطة بالعميل
+                           if($customer->AccountClass===1)
+                           {
+                               $AccountClassName="العميل";
+                           }
+                           if($customer->AccountClass===2)
+                           {
+                               $AccountClassName="المورد";
+                           }
+                           if($customer->AccountClass===3)
+                           {
+                               $AccountClassName="المخزن";
+                           }
+                           if($customer->AccountClass===4)
+                           {
+                               $AccountClassName="الحساب";
+                           }
+                           if($customer->AccountClass===5)
+                           {
+                               $AccountClassName="الصندوق";
+                           }
+    
+                           return view('customers.statement', compact('customer', 'entries','AccountClassName','currencysettings','UserName','accountingPeriod','SumCredit_amount','SumDebtor_amount','priceInWords','Sale_priceSum'))->render(); // إرجاع المحتوى كـ HTML
+                        }
+
     public function create(){
 
         return view('customers.create');
@@ -128,5 +200,69 @@ class CustomerCoctroller extends Controller
         return response()->json(['success' => true, 'message' => 'تمت العملية بنجاح', 'DataSubAccount' => $mainAccount], 201);
     
     }
+    private function numberToWords($number,$currency) 
+{
+    if (!is_numeric($number)) {
+        return "الرقم المدخل غير صالح";
+    }
+
+    $number = str_replace([',', ' '], '', $number); // إزالة الفواصل والمسافات
+    $number = (int)$number;
+
+    if ($number == 0) {
+        return "صفر $currency";
+    }
+
+    $units = ['', 'ألف', 'مليون', 'مليار'];
+    $ones = ['', 'واحد', 'اثنان', 'ثلاثة', 'أربعة', 'خمسة', 'ستة', 'سبعة', 'ثمانية', 'تسعة'];
+    $teens = ['عشرة', 'أحد عشر', 'اثنا عشر', 'ثلاثة عشر', 'أربعة عشر', 'خمسة عشر', 'ستة عشر', 'سبعة عشر', 'ثمانية عشر', 'تسعة عشر'];
+    $tens = ['', 'عشرة', 'عشرون', 'ثلاثون', 'أربعون', 'خمسون', 'ستون', 'سبعون', 'ثمانون', 'تسعون'];
+    $hundreds = ['', 'مائة', 'مائتين', 'ثلاثمائة', 'أربعمائة', 'خمسمائة', 'ستمائة', 'سبعمائة', 'ثمانمائة', 'تسعمائة'];
+
+    $parts = [];
+    $unitIndex = 0;
+
+    while ($number > 0) {
+        $chunk = $number % 1000;
+        $number = intdiv($number, 1000);
+
+        if ($chunk > 0) {
+            $words = '';
+
+            // معاملة خاصة لـ 1000
+            if ($chunk == 1 && $unitIndex == 1) { // إذا كان 1 في خانة الألف
+                $words = $units[$unitIndex];
+            } else {
+                // التعامل مع المئات
+                if ($chunk >= 100) {
+                    $words .= $hundreds[intdiv($chunk, 100)] . ' ';
+                    $chunk %= 100;
+                }
+
+                // التعامل مع الأرقام بين 10 و 19
+                if ($chunk >= 10 && $chunk < 20) {
+                    $words .= $teens[$chunk - 10] . ' ';
+                    $chunk = 0;
+                } else if ($chunk >= 20) {
+                    $words .= $tens[intdiv($chunk, 10)] . ' ';
+                    $chunk %= 10;
+                }
+
+                if ($chunk > 0) {
+                    $words .= $ones[$chunk] . ' ';
+                }
+
+                $words = trim($words) . ' ' . $units[$unitIndex];
+            }
+
+            $parts[] = trim($words);
+        }
+
+        $unitIndex++;
+    }
+
+    return implode(' و', array_reverse($parts)) . " $currency";
+}
+
 
 }

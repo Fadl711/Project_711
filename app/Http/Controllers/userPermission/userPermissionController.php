@@ -11,7 +11,7 @@ use Spatie\Permission\Models\Permission;
 class userPermissionController extends Controller
 {
     public function addUser(){
-        Permission::create(['name' => 'read']);
+        User::create(['name' => 'read']);
         Permission::create(['name' => 'write']);
         Permission::create(['name' => 'delete']);
         Permission::create(['name' => 'modify']);

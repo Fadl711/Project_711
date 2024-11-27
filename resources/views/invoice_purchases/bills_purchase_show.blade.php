@@ -17,6 +17,7 @@
             .print-container {
                 @apply w-full max-w-full mx-auto p-4;
             }
+            
             .no-print {
                 display: none;
             }
@@ -30,12 +31,9 @@
         }
         th, td {
             border: 1px solid #000;
-            padding: 8px;
         }
-        th {
-            background-color: #e0f7fa;
-            color: #00796b;
-        }
+       
+       
         .header-section, .totals-section {
             margin-top: 16px;
             padding: 12px;
@@ -49,16 +47,16 @@
         <!-- العنوان -->
         @isset($buss)
         <div class="header-section border-2 border-black rounded-b-lg my-2">
-            <div class="bg-gray-200 p-8 rounded-lg flex justify-between w-full">
+            <div class="bg-[#1749fd15] p-5 rounded-lg grid grid-cols-3 justify-between w-full">
                 <div class="text-right">
                     <h2 class="text-xl font-bold mb-2">{{ $buss->Company_Name }}</h2>
                     <p>{{ $buss->Services }}</p>
                     <p>العنوان: {{ $buss->Company_Address }}</p>
                     <p>التلفون: {{ $buss->Phone_Number }}</p>
                 </div>
-                <div class="flex items-center justify-center">
-                    <div class="w-24 h-20 bg-gray-300 flex items-center justify-center translate-x-10">
-                        <img src="{{ url($buss->Company_Logo ? 'images/' . $buss->Company_Logo : '') }}" alt="">
+                <div class="flex items-center justify-center px-2">
+                    <div class="w-24 h-20   flex items-center justify-center translate-x-10">
+                        <img class=" bg-[#1749fd15] rounded-3xl" src="{{ url($buss->Company_Logo ? 'images/' . $buss->Company_Logo : '') }}" alt="">
                     </div>
                 </div>
                 <div class="text-left">
@@ -73,9 +71,9 @@
 
         <header class="flex justify-between items-center border-b-2 border-gray-800 pb-4 mb-4">
             <div>
-                <p>اسم@isset($accountCla){{$accountCla}}@endisset:  
+                <p> اسم@isset($accountCla) {{{" "}}} {{$accountCla}}@endisset:  {{{" "}}}
                     @isset($SubAccounts)
-                                {{$SubAccounts->sub_name??null}} </p>
+                    {{{" "}}}   {{$SubAccounts->sub_name??null}}  {{{" "}}}</p>
                     @endisset
 
                 </p>
@@ -103,17 +101,17 @@
         </header>
 
         <!-- جدول المنتجات -->
-        <table class="w-full mb-4 text-sm">
+        <table class="w-full  text-sm">
             <thead>
-                <tr class="bg-blue-100">
-                    <th class="p-2 text-right">م</th>
-                    <th class="p-2 text-right">اسم الصنف</th>
-                    <th class="p-2 text-right"> الوحده</th>
+                <tr class="bg-[#1749fd15] ">
+                    <th class="px-2 text-right">م</th>
+                    <th class="px-2 text-right">اسم الصنف</th>
+                    <th class="px-2 text-right"> الوحده</th>
 
-                    <th class="p-2 text-center">الكمية</th>
-                    <th class="p-2 text-right">سعر الشراء</th>
-                    <th class="border border-black px-2 py-1">المخزن</th>
-                    <th class="p-2 text-right">الإجمالي</th>
+                    <th class="px-2 text-center">الكمية</th>
+                    <th class="px-2 text-right">سعر الشراء</th>
+                    <th class="border  text-right px-2 ">المخزن</th>
+                    <th class="px-2 text-right">الإجمالي</th>
                 </tr>
             </thead>
             <tbody>
@@ -124,8 +122,8 @@
                 @foreach ($DataPurchase as $Purchase)
                     <tr class="bg-white">
                         <td>{{$loop->iteration}}</td>
-                        <td class="p-2 text-right">{{ $Purchase->Product_name }}</td>
-                        <td class="p-2 text-right">
+                        <td class="px-2 text-right">{{ $Purchase->Product_name }}</td>
+                        <td class="px-2 text-right">
                             @isset($Categorys)
                             @foreach ($Categorys as $Category)
                             @if($Category->categorie_id === $Purchase->categorie_id)
@@ -136,9 +134,9 @@
                             @endisset
 
                             </td>
-                        <td class="p-2 text-center">{{ $Purchase->quantity }}</td>
-                        <td class="p-2 text-right">{{number_format( $Purchase->Purchase_price) }}</td>
-                        <td class="p-2 text-right">
+                        <td class="px-2 text-center">{{ $Purchase->quantity }}</td>
+                        <td class="px-2 text-right">{{number_format( $Purchase->Purchase_price) }}</td>
+                        <td class="px-2 text-right">
                             @isset($warehouses)
                             @foreach ($warehouses as $warehouse)
                             @if($warehouse->sub_account_id === $Purchase->warehouse_to_id)
@@ -148,7 +146,7 @@
                             @endisset
 
                         </td>
-                        <td class="p-2 text-right">{{ number_format($Purchase->Total )}}</td>
+                        <td class="px-2 text-right">{{ number_format($Purchase->Total )}}</td>
                     </tr>
                 @endforeach
                 @php
@@ -163,11 +161,16 @@
             <div class="flex justify-between">
               
                 <div>
-                    <p class="font-semibold">الجمالي تكلفة الشراء: {{number_format($Purchase_priceSum) ?? 0}}</p>
-                    <p>الإجمالي كتابة: {{ $priceInWords }}</p>
+                    <p class="font-semibold">
+                        الإجمالي  : {{number_format($Purchase_priceSum) ?? 0}}</p>
+                    <p> {{ $priceInWords }}</p>
                 </div>
                 <div>
-                    <p class="font-semibold">الجمالي  المصاريف: {{ number_format($Purchase_CostSum ?? 0)}}</p>
+                    <p class="font-semibold">
+                        @if ($Purchase_CostSum>0)
+                        الجمالي  المصاريف: {{ number_format($Purchase_CostSum ?? 0)}}</p>
+
+                        @endif
                 </div>
                 
             </div>

@@ -11,7 +11,7 @@
 
             <p >رقم السند : {{$PaymentBond->payment_bond_id}}</p>
             <p>تاريخ السند : {{ \Carbon\Carbon::parse($PaymentBond->created_at)->format('Y/m/d') }}</p>
-            <p >رقم المرجع : 21</p>
+            <p >رقم المرجع : </p>
         </div>
         <div class="p-3 w-52 bg-gray-100 border-black   h-16 my-1 text-center text-2xl font-bold underline underline-offset-8">
 

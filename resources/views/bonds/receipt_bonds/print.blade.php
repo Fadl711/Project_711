@@ -83,8 +83,17 @@ $oo = convertNumberToWords($number) . ' ريال  يمني';
             <div class="flex justify-between mx-10">
 
 
-                <p >المحاسب............................ </p>
-            </div>
+                <div class="totals- bg-gray-100 p-4">
+                    <div class="flex justify-">
+                        <div>
+                            <p class=" text-sm" dir="ltr">................ توقيع المستلم</p>
+                        </div>
+                        <div>
+                            <p class=" text-sm" dir="ltr">  المسؤول :{{ $users->where('id', $PaymentBond->User_id)->first()->name }}</p>
+                        </div>
+                        
+                    </div>
+                </div>            </div>
         </div>
     </div>
 </div>

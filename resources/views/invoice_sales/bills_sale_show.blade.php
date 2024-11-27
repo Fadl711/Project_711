@@ -104,7 +104,7 @@
                        {{"نقداً"}}
                    @endif
                    @if ($DataPurchaseInvoice->payment_type==="on_credit")
-                   {{"آجل"}}
+                   {{"آجلة"}}
                @endif
 
                 </h2>
@@ -135,17 +135,17 @@
         </header>
 
         <!-- جدول المنتجات -->
-        <table class="w-full mb-4 text-sm">
+        <table class="w-full  text-sm">
             <thead>
                 <tr class="bg-[#1749fd15] ">
-                    <th class="p-2 text-right">م</th>
-                    <th class="p-2 text-right">اسم الصنف</th>
-                    <th class="p-2 text-right"> الوحده</th>
+                    <th class="px-2 text-right">م</th>
+                    <th class="px-2 text-right">اسم الصنف</th>
+                    <th class="px-2 text-right"> الوحده</th>
 
-                    <th class="p-2 text-center">الكمية</th>
-                    <th class="p-2 text-right">سعر الشراء</th>
-                    <th class="border border-black px-2 py-1">المخزن</th>
-                    <th class="p-2 text-right">الإجمالي</th>
+                    <th class="px-2 text-center">الكمية</th>
+                    <th class="px-2 text-right">سعر الشراء</th>
+                    <th class="px-2 text-right">المخزن</th>
+                    <th class="px-2 text-right">الإجمالي</th>
                 </tr>
             </thead>
             <tbody>
@@ -155,15 +155,15 @@
 
                 @foreach ($DataSale as $Sale)
                     <tr class="bg-white">
-                        <td>{{$loop->iteration}}</td>
-                        <td class="p-2 text-right">{{ $Sale->Product_name }}</td>
-                        <td class="p-2 text-right">
+                        <td class="px-2 ">{{$loop->iteration}}</td>
+                        <td class="px-2 text-right">{{ $Sale->Product_name }}</td>
+                        <td class="px-2 text-right">
                          
                             {{ $Sale->Category_name }}
                             </td>
-                        <td class="p-2 text-center">{{ $Sale->quantity }}</td>
-                        <td class="p-2 text-right">{{number_format( $Sale->Selling_price) }}</td>
-                        <td class="p-2 text-right">
+                        <td class="px-2 text-right">{{ $Sale->quantity }}</td>
+                        <td class="px-2 text-right">{{number_format( $Sale->Selling_price) }}</td>
+                        <td class="px-2 text-right">
                             @isset($warehouses)
                             @foreach ($warehouses as $warehouse)
                             @if($warehouse->sub_account_id === $Sale->warehouse_to_id)
@@ -181,28 +181,41 @@
             </tbody>
            
         </table>
-        <table class="w-[60%] mb-4 text-sm ">
-            <thead>
-                <tr class="bg-blue-100  ">
-                    <th class="px-2 text-right  w-[30%] ">
-                        <p class=" font- "> المبلغ المستحق</p></th>
-                    <th class="px-2 text-right">{{number_format($Sale_priceSum) ?? 0}}
-                        <p class=" text-sm"> {{ $priceInWords }}</p>
-
-                          </th>
-                </tr>
-                <tr class="bg-blue-100">
-                 
-                    <th class="px-2 text-right">رصيد سابق</th>
+        <table class="w-[60%] text-sm ">
+           
                     
-                    <td class=" px-2 text-right">{{100000}}</td>
-                </tr>
-                <tr class="bg-blue-100">
-                 
-                    <th class="px-2 text-right"> الجمالي رصيد</th>
-                    <th class="px-2 text-right">{{100000}}</th>
-                </tr>
-            </thead>
+                    <thead>
+                        <tr class="bg-blue-100">
+                            <th class="px-2 text-right w-[30%]">
+                                <p class="font-">المبلغ المستحق</p>
+                            </th>
+                            <th class="px-2 text-right">
+                                {{ number_format($Sale_priceSum) ?? 0 }}
+                                <p class="text-sm">{{ $priceInWords }}</p>
+                            </th>
+                        </tr>
+                        <tr class="bg-blue-100">
+                            <th class="px-2 text-right">رصيد سابق</th>
+                            <th class="px-2 text-right">
+                                    @php
+                                        $sum = $Sum_amount - $Sale_priceSum;
+                                    @endphp
+                                    @if ($sum >= 0)
+                                        {{ number_format($sum) ?? 0 }}
+                                @endif
+                            </th>
+                        </tr>
+                        <tr class="bg-blue-100">
+                            <th class="px-2 text-right">الجمالي رصيد</th>
+                            <th class="px-2 text-right">
+                                @if(isset($sum) && $sum > 0)
+                                    {{ number_format($Sum_amount) ?? 0 }}
+                                @endif
+                            </th>
+                        </tr>
+                    </thead>
+                    
+                   
         </table>
 
         <!-- الإجماليات -->

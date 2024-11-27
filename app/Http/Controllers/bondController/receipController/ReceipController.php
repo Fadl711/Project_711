@@ -28,19 +28,22 @@ class ReceipController extends Controller
         if($request->DepositAccount==$request->CreditAmount){
             return response()->json(['error' => ' لايمكن اختيار نفس الحساب']);
         }
-        PaymentBond::create([
+       $paymentBond= PaymentBond::create([
             'Main_debit_account_id'=>$request->AccountReceivable,
             'Debit_sub_account_id'=>$request->DepositAccount,
             'Amount_debit'=>$request->Amount_debit,
             'Main_Credit_account_id'=>$request->PaymentParty,
             'Credit_sub_account_id'=>$request->CreditAmount,
-            'Statement'=>$request->Statement,
+            'Statement'=>$request->Statement ?? "سند قبض",
             'Currency_id'=>$request->Currency,
             'User_id'=>$request->User_id,
             'created_at'=>$request->date,
         ]);
 
-
+        // if($paymentBond->payment_bond_id){
+        //     return response()->json(['success' => '  اختيار نفس الحساب'.$paymentBond->payment_bond_id]);
+        // }
+        $paymentBond1= PaymentBond::where('payment_bond_id',$paymentBond->payment_bond_id)->first();
 
         // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
         $today = Carbon::now()->toDateString();
@@ -50,26 +53,43 @@ class ReceipController extends Controller
         if (!$dailyPage) {
             $dailyPage = GeneralJournal::create([]);
         }
-        // حفظ القيد اليومي
-        $dailyEntrie = new DailyEntrie();
 
+        $transaction_type="سند قبض";
 
-    $dailyEntrie->account_debit_id = $request->DepositAccount;
-    $dailyEntrie->Amount_debit = $request->Amount_debit;
-    $dailyEntrie->account_Credit_id = $request->CreditAmount;
-    $dailyEntrie->Amount_Credit = $request->Amount_debit;
-    $dailyEntrie->Statement =
-    $dailyEntrie->Currency_name = $request->Statement; // استخدم الاسم الصحيح هنا
-    $dailyEntrie->accounting_period_id = $accountingPeriod->accounting_period_id;
-    $dailyEntrie->Daily_page_id = $dailyPage->page_id; // حفظ معرف الصفحة اليومية
-    $dailyEntrie->User_id = $request->User_id;
-    $dailyEntrie->daily_entries_type = $request->daily_entries_type;
-    $dailyEntrie->save();
+        $Getentrie_id = DailyEntrie::where('Invoice_id', $paymentBond1->payment_bond_id)
+            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+            ->where('daily_entries_type',$transaction_type)
+            ->value('entrie_id');
+    
+        // Create or update the daily entry
+        DailyEntrie::updateOrCreate(
+            [
+                'entrie_id' => $Getentrie_id,
+                'accounting_period_id' => $accountingPeriod->accounting_period_id,
+                'Invoice_id' => $paymentBond1->payment_bond_id,
+                'daily_entries_type' => $transaction_type,
+            ],
+            [
+                'account_debit_id' => $paymentBond1->Debit_sub_account_id,
+                'Amount_Credit' => $paymentBond1->Amount_debit ?: 0,
+                'Amount_debit' => $paymentBond1->Amount_debit ?: 0,
+                'account_Credit_id' => $paymentBond1->Credit_sub_account_id,
+                'Statement' =>  $paymentBond1->Statement,
+                'Daily_page_id' => $dailyPage->page_id,
+                'Invoice_type' => "نقداً",
+                'Currency_name' => 'ر',
+                'User_id' => auth()->user()->id,
+                'status_debit' => 'غير مرحل',
+                'status' => 'غير مرحل',
+            ]
+        );
+       
 
 
         return response()->json(['success' => 'تم بنجاح']);
 
     }
+
 
     public function show($id){
 
@@ -88,6 +108,10 @@ class ReceipController extends Controller
             return view('bonds.receipt_bonds.edit',compact('curr','dailyPage','ExchangeBond','SubAccounts'),['mainAccounts'=> $mainAccount,$dailyPage]);
         }
         public function update(Request $request){
+            $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+            if($request->DepositAccount==$request->CreditAmount){
+                return response()->json(['error' => ' لايمكن اختيار نفس الحساب']);
+            }
             $today = Carbon::now()->toDateString();
             $dailyPage = GeneralJournal::whereDate('created_at', $today)->first();
             $PaymentBond=PaymentBond::where('payment_bond_id',$request->id)->first();
@@ -98,31 +122,71 @@ class ReceipController extends Controller
                 'Amount_debit'=>$request->Amount_debit,
                 'Main_Credit_account_id'=>$request->PaymentParty,
                 'Credit_sub_account_id'=>$request->CreditAmount,
-                'Statement'=>$request->Statement,
+                'Statement'=>$request->Statement ?? "سند قبض",
                 'Currency_id'=>$request->Currency,
                 'User_id'=>$request->User_id,
                 'created_at'=>$request->date,
             ]);
-            DailyEntrie::where('updated_at',$PaymentBond->updated_at)->update([
-                'account_debit_id'=>$request['DepositAccount'],
-                'Amount_debit'=>$request['Amount_debit'],
-                'account_Credit_id'=>$request['CreditAmount'],
-                'Amount_Credit'=>$request['Amount_debit'],
-                'Statement'=> $request['Statement'],
-                'Currency_name'=>$Currency,
-                'Daily_page_id'=>$dailyPage->page_id,
-                'User_id'=>$request['User_id'],
-            ]);
+            $transaction_type="سند قبض";
+            $Getentrie_id = DailyEntrie::where('Invoice_id', $PaymentBond->payment_bond_id)
+                ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                ->where('daily_entries_type',$transaction_type)
+                ->value('entrie_id');
+        
+            // Create or update the daily entry
+            DailyEntrie::updateOrCreate(
+                [
+                    'entrie_id' => $Getentrie_id,
+                    'accounting_period_id' => $accountingPeriod->accounting_period_id,
+                    'Invoice_id' => $PaymentBond->payment_bond_id,
+                    'daily_entries_type' => $transaction_type,
+                ],
+                [
+                    'account_debit_id' => $PaymentBond->Debit_sub_account_id,
+                    'Amount_Credit' => $PaymentBond->Amount_debit ?: 0,
+                    'Amount_debit' => $PaymentBond->Amount_debit ?: 0,
+                    'account_Credit_id' => $PaymentBond->Credit_sub_account_id,
+                    'Statement' =>  $transaction_type . "نقداً",
+                    'Daily_page_id' => $dailyPage->page_id,
+                    'Invoice_type' => "نقداً",
+                    'Currency_name' => 'ر',
+                    'User_id' => auth()->user()->id,
+                    'status_debit' => 'غير مرحل',
+                    'status' => 'غير مرحل',
+                ]
+            );
+           
+    
 
 
             return redirect()->route('show_all_receipt');
         }
         public function destroy($id){
-            $PaymentBond=PaymentBond::where('payment_bond_id',$id)->first();
+            $transaction_type="سند قبض";
+            $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
 
-            DailyEntrie::where('updated_at',$PaymentBond->updated_at)->delete();
+            $PaymentBond=PaymentBond::where('payment_bond_id',$id)->first();
+           
             PaymentBond::where('payment_bond_id',$id)->delete();
+            $PaymentBond1=PaymentBond::where('payment_bond_id',$id)->first();
+
+            if(!$PaymentBond1)
+            {
+                $Getentrie_id = DailyEntrie::where('Invoice_id', $PaymentBond->payment_bond_id)
+                ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                ->where('daily_entries_type',$transaction_type)
+                ->delete('entrie_id');
+                if($Getentrie_id)
+                {
+                    DailyEntrie::where('entrie_id',$Getentrie_id)->delete();
+                }
+
+            }
             return redirect()->route('show_all_receipt');
+
+
+
+            
 }
 public function print($id){
     $PaymentBond=PaymentBond::where('payment_bond_id',$id)->first();

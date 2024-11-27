@@ -15,6 +15,8 @@ return new class extends Migration
             $table->increments('categorie_id')->unsigned();
             $table->integer('product_id')->unsigned();
             $table->string('Categorie_name');
+            $table->decimal('Purchase_price', 15, 2)->nullable();
+            $table->decimal('Selling_price', 15, 2)->nullable();
             $table->integer('user_id')->unsigned()->nullable();
             $table->timestamps();
             // $table->foreign('product_id')->references('product_id')->on('products');

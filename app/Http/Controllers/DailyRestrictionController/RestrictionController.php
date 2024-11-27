@@ -65,6 +65,8 @@ class RestrictionController extends Controller
     $dailyEntrie->accounting_period_id = $accountingPeriod->accounting_period_id;
     $dailyEntrie->Daily_page_id = $dailyPage->page_id; // حفظ معرف الصفحة اليومية
     $dailyEntrie->User_id = $validated['User_id'];
+    $dailyEntrie->daily_entries_type = 'قيد';
+
     $dailyEntrie->save();
         return response()->json(['success' => 'تم حفظ القيد بنجاح']);
     }

@@ -60,6 +60,7 @@ Route::get('/products/{product}/edit',[ProductCoctroller::class,'edit'])->name('
 Route::put('/products/{product}',[ProductCoctroller::class,'update'])->name('products.update');
 Route::delete('/products/{product}',[ProductCoctroller::class,'destroy'])->name('products.destroy');
 Route::get('/search', [ProductCoctroller::class,'search'])->name('search.products');
+Route::get('/GetProduct/{id}/price', [ProductCoctroller::class, 'price'])->name('GetProduct.price');
 
 Route::get('/products/Category', [CategoryController::class, 'create'])->name('Category.create');
 Route::post('/Category/store',[CategoryController::class,'store'])->name('Category.store');
@@ -84,15 +85,13 @@ Route::delete('/Default_Supplier/{id}/destroy', [default_supplierController::cla
 Route::get('/Default_customer', [default_customerController::class, 'index'])->name('default_customers.index');
 Route::post('Default_customer/store', [default_customerController::class, 'store'])->name('default_customers.store');
 Route::delete('/Default_customer/{id}/destroy', [default_customerController::class, 'destroy'])->name('default_customers.destroy');
-<<<<<<< HEAD
 Route::get('/customers', [CustomerCoctroller::class, 'index'])->name('customers.index');
 Route::get('/customers/create', [CustomerCoctroller::class, 'create'])->name('customers.create');
 Route::post('/customers/store', [CustomerCoctroller::class, 'store'])->name('customers.store');
 
 Route::get('/customers/show', [CustomerCoctroller::class, 'show'])->name('customers.show');
+Route::get('/customers/{id}/statement', [CustomerCoctroller::class, 'showStatement'])->name('customers.statement');
 
-=======
->>>>>>> 94569b94d674e4fde1e752ee37b7305fd9cbbae4
 Route::post('/invoicePurchases/store', [PurchaseController::class, 'store'])->name('invoicePurchases.store');
 Route::get('/api/products/search', [PurchaseController::class, 'search']);
 Route::get('/invoice_purchases/show/{id}', [InvoicePurchaseController::class, 'bills_purchase_show'])->name('bills_purchase_show');

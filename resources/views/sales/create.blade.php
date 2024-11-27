@@ -132,12 +132,16 @@
                     {{-- warehouse_to_id --}}
                     <select name="account_debitid" id="account_debitid"  dir="ltr" class="input-field select2 inputSale" required>
                         @isset($Warehouse)
-                            <option value="" selected>اختر المخزن</option>
-                            @foreach ($Warehouse as $mainAccount)
-                                <option value="{{ $mainAccount->sub_account_id }}">{{ $mainAccount->sub_name }}</option>
-                            @endforeach
+                        @foreach ($Warehouse as $cur)
+                        <option @isset($Default_warehouse)
+                        @selected($cur->sub_account_id==$Default_warehouse)
                         @endisset
+                        value="{{$cur->sub_account_id}}">{{$cur->sub_name}}</option>
+                         @endforeach
+                         @endisset
                     </select>
+                    {{-- <option value="{{ $mainAccount->sub_account_id }}">{{ $mainAccount->sub_name }}</option> --}}
+
                 </div>
                 <div>
                     <label for="financial_account_id_main" class="labelSale"> حساب الدفع</label>
@@ -441,7 +445,7 @@ form.on('keydown', function (event) {
  <script>
     $(document).ready(function() {
       
-
+ 
     $('.select2').select2();
     const form = $('#invoiceSales');
         form.on('keydown', function (event) {
@@ -478,6 +482,8 @@ $('#invoiceSales').on('submit', function (e) {
                 // تنظيف الجدول وإظهار رسالة النجاح
                 $('#mainAccountsTable tbody').empty();
                 displayMessage(successMessage, response.message);
+                $('#product_id').select2('open');
+
 
             } else {
                 displayMessage(errorMessage, response.message || 'حدث خطأ غير معروف.');

@@ -24,7 +24,10 @@ class SaleController extends Controller
     //
     public function create(){
         $customers=SubAccount::where('AccountClass',1)->get();
+
         $DefaultCustomer  = Default_customer::where('id',1)->pluck('subaccount_id')->first();
+        $Default_warehouse = Default_customer::where('id',1)->pluck('warehouse_id')->first();
+
         $Currency_name=Currency::all();
         $MainAccounts= MainAccount::all();
 
@@ -33,6 +36,7 @@ class SaleController extends Controller
         'DefaultCustomer'=>$DefaultCustomer
         ,'Currency_name'=>$Currency_name,
         'MainAccounts'=>$MainAccounts,
+        'Default_warehouse'=>$Default_warehouse,
     ]);
     }
     public function store(Request $request)
@@ -173,7 +177,14 @@ class SaleController extends Controller
             if (!$dailyPage || !$dailyPage->page_id) {
                 return response()->json(['success' => false, 'message' => 'فشل في إنشاء صفحة يومية']);
             }
-          
+            if ($saleInvoice->payment_type === "cash") {
+                $commint="";
+               
+
+            } elseif ($saleInvoice->payment_type === "on_credit") {
+                $commint="عليكم";
+
+            }
             // إنشاء أو تحديث الإدخالات اليومية
             $dailyEntrie = DailyEntrie::updateOrCreate(
                 [
@@ -187,10 +198,9 @@ class SaleController extends Controller
                     'Amount_Credit' => $net_total_after_discount ?: 0,
                     'Amount_debit' => $net_total_after_discount ?: 0,
                     'account_Credit_id' => $account_Credit,
-                    'Statement' => 'فاتورة مبيعات'." ".$payment_type,
+                    'Statement' => $commint." ".'فاتورة مبيعات'." ".$payment_type,
                     'Daily_page_id' => $dailyPage->page_id,
                     'Invoice_type' => $saleInvoice->payment_type,
-
                     'Currency_name' => 'ر',
                     'User_id' =>auth()->user()->id,
                     'status_debit' => 'غير مرحل',

@@ -23,7 +23,7 @@
                 <p class="border-b-2 border-black font-bold text-base">المبلغ </p>
                 <p id="maont2" class="bg-white h-10 font-bold text-lg pt-2">{{number_format($PaymentBond->Amount_debit)}} <span class="pb-1  font-normal">{{ $Currencies->where('currency_id', $PaymentBond->Currency_id)->first()->currency_name }} </span></p>
             </div>
-            <p class="text-right text-base">إيداع في حساب :{{ $MainAccounts->where('main_account_id', $PaymentBond->Main_debit_account_id)->first()->account_name }} </p>
+            <p class="text-right text-base">إيداع في حساب :{{ $SubAccounts->where('sub_account_id', $PaymentBond->Main_debit_account_id)->first()->sub_name }} </p>
         </div>
     </div>
     {{-- end header --}}
@@ -75,9 +75,7 @@ $oo = convertNumberToWords($number) . ' ريال  يمني';
             <br>
             <br>
             <div class="flex justify-between mx-10">
-
-
-                <p >المحاسب............................ </p>
+                <p >{{ $users->where('id', $PaymentBond->User_id)->first()->name }}</p>
             </div>
         </div>
     </div>

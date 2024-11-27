@@ -12,19 +12,28 @@
     <p class="font-bold">هناك خطاء</p>
     <p id="re"></p>
   </div>
-<div class="-translate-x-[40%] w-1/2">
+<div class=" ">
     <form action="{{route('Category.store')}}" method="POST">
         @csrf
             <div class="border-b flex justify-between text-sm">
-                <div class="w-full border-x border-y border-orange-950 rounded-xl">
-                    <div class="px-1">
+              <div class="grid grid-cols-2 gap-1 md:grid-cols-5 lg:grid-cols-5">
+                <div class="px-1">
                     <label for="barcod" class="btn">اسم الوحدة</label>
                     <input name="cate" type="text" placeholder="" class="inputSale" />
                     </div>
+                    <div class="flex flex-col">
+                      <label for="Purchase_price" class="btn">سعر الشراء</label>
+                      <input type="number" name="Purchase_price" id="Purchase_price" placeholder="0" class="inputSale"required />
+                    </div>
+                    <div class="flex flex-col">
+                      <label for="Selling_price" class="btn"> سعر البيع</label>
+                      <input type="number" name="Selling_price" id="Selling_price" placeholder="0" class="inputSale" required/>
+                    </div>
+            
                     <div class="px-1">
-                        <label for="product_id" class="block font-medium ">حساب الدائن/الرئيسي</label>
+                        <label for="product_id" class="block font-medium "> اسم الصنف</label>
                         <select name="product_id" id="product_id" class=" select2 inputSale" required>
-                            <option value="" selected>اختر الحساب</option>
+                            <option value="" selected>اختر الصنف</option>
     
                             @isset($products)
                            @foreach ($products as $product)
@@ -59,6 +68,8 @@
                 <tr class=" ">
                     <th scope="col" class="leading-2   ">#</th>
                     <th scope="col" class="leading-2  text-center ">اسم الفئة</th>
+                    <th scope="col" class="leading-2  text-center ">سعر الشراء </th>
+                    <th scope="col" class="leading-2  text-center ">سعر البيع </th>
                     <th scope="col" class="leading-2   text-right">تعديل الفئة</th>
                 </tr>
             </thead>
@@ -71,6 +82,8 @@
                 <tr class="bg-white transition-all duration-500 hover:bg-gray-50 border-b-2">
                     <td>{{$loop->iteration}}</td>
                     <td class="text-center">{{$cat->Categorie_name}}</td>
+                    <td class="text-center">{{$cat->Purchase_price}}</td>
+                    <td class="text-center">{{$cat->Selling_price}}</td>
                     <td class="">
                       <div class="flex items-center gap-1">
                         <a href="{{route('Category.edit',$cat->categorie_id)}}"  class="p-1  rounded-full  group transition-all duration-500  flex item-center">
@@ -122,6 +135,10 @@
 
 
 <script>
+  
+$(document).ready(function() {
+    $('.select2').select2();
+});
      $(document).ready(function() {
     $('#newProduc button').click(function(e) {
         e.preventDefault();

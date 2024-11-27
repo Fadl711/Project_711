@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AccountingPeriod;
 use App\Models\Category;
 use App\Models\Currency;
+use App\Models\DailyEntrie;
 use App\Models\Sale;
 use App\Models\SaleInvoice;
 use App\Models\SubAccount;
@@ -144,6 +145,7 @@ public function getSaleInvoice(Request $request, $filterType)
 
 public function print($id)
 {
+    
     $DataPurchaseInvoice = SaleInvoice::where('sales_invoice_id', $id)->first();
     $SubAccount = SubAccount::where('sub_account_id', $DataPurchaseInvoice->Customer_id)->first();
     $UserName = User::where('id', $DataPurchaseInvoice->User_id)->pluck('name')->first();
@@ -173,14 +175,15 @@ public function print($id)
     $DataSale = Sale::where('Invoice_id', $id)->get();
     $Categorys = Category::all();
    $currency=Currency::where('currency_id', $DataPurchaseInvoice->Currency_id)->first();
-   $curre=Currency::where('currency_id', $DataPurchaseInvoice->Currency_id)->pluck('currency_name')->first();
-
+   $curre=Currency::where('currency_id', $DataPurchaseInvoice->currency_id)->first();
     // حساب مجموع السعر والتكلفة
     $Sale_priceSum = Sale::where('Invoice_id', $id)->sum('total_price');
     $Sale_CostSum = Sale::where('Invoice_id', $id)->sum('total_amount');
-
+    $SumDebtor_amount=DailyEntrie::where('account_debit_id',$SubAccount->sub_account_id)->sum('Amount_debit');
+    $SumCredit_amount=DailyEntrie::where('account_Credit_id',$SubAccount->sub_account_id)->sum('Amount_Credit');
+    $Sum_amount=$SumDebtor_amount-$SumCredit_amount;
     // تحويل القيمة إلى نص مكتوب
-    $priceInWords = $this->numberToWords($Sale_priceSum,$curre ?? 'ريال');
+    $priceInWords = $this->numberToWords($Sale_priceSum,$curre->currency_name);
     return view('invoice_sales.bills_sale_show', [
         'DataPurchaseInvoice' => $DataPurchaseInvoice,
         'DataSale' => $DataSale,
@@ -193,10 +196,11 @@ public function print($id)
         'warehouses' => $SubName,
         'UserName' => $UserName,
         'accountCla' => $AccountClassName,
+        'Sum_amount' => $Sum_amount,
     ]);
 
 }
-private function numberToWords($number, $currency = 'ريال') 
+private function numberToWords($number,$currency) 
 {
     if (!is_numeric($number)) {
         return "الرقم المدخل غير صالح";

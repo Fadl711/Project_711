@@ -20,4 +20,8 @@ class AccountingPeriod extends Model
        'end_date',   // تاريخ النهاية
        'is_closed',   // حالة الفترة
     ];
+    public function getFormattedDateAttribute()
+    {
+        return $this->created_at->format('Y-m-d');
+    }
 }

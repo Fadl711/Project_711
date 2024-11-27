@@ -20,6 +20,49 @@ $('#mainaccount_debit_id,#financial_account_id_main').on('change', function() {
     }, 1000);
 
 });
+$('#Categorie_name').on('change', function() {
+    const mainAccountId1 = $(this).val(); // الحصول على ID الحساب الرئيسي
+    GetProduct(mainAccountId1);
+    setTimeout(() => {
+        $('#mainaccount_debit_id').select2('close'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
+        $('#Supplier_id').select2('open');
+    }, 1000);
+
+});
+function GetProduct(mainAccountId)
+{
+    var  Selling_price= $('#Selling_price');
+
+    if (mainAccountId!==null) {
+        
+        $.ajax({
+            url: `/GetProduct/${mainAccountId}/price`, // استخدام القيم الديناميكية
+            
+            type: 'GET',
+            dataType: 'json',
+            
+            success: function(data) {
+
+                 Selling_price.empty();
+                 $('#Selling_price').val(prod.Selling_price);
+
+
+        //   const  subAccountOptions = data.map(subAccount =>
+        //         `<option value="${subAccount.sub_account_id}">${subAccount.sub_name}</option>`
+        //     ).join('');
+
+        // إضافة الخيارات الجديدة إلى القائمة الفرعية
+        // sub_account_debit_id.append(subAccountOptions);
+        sub_account_debit_id.select2('destroy').select2();
+        
+        // إعادة تهيئة Select2 بعد إضافة الخيارات
+    },
+        error: function(xhr) {
+            console.error('حدث خطأ في الحصول على الحسابات الفرعية.', xhr.responseText);
+        }
+    });
+};
+}
 function showAccounts(mainAccountId2,mainAccountId1)
 {
     var mainAccountId=null;

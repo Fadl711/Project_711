@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\productController;
 
 use App\Http\Controllers\Controller;
+use App\Models\AccountingPeriod;
 use App\Models\Category;
 use App\Models\Currency;
 use App\Models\Product;
+use App\Models\Purchase;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
 
@@ -37,9 +39,15 @@ class ProductCoctroller extends Controller
         $Regular_discount = $this->convertArabicNumbersToEnglish($request->input('Regular_discount'));
 
         $Special_discount = $this->convertArabicNumbersToEnglish($request->input('Special_discount'));
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+        if (!$accountingPeriod) {
+            return response()->json([
+                'success' => false,
+                'message' => 'لا توجد فترة محاسبية مفتوحة.'
+            ]);
+        }
 
-
-        Product::create([
+        $ProductNew=Product::create([
             'Barcode'=>$request->Barcode,
             'product_name'=>$request->product_name,
             'Quantity'=>$request->Quantity,
@@ -57,6 +65,58 @@ class ProductCoctroller extends Controller
             'warehouse_id'=>$request->warehouse_id,
 
 
+        ]);
+          // الحصول على الفترة المحاسبية المفتوحة
+         
+        if($request->Quantity)
+        {
+            if(!$request->account_debitid)
+            {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'يجب عليك تحديد مخزن'
+                ]);
+            }
+            $purchase = Purchase::updateOrCreate(
+                [
+                    'Purchase_invoice_id' => $ProductNew->product_id,
+                    'accounting_period_id' => $accountingPeriod->accounting_period_id,
+                ],
+                [
+                    'Product_name' => $request->product_name,
+                    'Barcode' => $request->Barcode ?? 0,
+                    'quantity' => $request->Quantity,
+                    'Purchase_price' => $request->Purchase_price,
+                    'Selling_price' => $request->Selling_price,
+                    'Total' => $request->Total,
+                    'Cost' => $request->Cost,
+                    'Currency_id' => $ProductNew->Currency_id??null,
+                    'Supplier_id' => $ProductNew->Supplier_id ?? null,
+                    'User_id' =>  auth()->id(),
+                    'warehouse_to_id' => $ $request->account_debitid,
+                    'warehouse_from_id' => null,
+                    'Discount_earned' =>  0,
+                    'Profit' => $request->Profit ?? 0,
+                    'Exchange_rate' =>  1.0,
+                    'note' => $request->note ?? '',
+                    'product_id' => $ProductNew->product_id,
+                    'account_id' => null,
+                    'transaction_type' => 'كمية افتتاحيه',
+                    'categorie_id' =>null,
+                ]
+            );
+            return response()->json([
+                'success' => true,
+                'message' => 'تم الحفظ بنجاح وتحديث مخزن.',
+               
+            ]);
+
+
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'تم الحفظ بنجاح  .',
+           
         ]);
         return back();
     }
@@ -93,6 +153,14 @@ class ProductCoctroller extends Controller
     public function destroy($id){
         Product::where('product_id',$id)->delete();
         return back();
+    }
+    public function price($id)
+    {
+        $prod= Category::where('categorie_id',$id)->first();
+
+        return response()->json($prod);
+
+
     }
 
     public function search(Request $request)

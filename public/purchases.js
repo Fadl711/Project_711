@@ -26,7 +26,6 @@ function TotalPrice() {
     var quantity = parseNumber($('.quantity-field').val());
     var Yr_cost = parseNumber($('#Yr_cost').val());
     var discount_rate = parseNumber($('#discount_rate').val());
-
     if ((price > 0 || sellingPrice > 0) && quantity > 0) {
         let total_price = price * quantity;
         let total_priceS = sellingPrice * quantity;
@@ -35,15 +34,15 @@ function TotalPrice() {
         let loss = total_priceS - (total_price + discount);
 
         // تقريب القيم
+        // total_price = total_price.toFixed(2);
         total_price = total_price.toFixed(2);
-        total_priceS = total_priceS.toFixed(2);
         discount = discount.toFixed(2);
         cost = cost.toFixed(2);
         loss = loss.toFixed(2);
 
         // تحديث القيم
         $('#total_Purchase_price').val(total_price).trigger('change');
-        $('#Total').val(total_priceS).trigger('change');
+        $('#Total').val(total_price).trigger('change');
         $('#total_price').val(total_priceS - discount).trigger('change');
         $('#total_discount_rate').val(discount).trigger('change');
         $('#Cost').val(cost).trigger('change');
@@ -149,6 +148,7 @@ function addToTable(account) {
   // وظيفة لاستعراض تفاصيل المنتج
   function displayProductDetails(product) {
     const invoiceInput = $('#purchase_invoice_id,#sales_invoice_id');
+    var   Categorie_name=$('#Categorie_name');
     if (invoiceInput.length) {
         // التأكد من أن العناصر موجودة قبل تحديثها
         if ($('#Barcode').length) {
@@ -190,8 +190,13 @@ function addToTable(account) {
        categorieSelect.empty();
         // تفريغ القائمة السابقة
         console.time('Select2 Initialization');
+        // const  GetCategorie_name = product.forEach(subAccount =>
+        //     `<option value="${subAccount.categorie_id}">${subAccount.Categorie_name}</option>`
+        // ).join('');
+        // Categorie_name.append(GetCategorie_name);
+
         product.Categorie_names.forEach(categorie => {
-            $('#Categorie_name').append(new Option(categorie.Categorie_name, categorie.Categorie_name));
+            $('#Categorie_name').append(new Option(categorie.Categorie_name, categorie.categorie_id));
         });
         
         $('#Categorie_name').select2(); // إعادة التهيئة بعد الإضافة
@@ -358,8 +363,6 @@ $(document).on('keydown', function(event) {
  $('#product_id').on('change', function() {
     $(this).select2('close');
         $('#Categorie_name').select2('open');
-
-
     });
     $('#Categorie_name').on('change', function() {
 

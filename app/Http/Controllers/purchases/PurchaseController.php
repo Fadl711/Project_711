@@ -241,7 +241,7 @@ class PurchaseController extends Controller
             ],
             [
                 'Product_name' => $request->product_name,
-                'Barcode' => $request->Barcode ?? '',
+                'Barcode' => $request->Barcode ?? 0,
                 'quantity' => $request->Quantity,
                 'Purchase_price' => $request->Purchase_price,
                 'Selling_price' => $request->Selling_price,

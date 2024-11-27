@@ -23,6 +23,8 @@ class CategoryController extends Controller
     $Post = new Category;
     $Post->Categorie_name=$request->cate;
     $Post->product_id=$request->product_id;
+    $Post->Purchase_price=$request->Purchase_price;
+    $Post->Selling_price=$request->Selling_price ;
     $Post->user_id=$request->user_id;
     $Post->save();
 /*         Category::createOrFirst([
