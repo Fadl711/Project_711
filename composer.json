@@ -8,10 +8,10 @@
         "php": "^8.2",
         "barryvdh/laravel-dompdf": "^3.0",
         "itsgoingd/clockwork": "^5.2",
+        "kwn/number-to-words": "^2.9",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
         "mpdf/mpdf": "*"
-
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -29,7 +29,9 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
+          
         }
+      
     },
     "autoload-dev": {
         "psr-4": {

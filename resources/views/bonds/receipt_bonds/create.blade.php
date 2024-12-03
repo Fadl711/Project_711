@@ -3,33 +3,56 @@
 <div id="successAlert" style="display: none" class=" fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
     <p></p>
   </div>
-  <br>
-  {{-- <button onclick="window.history.back()">رجوع</button> --}}
-  <form action="{{route('Receip.stor')}}" method="POST"  enctype="multipart/form-data">
-    @csrf
-    <div class="mb-4">
-        <label for="page_id" class="block font-medium mb-2">رقم الصفحة</label>
-@auth
-@isset($dailyPage->page_id)
-<input type="text" name="page_id" id="page_id" class=" rounded-md w-[10%]"  value="{{$dailyPage['page_id']}}">
-@endisset
-
-
-@endauth
-
-    </div>
-    <button type="submit">إنشاء صفحة جديدة</button>
-</form>
+  
+  
   <form method="POST" id="Receip">
     @csrf
-
-  <div class="flex container  shadow-md py-4 px-2 bg-white">
+    <div class="flex gap-4">
+        <div class="flex gap-4">
+            @foreach ($PaymentType as $index => $item)
+                <div class="flex items-center gap-2">
+                    <label for="payment_type_{{ $index }}" class="labelSale">
+                        {{ $item->label() }}
+                    </label>
+                    <input 
+                        type="radio" 
+                        name="payment_type" 
+                        id="payment_type_{{ $index }}" 
+                        value="{{ $item->value }}" 
+                        {{ isset($ExchangeBond->payment_type) && $ExchangeBond->payment_type == $item->value ? 'checked' : ($index === 0 ? 'checked' : '') }} 
+                        required
+                    >
+                </div>
+            @endforeach
+        </div>
+        
+        </div>
+    </div>
+    <div class="overflow-y-auto max-h-[80vh] bg-white px-4 py-1 rounded-lg shadow-md">
+  <div class="flex container  shadow-md py-4 px-2 bg-white"  >
         <div class="w-[40%] max-sm:w-[30%]">
-            <div class=" text-center">
-                  <label for="date" class=" text-center ">التاريخ </label>
-                <input name="date" type="date" class="inputSale" placeholder="505,550">
+            <div>
+                <label for="transaction_type" class="labelSale">نوع العملية</label>
+                <select dir="ltr" id="transaction_type" class="inputSale select2 input-field" name="transaction_type">
+                    @isset($ExchangeBond->transaction_type)
+                    <option value="{{$ExchangeBond->transaction_type}}" > {{$ExchangeBond->transaction_type}} </option>
+                      @endisset
+                 <option value="سند قبض"> سند قبض</option>
+                 <option value="سند صرف">سند صرف</option>
+                </select>
             </div>
-
+            <div class="text-center">
+                <label for="date" class="text-center">التاريخ</label>
+                <input 
+                    name="date" 
+                    type="date" 
+                    class="inputSale" 
+                    @isset($ExchangeBond->created_at)
+                        value="{{ \Carbon\Carbon::parse($ExchangeBond->created_at)->format('Y-m-d') }}"
+                    @endisset 
+                >
+            </div>
+            
        </div>
         <div class="text-gray-700  px-2">
 
@@ -39,25 +62,27 @@
                 <div class="flex  " role="">
                     <div  class=" text-center  ">
                         <label for="" class=" text-center" >العمله </label>
-                        <select   dir="ltr" id="Currency" class="inputSale input-field " name="Currency"  >
-                            @auth
+                        <select   dir="ltr" id="Currency" class="inputSale select2 input-field " name="Currency"  >
+                            @isset($currs)
+                            <option selected value="{{$currs->currency_id}}">{{$currs->currency_name}}</option>
+                            @endisset
+                            @isset($curr)
+
                           @foreach ($curr as $cur)
                           <option @isset($cu)
                           @selected($cur->currency_id==$cu->Currency_id)
                           @endisset
                           value="{{$cur->currency_id}}">{{$cur->currency_name}}</option>
                            @endforeach
-                           @endauth
-                          </select>
+                           @endisset
+                        </select>
                        </div>
-                       <div  class=" text-center  ">
-                        <label for="" class=" text-center" >الصرف </label>
-                        <input id="maont" type="number" class="inputSale px-1" placeholder="505,550" required>
-                       </div>
+                       
 
                 <div class="">
                 <label for="" class=" text-center " >المبلغ </label>
-                <input name="Amount_debit" id="maont" type="number" class="inputSale px-1" placeholder="505,550" required>
+                <input name="Amount_debit" id="maont" type="number" @isset($ExchangeBond->Amount_debit)
+                    value="{{$ExchangeBond->Amount_debit}}"  @endisset class="inputSale px-1" placeholder="0" required>
                 </div>
 
                 </div>
@@ -69,7 +94,10 @@
                     @isset($mainAccounts)
                   <option value="" selected>اختر الحساب</option>
                    @foreach ($mainAccounts as $mainAccount)
-                        <option value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
+                        <option @isset($ExchangeBond->Main_debit_account_id)
+                             @selected($ExchangeBond->Main_debit_account_id==$mainAccount->main_account_id) value="{{$mainAccount['main_account_id']}}"
+
+                        @endisset value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
                    @endforeach
                    @endisset
                  </select>
@@ -77,8 +105,9 @@
             <div class="text-center ">
                  <label for="b" class="text-center ">  إيداع في حساب </label>
                  <select name="DepositAccount" id="DepositAccount" dir="ltr" class="input-field select2 inputSale" >
-                    <!-- سيتم تعبئة الخيارات بناءً على الحساب الرئيسي المحدد -->
-                    <option value="" selected>اختر الحساب الفرعي</option>
+                    @isset($Debitsub_account_id)
+                    <option  value="{{$Debitsub_account_id->sub_account_id}}">{{$Debitsub_account_id->sub_name}}</option>
+                   @endisset
                     </select>
             </div>
         </div>
@@ -97,20 +126,34 @@
                 <li class="text-center">
                     <select name="PaymentParty" id="PaymentParty" class=" select2 inputSale" required>
                     <option value="" selected>اختر الحساب</option>
-                        @isset($mainAccounts)
-                            @foreach ($mainAccounts as $mainAccount)
-                                <option value="{{$mainAccount->main_account_id}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
-                            @endforeach
-                        @endisset
+                    @isset($mainAccounts)
+                    <option value="" selected>اختر الحساب</option>
+                     @foreach ($mainAccounts as $mainAccount)
+                          <option @isset($ExchangeBond->Main_Credit_account_id)
+                               @selected($ExchangeBond->Main_Credit_account_id==$mainAccount->main_account_id) value="{{$mainAccount['main_account_id']}}"
+  
+                          @endisset value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
+                     @endforeach
+                     @endisset
                     </select>
                     </li>
                 <li class=" text-center px-1">
                     <select name="CreditAmount"  step="0.01" id="CreditAmount" class="block w-full select2 p-2 border rounded-md inputSale">
+                         @isset($Creditsub_account_id)
+                    <option  value="{{$Creditsub_account_id->sub_account_id}}">{{$Creditsub_account_id->sub_name}}</option>
+                   @endisset
                     </select>
                 </li>
-                <li class=" text-center">
-                       <textarea class="inputSale" name="Statement" id="Statement" cols="30" rows="1"></textarea>
+                <li class="text-center">
+                    <textarea 
+                        class="inputSale" 
+                        name="Statement" 
+                        id="Statement" 
+                        cols="30" 
+                        rows="3"
+                    >@isset($ExchangeBond->Statement){{ $ExchangeBond->Statement }}@endisset</textarea>
                 </li>
+                
             </ul>
         </li>
      </ul>
@@ -118,23 +161,32 @@
 
 <div class="flex  py-4 ">
     <div class="mx-10"  >
-        <button type="submit" id="submitButton" class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            حفظ
-        </button>
+        <input type="submit" id="submitButton"  @isset($submitButton) value="{{ $submitButton }}" @endisset class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"  value="حفظ" >
+       
         </div>
 {{--         <div class="mx-10" id="newInvoice" >
             <button type="button"  class="text-purple-700 hover:text-white border border-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-purple-400 dark:text-purple-400 dark:hover:text-white dark:hover:bg-purple-500 dark:focus:ring-purple-900">
                              الغاء الحساب
                   </button>
             </div> --}}
+            <div class="mx-10" id="" >
+                <label for="payment_bond_id" class="text-center ">  رقم السند</label>
+                <input type="text" id="payment_bond_id" name="payment_bond_id" @isset($ExchangeBond->payment_bond_id)value="{{$ExchangeBond->payment_bond_id}}"
+                @endisset>
+                </div>
     </div>
     <input type="hidden" name="daily_entries_type" value="سند قبض">
 
-    @auth
 
+   
+   
+</div>
+@auth
     <input type="hidden" name="User_id" value="{{ Auth::user()->id }}">
     @endauth
+   
 </form>
+</div>
 
 <script>
 
@@ -209,59 +261,64 @@
 });
 
 
-
-
 $(document).ready(function() {
-            $('#submitButton').click(function(event) {
-                event.preventDefault();
-                // جمع بيانات النموذج
-                var formData = $('#Receip').serialize();
+    $('#submitButton').click(function(event) {
+        event.preventDefault();
+        var buttonValue = $(this).val(); // الحصول على قيمة الزر الذي تم الضغط عليه
 
-            // إرسال الطلب باستخدام AJAX
-            $.ajax({
-                url: '{{ route("Receip.store") }}',
-                method: 'POST',
-                data: formData,
-                success: function(data) {
-                        if(data.error){
-                            $('#successAlert').show().text(data.error);
-                        $('#Amount_debit').val(""); // إعادة تعيين النموذج
-                        // إخفاء الرسالة بعد 3 ثوانٍ
-                        setTimeout(function() {
-                            $('#successAlert').hide();
-                        }, 3000);
+        // جمع بيانات النموذج
+        var formData = $('#Receip').serialize();
 
-                        }else if(data.success){
-                            $('#successAlert').show().show().text(data.success);
-                            $('#Amount_debit').val(""); // إعادة تعيين النموذج
-                            // إخفاء الرسالة بعد 3 ثوانٍ
-                            setTimeout(function() {
-                                $('#successAlert').hide();
-                            }, 3000);
-                            setTimeout(function() {
-                                location.reload ();
-                            }, 3000);
+        // إرسال الطلب باستخدام AJAX
+        $.ajax({
+            url: '{{ route("Receip.store") }}',
+            method: 'POST',
+            
+            data: formData,
+        
+            success: function(response) {
+                if (response.error) {
+                    // عرض رسالة الخطأ
+                    $('#successAlert').show().text(response.error);
+                    $('#Amount_debit').val(''); // إعادة تعيين الحقل
+                    setTimeout(function() {
+                        $('#successAlert').hide();
+                    }, 3000);
+                } else if (response.success) {
+                    // عرض رسالة النجاح
+                    $('#successAlert').show().text(response.success);
+                    $('#Amount_debit').val(''); // إعادة تعيين الحقل
+                    setTimeout(function() {
+                        $('#successAlert').hide();
+                    }, 3000);
+                    $('#Receip')[0].reset();  // إفراغ النموذج
 
-                        }
-                        // إظهار رسالة النجاح
+                    // تحديد الإجراء بناءً على قيمة الزر
+                    var invoiceField = response.payment_bond_id;
+                    const url = `{{ route('receip.print', ':invoiceField') }}`.replace(':invoiceField', invoiceField);
+                            window.open(url, '_blank', 'width=600,height=800'); // فتح الرابط في نافذة جديدة
+                      
+                            window.location.href = '{{ route("Receip.create") }}';  // توجيه المستخدم إلى صفحة "إنشاء"
 
-                },
-                error: function(xhr) {
-                    if (xhr.status === 422) {
-                        // إظهار الأخطاء عند وجود أخطاء في التحقق
-                        var errors = xhr.responseJSON.errors;
-                        var errorMessage = '';
-                        $.each(errors, function(key, value) {
-                            errorMessage += value[0] + '<br>'; // إضافة الأخطاء
-                        });
-                        $('#errorMessage').show().html(errorMessage);
-                    } else {
-                        $('#errorMessage').show().text('حدث خطأ أثناء الحفظ.');
-                    }
                 }
-            });
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    // معالجة أخطاء التحقق من الإدخال
+                    var errors = xhr.responseJSON.errors;
+                    var errorMessage = '';
+                    $.each(errors, function(key, value) {
+                        errorMessage += value[0] + '<br>';
+                    });
+                    $('#errorMessage').show().html(errorMessage);
+                } else {
+                    $('#errorMessage').show().text('حدث خطأ أثناء الحفظ.');
+                }
+            }
         });
     });
+});
+
 
     function datainvoices(){
         var maont = document.getElementById('crud-modal').value;

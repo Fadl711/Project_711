@@ -36,6 +36,12 @@ class reportsConreoller extends Controller
 
         return view('report.Summary.summary',['name'=>'الحساب','SubAccount'=>$SubAccount,'MainAccounts'=>$MainAccounts]);
     }
+    public function create(Request $request){
+               $MainAccounts= MainAccount::all();
+               $SubAccount= SubAccount::all();
+        
+                return view('report.create');
+            }
     public function inventoryReport(){
 
         return view('report.InventoryReport.inventoryReport',['name'=>'المخزن']);

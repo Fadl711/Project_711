@@ -13,12 +13,17 @@ return new class extends Migration
     {
         Schema::create('exchange_bonds', function (Blueprint $table) {
             $table->increments('payment_bond_id');
+            $table->integer('payment_type')->nullable()->comment('1: نقداً, 2: أجل, 3: تحويل بنكي, 4: شيك');
             $table->integer('Main_debit_account_id')->unsigned();
+            $table->integer('accounting_period_id')->unsigned();
+
             $table->integer('Debit_sub_account_id')->unsigned();
             $table->decimal('Amount_debit', 8, 2);
             $table->integer('Main_Credit_account_id')->unsigned();
             $table->integer('Credit_sub_account_id')->unsigned();
             $table->string('Statement');
+            $table->string('transaction_type');
+
             $table->integer('Currency_id')->unsigned();
             $table->integer('User_id')->unsigned();
             $table->timestamps();

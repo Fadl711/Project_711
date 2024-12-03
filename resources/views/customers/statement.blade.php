@@ -46,7 +46,6 @@
         @isset($buss)
         <div class="header-section border-2 border-black bg-[#1749fd15]  rounded-lg my-4">
             <div class="rounded-lg grid grid-cols-3 gap-6 p-2 w-full">
-                
                 <!-- القسم الأيمن - Arabic content -->
                 <div class="text-right space-y-2">
                     <h2 class="font-extrabold  ">{{ $buss->Company_Name }}</h2>
@@ -69,7 +68,6 @@
                     <p class="text-sm text-gray-700">Address: {{ $buss->Company_AddressE }}</p>
                     <p class="text-sm text-gray-700">Phone: {{ $buss->Phone_Number }}</p>
                 </div>
-                
             </div>
             <div class="text-center space-y-4">
                 <p class="font-extrabold text-lg ">كشف حساب تحليلي - رصيد نهاية التقرير</p>
@@ -95,19 +93,14 @@
                         <div>{{ $customer->sub_name ?? __('غير متوفر') }}/{{ $customer->name_The_known ?? __(' ') }}</div>
                     </div>
                 </div>
-
-               
             </div>
-
             <div>
-               
                 <div class="flex mt-2">
                     <div class="font-extrabold">{{ __('العملة') }} :</div>
                     <div>{{ $currencysettings ?? __('YR') }}</div>
                 </div>
             </div>
         </header>
-
         <!-- جدول المنتجات -->
         <table class="w-full text-sm">
             <thead>
@@ -126,19 +119,27 @@
                     @foreach ($entries as $entrie)
                         <tr class="bg-white">
                             @php
-                        if ($entrie->Invoice_type=="on_credit") {
+                        if ($entrie->Invoice_type==2) {
                             $Invoice_type  = "آجلة"   ;
 
                                          }
-                                         if ($entrie->Invoice_type=="cash") {
+                                         if ($entrie->Invoice_type==1) {
                             $Invoice_type  = "نقد"   ;
+
+                                         }
+                                         if ($entrie->Invoice_type==3) {
+                            $Invoice_type  = "تحويل بنكي"   ;
+
+                                         }
+                                         if ($entrie->Invoice_type==4) {
+                            $Invoice_type  = "شيك"   ;
 
                                          }
                         @endphp
                             <td class=" text-right ">
                                 {{ $entrie->created_at ? $entrie->created_at->format('Y-m-d') : __('غير متوفر') }}
                             </td>
-                            <td class=" text-right ">{{ $entrie->daily_entries_type }} {{ $Invoice_type }}</td>
+                            <td class=" text-right ">{{ $entrie->daily_entries_type }} {{ $Invoice_type ?? ""}}</td>
                             <td class=" text-center">{{ $entrie->Invoice_id }}</td>
                             <td class=" text-right ">{{ $entrie->Statement }}</td>
                             <td class=" text-center">{{ $entrie->entrie_id }}</td>
@@ -204,7 +205,8 @@
                         <p class="">{{ $commintString }}</p>
                     </th>
                     <th class="px-2 text-right">
-                        {{ number_format($Sale_priceSum) ?? 0 }}
+                        {{ number_format(abs($Sale_priceSum)) ?? 0 }}
+                        
                         <p class="text-sm">{{ $priceInWords }}</p>
                     </th>
                 </tr>

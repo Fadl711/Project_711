@@ -46,6 +46,7 @@
     <div id="displayContainer2" class="overflow-y-auto max-h-[80vh]  bg-white px-4 py-1 rounded-lg shadow-md">
         </div>
 </div>
+
 <script>
     $(document).ready(function () {
     const searchTypeSelect = $('select[name="searchType"]');

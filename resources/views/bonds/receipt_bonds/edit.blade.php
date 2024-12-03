@@ -27,15 +27,14 @@
                     <div  class=" text-center  ">
                         <label for="" class=" text-center" >العمله </label>
                         <select   dir="ltr" id="Currency" class="inputSale input-field " name="Currency"  >
-                            @auth
+                     @isset($curr)
                           @foreach ($curr as $cur)
                           <option
                           @selected($cur->currency_id==$ExchangeBond->Currency_id)
 
                           value="{{$cur->currency_id}}">{{$cur->currency_name}}</option>
                            @endforeach
-                           @endauth
-                          </select>
+                           @endisset                          </select>
                        </div>
                        <div  class=" text-center  ">
                         <label for="" class=" text-center" >الصرف </label>

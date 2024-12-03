@@ -22,7 +22,19 @@
 </form>
   <form method="POST" id="Receip">
     @csrf
+    <div class="flex gap-4">
+        <div class="flex gap-4">
+            @foreach ($PaymentType as $index => $item)
+<div class="flex">
+<label for="" class="labelSale">{{$item->label()}}</label>
+<input type="radio" name="payment_type" value="{{$item->value}}" 
+    {{ $index === 0 ? 'checked' : '' }} required>
+</div>
+@endforeach
 
+            
+        </div>
+    </div>
   <div class="flex container  shadow-md py-4 px-2 bg-white">
         <div class="w-[40%] max-sm:w-[30%]">
             <div class=" text-center">
@@ -122,11 +134,11 @@
             حفظ
         </button>
         </div>
-{{--         <div class="mx-10" id="newInvoice" >
-            <button type="button"  class="text-purple-700 hover:text-white border border-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-purple-400 dark:text-purple-400 dark:hover:text-white dark:hover:bg-purple-500 dark:focus:ring-purple-900">
-                             الغاء الحساب
-                  </button>
-            </div> --}}
+        <div class="mx-10" id="" >
+            <label for="payment_bond_id" class="text-center ">  رقم السند</label>
+
+            <input type="text" id="payment_bond_id" name="payment_bond_id" value="">
+            </div>
     </div>
 
     @auth

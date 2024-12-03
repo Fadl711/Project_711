@@ -65,4 +65,9 @@ class SaleInvoice extends Model
         return $this->created_at->format('Y-m-d');
     }
   
+    public function currency()
+    {
+        return $this->belongsTo(Currency::class, 'currency_id', 'currency_id');
+    }
+
 }

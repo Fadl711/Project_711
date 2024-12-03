@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Enum\AccountClass;
+use App\Enum\PaymentType;
 use App\Enum\TransactionType;
 use App\Http\Controllers\Controller;
 use App\Models\AccountingPeriod;
+use App\Models\DailyEntrie;
 use App\Models\MainAccount;
 use App\Models\Purchase;
 use App\Models\PurchaseInvoice;
+use App\Models\SaleInvoice;
 use App\Models\SubAccount;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -94,7 +97,6 @@ class InvoicePurchaseController extends Controller
                 }
                 break;
         }
-    
         // جلب البيانات وتحويلها
         $purchaseInvoices = $query->get()->transform(function ($invoice) {
             return [
@@ -104,7 +106,7 @@ class InvoicePurchaseController extends Controller
                 'transaction_type' => TransactionType::tryFrom($invoice->transaction_type)?->label() ?? 'غير معروف',
                 'invoice_number' => $invoice->purchase_invoice_id ?? 'غير متاح',
                 'receipt_number' => $invoice->Receipt_number ?? 'غير متاح',
-                'Invoice_type' => $invoice->Invoice_type ?? 'غير متاح',
+                'Invoice_type' => PaymentType::tryFrom($invoice->Invoice_type)?->label() ?? 'غير معروف',
                 'total_invoice' => $invoice->Total_invoice ?? 0,
                 'total_cost' => $invoice->Total_cost ?? 0,
                 'paid' => $invoice->Paid ?? 0,
@@ -112,12 +114,52 @@ class InvoicePurchaseController extends Controller
                 'updated_at' => optional($invoice->updated_at)->format('Y-m-d') ?? 'غير متاح',
             ];
         });
-    
         return response()->json(['purchaseInvoices' => $purchaseInvoices], 200);
     }
-    
+    public function deleteInvoice($id)
+{
+    try {
+        $invoice = PurchaseInvoice::where('purchase_invoice_id', $id)->first();
+        if (!$invoice) {
+            return response()->json([
+                'success' => false,
+                'message' => 'لم يتم العثور على معرف الفاتورة.'
+            ]);      
+          }
+        // حذف جميع المشتريات المرتبطة إن وجدت
+        if ($invoice->purchases()->exists()) {
+            $invoice->purchases()->delete();
+        }
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+        if (!$accountingPeriod) {
+            return response()->json(['success' => false, 'message' => 'لا توجد فترة محاسبية مفتوحة.']);
+        }
+        // حذف الفاتورة نفسها
+        $invoice->delete();
+        $Getentrie_id = DailyEntrie::where('Invoice_id',$invoice->purchase_invoice_id)
+            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+            ->where('daily_entries_type',$invoice->transaction_type)
+            ->first();
+            if($Getentrie_id )
+            {
+                $Getentrie_id->delete();
+            }
 
+        // DB::commit();
+        return response()->json([
+            'success' => true,
+            'message' => 'تم حذف الفاتورة وجميع المشتريات المرتبطة بها بنجاح'
+        ]);
 
+    } catch (\Exception $e) {
+        // DB::rollBack();
+
+        return response()->json([
+            'success' => false,
+            'message' => 'حدث خطأ أثناء الحذف: ' . $e->getMessage()
+        ]);
+    }
+}
     public function searchInvoices(Request $request)
     {
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
@@ -125,13 +167,11 @@ class InvoicePurchaseController extends Controller
         if (!$accountingPeriod) {
             return response()->json(['message' => 'لم يتم العثور على فترة محاسبية حالية.'], 404);
         }
-    
         // التحقق من المدخلات
         $validated = $request->validate([
             'searchType' => 'nullable|string|in:كل الفواتير,أول فاتورة,آخر فاتورة',
             'searchQuery' => 'nullable|string|max:255',
         ]);
-    
         // بناء الاستعلام الأساسي
         $query = PurchaseInvoice::with(['supplier', 'user'])
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
@@ -160,7 +200,6 @@ class InvoicePurchaseController extends Controller
             $orderDirection = ($validated['searchType'] === 'أول فاتورة') ? 'asc' : 'desc';
             $query->orderBy('created_at', $orderDirection);
         }
-    
         // الحصول على النتائج
         $purchaseInvoices = $query->get()->transform(function ($invoice) {
             return [
@@ -170,7 +209,9 @@ class InvoicePurchaseController extends Controller
                 'transaction_type' => TransactionType::tryFrom($invoice->transaction_type)?->label() ?? 'غير معروف',
                 'invoice_number' => $invoice->purchase_invoice_id ?? 'غير متاح',
                 'receipt_number' => $invoice->Receipt_number ?? 'غير متاح',
-                'Invoice_type' => $invoice->Invoice_type ?? 'غير متاح',
+                // 'Invoice_type' => $invoice->Invoice_type ?? 'غير متاح',
+                'Invoice_type' => PaymentType::tryFrom($invoice->Invoice_type)?->label() ?? 'غير معروف',
+
                 'total_invoice' => $invoice->Total_invoice ?? 0,
                 'total_cost' => $invoice->Total_cost ?? 0,
                 'paid' => $invoice->Paid ?? 0,
@@ -187,11 +228,34 @@ class InvoicePurchaseController extends Controller
     
 public function bills_purchase_show($id){
     $Purchase=Purchase::where('purchase_id',$id)->first();
-
-
     return view('invoice_purchases.bills_purchase_show',compact('Purchase'));
 
 }
+
+    public function GetInvoiceNumber($id)
+{        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+
+    if (in_array($id, [4, 5])) {
+        // استرجاع الفواتير من جدول SaleInvoice
+        $invoices = SaleInvoice::where('transaction_type', $id)
+        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        ->get();
+    } elseif (in_array($id, [1, 2, 3])) {
+        // استرجاع الفواتير من جدول PurchaseInvoice
+        $invoices = PurchaseInvoice::where('transaction_type', $id)
+        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        ->get();
+    } else {
+        // إذا لم يكن $id يطابق أي من القيم
+        return response()->json(['message' => 'Invalid transaction type'], 400);
+    }
+
+    return response()->json($invoices);
+}
+
+
+
+
 
 
 

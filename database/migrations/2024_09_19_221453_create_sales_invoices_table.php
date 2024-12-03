@@ -20,8 +20,8 @@ return new class extends Migration
    // عمود ID العميل
    $table->integer('Customer_id')->unsigned()->nullable()->comment('معرف العميل');
    // عمود نوع الدفع
+   $table->integer('payment_type')->nullable()->comment('1: نقداً, 2: أجل, 3: تحويل بنكي, 4: شيك');
 
-   $table->enum('payment_type', ['cash', 'on_credit', 'transfer'])->comment('نوع الدفع: نقداً، على الحساب، تحويل');
    // عمود حالة الدفع
    $table->enum('payment_status', ['paid', 'unpaid', 'partial'])->default('unpaid')->comment('حالة الدفع: مدفوع، غير مدفوع، جزئي');
 
@@ -53,7 +53,7 @@ return new class extends Migration
    $table->decimal('exchange_rate', 15, 2)->nullable()->comment('سعر الصرف للعملة');
 
    // عمود نوع العملية
-   $table->string('transaction_type')->default('مبيعات')->comment('نوع العملية');
+   $table->unsignedTinyInteger('transaction_type')->comment('يحدد نوع المعاملة');
 
 
    // عمود الدافع للشحن

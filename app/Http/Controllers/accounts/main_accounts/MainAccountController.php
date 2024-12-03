@@ -25,6 +25,7 @@ use function Laravel\Prompts\select;
 use function PHPUnit\Framework\isNull;
 
 class MainaccountController extends Controller
+
 {
     
     public function create(){
@@ -180,11 +181,8 @@ return view('accounts.Main_Account.create',
     {
         
             $Main_id = $request->Main_id;
-    
             $DataSubAccount = new SubAccount();
             $TypeSubAccount = MainAccount::where('main_account_id', $Main_id)->first();
-            $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
-    
             $sub_name = $request->sub_name;
             $User_id = $request->User_id;
             $debtor_amount1 = $request->input('debtor_amount', '٠١٢٣٤٥٦٧٨٩');
@@ -232,26 +230,32 @@ if ($DataSubAccount->debtor_amount>0 || $DataSubAccount->creditor_amount>0) {
         if (!$dailyPage || !$dailyPage->page_id) {
             return response()->json(['success' => false, 'message' => 'فشل في إنشاء صفحة يومية']);
         }
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
 
     $dailyEntry = DailyEntrie::create([
         'Amount_debit' => $DataSubAccount->debtor_amount  ?: 0,
         'account_debit_id' => $DSubAccount->sub_account_id ,
         'Amount_Credit' => $DataSubAccount->creditor_amount  ?: 0,
-
         'account_Credit_id' => $DSubAccount->sub_account_id ,
         'Statement' => 'إدخال رصيد افتتاحي',
         'Daily_page_id' =>$dailyPage->page_id,
         'Currency_name' => 'ر',
-        'User_id' =>1,
-        'Invoice_type' => 'رصيد افتتاحي',
+        'User_id' =>$User_id ,
+        'Invoice_type' =>1,
+        'accounting_period_id' =>$accountingPeriod->accounting_period_id,
         'Invoice_id' => null,
+        'daily_entries_type' =>'رصيد افتتاحي',
+
         'status_debit' => 'غير مرحل',
         'status' => 'غير مرحل',
     ]);
-    return response()->json(['success' => ' تم حفظ بنجاح ودخال مبلغ للحساب' , 'subAccountId' => $DataSubAccount->id]);
+    if ($dailyEntry) {
+
+    return response()->json(['success'=>true,'message' => ' تم حفظ بنجاح ودخال مبلغ للحساب']);
+}  
 }  
   
-return response()->json(['success' => 'تم حفظ  بنجاح']);
+return response()->json(['success'=>true,'message' => 'تم حفظ  بنجاح']);
           
     
     }

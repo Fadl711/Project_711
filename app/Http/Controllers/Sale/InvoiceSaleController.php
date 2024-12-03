@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Sale;
 
+use App\Enum\PaymentType;
 use App\Enum\TransactionType;
 use App\Http\Controllers\Controller;
 use App\Models\AccountingPeriod;
@@ -15,6 +16,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
+use NumberToWords\NumberToWords;
 
 class InvoiceSaleController extends Controller
 {
@@ -40,10 +42,11 @@ class InvoiceSaleController extends Controller
         'User_id' => 'required|exists:users,id',
         'paid_amount' => 'nullable|numeric|min:0',
         'remaining_amount' => 'nullable|numeric|min:0',
-        'payment_type' => 'required|in:cash,on_credit,transfer',
+        'payment_type' => 'required|numeric',
         'currency_id' => 'required|exists:currencies,currency_id', // assuming there's a currencies table
         'exchange_rate' => 'nullable|numeric|min:0',
         'shipping_bearer' => 'required|in:customer,merchant',
+        'transaction_type' => 'required|numeric',
         'shipping_amount' => 'nullable|numeric|min:0',
     ]);
 
@@ -62,7 +65,7 @@ class InvoiceSaleController extends Controller
         $salesInvoice->payment_type = $validatedData['payment_type'];
         $salesInvoice->currency_id = $validatedData['currency_id'];
         $salesInvoice->exchange_rate = $validatedData['exchange_rate'] ?? 0;
-        $salesInvoice->transaction_type ="مبيعات";
+        $salesInvoice->transaction_type =$validatedData['transaction_type'];
         $salesInvoice->shipping_bearer = $validatedData['shipping_bearer']??0;
         $salesInvoice->accounting_period_id = $accountingPeriod->accounting_period_id;
         $salesInvoice->save();
@@ -124,10 +127,10 @@ public function getSaleInvoice(Request $request, $filterType)
             'formatted_date' => $invoice->formatted_date ?? 'غير متاح',
             'Customer_name' => optional($invoice->customer)->sub_name ?? 'غير معروف',
             'main_account_class' => optional($invoice->customer?->mainAccount)->accountClassLabel() ?? 'غير معروف',
-            'transaction_type' => $invoice->transaction_type ?? 'غير معروف',
+            'transaction_type' => TransactionType::fromValue($invoice->transaction_type)?->label() ?? 'غير معروف',
             'invoice_number' => $invoice->sales_invoice_id ?? 'غير متاح',
             'discount' => $invoice->discount ?? 'غير متاح',
-            'payment_type' => $invoice->payment_type ?? 'غير متاح',
+            'payment_type' => PaymentType::tryFrom($invoice->payment_type)?->label() ?? 'غير معروف',
             'shipping_bearer' => $invoice->shipping_bearer ?? 'غير متاح',
             'shipping_amount' => $invoice->shipping_amount ?? 0,
             'total_price_sale' => $invoice->total_price_sale ?? 0,
@@ -183,16 +186,23 @@ public function print($id)
     $SumCredit_amount=DailyEntrie::where('account_Credit_id',$SubAccount->sub_account_id)->sum('Amount_Credit');
     $Sum_amount=$SumDebtor_amount-$SumCredit_amount;
     // تحويل القيمة إلى نص مكتوب
-    $priceInWords = $this->numberToWords($Sale_priceSum,$curre->currency_name);
+    $numberToWords = new NumberToWords();
+    $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
+    
     return view('invoice_sales.bills_sale_show', [
         'DataPurchaseInvoice' => $DataPurchaseInvoice,
         'DataSale' => $DataSale,
         'SubAccounts' => $SubAccount,
         'Sale_priceSum' => $Sale_priceSum,
         'Sale_CostSum' => $Sale_CostSum,
-        'priceInWords' => $priceInWords, // القيمة النصية
+        'priceInWords' => is_numeric($Sale_priceSum) 
+        ? $numberTransformer->toWords($Sale_priceSum) . ' ' . $curre->currency_name
+        : 'القيمة غير صالحة', // القيمة النصية
         'Categorys' => $Categorys,
         'currency' => $currency,
+        'payment_type' => PaymentType::tryFrom($DataPurchaseInvoice->payment_type)?->label() ?? 'غير معروف',
+        'transaction_type' => TransactionType::fromValue($DataPurchaseInvoice->transaction_type)?->label() ?? 'غير معروف',
+     
         'warehouses' => $SubName,
         'UserName' => $UserName,
         'accountCla' => $AccountClassName,
@@ -200,70 +210,6 @@ public function print($id)
     ]);
 
 }
-private function numberToWords($number,$currency) 
-{
-    if (!is_numeric($number)) {
-        return "الرقم المدخل غير صالح";
-    }
-
-    $number = str_replace([',', ' '], '', $number); // إزالة الفواصل والمسافات
-    $number = (int)$number;
-
-    if ($number == 0) {
-        return "صفر $currency";
-    }
-
-    $units = ['', 'ألف', 'مليون', 'مليار'];
-    $ones = ['', 'واحد', 'اثنان', 'ثلاثة', 'أربعة', 'خمسة', 'ستة', 'سبعة', 'ثمانية', 'تسعة'];
-    $teens = ['عشرة', 'أحد عشر', 'اثنا عشر', 'ثلاثة عشر', 'أربعة عشر', 'خمسة عشر', 'ستة عشر', 'سبعة عشر', 'ثمانية عشر', 'تسعة عشر'];
-    $tens = ['', 'عشرة', 'عشرون', 'ثلاثون', 'أربعون', 'خمسون', 'ستون', 'سبعون', 'ثمانون', 'تسعون'];
-    $hundreds = ['', 'مائة', 'مائتين', 'ثلاثمائة', 'أربعمائة', 'خمسمائة', 'ستمائة', 'سبعمائة', 'ثمانمائة', 'تسعمائة'];
-
-    $parts = [];
-    $unitIndex = 0;
-
-    while ($number > 0) {
-        $chunk = $number % 1000;
-        $number = intdiv($number, 1000);
-
-        if ($chunk > 0) {
-            $words = '';
-
-            // معاملة خاصة لـ 1000
-            if ($chunk == 1 && $unitIndex == 1) { // إذا كان 1 في خانة الألف
-                $words = $units[$unitIndex];
-            } else {
-                // التعامل مع المئات
-                if ($chunk >= 100) {
-                    $words .= $hundreds[intdiv($chunk, 100)] . ' ';
-                    $chunk %= 100;
-                }
-
-                // التعامل مع الأرقام بين 10 و 19
-                if ($chunk >= 10 && $chunk < 20) {
-                    $words .= $teens[$chunk - 10] . ' ';
-                    $chunk = 0;
-                } else if ($chunk >= 20) {
-                    $words .= $tens[intdiv($chunk, 10)] . ' ';
-                    $chunk %= 10;
-                }
-
-                if ($chunk > 0) {
-                    $words .= $ones[$chunk] . ' ';
-                }
-
-                $words = trim($words) . ' ' . $units[$unitIndex];
-            }
-
-            $parts[] = trim($words);
-        }
-
-        $unitIndex++;
-    }
-
-    return implode(' و', array_reverse($parts)) . " $currency";
-}
-
 
 public function searchInvoices(Request $request)
 {
@@ -311,7 +257,8 @@ public function searchInvoices(Request $request)
             'transaction_type' => $invoice->transaction_type ?? 'غير معروف',
             'invoice_number' => $invoice->sales_invoice_id ?? 'غير متاح',
             'discount' => $invoice->discount ?? 'غير متاح',
-            'payment_type' => $invoice->payment_type ?? 'غير متاح',
+            'payment_type' => PaymentType::tryFrom($invoice->payment_type)?->label() ?? 'غير معروف',
+            'transaction_type' => TransactionType::fromValue($invoice->transaction_type)?->label() ?? 'غير معروف',
             'shipping_bearer' => $invoice->shipping_bearer ?? 'غير متاح',
             'shipping_amount' => $invoice->shipping_amount ?? 0,
             'total_price_sale' => $invoice->total_price_sale ?? 0,

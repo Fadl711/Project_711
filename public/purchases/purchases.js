@@ -99,3 +99,22 @@ function showAccounts(mainAccountId2,mainAccountId1)
     });
 };
 }
+$('#Categorie_name').on('change', function () {
+    const CategorieId = $(this).val(); // الحصول على معرف التصنيف المحدد
+    $(this).select2('close');
+    if (!CategorieId) {
+        console.warn('لم يتم اختيار تصنيف.');
+        return; // إنهاء التنفيذ إذا لم يتم اختيار تصنيف
+    }
+    // استدعاء الدالة لجلب المنتج بناءً على التصنيف
+    GetProduct(CategorieId);
+    // إغلاق القائمة المنسدلة بعد التأخير
+    setTimeout(() => {
+        $('#Categorie_name').select2('close');
+        
+    }, 1000);
+    setTimeout(function() {
+        $('#Quantity').focus();
+        console.log('Focused on Quantity'); // للتأكد من التركيز
+    }, 100); // تأخير 100 مللي ثانية
+});

@@ -1,7 +1,19 @@
 @extends('daily_restrictions.index')
 
 @section('restrictions')
-
+<style>
+    .select2-container--default .select2-dropdown {
+    max-height: 200px; /* ارتفاع القائمة */
+    overflow-y: auto; /* تمكين التمرير إذا تجاوز المحتوى الارتفاع */
+}
+.select2-container--default .select2-selection--single {
+    height: 40px; /* ارتفاع العنصر الأساسي */
+    line-height: 45px; لتوسيط النص عموديًا
+}
+.select2-container--default .select2-selection__rendered {
+    padding-top: 5px; /* تحسين النصوص */
+}
+</style>
 
 <form action="{{route('daily_restrictions.stor')}}" method="POST"  enctype="multipart/form-data">
     @csrf
@@ -25,18 +37,19 @@
     @csrf
     <div class="container mx-auto  px-4">
         <!-- Title -->
-        <div>
-            <label for="transaction_type" class="labelSale">نوع العملية </label>
-            <select dir="ltr" id="transaction_type" class="inputSale input-field" name="transaction_type">
-                @foreach ($transactionTypes as $transactionType)
-                    <option value="{{ $transactionType->value }}">{{ $transactionType->label() }}</option>
-                @endforeach
-            </select>
-            </div>
-            <div >
+        <div class="flex gap-4">
+            @foreach ($PaymentType as $index => $item)
+<div class="flex">
+<label for="" class="labelSale">{{$item->label()}}</label>
+<input type="radio" name="payment_type" value="{{$item->value}}" 
+    {{ $index === 0 ? 'checked' : '' }} required>
+</div>
+@endforeach
+        </div>
         <!-- Form Layout -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="shadow-lg rounded-lg p-1 bg-white border">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <div class="">
                 <label for="Invoice_type" class="block font-medium  ">  نوع المستند</label>
                 <select name="Invoice_type" dir="ltr" class=" select2 inputSale" id="Invoice_type">
                     <option value="" selected>اختر  نوع المستند</option>
@@ -44,14 +57,21 @@
                     <option value="{{ $transactionType->value }}">{{ $transactionType->label() }}</option>
                 @endforeach
             </select>
+            </div>
+            <div class="">
+                <label for="Invoice_id" class="block font-medium  ">  رقم المستند</label>
+                <select name="Invoice_id" dir="ltr" class=" select2 inputSale" id="Invoice_id">
+                    <option value="" selected>اختر  رقم المستند</option>
+            </select>
                     </select>
+            </div>
             </div>
             <!-- حساب المدين -->
             <div class="shadow-lg rounded-lg p-1 bg-white border">
                 <h3 class=" font-semibold">المدين</h3>
                 <div class="">
                     <label for="account_debit_id" class="block font-medium ">حساب المدين/الرئيسي</label>
-                    <select name="account_debit_id" id="account_debit_id" dir="ltr" class="input-field  select2 inputSale" required>
+                    <select name="account_debit_id" id="account_debit_id" dir="ltr" class="input-field   select2 inputSale" required>
                        <!-- إضافة خيارات الحسابات -->
                        @isset($mainAccounts)
                      <option value="" selected>اختر الحساب</option>

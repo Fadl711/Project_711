@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\DailyRestrictionController;
 
+use App\Enum\TransactionType;
 use App\Http\Controllers\Controller;
 use App\Models\AccountingPeriod;
 use App\Models\Currency;
@@ -10,6 +11,8 @@ use App\Models\ExchangeBond;
 use App\Models\GeneralJournal;
 use App\Models\MainAccount;
 use App\Models\PaymentBond;
+use App\Models\PurchaseInvoice;
+use App\Models\SaleInvoice;
 use App\Models\SubAccount;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -17,6 +20,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
 
 class RestrictionController extends Controller
 {
@@ -26,7 +30,6 @@ class RestrictionController extends Controller
     public function store(Request $request)
     {
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
-
         $validated = $request->validate([
             'sub_account_debit_id' => 'required|integer',
             'Amount_debit' => 'required|numeric',
@@ -44,30 +47,68 @@ class RestrictionController extends Controller
         // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
         $today = Carbon::now()->toDateString();
         $dailyPage = GeneralJournal::whereDate('created_at', $today)->first();
-
+        
         // إذا لم توجد صفحة، قم بإنشائها
         if (!$dailyPage) {
             $dailyPage = GeneralJournal::create([]);
         }
         // حفظ القيد اليومي
         $dailyEntrie = new DailyEntrie();
-        $invoice_type=$request->Invoice_type;
-        $Invoice_num=$request->Invoice_id;
+        if ($request->Invoice_type) {
+            $transactionType = TransactionType::fromValue($request->Invoice_type);
+            if ($transactionType) {
+                $invoice_type = $transactionType->label(); // جلب التسمية النصية
+            } else {
+                
+                throw new InvalidArgumentException('نوع الفاتورة غير معروف.');
+            }
+        }
+       // تحديد النوع الافتراضي
+$defaultPaymentType = 'قيد';
+$Invoice_id = null;
+$Payment_type = $defaultPaymentType;
+if($request->Invoice_type){
+// التحقق من نوع المعاملة
+if (in_array($request->Invoice_type, [4, 5])) {
+    // استرجاع فواتير المبيعات
+    $invoices = SaleInvoice::where('sales_invoice_id', $request->Invoice_id)
+        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        ->where('transaction_type', $request->Invoice_type)
+        ->first();
+} elseif (in_array($request->Invoice_type, [1, 2, 3])) {
+    // استرجاع فواتير المشتريات
+    $invoices = PurchaseInvoice::where('purchase_invoice_id', $request->Invoice_id)
+        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        ->where('transaction_type', $request->Invoice_type)
+        ->first();
+}
+$Invoice_id = $request->Invoice_type >= 4 ? $invoices->sales_invoice_id : $invoices->purchase_invoice_id;
+$Payment_type = $request->Invoice_type >= 4 ? $invoices->payment_type : $invoices->Invoice_type;
 
-        $dailyEntrie->Invoice_type =$invoice_type ;//+
-        $dailyEntrie->Invoice_id =$Invoice_num ;//+
-    $dailyEntrie->account_debit_id = $validated['sub_account_debit_id'];
-    $dailyEntrie->Amount_debit = $validated['Amount_debit'];
-    $dailyEntrie->account_Credit_id = $validated['sub_account_Credit_id'];
-    $dailyEntrie->Amount_Credit = $validated['Amount_debit'];
-    $dailyEntrie->Statement = $validated['Statement'];
-    $dailyEntrie->Currency_name = $validated['Currency_name']; // استخدم الاسم الصحيح هنا
-    $dailyEntrie->accounting_period_id = $accountingPeriod->accounting_period_id;
-    $dailyEntrie->Daily_page_id = $dailyPage->page_id; // حفظ معرف الصفحة اليومية
-    $dailyEntrie->User_id = $validated['User_id'];
-    $dailyEntrie->daily_entries_type = 'قيد';
+// التحقق من وجود الفاتورة
+if (!$invoices) {
+    throw new \Exception('الفاتورة غير موجودة.');
+}
+}
+// تحديد المعرف ونوع الدفع
 
-    $dailyEntrie->save();
+// إنشاء القيد اليومي
+$dailyEntrie->Invoice_type =$request->payment_type ;
+$dailyEntrie->Invoice_id = $Invoice_id??null;
+$dailyEntrie->account_debit_id = $validated['sub_account_debit_id'];
+$dailyEntrie->Amount_debit = $validated['Amount_debit'];
+$dailyEntrie->account_Credit_id = $validated['sub_account_Credit_id'];
+$dailyEntrie->Amount_Credit = $validated['Amount_debit']; // هل المدين يساوي الدائن دائماً؟
+$dailyEntrie->Statement = $validated['Statement'];
+$dailyEntrie->Currency_name = $validated['Currency_name'];
+$dailyEntrie->accounting_period_id = $accountingPeriod->accounting_period_id;
+$dailyEntrie->Daily_page_id = $dailyPage->page_id;
+$dailyEntrie->User_id = $validated['User_id'];
+$dailyEntrie->daily_entries_type = $invoice_type ?? $Payment_type;
+
+// حفظ القيد
+$dailyEntrie->save();
+
         return response()->json(['success' => 'تم حفظ القيد بنجاح']);
     }
     public function saveAndPrint(Request $request)

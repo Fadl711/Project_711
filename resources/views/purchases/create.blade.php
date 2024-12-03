@@ -30,7 +30,6 @@
   </style>
 <div id="errorMessage" style="display: none;" class="alert alert-danger"></div>
 <div id="successMessage" style="display: none;" class="alert alert-success"></div>
-
 <div class="min-w-[20%] px-1  bg-white rounded-xl ">
     <div class=" flex items-center">
         <div class="w-full min-w-full  py-1">
@@ -38,24 +37,29 @@
                 @csrf
               
                 <div class="flex gap-4">
-                    <div class="flex">
-                        <label for="" class="labelSale">اجل</label>
-                        <input type="radio" name="Payment_type" value="اجل"   >
-                    </div>
-                    <div class="flex">
-                        <label for="" class="labelSale">نقدا</label>
-                        <input type="radio" name="Payment_type"   value="نقدا"  required >
+                    <div class="flex gap-4">
+                        @foreach ($PaymentType as $index => $item)
+        <div class="flex">
+            <label for="" class="labelSale">{{$item->label()}}</label>
+            <input type="radio" name="Payment_type" value="{{$item->value}}" 
+                {{ $index === 0 ? 'checked' : '' }} required>
+        </div>
+    @endforeach
+    
+                        
                     </div>
                 </div>
                 <div class="md:justify- text-right grid md:grid-cols-9 gap-2">
                     <div>
-                        <label for="transaction_type" class="labelSale">نوع العملية </label>
+                        <label for="transaction_type" class="labelSale">نوع العملية</label>
                         <select dir="ltr" id="transaction_type" class="inputSale input-field" name="transaction_type">
                             @foreach ($transactionTypes as $transactionType)
-                                <option value="{{ $transactionType->value }}">{{ $transactionType->label() }}</option>
+                                @if (in_array($transactionType->value, [1,2,3]))
+                                    <option value="{{ $transactionType->value }}">{{ $transactionType->label() }}</option>
+                                @endif
                             @endforeach
                         </select>
-                        </div>
+                    </div>
                         <div >
                             <label for="mainaccount_debit_id" class="  labelSale">  حساب التصدير  </label>
                            <select name="mainaccount_debit_id"  id="mainaccount_debit_id" dir="ltr" class="input-field  select2 inputSale" required >
@@ -162,10 +166,10 @@
                     </select>
                 </div>
                  
-                <div class="">
+                {{-- <div class="">
                     <label for="product_name" class="labelSale">اسم المنتج</label>
                     <input type="text" name="product_name" id="product_name" class="inputSale " required />
-                </div>
+                </div> --}}
                 <div>
                     <label for="Categorie_name" class="block  labelSale">الوحده  </label>
                     <select name="Categorie_name" id="Categorie_name" dir="ltr" class="input-field select2 inputSale" >
@@ -190,8 +194,8 @@
                     <input type="text" name="Cost" id="Cost" placeholder="0" class="inputSale" />
                 </div>
                 <div class="">
-                    <label for="Total" class="labelSale">الاجمالي</label>
-                    <input type="text" name="Total" id="Total" placeholder="0" class="inputSale total-field" required />
+                    <label for="TotalPurchase" class="labelSale">الاجمالي</label>
+                    <input type="text" name="TotalPurchase" id="TotalPurchase" placeholder="0" class="inputSale total-field" required />
                 </div>
             </div>
             <div class="flex gap-1 px-1">
@@ -250,7 +254,7 @@
                         <button class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700"  id="saveButton">اضافة </button>
                     </div>
                 <div class="col-span-6 sm:col-span-3" >
-                <button class="flex inputSale mt-2 " type="button" onclick="deleteInvoice()" >
+                <button class="flex inputSale mt-2 " id="delete_invoice" type="button" onclick="deleteInvoice()" >
                         <svg class="w-6 h-5 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M11 16h2m6.707-9.293-2.414-2.414A1 1 0 0 0 16.586 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V7.414a1 1 0 0 0-.293-.707ZM16 20v-6a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v6h8ZM9 4h6v3a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V4Z"/>
                         </svg>
@@ -281,7 +285,6 @@
             </table>
     </div>
     <button onclick="openInvoiceWindow(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح الفاتورة</button>
-
     <script>
         function openInvoiceWindow(e) {
     const successMessage= $('#successMessage');
@@ -414,10 +417,47 @@ else{
     </script>
  
 <script type="text/javascript">
+$(document).on('click', '.delete-payment', function (e) {
+    e.preventDefault();
+
+    var successMessage = $('#successMessage'); // الرسالة الناجحة
+    var errorMessage = $('#errorMessage'); // الرسالة الخطأ
+    const Total_invoice = $('#Total_invoice'); // إجمالي الفاتورة
+
+    let paymentId = $(this).data('id');
+    let url = `/purchases/${paymentId}`; // تصحيح مسار الحذف
+
+    if (confirm('هل أنت متأكد أنك تريد حذف هذا السند؟')) {
+        $.ajax({
+            url: url,
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+            },
+            success: function (response) {
+                if (response.status === 'success') {
+                    // إخفاء السند من الواجهة
+                    $('#row-' + paymentId).fadeOut(); // إخفاء الصف
+                    // تحديث إجمالي الفاتورة
+                    $('#Total_invoice').val(response.Purchasesum || '0'); 
+                } else {
+                    errorMessage.text(response.message || 'حدث خطأ أثناء الحذف.').show();
+                    setTimeout(() => errorMessage.hide(), 3000);
+                }
+            },
+            error: function (error) {
+                console.error('Error deleting payment bond:', error.responseText);
+                alert('حدث خطأ أثناء الحذف. يرجى المحاولة لاحقًا.');
+            }
+        });
+    }
+});
 
 
 
     $(document).ready(function () {
+
+     
         $('#Supplier_id').on('change', function() {
     const receipt_number = $('#Receipt_number');
 
@@ -466,6 +506,8 @@ const Product_name = $('#product_name');
         $('#saveButton').click(function() {
             saveData(event); // استدعاء دالة الحفظ
         });
+   // دالة لحذف السند باستخدام AJAX بعد التأكيد
+
        
       function saveData(event) {
         event.preventDefault(); // منع تحديث الصفحة
@@ -513,6 +555,96 @@ const Product_name = $('#product_name');
         }
           });
       };
+
+      function displayPurchases(purchases) {
+    let uniqueInvoices = new Set(); // Set لتخزين الفواتير الفريدة
+    let rows = ''; // متغير لتخزين الصفوف
+    $('#mainAccountsTable tbody').empty(); // تنظيف الجدول
+    purchases.forEach(function (purchase) {
+        // إضافة شرط للتأكد من عدم تكرار البيانات
+        if (!uniqueInvoices.has(purchase.purchase_id)) {
+            uniqueInvoices.add(purchase.purchase_id);
+            rows += `
+                <tr id="row-${purchase.purchase_id}">
+                    <td class="text-right tagTd">${purchase.Barcode}</td>
+                    <td class="text-right tagTd">${purchase.Product_name}</td>
+                    <td class="text-right tagTd">${purchase.categorie_id}</td>
+                    <td class="text-right tagTd">${purchase.quantity}</td>
+                    <td class="text-right tagTd">${purchase.Purchase_price}</td>
+                    <td class="text-right tagTd">${purchase.Cost}</td>
+                    <td class="text-right tagTd">${purchase.warehouse_to_id}</td>
+                    <td class="text-right tagTd">${purchase.Total}</td>
+                    <td class="flex">
+                        <button class="" onclick="editData(${purchase.purchase_id})">
+                                           <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
+</svg>
+                        </button>
+                        <button class="" onclick="deleteData(${purchase.purchase_id})">
+                                     <svg class="w-6 h-6 text-red-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
+</svg>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }
+    });
+
+    $('#mainAccountsTable tbody').append(rows);
+}
+     
+
+function CsrfToken() {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+}
+
+
+      function deleteInvoice()  {
+        CsrfToken();
+        const invoiceId = $('#purchase_invoice_id').val();        // الحصول على معرف الفاتورة من الحقل
+        if (!invoiceId) {
+            $('#errorMessage').show().text('لم يتم العثور على معرف الفاتورة.');
+            setTimeout(() => {
+                errorMessage.hide();
+              }, 5000);
+            return;
+        }
+        // تأكيد الحذف
+        if (!confirm('هل أنت متأكد من حذف الفاتورة وجميع المشتريات المرتبطة بها؟')) {
+            return;
+        }
+        // إرسال طلب الحذف باستخدام Ajax
+        $.ajax({
+            url: `/purchase-invoices/${invoiceId}`, // مسار الحذف
+            type: 'DELETE',
+            success: function(response) {
+                if (response.success) {
+                    window.location.reload();
+                    successMessage.show().text(response.message);
+                    // $('#Total_invoice').val(response.Purchasesum);
+                    setTimeout(() => {
+                        successMessage.hide();
+                    }, 5000); // هذا سيقوم بإعادة تحميل الصفحة بالكامل
+                    // إزالة الصف المرتبط بالفاتورة من الجدول بدون إعادة تحميل الصفحة
+                } else {
+                    $('#errorMessage').show().text(response.message);
+                    setTimeout(() => {
+                      errorMessage.hide();
+                    }, 5000);
+                }
+            },
+            error: function(xhr, status, error) {
+                $('#errorMessage').show().text(response.message);
+                    setTimeout(() => {
+                      errorMessage.hide();
+                    }, 5000);   }
+        });
+};
     });
     </script>
 <script src="{{url('purchases/purchases.js')}}"></script>

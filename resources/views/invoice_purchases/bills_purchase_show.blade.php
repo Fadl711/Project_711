@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>فاتورة الشراء</title>
+    <title>     {{$transaction_type}}
+        {{($Invoice_type)}}
+      </title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         /* تخصيص للطباعة */
@@ -76,22 +78,19 @@
                     {{{" "}}}   {{$SubAccounts->sub_name??null}}  {{{" "}}}</p>
                     @endisset
 
+                    <p>رقم الفاتورة:  {{$DataPurchaseInvoice->purchase_invoice_id??0}}
                 </p>
-                <p>العملة: 
-                    @isset($currency->currency_symbol)
-                    {{$currency->currency_symbol}}</p>
-                    @endisset
+
+               
 
             </div>
             <div>
                 <h2 class="text-lg font-bold">فاتورة :
-                    @isset($accountType)
-                    @foreach ($accountType as $accountTypes)
-                    @if($accountTypes->value === $DataPurchaseInvoice->transaction_type)
-                    {{ $accountTypes->label()}} /{{$DataPurchaseInvoice->Invoice_type??null}}
-                     @endif
-                    @endforeach
-                    @endisset
+                
+                    {{$transaction_type}}
+                    /
+                    {{($Invoice_type)}}
+                  
                 </h2>
             </div>
             <div>
@@ -124,28 +123,24 @@
                         <td>{{$loop->iteration}}</td>
                         <td class="px-2 text-right">{{ $Purchase->Product_name }}</td>
                         <td class="px-2 text-right">
-                            @isset($Categorys)
-                            @foreach ($Categorys as $Category)
-                            @if($Category->categorie_id === $Purchase->categorie_id)
-                            {{ $Category->Categorie_name }}
-                            @endif
-                            @endforeach
-                         
-                            @endisset
+                           
+                            {{ $Purchase->categorie_id }}
+                           
 
                             </td>
                         <td class="px-2 text-center">{{ $Purchase->quantity }}</td>
                         <td class="px-2 text-right">{{number_format( $Purchase->Purchase_price) }}</td>
                         <td class="px-2 text-right">
                             @isset($warehouses)
-                            @foreach ($warehouses as $warehouse)
-                            @if($warehouse->sub_account_id === $Purchase->warehouse_to_id)
-                            {{ $warehouse->sub_name }}
-                            @endif
-                            @endforeach
+                                @foreach ($warehouses as $warehouse)
+                                    @if($warehouse->sub_account_id === ($Purchase->warehouse_to_id ?? $Purchase->warehouse_from_id))
+                                        {{ $warehouse->sub_name }}
+                                        @break
+                                    @endif
+                                @endforeach
                             @endisset
-
                         </td>
+                        
                         <td class="px-2 text-right">{{ number_format($Purchase->Total )}}</td>
                     </tr>
                 @endforeach
@@ -169,6 +164,13 @@
                     <p class="font-semibold">
                         @if ($Purchase_CostSum>0)
                         الجمالي  المصاريف: {{ number_format($Purchase_CostSum ?? 0)}}</p>
+                        <p>العملة: 
+                            @isset($currency->currency_symbol)
+                            {{$currency->currency_symbol}}
+
+                            @endisset
+
+                        </p>
 
                         @endif
                 </div>
@@ -177,7 +179,6 @@
         </div>
         <div class=" bg-white p-4">
 
-              
                     <p class=" text-sm" dir="ltr">  المسؤول : {{($UserName) ?? 0}}</p>
               
                 

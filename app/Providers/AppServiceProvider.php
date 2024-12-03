@@ -6,6 +6,7 @@ use App\Enum\AccountClass;
 use App\Enum\AccountType;
 use App\Enum\Deportatton;
 use App\Enum\IntOrderStatus;
+use App\Enum\PaymentType;
 use App\Enum\TransactionType;
 use App\Models\BusinessData;
 use App\Models\Category;
@@ -76,10 +77,8 @@ class AppServiceProvider extends ServiceProvider
                
             ]);
         }
-
         $accountClasses = AccountClass::cases();
-      
-        
+      $PaymentType=PaymentType::cases();
             $transactionTypes = TransactionType::cases();
             View::share('transactionTypes', $transactionTypes);
         $users=User::all();
@@ -87,6 +86,7 @@ class AppServiceProvider extends ServiceProvider
             'accountClasses'=>$accountClasses,
             'TypesAccounts'=>$TypesAccountName,
             'Deportattons'=>$dataDeportattons,
+            'PaymentType'=>$PaymentType,
             'today '=> Carbon::now()->toDateString(),
             'users'=>$users,
         ]);
@@ -94,17 +94,20 @@ class AppServiceProvider extends ServiceProvider
         $cate=Category::all();
         $buss=BusinessData::first();
         $cu=CurrencySetting::first();
-
+$transaction_typeExchangeBond="سند صرف";
+$transaction_typePaymentBonds="سند قبض";
         View::share([
             'cate'=>$cate,
             'cu'=>$cu,
             'buss'=>$buss,
             'Default_customers'=>$Default_customers,
-            $PaymentBonds=PaymentBond::all(),
+            $PaymentBonds= PaymentBond::where('transaction_type',$transaction_typePaymentBonds)->get(),
+            $ExchangeBond= PaymentBond::where('transaction_type',$transaction_typeExchangeBond)->get(),
+
             $SubAccounts=SubAccount::all(),
            $MainAccounts= MainAccount::all(),
            $Currencies=Currency::all(),
-           'PaymentBonds'=>$PaymentBonds,'SubAccounts'=>$SubAccounts,'MainAccounts'=>$MainAccounts,'Currencies'=>$Currencies,
+           'PaymentBonds'=>$PaymentBonds, 'ExchangeBond'=>$ExchangeBond,'SubAccounts'=>$SubAccounts,'MainAccounts'=>$MainAccounts,'Currencies'=>$Currencies,
 
         ]);
         if(isset($buss)){

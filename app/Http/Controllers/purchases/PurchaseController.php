@@ -4,6 +4,7 @@ namespace App\Http\Controllers\purchases;
 
 use App\Enum\AccountClass;
 use App\Enum\AccountType;
+use App\Enum\PaymentType;
 use App\Enum\TransactionType;
 use App\Http\Controllers\Controller;
 use App\Models\Currency;
@@ -25,6 +26,7 @@ use Mike42\Escpos\Printer;
 use Mike42\Escpos\EscposImage;
 
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;//+
+use NumberToWords\NumberToWords;
 
 use function PHPUnit\Framework\isNull;
 
@@ -70,7 +72,7 @@ class PurchaseController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'Payment_type' => 'required|string',
+            'Payment_type' => 'required|numeric',
             'transaction_type' => 'required|string',
             'mainaccount_debit_id' => 'required|numeric',
             'Supplier_id' => 'required|numeric',
@@ -106,7 +108,7 @@ class PurchaseController extends Controller
             $purchaseInvoice->Paid = 0;
             $purchaseInvoice->User_id = $request->User_id ?? auth()->id();
             $purchaseInvoice->accounting_period_id = $accountingPeriod->accounting_period_id;
-            $purchaseInvoice->Invoice_type = $request->Payment_type;
+            $purchaseInvoice->Invoice_type = $request->payment_type;
             $purchaseInvoice->Supplier_id = $request->Supplier_id;
             $purchaseInvoice ->Currency_id= $request->Currency_id;
             $purchaseInvoice->transaction_type = $request->transaction_type;
@@ -136,7 +138,7 @@ class PurchaseController extends Controller
         }
     
         // التحقق من وجود المنتج في النظام
-        $product = Product::where('product_name', $request->product_name)->first();
+        $product = Product::where('product_id', $request->product_id)->first();
         if (!$product) {
             return response()->json([
                 'success' => false,
@@ -215,7 +217,6 @@ class PurchaseController extends Controller
                     'message' => 'نوع العملية غير معروف.'
                 ]);
         }
-    
         // التحقق من فئة الحساب
         $subAccount = SubAccount::where('sub_account_id', $request->sub_account_debit_id)->first();
         if (($transactionType == 3 && $subAccount->AccountClass != 3) ||
@@ -227,11 +228,10 @@ class PurchaseController extends Controller
                     : 'يجب عليك تحديد حساب التصدير الدائن آخر غير حساب المخازن لإنك تقوم بعملية شراء.'
             ]);
         }
-        
-        $categorieId = Category::where('Categorie_name', $request->Categorie_name)
+        $productName = Product::where('product_id', $request->product_id)->value('Product_name');
+        $categorieId = Category::where('categorie_id', $request->Categorie_name)
         ->where('product_id', $request->product_id)
-        ->value('categorie_id');
-
+        ->value('Categorie_name');
         // إنشاء أو تحديث سجل الشراء
         $purchase = Purchase::updateOrCreate(
             [
@@ -240,12 +240,13 @@ class PurchaseController extends Controller
                 'accounting_period_id' => $accountingPeriod->accounting_period_id,
             ],
             [
-                'Product_name' => $request->product_name,
+                'Product_name' => $productName,
                 'Barcode' => $request->Barcode ?? 0,
                 'quantity' => $request->Quantity,
                 'Purchase_price' => $request->Purchase_price,
                 'Selling_price' => $request->Selling_price,
-                'Total' => $request->Total,
+                'Quantityprice' => $request->Quantity,
+                'Total' => $request->TotalPurchase,
                 'Cost' => $request->Cost,
                 'Currency_id' => $purchaseInvoice->Currency_id,
                 'Supplier_id' => $purchaseInvoice->Supplier_id ?? null,
@@ -267,8 +268,9 @@ class PurchaseController extends Controller
         try {
             $Purchasesum = Purchase::where('Purchase_invoice_id', $purchaseInvoice->purchase_invoice_id )->sum('Total');
             // $Purchasesum = $purchase->sum('Total');
-            $Invoice_type = $request->Payment_type;
-            $pamyment = $Invoice_type === "نقدا" ? $Purchasesum : 0;
+            $Invoice_type = $request->payment_type;
+            $pamyment = in_array($Invoice_type, [1, 3, 4]) ? $Purchasesum : 0;
+
             $Currency=   $request->Currency_id;
             
             $purchaseInvoice->update([
@@ -403,9 +405,40 @@ public function edit($id)
 }
 public function destroy($id)
 {
-    Purchase::where('purchase_id',$id)->delete();
-    return response()->json(['message' => 'تم حذف البيانات بنجاح']);
+    // التحقق من وجود السجل
+    $purchase = Purchase::where('purchase_id', $id)->first();
+
+    if (!$purchase) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'العنصر غير موجود.'
+        ], 404);
+    }
+
+    try {
+        // حذف السجل
+        $purchase->delete();
+
+        // تحديث الإجمالي
+        $Purchasesum = Purchase::where('Purchase_invoice_id', $purchase->Purchase_invoice_id)->sum('Total');
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'تم حذف البيانات بنجاح.',
+            'Purchasesum' => $Purchasesum
+        ]);
+
+    } catch (\Exception $e) {
+        // في حالة حدوث خطأ أثناء الحذف
+        return response()->json([
+            'status' => 'error',
+            'message' => 'حدث خطأ أثناء حذف البيانات. يرجى المحاولة لاحقًا.',
+            'error' => $e->getMessage()
+        ], 500);
+    }
 }
+
+
 
 public function print($id)
 {
@@ -441,19 +474,27 @@ public function print($id)
    $curre=Currency::where('currency_id', $DataPurchaseInvoice->Currency_id)->pluck('currency_name')->first();
 
     // حساب مجموع السعر والتكلفة
-    $Purchase_priceSum = Purchase::where('purchase_invoice_id', $id)->sum('Total');
-    $Purchase_CostSum = Purchase::where('purchase_invoice_id', $id)->sum('Cost');
-
+    $Purchase_priceSum = Purchase::where('Purchase_invoice_id', $id)->sum('Total');
+    $Purchase_CostSum = Purchase::where('Purchase_invoice_id', $id)->sum('Cost');
+  // جلب البيانات وتحويلها
+  $numberToWords = new NumberToWords();
+  $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
+  
+  
     // تحويل القيمة إلى نص مكتوب
-    $priceInWords = $this->numberToWords($Purchase_priceSum,$curre ?? 'ريال');
     return view('invoice_purchases.bills_purchase_show', [
         'DataPurchaseInvoice' => $DataPurchaseInvoice,
         'DataPurchase' => $DataPurchase,
         'SubAccounts' => $SubAccount,
         'Purchase_CostSum' => $Purchase_CostSum,
         'Purchase_priceSum' => $Purchase_priceSum,
-        'priceInWords' => $priceInWords, // القيمة النصية
-        'accountType' => $accountType,
+        'Invoice_type' => PaymentType::tryFrom($DataPurchaseInvoice->Invoice_type)?->label() ?? 'غير معروف',
+        'transaction_type' => TransactionType::tryFrom($DataPurchaseInvoice->transaction_type)?->label() ?? 'غير معروف',
+
+        'priceInWords' =>  is_numeric($Purchase_priceSum) 
+        ? $numberTransformer->toWords($Purchase_priceSum) . ' ' . $curre
+        : 'ريال', // القيمة النصية
+        // 'accountType' => $accountType,
         'Categorys' => $Categorys,
         'currency' => $currency,
         'warehouses' => $SubName,
@@ -462,68 +503,6 @@ public function print($id)
     ]);
 }
 
-private function numberToWords($number, $currency = 'ريال') 
-{
-    if (!is_numeric($number)) {
-        return "الرقم المدخل غير صالح";
-    }
 
-    $number = str_replace([',', ' '], '', $number); // إزالة الفواصل والمسافات
-    $number = (int)$number;
-
-    if ($number == 0) {
-        return "صفر $currency";
-    }
-
-    $units = ['', 'ألف', 'مليون', 'مليار'];
-    $ones = ['', 'واحد', 'اثنان', 'ثلاثة', 'أربعة', 'خمسة', 'ستة', 'سبعة', 'ثمانية', 'تسعة'];
-    $teens = ['عشرة', 'أحد عشر', 'اثنا عشر', 'ثلاثة عشر', 'أربعة عشر', 'خمسة عشر', 'ستة عشر', 'سبعة عشر', 'ثمانية عشر', 'تسعة عشر'];
-    $tens = ['', 'عشرة', 'عشرون', 'ثلاثون', 'أربعون', 'خمسون', 'ستون', 'سبعون', 'ثمانون', 'تسعون'];
-    $hundreds = ['', 'مائة', 'مائتين', 'ثلاثمائة', 'أربعمائة', 'خمسمائة', 'ستمائة', 'سبعمائة', 'ثمانمائة', 'تسعمائة'];
-
-    $parts = [];
-    $unitIndex = 0;
-
-    while ($number > 0) {
-        $chunk = $number % 1000;
-        $number = intdiv($number, 1000);
-
-        if ($chunk > 0) {
-            $words = '';
-
-            // معاملة خاصة لـ 1000
-            if ($chunk == 1 && $unitIndex == 1) { // إذا كان 1 في خانة الألف
-                $words = $units[$unitIndex];
-            } else {
-                // التعامل مع المئات
-                if ($chunk >= 100) {
-                    $words .= $hundreds[intdiv($chunk, 100)] . ' ';
-                    $chunk %= 100;
-                }
-
-                // التعامل مع الأرقام بين 10 و 19
-                if ($chunk >= 10 && $chunk < 20) {
-                    $words .= $teens[$chunk - 10] . ' ';
-                    $chunk = 0;
-                } else if ($chunk >= 20) {
-                    $words .= $tens[intdiv($chunk, 10)] . ' ';
-                    $chunk %= 10;
-                }
-
-                if ($chunk > 0) {
-                    $words .= $ones[$chunk] . ' ';
-                }
-
-                $words = trim($words) . ' ' . $units[$unitIndex];
-            }
-
-            $parts[] = trim($words);
-        }
-
-        $unitIndex++;
-    }
-
-    return implode(' و', array_reverse($parts)) . " $currency";
-}
 
 }

@@ -23,23 +23,34 @@
             <form id="invoiceSales"   >
                 @csrf
                 <div class="flex gap-4">
-                    <div class="flex">
-                        <label for="" class="labelSale">آجل</label>
-                        <input type="radio" name="payment_type" value="on_credit" required>
-                    </div>
-                    <div class="flex">
-                        <label for="" class="labelSale">نقداً</label>
-                        <input type="radio" name="payment_type" value="cash" checked required>
-                    </div>
+                    @foreach ($PaymentType as $index => $item)
+    <div class="flex">
+        <label for="" class="labelSale">{{$item->label()}}</label>
+        <input type="radio" name="payment_type" value="{{$item->value}}" 
+            {{ $index === 0 ? 'checked' : '' }} required>
+    </div>
+@endforeach
+
+                    
                 </div>
                 <div class="grid md:grid-cols-8 gap-2 text-right">
+                    <div>
+                        <label for="transaction_type" class="labelSale">نوع العملية</label>
+                        <select dir="ltr" id="transaction_type" class="inputSale input-field" name="transaction_type">
+                            @foreach ($transactionTypes as $transactionType)
+                                @if (in_array($transactionType->value, [4, 5]))
+                                    <option value="{{ $transactionType->value }}">{{ $transactionType->label() }}</option>
+                                @endif
+                            @endforeach
+                        </select>
+                    </div>
                     <div class="md:ml-6 relative ">
                         <label for="Customer_name_id" class="labelSale">اسم العميل</label>
                         <select name="Customer_name_id" id="Customer_name_id" class="inputSale select2 input-field">
                             @isset($customers)
                             @foreach ($customers as $cur)
                             <option @isset($DefaultCustomer)
-                            @selected($cur->sub_account_id==$DefaultCustomer)
+                            @selected($cur->sub_account_id==$DefaultCustomer->subaccount_id)
                             @endisset
                             value="{{$cur->sub_account_id}}">{{$cur->sub_name}}</option>
                              @endforeach
@@ -91,7 +102,7 @@
                         <input type="hidden" name="User_id" id="User_id" value="{{ Auth::user()->id }}">
                     @endauth
                     <div id="newInvoice1" style="display: block">
-                        <button type="submit" class="inputSale flex font-bold">
+                        <button id="saveinvoiceSales" type="button" class="inputSale flex font-bold">
                             إضافة الفاتورة
                         </button>
                     </div>
@@ -117,7 +128,7 @@
                 </button>
             </div>
             <!-- Modal body -->
-            @include('includes.form')
+            {{-- @include('includes.form') --}}
         </div>
     </div>
 </div>
@@ -133,15 +144,13 @@
                     <select name="account_debitid" id="account_debitid"  dir="ltr" class="input-field select2 inputSale" required>
                         @isset($Warehouse)
                         @foreach ($Warehouse as $cur)
-                        <option @isset($Default_warehouse)
-                        @selected($cur->sub_account_id==$Default_warehouse)
+                        <option @isset($DefaultCustomer)
+                        @selected($cur->sub_account_id==$DefaultCustomer->warehouse_id)
                         @endisset
                         value="{{$cur->sub_account_id}}">{{$cur->sub_name}}</option>
                          @endforeach
                          @endisset
                     </select>
-                    {{-- <option value="{{ $mainAccount->sub_account_id }}">{{ $mainAccount->sub_name }}</option> --}}
-
                 </div>
                 <div>
                     <label for="financial_account_id_main" class="labelSale"> حساب الدفع</label>
@@ -158,6 +167,19 @@
                     <label for="financial_account_id" class="labelSale"> تحديد الحساب</label>
                     <select name="financial_account_id" id="financial_account_id" dir="ltr" class="input-field select2 inputSale" required>
                         <option value="" selected>اختر الحساب </option>
+                         @isset($financialts)
+                         @isset($financial_account)
+                        @foreach ($financialts as $financialt)
+                        @if ($financialt->sub_account_id==$financial_account)
+                        <option  selected value="{{$financialt->sub_account_id}}">{{$financialt->sub_name}}</option>
+
+                        @endif
+                        @endforeach
+                        @endisset
+                        @endisset
+
+
+
                     </select>
                 </div>
             </div>
@@ -341,7 +363,6 @@ form.on('keydown', function (event) {
         event.preventDefault(); // منع الحفظ عند الضغط على زر Enter
     }
 });
-
            // استدعاء وظيفة الحفظ عند الضغط على زر +
         $(document).on('keydown', function (e) {
             if (e.key === '+') {
@@ -349,7 +370,6 @@ form.on('keydown', function (event) {
                 handleSave();
             }
         });
-    
         // استدعاء وظيفة الحفظ عند الضغط على زر الحفظ
         $('#saveButton').on('click', function () {
             handleSave();
@@ -461,72 +481,80 @@ form.on('keydown', function (event) {
 </script>
 
  <script>
-    $(document).ready(function() {
-      
- 
-    $('.select2').select2();
-    const form = $('#invoiceSales');
-        form.on('keydown', function (event) {
-            if (event.key === 'Enter') {
-                event.preventDefault(); // منع الحفظ عند الضغط على زر Enter
-            }
+  $(document).ready(function () {
+    $('.select2').select2(); // تفعيل المكتبة select2
+    $('#saveinvoiceSales').on('click', function () {
+        saveData();
         });
-$('#invoiceSales').on('submit', function (e) {
-    e.preventDefault(); // منع الإرسال الافتراضي للنموذج
+    const form = $('#invoiceSales');
 
-    // تعريف الحقول والرسائل
-    const successMessage = $('#successMessage'),
-          errorMessage = $('#errorMessage'),
-          invoiceField = $('#sales_invoice_id'),
-          customerIdField = $('#Customer_id');
-    const formData = $(this).serialize();
-    $.ajax({
-        url: "{{ route('invoiceSales.store') }}", // مسار التخزين
-        method: 'POST',
-        data: formData,
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // إضافة رمز CSRF
-        },
-        success: function (response) {
-            if (response.success) {
-                // تحديث الحقول إذا كانت موجودة
-                if (invoiceField.length) {
-                    invoiceField.val(response.invoice_number).trigger('change');
-                }
-                if (customerIdField.length) {
-                    customerIdField.val(response.customer_number).trigger('change');
-                }
-
-                // تنظيف الجدول وإظهار رسالة النجاح
-                $('#mainAccountsTable tbody').empty();
-                displayMessage(successMessage, response.message);
-                $('#product_id').select2('open');
-
-
-            } else {
-                displayMessage(errorMessage, response.message || 'حدث خطأ غير معروف.');
-            }
-        },
-        error: function (xhr) {
-            const errorMsg = xhr.responseJSON?.message || 'حدث خطأ غير متوقع.';
-            displayMessage(errorMessage, errorMsg);
+    form.on('keydown', function (event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
         }
     });
 
-    return false; // منع إعادة تحميل الصفحة
+    // الإرسال باستخدام Ctrl + Shift
+    $(document).keydown(function (event) {
+        if (event.ctrlKey && event.shiftKey) {
+            event.preventDefault(); // منع الإرسال الافتراضي للنموذج
+            saveData(); // استدعاء دالة الحفظ
+        }
+    });
+
+    // دالة الحفظ باستخدام Ajax
+    function saveData() {
+        const formData = new FormData(form[0]); // إنشاء FormData من النموذج
+
+        // تعريف الحقول والرسائل
+        const successMessage = $('#successMessage'),
+            errorMessage = $('#errorMessage'),
+            invoiceField = $('#sales_invoice_id'),
+            customerIdField = $('#Customer_id');
+
+        $.ajax({
+            url: '{{ route("invoiceSales.store") }}', // مسار التخزين
+            type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}' // التوكن الخاص بـ Laravel
+            },
+            data: formData,
+            processData: false, // ضروري مع FormData
+            contentType: false, // ضروري مع FormData
+            success: function (response) {
+                if (response.success) {
+                    // تحديث الحقول إذا كانت موجودة
+                    if (invoiceField.length) {
+                        invoiceField.val(response.invoice_number).trigger('change');
+                    }
+                    if (customerIdField.length) {
+                        customerIdField.val(response.customer_number).trigger('change');
+                    }
+
+                    // تنظيف الجدول وإظهار رسالة النجاح
+                    $('#mainAccountsTable tbody').empty();
+                    displayMessage(successMessage, response.message);
+                    $('#product_id').select2('open'); // فتح القائمة المنسدلة
+                } else {
+                    displayMessage(errorMessage, response.message || 'حدث خطأ غير معروف.');
+                }
+            },
+            error: function (xhr) {
+                const errorMsg = xhr.responseJSON?.message || 'حدث خطأ غير متوقع.';
+                displayMessage(errorMessage, errorMsg);
+            }
+        });
+    }
+
+    // دالة مساعدة لعرض الرسائل
+    function displayMessage(element, message, duration = 2000) {
+        element.text(message).show();
+        setTimeout(() => {
+            element.hide();
+        }, duration);
+    }
 });
 
-// دالة مساعدة لعرض الرسائل
-function displayMessage(element, message, duration = 2000) {
-    element.text(message).show();
-    setTimeout(() => {
-        element.hide();
-    }, duration);
-}
-
-
-     
-});
  </script>
 
 <script>

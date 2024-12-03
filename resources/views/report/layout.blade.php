@@ -8,6 +8,7 @@
           <div class="sm:px-7 sm:pt-7  pt-4 flex flex-col sm:w-full border-b border-gray-200 bg-white dark:bg-gray-900 dark:text-white dark:border-gray-800 sticky top-0">
             <div class="flex items-center space-x-3 sm:mt-7 mt-4  sm:text-lg">
               <a href="{{route('report.summary')}}" class="sm:px-3 border-b-2 {{ Request::is('summary') ? 'dark:alert("gamal")  text-blue-700 border-blue-700 ' : 'text-gray-600' }}   border-transparent  dark:text-white dark:border-white pb-1.5 ">كشف حساب</a>
+              <a href="{{route('report.create')}}" class="sm:px-3 border-b-2 {{ Request::is('report/create') ? 'dark:alert("gamal")  text-blue-700 border-blue-700 ' : 'text-gray-600' }}   border-transparent  dark:text-white dark:border-white pb-1.5 ">كشف حساب</a>
               <a href="{{route('report.inventoryReport')}}" class="sm:px-3 border-b-2 border-transparent {{ Request::is('inventoryReport') ? 'text-blue-700 border-blue-700' : 'text-gray-600' }} dark:text-gray-400 pb-1.5"> تقارير المخازن </a>
               <a href="{{route('report.earningsReports')}}" class="sm:px-3 border-b-2 {{ Request::is('earningsReports') ? 'text-blue-700 border-blue-700' : 'text-gray-600' }} border-transparent   dark:text-gray-400 pb-1.5">تقارير ارباح وخسائر الاصناف</a>
               <a href="{{route('report.salesReport')}}" class="sm:px-3 border-b-2 {{ Request::is('salesReport') ? 'text-blue-700 border-blue-700' : 'text-gray-600' }} border-transparent dark:text-gray-400 pb-1.5">تقارير المبيعات</a>
@@ -72,7 +73,7 @@
                         </li>
                     </ul>
                         <div class="border-gray-200 rounded-lg   xl:absolute -top-12 left-2 sm:w-1/3">
-                            <input type="text" class="rounded-md w-full text-left placeholder:text-right " placeholder="اسم {{$name}} او رقم {{$name}}" name="search" value="">
+                            {{-- <input type="text" class="rounded-md w-full text-left placeholder:text-right " placeholder="اسم {{$name}} او رقم {{$name}}" name="search" value=""> --}}
                         </div>
                 </form>
                 <br>

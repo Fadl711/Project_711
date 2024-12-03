@@ -71,7 +71,7 @@ Route::delete('/Category/{Category}',[CategoryController::class,'destroy'])->nam
 Route::get('/purchases/{id}',[PurchaseController::class,'edit'])->name('purchases.edit');
 Route::delete('/purchases/{id}',[PurchaseController::class,'destroy'])->name('purchases.destroy');
 // Route::delete('/purchases/destroyInvoice/{id}',[PurchaseController::class,'destroyInvoice'])->name('purchases.destroyInvoice');
-Route::delete('/purchase-invoices/{id}', [PurchaseController::class, 'deleteInvoice'])->name('purchase-invoice.delete');
+Route::delete('/purchase-invoices/{id}', [InvoicePurchaseController::class, 'deleteInvoice'])->name('purchase-invoice.delete');
 
 
 
@@ -95,6 +95,7 @@ Route::post('/customers/store', [CustomerCoctroller::class, 'store'])->name('cus
 
 Route::get('/customers/show', [CustomerCoctroller::class, 'show'])->name('customers.show');
 Route::get('/customers/{id}/statement', [CustomerCoctroller::class, 'showStatement'])->name('customers.statement');
+Route::get('/report/create',[reportsConreoller::class,'create'])->name('report.create');
 
 Route::post('/invoicePurchases/store', [PurchaseController::class, 'store'])->name('invoicePurchases.store');
 Route::get('/api/products/search', [PurchaseController::class, 'search']);
@@ -109,6 +110,7 @@ Route::get('/Purchases/{id}/main-accounts', [PurchaseController::class, 'getMain
 Route::post('/invoicePurchases/saveAndPrint', [PurchaseController::class, 'saveAndPrint'])->name('invoicePurchases.saveAndPrint');
 Route::get('/get-purchases-by-invoice', [PurchaseController::class, 'getPurchasesByInvoice'])->name('getPurchasesByInvoice');
 Route::get('/invoice_purchases/{id}/print', [PurchaseController::class, 'print'])->name('invoicePurchases.print');
+Route::get('/invoice_purchases/{id}/GetInvoiceNumber', [InvoicePurchaseController::class, 'GetInvoiceNumber'])->name('GetInvoiceNumber');
 
 Route::get('/balancing', [AccountCoctroller::class, 'balancing'])->name('accounts.balancing');
 
@@ -132,16 +134,18 @@ Route::get('/bills_sale_show', [AllBillsController::class, 'bills_sale_show'])->
 
 
 
+Route::get('/api/Receip-invoices/{filterType}', [ReceipController::class, 'getPaymentBond']);
+Route::get('/api/Receip-invoices', [ReceipController::class, 'searchInvoices']);
 
 Route::get('/bonds', [BondController::class, 'bonds'])->name('bonds.index');
-Route::get('/Receip/create', [ReceipController::class, 'create'])->name('create.index');
+Route::get('/Receip/create', [ReceipController::class, 'create'])->name('Receip.create');
 Route::post('/Receip', [ReceipController::class, 'store'])->name('Receip.store');
+Route::get('/Receips/{id}/print', [ReceipController::class, 'print'])->name('receip.print');
 Route::get('/Receip/show_all_receipt', [All_Receipt_BondController::class, 'show_all_receipt'])->name('show_all_receipt');
 Route::get('/Receips/{Receip}', [ReceipController::class, 'show'])->name('receip.show');
-Route::get('/Receips/{id}/print', [ReceipController::class, 'print'])->name('receip.print');
 Route::get('/Receip/{id}/edit', [ReceipController::class, 'edit'])->name('receip.edit');
 Route::put('/Receip/update', [ReceipController::class, 'update'])->name('receip.update');
-Route::delete('/Receips/{Receip}', [ReceipController::class, 'destroy'])->name('receip.destroy');
+Route::delete('/Receips/{id}/destroy', [ReceipController::class, 'destroy'])->name('receip_destroy.destroy');
 Route::post('/Receip/stor', [ReceipController::class, 'stor'])->name('Receip.stor');
 
 Route::get('/exchange/index', [ExchangeController::class, 'index'])->name('exchange.index');
@@ -227,6 +231,7 @@ Route::delete('/settings/warehouse/{id}',[WarehouseController::class,'destroy'])
 
 
 Route::get('/summary',[reportsConreoller::class,'summary'])->name('report.summary');
+
 Route::get('/inventoryReport',[reportsConreoller::class,'inventoryReport'])->name('report.inventoryReport');
 Route::get('/earningsReports',[reportsConreoller::class,'earningsReports'])->name('report.earningsReports');
 Route::get('/salesReport',[reportsConreoller::class,'salesReport'])->name('report.salesReport');

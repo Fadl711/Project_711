@@ -17,71 +17,83 @@
         $('#sub_name').focus();
 
         // التعامل مع إرسال النموذج وحفظ البيانات باستخدام jQuery
-        $('#ajaxForm').on('submit', function(event) {
-            event.preventDefault(); // منع تحديث الصفحة
+        $('#SubAccount').on('submit', function(event) {
+    event.preventDefault(); // منع تحديث الصفحة
 
-            // تجميع بيانات النموذج
-            var formData = $(this).serialize(); // استخدام serialize لجمع البيانات
+    // إخفاء أي رسائل سابقة
+    $('#successMessage').hide();
 
-            // إرسال الطلب باستخدام AJAX
-            $.ajax({
-                url: '{{ route("Main_Account.storc") }}',
-                method: 'POST',
-                data: formData,
-                success: function(data) {
-                    if (data.success) {
-                        // إظهار رسالة النجاح
-                        $('#successMessage').show().text('تم الحفظ بنجاح!');
-                        $('#sub_name').focus(); // إعادة التركيز على حقل الاسم بعد الحفظ
-                        // إخفاء الرسالة بعد 3 ثوانٍ
-                        setTimeout(function() {
-                            $('#successMessage').hide();
-                        }, 8000);
-                        // تفريغ النموذج بعد الحفظ
-                        $('#sub_name').val('');           // إعادة تعيين حقل الاسم
-                        $('#debtor_amount').val('');      // إعادة تعيين حقل المبلغ المدين
-                        $('#creditor_amount').val('');    // إعادة تعيين حقل المبلغ الدائن
-                        $('#Phone').val('');              // إعادة تعيين حقل الهاتف
-                        $('#name_The_known').val('');     // إعادة تعيين حقل الاسم المعروف
-                        $('#Known_phone').val('');        // إعادة تعيين حقل الهاتف المعروف
-                                                // إضافة البيانات المحفوظة إلى الجدول
-                        addToTable(data.DataSubAccount);
-                        $('#sub_name').focus();
+    // إضافة مؤشر تحميل
+    $('#submitButton').prop('disabled', true).text('جارٍ الحفظ...');
 
+    // تجميع بيانات النموذج
+    var formData = $(this).serialize();
 
+    // إرسال الطلب باستخدام AJAX
+    $.ajax({
+        url: '{{ route("Main_Account.storc") }}',
+        method: 'POST',
+        data: formData,
+        success: function(response) {
+            if (response.success) {
+                // إظهار رسالة النجاح
+                $('#successMessage').show().text(response.message);
 
-                    } else {
-                        // إظهار رسالة عند وجود نفس الاسم
-                        $('#successMessage').show().text(data.message || 'يوجد نفس هذا الاسم من قبل');
-                        $('#sub_name').focus();
-                        setTimeout(function() {
-                            $('#successMessage').hide();
-                        }, 8000);
-                    }
-                },
-                error: function(xhr) {
-                    if (xhr.status === 400) {
-                        // إظهار رسالة خطأ عند وجود نفس الاسم
-                        $('#successMessage').show().text(xhr.responseJSON.message);
-                    }
-                
-                }
-            });
-        });
+                // إخفاء الرسالة بعد 3 ثوانٍ
+                setTimeout(function() {
+                    $('#successMessage').hide();
+                }, 3000);
+
+                // إعادة التركيز على حقل معين
+                $('#debtor_amount').val($('#debtor_amount').val() || 0); 
+$('#creditor_amount').val($('#creditor_amount').val() || 0);
+
+                // تفريغ الحقول المحددة فقط
+                $('#sub_name').val('');           // تفريغ حقل الاسم
+                $('#debtor_amount').val('');      // تفريغ حقل المبلغ المدين
+                $('#creditor_amount').val('');    // تفريغ حقل المبلغ الدائن
+                $('#Phone').val('');              // تفريغ حقل الهاتف
+                $('#name_The_known').val('');     // تفريغ حقل الاسم المعروف
+                $('#sub_name').focus();
+
+                // تفعيل الزر مرة أخرى
+                $('#submitButton').prop('disabled', false).text('حفظ');
+            } else {
+                // إظهار رسالة خطأ عند وجود اسم مكرر
+                $('#successMessage').show().text(response.message || 'يوجد نفس هذا الاسم من قبل');
+                setTimeout(function() {
+                    $('#successMessage').hide();
+                }, 8000);
+
+                // إعادة التركيز على الحقل
+                $('#sub_name').focus();
+
+                // تفعيل الزر مرة أخرى
+                $('#submitButton').prop('disabled', false).text('حفظ');
+            }
+        },
+        error: function(xhr) {
+            // التعامل مع الأخطاء
+            let errorMessage = 'حدث خطأ ما. حاول مرة أخرى.';
+            if (xhr.status === 400 && xhr.responseJSON.message) {
+                errorMessage = xhr.responseJSON.message;
+            }
+            $('#successMessage').show().text(errorMessage);
+
+            // إخفاء الرسالة بعد 8 ثوانٍ
+            setTimeout(function() {
+                $('#successMessage').hide();
+            }, 8000);
+
+            // تفعيل الزر مرة أخرى
+            $('#submitButton').prop('disabled', false).text('حفظ');
+        }
+    });
+});
+
 
         // وظيفة لإضافة البيانات إلى الجدول
-        function addToTable(account) {
-            var newRow = `
-                <tr>
-                    <td class="text-right tagTd">${account.Main_id}</td>
-                    <td class="text-right tagTd">${account.sub_name}</td>
-                    <td class="text-right tagTd">${account.debtor_amount || 0}</td>
-                    <td class="text-right tagTd">${account.creditor_amount || 0}</td>
-                    <td class="text-right tagTd">${account.Phone || ''}</td>
-                </tr>
-            `;
-            $('#invoiceItemsTable tbody').append(newRow);
-        }
+       
 
         // منع السلوك الافتراضي لزر Enter
         $('#ajaxForm').on('keypress', function(event) {
@@ -95,8 +107,8 @@
 </script>
 
 <br>
-<div id="SubAccount">
-    <form id="ajaxForm" class="p-4 md:p-5" method="POST">
+<div id="">
+    <form id="SubAccount" class="p-4 md:p-5" method="POST">
         @csrf
         <div id="successMessage" class="alert-success" style="display: none;"></div>
 
@@ -128,13 +140,10 @@
                 <input type="number" name="Phone" id="Phone" class="input-field inputSale" />
             </div>
             <div class="mb-2">
-                <label for="name_The_known" class="labelSale">اسم/ معرف العميل</label>
+                <label for="name_The_known" class="labelSale">العنوان</label>
                 <input type="text" name="name_The_known" id="name_The_known" class="input-field inputSale" />
             </div>
-            <div class="mb-2">
-                <label for="Known_phone" class="labelSale">رقم تلفون/ معرف العميل</label>
-                <input type="text" name="Known_phone" id="Known_phone" class="input-field inputSale" />
-            </div>
+           
         </div>
         @auth
         <input type="hidden" name="User_id" required id="User_id" value="{{Auth::user()->id}}">
@@ -144,19 +153,7 @@
         </button>
     </form>
 
-    <table class="min-w-[85%]" id="invoiceItemsTable">
-        <thead>
-            <tr class="bgcolor">
-                <th class="text-right">رقم الحساب</th>
-                <th class="text-right">اسم الحساب</th>
-                <th class="text-right">الرصيد مدين</th>
-                <th class="text-right">الرصيد دائن</th>
-                <th class="text-right">التلفون</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
+   
 </div>
 
 <div id="errorMessage" style="display: none; color: red;"></div>

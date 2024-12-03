@@ -61,7 +61,7 @@
   </div>
   <div class="mb-2">
     <label class="labelSale  "   for="typeAccount"> تصنيف الحساب</label>
-      <select class=" input-field inputSale text-left " required  name="typeAccount" id="typeAccount">
+      <select class=" input-field inputSale text-left select2 " required  name="typeAccount" id="typeAccount">
         <option selected></option>
         @foreach ($TypesAccounts as $TypesAccount)
         <option value="{{$TypesAccount['id']}}" >{{$TypesAccount['TypesAccountName']}} </option>
@@ -71,17 +71,10 @@
     </select>
 
     </div>
-    <div class="mb-2">
-        <label class="labelSale" for="debtor_amount">  رصيدافتتاحي مدين (علية)</label>
-        <input name="debtor_amount" class="inputSale input-field english-numbers " id="debtor_amount" type="number" autocomplete="off" placeholder="0"/>
-    </div>
-    <div class="mb-2">
-      <label class="labelSale" for="creditor_amount" >رصيدافتتاحي دائن (لة) </label>
-      <input name="creditor_amount" class="inputSale input-field english-numbers" id="creditor_amount" type="number" autocomplete="off"  placeholder="0"/>
-  </div>
+    
   <div class="mb-2">
     <label class="labelSale  " required for="Type_migration"> يرحل الى </label>
-      <select id="Type_migration" class=" text-left input-field inputSale" name="Type_migration">
+      <select id="Type_migration" class=" text-left select2 input-field inputSale" name="Type_migration">
         <option selected></option>
         @foreach ($Deportattons as $Deportatton)
         <option value="{{$Deportatton['id']}}" >{{$Deportatton['Deportatton']}} </option>
@@ -89,18 +82,7 @@
 
       </select>
     </div>
-    <div class="mb-2">
-      <label for="Phone " class="labelSale" >   رقم التلفون الحساب</label>
-      <input name="Phone" class="inputSale input-field english-numbers" id="Phone" type="number" autocomplete="off"  placeholder="0"/>
-  </div>
-  <div class="mb-2">
-      <label for="name_The_known" class="labelSale">اسم/ معرف العميل</label>
-        <input type="text" name="name_The_known" id="name_The_known" placeholder="" class="input-field inputSale" />
-      </div>
-  <div class="mb-2">
-      <label for="Known_phone"  class="labelSale ">رقم تلفون/ معرف العميل</label>
-        <input type="number"  autocomplete="off" name="Known_phone" id="Known_phone"  class="inputSale input-field english-numbers" />
-      </div>
+
       <div class="mb-2">
         <button type="button" id="saveButton" class="input-field text-white inline-flex items-center bgcolor hover:bg-stone-400  font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
 
@@ -239,6 +221,8 @@
 
 <script type="text/javascript">
 $(document).ready(function () {
+  $('.select2').select2();
+
   const form = $('#ajaxForm');
   const successMessage = $('#successMessage');
   const errorMessage = $('#errorMessage');

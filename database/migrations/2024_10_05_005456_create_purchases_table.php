@@ -36,7 +36,7 @@ return new class extends Migration
             $table->integer('warehouse_from_id')->unsigned()->nullable()->comment('المخزن المصدر (للتحويل المخزني)');
             $table->integer('warehouse_to_id')->unsigned()->nullable()->comment('المخزن الوجهة (للتحويل المخزني)');
             $table->integer('Supplier_id')->unsigned()->nullable();
-            $table->integer('categorie_id')->unsigned()->nullable();
+            $table->string('categorie_id')->nullable();
             $table->timestamps();
             $table->foreign('Purchase_invoice_id')->references('Purchase_invoice_id')->on('purchase_invoices')
             ->onDelete('cascade');

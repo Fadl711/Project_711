@@ -21,7 +21,7 @@ return new class extends Migration
             $table->integer('Daily_page_id')->unsigned();
             $table->string('Currency_name')->nullable();
             $table->unsignedInteger('User_id');
-            $table->string('Invoice_type')->nullable();
+            $table->integer('Invoice_type')->nullable()->comment('1: نقداً, : أجل, : تحويل بنكي, : شيك');
             $table->string('daily_entries_type');
             // $table->integer('Type_migration')->nullable();
             $table->integer('Invoice_id')->nullable()->unsigned();

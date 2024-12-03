@@ -57,7 +57,6 @@
                 <th scope="col" class="leading-2 tagHt ">خصم عادي</th>
                 <th scope="col" class="leading-2 tagHt">خصم خاص</th>
                 <th scope="col" class="leading-2 tagHt ">العملة</th>
-                <th scope="col" class="leading-2 tagHt ">المخزن</th>
                 <th scope="col" class="leading-2 tagHt ">ملاحظه</th>
                 <th scope="col" class="leading-2 tagHt">تعديل الشراء</th>
 

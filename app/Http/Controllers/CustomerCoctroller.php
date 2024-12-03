@@ -13,6 +13,7 @@ use App\Models\SubAccount;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use NumberToWords\NumberToWords;
 
 class CustomerCoctroller extends Controller
 {
@@ -49,8 +50,16 @@ $balances = $balances->map(function ($balance) {
 return view('customers.show', compact('balances'));
         // return view('customers.show');
     }
-    public function showStatement($id)
+    public function showStatement(Request $request, $id)
 {
+
+    $validated = $request->validate([
+        'list-radio' => 'required|string',
+        'from-date' => 'nullable|date',
+        'to-date' => 'nullable|date',
+        'main_account_debit_id' => 'required|integer',
+        'sub_account_debit_id' => 'nullable|integer',
+    ]);
     $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
     $customer = SubAccount::where('sub_account_id',$id)->first(); // استرجاع بيانات العميل
     $idCurr=1;
@@ -59,37 +68,28 @@ return view('customers.show', compact('balances'));
     
     // $curre2=Currency::where('currency_id',$curre->Currency_id)->first();
     
-    $currencysettings=$curre->currency_name;
+    $currencysettings=$curre->currency_name ?? 'ريال يمني';
 
     $SumDebtor_amount=DailyEntrie::where('account_debit_id',$customer->sub_account_id)->sum('Amount_debit');
     $SumCredit_amount=DailyEntrie::where('account_Credit_id',$customer->sub_account_id)->sum('Amount_Credit');
-    $Sale_priceSum=$SumDebtor_amount-$SumCredit_amount;
-    $priceInWords = $this->numberToWords($Sale_priceSum,$curre->currency_name);
+    $Sale_priceSum = abs($SumDebtor_amount - $SumCredit_amount);
 
-
+   $numberToWords = new NumberToWords();
+    $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
+    $priceInWords=is_numeric($Sale_priceSum) 
+    ? $numberTransformer->toWords( abs($SumDebtor_amount - $SumCredit_amount)) . ' ' . $currencysettings
+    : 'القيمة غير صالحة';
     $entries = DailyEntrie::where('account_debit_id', $id)
                            ->orWhere('account_Credit_id', $id)
                            ->get(); // استرجاع القيود المرتبطة بالعميل
-                           if($customer->AccountClass===1)
-                           {
-                               $AccountClassName="العميل";
-                           }
-                           if($customer->AccountClass===2)
-                           {
-                               $AccountClassName="المورد";
-                           }
-                           if($customer->AccountClass===3)
-                           {
-                               $AccountClassName="المخزن";
-                           }
-                           if($customer->AccountClass===4)
-                           {
-                               $AccountClassName="الحساب";
-                           }
-                           if($customer->AccountClass===5)
-                           {
-                               $AccountClassName="الصندوق";
-                           }
+                           $accountClasses = [
+                            1 => 'العميل',
+                            2 => 'المورد',
+                            3 => 'المخزن',
+                            4 => 'الحساب',
+                            5 => 'الصندوق',
+                        ];
+                        $AccountClassName = $accountClasses[$customer->AccountClass] ?? 'غير معروف';
     
                            return view('customers.statement', compact('customer', 'entries','AccountClassName','currencysettings','UserName','accountingPeriod','SumCredit_amount','SumDebtor_amount','priceInWords','Sale_priceSum'))->render(); // إرجاع المحتوى كـ HTML
                         }
@@ -107,6 +107,7 @@ return view('customers.show', compact('balances'));
     }
     public function store(Request $request)
     {
+        $User_id=auth()->user()->id;
 
         $debtor_amount = $request->input('debtor_amount', '٠١٢٣٤٥٦٧٨٩');
         $creditor_amount = $request->input('creditor_amount', '٠١٢٣٤٥٦٧٨٩');
@@ -114,9 +115,8 @@ return view('customers.show', compact('balances'));
         $sub_name = $request->sub_name;
 
         $mainAccount=MainAccount::where('AccountClass',AccountClass::CUSTOMER->value)->first();
-        $User_id=auth()->user()->id;
         if (!$mainAccount) {
-            return response()->json(['success' => false, 'message' => 'فشل في إنشاء صفحة يومية']);
+            return response()->json(['success' => false, 'message' => 'لا يوجد حساب رئيسي للعميل']);
         }
 
         $account_names_exist = SubAccount::where('Main_id', $mainAccount->main_account_id)->pluck('sub_name');
@@ -141,9 +141,7 @@ return view('customers.show', compact('balances'));
         $account_debit_id=null;
         $account_Credit_id=null;
         if ($DSubAccount->debtor_amount > 0 || $DSubAccount->creditor_amount > 0) {
-            // if ($DSubAccount->debtor_amount) {
-            //     return response()->json(['success' => false, 'message' =>$DSubAccount->debtor_amount]);
-            // }
+           
           
             if($DSubAccount->debtor_amount>0 )
             {
@@ -153,15 +151,12 @@ return view('customers.show', compact('balances'));
             {
                 $account_Credit_id=$DSubAccount->sub_account_id;
             }
-
             $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
-
+           
                 $today = Carbon::now()->toDateString();
                 $dailyPage = GeneralJournal::whereDate('created_at', $today)->first() ?? GeneralJournal::create([]);
         
-                if (!$dailyPage || !$dailyPage->page_id) {
-                    return response()->json(['success' => false, 'message' => 'فشل في إنشاء صفحة يومية']);
-                }
+               
                 $transaction_type="رصيد افتتاحي";
                   // إعداد بيانات الإدخالات اليومية
           
@@ -184,8 +179,7 @@ return view('customers.show', compact('balances'));
                     'account_Credit_id' => $account_Credit_id,
                     'Statement' => 'فاتورة '." ".'رصيد افتتاحي',
                     'Daily_page_id' => $dailyPage->page_id,
-                    'Invoice_type' => 'رصيد افتتاحي',
-
+                    'Invoice_type' => 5,
                     'Currency_name' => 'ر',
                     'User_id' =>auth()->user()->id,
                     'status_debit' => 'غير مرحل',
@@ -200,69 +194,6 @@ return view('customers.show', compact('balances'));
         return response()->json(['success' => true, 'message' => 'تمت العملية بنجاح', 'DataSubAccount' => $mainAccount], 201);
     
     }
-    private function numberToWords($number,$currency) 
-{
-    if (!is_numeric($number)) {
-        return "الرقم المدخل غير صالح";
-    }
-
-    $number = str_replace([',', ' '], '', $number); // إزالة الفواصل والمسافات
-    $number = (int)$number;
-
-    if ($number == 0) {
-        return "صفر $currency";
-    }
-
-    $units = ['', 'ألف', 'مليون', 'مليار'];
-    $ones = ['', 'واحد', 'اثنان', 'ثلاثة', 'أربعة', 'خمسة', 'ستة', 'سبعة', 'ثمانية', 'تسعة'];
-    $teens = ['عشرة', 'أحد عشر', 'اثنا عشر', 'ثلاثة عشر', 'أربعة عشر', 'خمسة عشر', 'ستة عشر', 'سبعة عشر', 'ثمانية عشر', 'تسعة عشر'];
-    $tens = ['', 'عشرة', 'عشرون', 'ثلاثون', 'أربعون', 'خمسون', 'ستون', 'سبعون', 'ثمانون', 'تسعون'];
-    $hundreds = ['', 'مائة', 'مائتين', 'ثلاثمائة', 'أربعمائة', 'خمسمائة', 'ستمائة', 'سبعمائة', 'ثمانمائة', 'تسعمائة'];
-
-    $parts = [];
-    $unitIndex = 0;
-
-    while ($number > 0) {
-        $chunk = $number % 1000;
-        $number = intdiv($number, 1000);
-
-        if ($chunk > 0) {
-            $words = '';
-
-            // معاملة خاصة لـ 1000
-            if ($chunk == 1 && $unitIndex == 1) { // إذا كان 1 في خانة الألف
-                $words = $units[$unitIndex];
-            } else {
-                // التعامل مع المئات
-                if ($chunk >= 100) {
-                    $words .= $hundreds[intdiv($chunk, 100)] . ' ';
-                    $chunk %= 100;
-                }
-
-                // التعامل مع الأرقام بين 10 و 19
-                if ($chunk >= 10 && $chunk < 20) {
-                    $words .= $teens[$chunk - 10] . ' ';
-                    $chunk = 0;
-                } else if ($chunk >= 20) {
-                    $words .= $tens[intdiv($chunk, 10)] . ' ';
-                    $chunk %= 10;
-                }
-
-                if ($chunk > 0) {
-                    $words .= $ones[$chunk] . ' ';
-                }
-
-                $words = trim($words) . ' ' . $units[$unitIndex];
-            }
-
-            $parts[] = trim($words);
-        }
-
-        $unitIndex++;
-    }
-
-    return implode(' و', array_reverse($parts)) . " $currency";
-}
 
 
 }

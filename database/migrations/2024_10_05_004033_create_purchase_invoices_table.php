@@ -18,7 +18,7 @@ return new class extends Migration
             $table->decimal('Total_cost', 15, 2)->nullable();
             $table->decimal('Paid',15, 2)->nullable();
             $table->integer('User_id')->unsigned();
-            $table->string('Invoice_type')->nullable();
+            $table->integer('Invoice_type')->nullable()->comment('1: نقداً, 2: أجل, 3: تحويل بنكي, 4: شيك');
             $table->integer('Currency_id')->unsigned()->nullable();
             $table->string('currency_symbol')->unique()->nullable();
             $table->decimal('exchange_rate',8,2)->unsigned()->nullable();

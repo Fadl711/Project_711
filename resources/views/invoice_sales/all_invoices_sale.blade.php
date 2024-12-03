@@ -88,7 +88,7 @@
                         <div class="text-gray-700 text-right">تاريخ الفاتورة: <span class="text-sm">${sale.formatted_date}</span></div>
                         <div class="text-gray-700 text-right">اسم .${" "}.${sale.main_account_class}: <span class="text-sm">${sale.Customer_name}</span></div>
                     </div>
-                    <div class="text-gray-700">فاتورة ${sale.transaction_type}: <span class="text-sm">${sale.payment_type === 'cash' ? 'نقداً' : sale.payment_type === 'on_credit' ? 'آجلة' : 'غير معروف'}
+                    <div class="text-gray-700">فاتورة ${sale.transaction_type}: <span class="text-sm">${sale.payment_type}
 </span></div>
                     <div class="text-right">
                         <div>رقم الفاتورة: <span class="text-sm">${sale.invoice_number}</span></div>
