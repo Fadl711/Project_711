@@ -53,13 +53,6 @@ return view('customers.show', compact('balances'));
     public function showStatement(Request $request, $id)
 {
 
-    $validated = $request->validate([
-        'list-radio' => 'required|string',
-        'from-date' => 'nullable|date',
-        'to-date' => 'nullable|date',
-        'main_account_debit_id' => 'required|integer',
-        'sub_account_debit_id' => 'nullable|integer',
-    ]);
     $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
     $customer = SubAccount::where('sub_account_id',$id)->first(); // استرجاع بيانات العميل
     $idCurr=1;
