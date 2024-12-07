@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>إيصال دفع</title>
+    <title>{{$PaymentBond->transaction_type}} ({{$payment_type}})</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         body {
@@ -36,27 +36,8 @@
 </head>
 <body>
 <div class="container mx-auto px-4 py-6">
-    @isset($buss)
-        <div class="header-section border border-gray-300 rounded-lg shadow-md p-4 mb-4">
-            <div class="grid grid-cols-3 gap-4 items-center">
-                <div class="text-right">
-                    <h2 class="text-1xl font-bold text-blue-700 mb-2">{{ $buss->Company_Name }}</h2>
-                    <p class="text-gray-600">{{ $buss->Services }}</p>
-                    <p class="text-gray-600">العنوان: {{ $buss->Company_Address }}</p>
-                    <p class="text-gray-600">التلفون: {{ $buss->Phone_Number }}</p>
-                </div>
-                <div class="flex justify-center">
-                    <img class="w-32 h-32 rounded-lg shadow" src="{{ url($buss->Company_Logo ? 'images/' . $buss->Company_Logo : '') }}" alt="Logo">
-                </div>
-                <div class="text-left">
-                    <h2 class="text-1xl font-bold text-blue-700 mb-2">{{ $buss->Company_NameE }}</h2>
-                    <p class="text-gray-600">{{ $buss->ServicesE }}</p>
-                    <p class="text-gray-600">Address: {{ $buss->Company_AddressE }}</p>
-                    <p class="text-gray-600">Phone: {{ $buss->Phone_Number }}</p>
-                </div>
-            </div>
-        </div>
-    @endisset
+    @include('includes.header2')
+
 
     <div class="bg-white border border-gray-300 rounded-lg shadow-md p-4 mb-4">
         <div class="grid grid-cols-3 gap-4">
@@ -114,6 +95,22 @@
                 </tr>
             </tbody>
         </table>
+        <div class="totals-section py-5">
+            <div class="flex justify-between">
+                <div>
+                   
+                       
+                        <div>
+                            <p class="text-sm" dir="ltr">................ التوقيع المستلم </p>
+    
+                        </div>
+                    </div> 
+
+                    <div>
+                        <p class="text-sm" dir="ltr">المسؤول : {{ $PaymentBond->UserName ?? 0 }}</p>
+                    </div>
+                </div>
+            </div>
     </div>
 
     <!-- أزرار الطباعة -->

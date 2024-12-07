@@ -38,35 +38,8 @@
     </div>
 
 <div class=" rounded-lg shadow-lg px-2 py-2 max-w-[100%] mx-auto  " id="js-print-template  " x-ref="printTemplate">
-    <div class="flex items-center justify-between border-2 p-2  border-black rounded bg-gray-100 ">
-        <div class="w-[40%] max-sm:text-sm">
-            <div class="font-bold  text-right">  محلات صادق الريعاني للتجارة والمقاولات </div>
-            <div class="  text-right">   مواد بناء-كهرباء ادوات صحية-معدات ورش -دهانات</div>
-            <div class=" text-right">     الصباحة خط الحديدة قبل مفرق  لؤلؤة 
-            </div>
-            <div class=" text-right">    776327938-776327938-776327938
-            </div>
-           
-        </div>
-        <div class="text-gray-700 px-4 w-[20%]">
-            <div class="font-bold t block"> 
-                <img class="rounded-full" src="{{url('img/bnaa.png')}}" alt="">
- 
-                  
-                     </div>
-             
+    @include('includes.header2')
 
-        </div>
-        <div class=" w-[40%]  max-sm:text-sm">
-            <div class="font-bold  text-left">   Sadiq AL-Rayani Stores for Trading and Contracting</div>
-            <div class="  text-left">Building materials-electricty-sanitary ware-equipment-end paint-workshops </div>
-            <div class="  text-left">   Swimming on AL-Hodeidah Street before the Pearl Junction
-            </div>
-            <div class="  text-left">    776327938-776327938-776327938
-            </div>
-        
-        </div> 
-    </div>
 
     <div class="flex items-center bg-gray-100 justify-between my-2 px-2 border-2  border-black rounded  ">
         <div class="max-sm:text-sm">

@@ -29,6 +29,7 @@ protected $primaryKey = 'sub_account_id';
     {
         return $this->belongsTo(MainAccount::class, 'Main_id', 'main_account_id');
     }
+    
   
     public function daily_entries()
 {

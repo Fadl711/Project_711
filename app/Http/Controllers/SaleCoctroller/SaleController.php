@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\SaleCoctroller;
 
+use App\Enum\PaymentType;
+use App\Enum\TransactionType;
 use App\Http\Controllers\Controller;
 use App\Models\AccountingPeriod;
 use App\Models\Category;
@@ -25,14 +27,11 @@ class SaleController extends Controller
     public function create(){
         $customers=SubAccount::where('AccountClass',1)->get();
         $financialt=SubAccount::where('AccountClass',5)->get();
-
         $DefaultCustomer  = Default_customer::where('id',1)->first();
         $financial_account = Default_customer::where('id',1)->pluck('financial_account_id')->first();
 
         $Currency_name=Currency::all();
         $MainAccounts= MainAccount::all();
-
-
         return view('sales.create',['customers'=>$customers,
         'DefaultCustomer'=>$DefaultCustomer
         ,'Currency_name'=>$Currency_name,
@@ -60,9 +59,11 @@ class SaleController extends Controller
         ]);
         
         try {
+          
             $Categorie_name=Category::where('categorie_id',$request->Categorie_name)->value('Categorie_name');
             // الحصول على اسم المنتج
-            $productName = Product::where('product_id', $request->product_id)->value('product_name');
+            $Product = Product::where('product_id', $request->product_id)->first();
+
             // التحقق من وجود الفترة المحاسبية
             $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
             if (!$accountingPeriod) {
@@ -85,9 +86,9 @@ class SaleController extends Controller
 
                 ],
                 [
-                    'Product_name' => $productName,
-                    'product_id' => $request->product_id,
-                    'Barcode' => $request->Barcode ?? '',
+                    'Product_name' => $Product->product_name,
+                    'product_id' => $Product->product_id,
+                    'Barcode' => $Product->Barcode ?? '',
                     'Quantityprice' => $request->Quantity,
                     'quantity' => $request->Quantityprice,
                     'Selling_price' => $request->Selling_price,
@@ -96,6 +97,8 @@ class SaleController extends Controller
                     'total_amount' => $request->Quantity * $request->Selling_price,
                     'total_price' => $request->total_price,
                     'currency' => $saleInvoice->currency,
+                    'transaction_type' => $saleInvoice->transaction_type,
+                    'supplier_id' => $Product->supplier_id,
                     'Customer_id' => $saleInvoice->Customer_id ?? null,
                     'User_id' => auth()->id(),
                     'warehouse_to_id' => $request->account_debitid,
@@ -124,13 +127,13 @@ class SaleController extends Controller
            
         }          
 
-            if ($saleInvoice->payment_type === "cash") {
-                $payment_type="نقدا";
+        if (in_array($saleInvoice->payment_type, [1, 3, 4])){
+        $payment_type="نقدا";
                 $account_Credit= $request->account_debitid;
                 $account_debit = $request->financial_account_id;
                 $paid_amount = $net_total_after_discount;
 
-            } elseif ($saleInvoice->payment_type === "on_credit") {
+            } elseif ($saleInvoice->payment_type === 2) {
                 $payment_type="اجل";
 
                 $account_Credit= $request->account_debitid;
@@ -149,16 +152,29 @@ class SaleController extends Controller
                 'paid_amount' => $paid_amount,
                 'remaining_amount' => $net_total_after_discount - $paid_amount,
             ]);
-            
+            $today = Carbon::now()->toDateString();
+            $dailyPage = GeneralJournal::whereDate('created_at', $today)->first();
+            if (!$dailyPage) {
+                $dailyPage = GeneralJournal::create([]);
+            }
+            $transactiontype=   TransactionType::fromValue($saleInvoice->transaction_type)?->label();
+  // الاستجابة بنجاح
+//   return response()->json([
+//     'success' => true,
+//     'message' => 'تمت إضافة عملية البيع بنجاح!'.$transactiontype,
+   
+// ]);
             // إعداد بيانات الإدخالات اليومية
-            $Getentrie_id = DailyEntrie::where('Invoice_id',$saleInvoice->sales_invoice_id)
+            $entrie_id = DailyEntrie::where('Invoice_id',$saleInvoice->sales_invoice_id)
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-            ->where('daily_entries_type',$saleInvoice->transaction_type)
-                ->value('entrie_id');
+            ->where('daily_entries_type',$transactiontype)
+            ->first();
+             $Getentrie_id= $entrie_id->entrie_id ?? null;
+                $daily_page_id = $entrie_id->Daily_page_id ?? $dailyPage->page_id;
             
                 if ($saleInvoice->transaction_type ==4) {
 
-                    $this->createOrUpdateDailyEntry($saleInvoice, $accountingPeriod,$account_Credit, $account_debit, $net_total_after_discount,$Getentrie_id,$payment_type);
+                    $this->createOrUpdateDailyEntry($saleInvoice, $accountingPeriod,$account_Credit, $account_debit, $net_total_after_discount,$Getentrie_id,$payment_type,$daily_page_id);
 
                 }          
         
@@ -182,7 +198,7 @@ class SaleController extends Controller
             ], 500);
         }
     }
-    private function createOrUpdateDailyEntry($saleInvoice, $accountingPeriod,$account_Credit, $account_debit, $net_total_after_discount,$Getentrie_id,$payment_type)
+    private function createOrUpdateDailyEntry($saleInvoice, $accountingPeriod,$account_Credit, $account_debit, $net_total_after_discount,$Getentrie_id,$payment_type,$daily_page_id)
     {
         $today = Carbon::now()->toDateString();
         $dailyPage = GeneralJournal::whereDate('created_at', $today)->first() ?? GeneralJournal::create([]);
@@ -191,30 +207,32 @@ class SaleController extends Controller
                 return response()->json(['success' => false, 'message' => 'فشل في إنشاء صفحة يومية']);
             }
 
-                $commint="لكم";
 
-            if ($saleInvoice->payment_type === "cash") {
-               
+            $commint="لكم";
+                if (in_array($saleInvoice->payment_type, [1, 3, 4]))
+                 {
 
-            } elseif ($saleInvoice->payment_type === "on_credit") {
-                $commint="عليكم";
+
+            } elseif ($saleInvoice->payment_type ===2) {
+                $commint="عليكم فاتورة";
 
             }
+         $transactiontype=   TransactionType::fromValue($saleInvoice->transaction_type)?->label();
                          // إنشاء أو تحديث الإدخالات اليومية
             $dailyEntrie = DailyEntrie::updateOrCreate(
                 [
                     'entrie_id'=> $Getentrie_id,
                     'accounting_period_id' => $accountingPeriod->accounting_period_id,
                     'Invoice_id' => $saleInvoice->sales_invoice_id,
-                    'daily_entries_type' =>'مبيعات',
+                    'daily_entries_type' =>$transactiontype,
                 ],
                 [
                     'account_debit_id' => $account_debit,
                     'Amount_Credit' => $net_total_after_discount ?: 0,
                     'Amount_debit' => $net_total_after_discount ?: 0,
                     'account_Credit_id' => $account_Credit,
-                    'Statement' => $commint." ".'فاتورة مبيعات'." ".$payment_type,
-                    'Daily_page_id' => $dailyPage->page_id,
+                    'Statement' => $commint." ".$transactiontype." ".PaymentType::tryFrom($saleInvoice->payment_type)?->label() ,
+                    'Daily_page_id' => $daily_page_id,
                     'Invoice_type' => $saleInvoice->payment_type,
                     'Currency_name' => 'ر',
                     'User_id' =>auth()->user()->id,
@@ -255,9 +273,9 @@ $total_price_sale = Sale::where('Invoice_id', $saleInvoice->sales_invoice_id )
             ->sum('discount');
             $paid_amount = 0;
             // تحديد الحساب المدين والمبلغ المدفوع بناءً على نوع الدفع
-            if ($saleInvoice->payment_type === "cash") {
-                $paid_amount = $net_total_after_discount;
-            } elseif ($saleInvoice->payment_type === "on_credit") {
+            if (in_array($saleInvoice->payment_type, [1, 3, 4])){
+            $paid_amount = $net_total_after_discount;
+            } elseif ($saleInvoice->payment_type === 2) {
 
                 $paid_amount = $net_total_after_discount - $discount;
                 $paid_amount = 0;
@@ -271,10 +289,12 @@ $total_price_sale = Sale::where('Invoice_id', $saleInvoice->sales_invoice_id )
                 'paid_amount' => $paid_amount,
                 'remaining_amount' => $net_total_after_discount - $paid_amount,
             ]);   
+            $transactiontype=   TransactionType::fromValue($saleInvoice->transaction_type)?->label();
+
             // إعداد بيانات الإدخالات اليومية
             $Getentrie_id = DailyEntrie::where('Invoice_id',$saleInvoice->sales_invoice_id)
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-            ->where('daily_entries_type',$saleInvoice->transaction_type)
+            ->where('daily_entries_type',$transactiontype)
                 ->first();
 
          // تحديث بيانات القيد اليومي
@@ -294,6 +314,8 @@ public function deleteInvoice($id)
                 'message' => 'لم يتم العثور على معرف الفاتورة.'
             ]);      
           }
+          $transactiontype=   TransactionType::fromValue($invoice->transaction_type)?->label();
+
         // حذف جميع المشتريات المرتبطة إن وجدت
         if ($invoice->sales()->exists()) {
             $invoice->sales()->delete();
@@ -306,7 +328,7 @@ public function deleteInvoice($id)
         $invoice->delete();
         $Getentrie_id = DailyEntrie::where('Invoice_id',$invoice->sales_invoice_id)
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-            ->where('daily_entries_type',$invoice->transaction_type)
+            ->where('daily_entries_type',$transactiontype)
             ->first();
             $Getentrie_id->delete();
 

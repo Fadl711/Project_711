@@ -15,7 +15,7 @@ return new class extends Migration
             $table->increments('product_id')->unsigned();
             $table->bigInteger('Barcode')->unsigned()->nullable(); // إضافة العمود Barcode
             $table->unique('Barcode'); 
-                        $table->string('product_name')->unique();
+            $table->string('product_name')->unique();
             $table->integer('Quantity')->nullable();
             $table->double('Purchase_price')->nullable()->unsigned();;
            $table->double('Selling_price')->nullable()->unsigned();;
@@ -25,15 +25,15 @@ return new class extends Migration
             $table->double('Special_discount')->nullable()->unsigned();
             $table->double('Profit')->nullable();
             $table->string('note')->nullable();
-
-
             $table->integer('warehouse_id')->unsigned()->nullable();
+            $table->integer('supplier_id')->unsigned()->nullable();
             $table->integer('currency_id')->unsigned()->nullable();
              $table->integer('User_id')->unsigned();
             $table->integer('Categorie_id')->unsigned()->nullable();
             $table->timestamps();
-            $table->foreign('Categorie_id')->references('categorie_id')->on('categories')->onDelete('cascade');
-            $table->foreign('warehouse_id')->references('warehouse_id')->on('warehouses');
+            $table->foreign('Categorie_id')->references('categorie_id')->on('categories');
+            $table->foreign('warehouse_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
+            $table->foreign('supplier_id')->references('sub_account_id')->on('sub_accounts');
             $table->foreign('User_id')->references('id')->on('users');
             $table->foreign('currency_id')->references('currency_id')->on('currencies');
         });

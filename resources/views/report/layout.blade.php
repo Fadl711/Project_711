@@ -1,8 +1,20 @@
 @extends('layout')
 @section('conm')
+<style>
+    .select2-container--default .select2-dropdown {
+    max-height: 200px; /* ارتفاع القائمة */
+    overflow-y: auto; /* تمكين التمرير إذا تجاوز المحتوى الارتفاع */
+}
+.select2-container--default .select2-selection--single {
+    height: 40px; /* ارتفاع العنصر الأساسي */
+    line-height: 45px; لتوسيط النص عموديًا
+}
+.select2-container--default .select2-selection__rendered {
+    padding-top: 5px; /* تحسين النصوص */
+}
+</style>
 
-
-<div class="bg-gray-100 dark:bg-gray-900 dark:text-white text-gray-600 h-screen flex overflow-hidden text-sm">
+<div class="bg-gray-100 dark:bg-gray-900 dark:text-white text-gray-600 h-screen  overflow-hidden text-sm">
 
         <div class="flex-grow bg-white dark:bg-gray-900 overflow-y-auto">
           <div class="sm:px-7 sm:pt-7  pt-4 flex flex-col sm:w-full border-b border-gray-200 bg-white dark:bg-gray-900 dark:text-white dark:border-gray-800 sticky top-0">
@@ -24,63 +36,227 @@
                 </a>
             </div>
           </div>
+        </div>
+    
+ 
+          <h1>تقرير كشف حساب</h1>
+          
+          <form id="Account" method="POST" class="mb-2">
+              @csrf
+              <ul class="flex flex-col sm:flex-row gap-4 items-center bg-white p-1 rounded-lg shadow-md mb-2">
+                  <li class="w-full text-center">
+                      <label for="horizontal-list-radio-license" class="labelSale">إعدادات العرض</label>
+                  </li>
+                  @foreach(['1' => 'تلقائي', '2' => 'اليوم', '3' => 'هذا الأسبوع', '4' => 'هذا الشهر'] as $key => $label)
+                      <li class="w-full text-center">
+                          <input type="radio" name="dateList" value="{{ $key }}" {{ $key == 1 ? 'checked' : '' }} class="mr-2"> {{ $label }}
+                      </li>
+                  @endforeach
+                  <li class="w-full flex items-center justify-center">
+                      <input type="checkbox" name="list-radio" value="5" class="mr-2">
+                      <label class="text-sm font-medium">من:</label>
+                      <input type="date" name="from-date" class="mx-2 p-2 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                  </li>
+                  <li class="w-full flex items-center justify-center">
+                      <label class="text-sm font-medium">إلى:</label>
+                      <input type="date" name="to-date" class="mx-2 p-2 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                  </li>
+              </ul>
+          
+              <div class="gap-2 grid grid-cols-4 bg-white p-1 rounded-lg shadow-md mb-2">
+                  <div>
+                      <label for="warehouse_id" class="labelSale"> المخزن</label>
+                      <select name="warehouse_id" id="warehouse_id" class="input-field select2 inputSale" required>
+                          <option value="" selected>اختر المخزن</option>
+                          @isset($Warehouse)
+                              
+                          @foreach($Warehouse as $mainAccount)
+                              <option value="{{ $mainAccount->sub_account_id }}">
+                                  {{ $mainAccount->sub_name }}-{{ $mainAccount->sub_account_id }}
+                              </option>
+                          @endforeach
+                          @endisset
 
-            <form  class="p-1 shadow-md relative ">
-                    <ul class="items-center w-full  font-medium text-gray-900 bg-white border border-indigo-700 rounded-lg sm:flex dark:bg-gray-700 dark:border-indigo-700 dark:text-white">
-                        <li class="w-full text-center border-b border-indigo-700 sm:border-b-0 sm:border-r dark:border-indigo-700">
-                            <div class=" items-center ">
-                                <label for="horizontal-list-radio-license" class="labelSale">إعدادات العرض والبحث  </label>
-                            </div>
-                        </li>
-                        @yield('nav')
+                      </select>
+                  </div>
+                  <div>
+                      <label for="product_name" class="labelSale"> اسم المنتج</label>
+                      <select name="product_name" id="product_name" class="input-field select2 inputSale" required>
+                          <option value="" selected>اختر  المنتج</option>
+                      </select>
+                  </div>
+                  <div class="">
+                    <label for="Report_Type" class="labelSale"> نوع التقرير</label>
+                    <select name="Report_Type" id="Report_Type" class="input-field select2 inputSale" required>
+                        <option value="" selected>اختر المخزن</option>
+                        @foreach(['storeData' => 'بيانات المخزن', 'stordeData' => ' المنتج المحدد'] as $key => $label)
 
-                        <li class="w-full text-center border-b border-indigo-700 sm:border-b-0 sm:border-r dark:border-gray-600 ">
-                            <div class=" items-center ">
-                                <label for="horizontal-list-radio-license" class="labelSale" >الكل </label>
-                                <input  id="horizontal-list-radio-license" type="radio" value="all" name="list-radio" class="  bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                            </div>
-                        </li>
-                        <li class="w-full text-center border-b border-indigo-700 sm:border-b-0 sm:border-r dark:border-gray-600 ">
-                            <div class=" items-center ">
-                                <label for="horizontal-list-radio-license" class="labelSale" >اليوم </label>
-                                <input  id="horizontal-list-radio-license" type="radio" value="today" name="list-radio" class="  bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                            </div>
-                        </li>
-                        <li class="w-full text-center border-b border-indigo-700 sm:border-b-0 sm:border-r dark:border-gray-600">
-                            <div class=" items-center ">
-                                <label for="horizontal-list-radio-id" class="labelSale">هذا الاسبوع </label>
-                                <input id="horizontal-list-radio-id" type="radio" value="week" name="list-radio" class="  bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                            </div>
-                        </li>
-                        <li class="w-full text-center border-b border-indigo-700 sm:border-b-0 sm:border-r dark:border-gray-600">
-                            <div class=" items-center text-center ">
-                                <label for="horizontal-list-radio-military" class="labelSale ">هذا الشهر</label>
-                                <input id="horizontal-list-radio-military" type="radio" value="month" name="list-radio" class="  bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                            </div>
-                        </li>
-                        <li class="w-full text-center border-b border-indigo-700 sm:border-b-0 sm:border-r dark:border-gray-600">
-                            <div class=" items-center  p-1">
-                                <label for="horizontal" class="w-full  ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">من تاريخ </label>
+                        <option value="{{ $key }}" > {{ $label }}</option>
+                        @endforeach
 
-                                <input name="horizontal" class="inputSale " id="" type="date" placeholder=""/>
-                            </div>
-                        </li>
-                        <li class="w-full text-center border-b border-indigo-700 sm:border-b-0 sm:border-r dark:border-gray-600">
-                            <div class=" items-center  p-1">
-                                <label for="horizontal-list-radio-passpot" class="w-full  ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"> الى تاريخ </label>
-                                <input name="horizontal-list-radio-passpot" class="inputSale " id="" type="date" placeholder=""/>
-                            </div>
-                        </li>
-                    </ul>
-                        <div class="border-gray-200 rounded-lg   xl:absolute -top-12 left-2 sm:w-1/3">
-                            {{-- <input type="text" class="rounded-md w-full text-left placeholder:text-right " placeholder="اسم {{$name}} او رقم {{$name}}" name="search" value=""> --}}
-                        </div>
-                </form>
-                <br>
-                @yield('report')
-            </div>
-  </div>
-</div>
+                    </select>
+
+
+                </div>
+                  <div class="gap-2 grid grid-cols-2">
+                      @foreach(['ShowAllProducts' => ' عرض كل المنتجات', 'SelectedProduct' => ' المنتج المحدد'] as $key => $label)
+                      <div class="flex">
+                          <input 
+                              type="radio" 
+                              name="DisplayMethod" 
+                              value="{{ $key }}" 
+                              class="mr-2"
+                              {{ (old('DisplayMethod', $selectedAccountListRadio ?? 'SelectedProduct') === $key) ? 'checked' : '' }}>
+                          <label class="labelSale">{{ $label }}</label>
+                      </div>
+                  @endforeach
+                  
+                      <div class="flex ">
+                          <input type="radio" name="Quantit" value="Quantityonly" class="mr-2">  
+                          <label for="" class="labelSale">  الكمية فقط</label>
+                      </div>
+                      <div class="flex ">
+                          <input type="radio" name="Quantit" value="QuantityCosts" checked class="mr-2">  
+                          <label for="" class="labelSale  ">   الكمية والتكاليف</label>
+                      </div>
+                  </div>
+                  
+              </div>
+          </form>
+          <div id="errorMessage" class="text-red-500 text-xs mt-2 hidden"></div>
+          <button onclick="openInvoiceWindow(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح الفاتورة</button>
+          <button onclick="openAndPrintInvoice2(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح وطباعة الفاتورة</button>
+          <div id="successMessage" style="display:none;" class="text-red-500 font-semibold mt-2"></div>
+        </div>
+<script></script>
+         
+          <script>
+                $(document).ready(function() {
+    $('.select2').select2();
+
+    $('#warehouse_id').on('change', function() {
+    const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي
+    showProductName(mainAccountId);
+    setTimeout(() => {
+        $('#warehouse_id').select2('close'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
+        // $('#Supplier_id').select2('open');
+    }, 1000);
+
+});
+
+function showProductName(mainAccountId)
+{
+     var  productname= $('#product_name');
+  
+    if (mainAccountId!==null) {
+        
+        $.ajax({
+            url: `/all-products/${mainAccountId}/show`, // استخدام القيم الديناميكية
+            
+            type: 'GET',
+            dataType: 'json',
+            
+            success: function(data) {
+                productname.empty();
+                const productnameOptions = data.map(uniqueProduct =>
+                `<option value="${uniqueProduct.product_id}">${uniqueProduct.Product_name}</option>`
+            ).join('');
+
+        // إضافة الخيارات الجديدة إلى القائمة الفرعية
+        productname.append(productnameOptions);
+        productname.select2('destroy').select2();
+        
+        // إعادة تهيئة Select2 بعد إضافة الخيارات
+    },
+        error: function(xhr) {
+            console.error('حدث خطأ في الحصول على  المنتاج.', xhr.responseText);
+        }
+    });
+};
+}
+});
+             function openInvoiceWindow(event) {
+                event.preventDefault(); // منع تحديث الصفحة
+             
+              let invoiceField = 0; // تعريف المتغير بـ let لتجنب الأخطاء
+              const warehouseid = $('#warehouse_id').val();
+              const productname = $('#product_name').val();
+              const DisplayMethod = $('input[name="DisplayMethod"]:checked').val(); // الخيار المحدد لعرض القائمة
+              const Quantit = $('input[name="Quantit"]:checked').val(); // الخيار المحدد لعرض القائمة
+              const dateList = $('input[name="dateList"]:checked').val(); // الخيار المحدد لعرض القائمة
+              const Report_Type = $('#Report_Type').val(); // الحساب الرئيسي أو الفرعي
+            //   const viewType = $('input[name="list"]:checked').val(); // كشف كلي أو تحليلي
+        
+          
+          if(DisplayMethod=="SelectedProduct")
+          {
+              if (productname) {
+                  invoiceField = productname;
+              }
+          }
+          if(DisplayMethod=="ShowAllProducts")
+          {
+              if (warehouseid) {
+                  invoiceField = warehouseid;
+              }
+          }
+         
+              
+          
+         
+              if (invoiceField) {
+                  const url = `{{ route('report.print', ':invoiceField') }}`
+                      .replace(':invoiceField', invoiceField)
+                      + `?warehouseid=${warehouseid}&productname=${productname}&DisplayMethod=${DisplayMethod}&Quantit=${Quantit}`;
+          
+                  window.open(url, '_blank', 'width=800,height=800');
+              } else {
+                  displayMessage('يرجى تحديد الحساب الفرعي', 'error'); // عرض رسالة خطأ
+              }
+          }
+          
+              
+              function openAndPrintInvoice2(event) {
+                event.preventDefault(); // منع تحديث الصفحة
+              
+                  const invoiceField = $('#product_name').val();
+              
+                  if (invoiceField) {
+                  const url = `{{ route('report.print', ':invoiceField') }}`
+                      .replace(':invoiceField', invoiceField)
+                      + `?warehouseid=${warehouseid}&productname=${productname}&DisplayMethod=${DisplayMethod}`;
+          
+                  window.open(url, '_blank', 'width=800,height=800');
+               if (newWindow) {
+                          newWindow.onload = function() {
+                              setTimeout(() => {
+                                  newWindow.print();
+                                  newWindow.close();
+                              }, 1000);
+                          };
+                      } else {
+                          displayMessage('تعذر فتح النافذة. يرجى التحقق من إعدادات المتصفح.', 'error');
+                      }
+                  } else {
+                      displayMessage('يرجى تحديد الحساب الفرعي', 'error');
+                  }
+              }
+              
+              function displayMessage(message, type) {
+                  const successMessage = $('#successMessage');
+                  successMessage
+                      .text(message)
+                      .removeClass()
+                      .addClass(type === 'error' ? 'text-red-500 font-semibold' : 'text-green-500 font-semibold')
+                      .fadeIn();
+              
+                  setTimeout(() => {
+                      successMessage.fadeOut();
+                  }, 3000);
+              }
+              </script>
+              
+        
 
 <script>
     function myfun(){

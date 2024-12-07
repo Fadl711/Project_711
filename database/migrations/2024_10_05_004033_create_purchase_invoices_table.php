@@ -25,7 +25,10 @@ return new class extends Migration
             $table->unsignedTinyInteger('transaction_type')->comment('يحدد نوع المعاملة');
             $table->integer('Supplier_id')->unsigned()->nullable();
             $table->integer('accounting_period_id')->unsigned();
+            $table->integer('account_id')->unsigned()->nullable()->comment('الحساب المرتبط بدفع');
           $table->timestamps();
+          $table->foreign('account_id')->references('sub_account_id')->on('sub_accounts')
+          ->onDelete('set null');
             $table->foreign('Supplier_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
             $table->foreign('User_id')->references('id')->on('users');
             

@@ -24,6 +24,8 @@ class CustomerCoctroller extends Controller
     }
     public function show(){
  // استعلام لجمع البيانات المدينة والدائنة
+ $accountingPeriod = AccountingPeriod::where('is_closed',false)->first();
+
  $balances = DailyEntrie::selectRaw(
     'sub_accounts.sub_account_id,
      sub_accounts.sub_name,
@@ -31,6 +33,8 @@ class CustomerCoctroller extends Controller
      SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_debit ELSE 0 END) as total_debit,
      SUM(CASE WHEN daily_entries.account_Credit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_Credit ELSE 0 END) as total_credit'
 )
+->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id)
+
 ->join('sub_accounts', function ($join) {
     $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')
          ->orOn('daily_entries.account_Credit_id', '=', 'sub_accounts.sub_account_id');
@@ -50,31 +54,340 @@ $balances = $balances->map(function ($balance) {
 return view('customers.show', compact('balances'));
         // return view('customers.show');
     }
-    public function showStatement(Request $request, $id)
+
+    public function createStatement(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'list' => 'nullable|string',
+            'listradio' => 'nullable|string',
+            'accountlistradio' => 'nullable|string|max:255',
+        ]);
+
+        if ($validated['accountlistradio'] === "subAccount") 
+        {
+            if ($validated['list'] === "summary") 
+            {
+                return $this->showStatementSubAccountTotally($validated['listradio'], $id);
+
+            }
+            elseif ($validated['list'] === "detail")
+            {
+                return $this->showStatementSubAccountMyanalysis($validated['listradio'], $id);
+                
+            }
+
+
+        } 
+        if ($validated['accountlistradio'] === "mainAccount") 
+        {
+            if ($validated['list'] === "summary") 
+            {
+                return $this->showStatementMainAccountTotally($validated['listradio'], $id);
+
+            }
+            elseif ($validated['list'] === "detail")
+            {
+                return $this->getDailyEntriesMainAccountMyanalysis($validated['listradio'], $id);
+                
+            }
+
+        }
+        
+    }
+    public function showStatementMainAccountTotally($validated, $id)
+    {
+        $Myanalysis="كلي";
+        try {
+            // التحقق من الحساب الرئيسي
+            $customer = MainAccount::where('main_account_id', $id)->first();
+            if (!$customer) {
+                return response()->json(['error' => 'الحساب الرئيسي غير موجود'], 404);
+            }
+    
+            // الحصول على الفترة المحاسبية المفتوحة
+            $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+    
+            $query = DailyEntrie::with(['debitAccount', 'debitAccount.mainAccount', 'creditAccount', 'creditAccount.mainAccount'])
+            ->selectRaw(
+                'daily_entries.account_debit_id,
+                 daily_entries.daily_entries_type,
+                 daily_entries.account_Credit_id,
+                 daily_entries.Invoice_type,
+                 daily_entries.Invoice_id,
+                 daily_entries.Statement,
+                 daily_entries.entrie_id,
+                 daily_entries.created_at,
+                 sub_accounts.sub_account_id,
+                 main_accounts.main_account_id,
+                 SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_debit ELSE 0 END) as total_debit,
+                 SUM(CASE WHEN daily_entries.account_Credit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_Credit ELSE 0 END) as total_credit'
+            )
+            ->join('sub_accounts', function ($join) {
+                $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')
+                     ->orOn('daily_entries.account_Credit_id', '=', 'sub_accounts.sub_account_id');
+            })
+            ->join('main_accounts', 'sub_accounts.Main_id', '=', 'main_accounts.main_account_id')
+            ->where('main_accounts.main_account_id', $id)
+            ->groupBy(
+                'sub_accounts.sub_account_id',
+                'main_accounts.main_account_id',
+                'daily_entries.account_debit_id',
+                'daily_entries.Invoice_type',
+                'daily_entries.account_Credit_id',
+                'daily_entries.daily_entries_type',
+                'daily_entries.Statement',
+                'daily_entries.entrie_id',
+                'daily_entries.Invoice_id',
+                'daily_entries.created_at'
+            )
+            ->orderBy('created_at', 'asc'); // تصحيح ترتيب النتائج
+            $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
+
+            $startDate = null;
+            $endDate = null;
+            
+            // تخصيص الفترة الزمنية بناءً على المدخلات
+            switch ($validated ?? '') {
+                case '2': // اليوم
+                    $startDate = now()->toDateString();
+                    $endDate = now()->toDateString();
+                    $query->whereDate('daily_entries.created_at', $startDate);
+                    break;
+                case '3': // هذا الأسبوع
+                    $startDate = now()->startOfWeek()->toDateString();
+                    $endDate = now()->endOfWeek()->toDateString();
+                    $query->whereBetween('daily_entries.created_at', [$startDate, $endDate]);
+                    break;
+                case '4': // هذا الشهر
+                    $startDate = now()->startOfMonth()->toDateString();
+                    $endDate = now()->endOfMonth()->toDateString();
+                    $query->whereMonth('daily_entries.created_at', now()->month)
+                          ->whereYear('daily_entries.created_at', now()->year);
+                    break;
+                default: // عرض كل القيود
+                    $startDate = $accountingPeriod->created_at?->format('Y-m-d') ?? 'غير متوفر';
+                    $endDate = now()->toDateString();
+                    break;
+            }
+    
+            // جلب القيود اليومية مع الإجماليات
+            $entriesTotally = $query->get();
+    
+            // حساب الإجماليات (بناءً على البيانات المسترجعة)
+            $SumDebtor_amount = $entriesTotally->sum('total_debit');
+            $SumCredit_amount = $entriesTotally->sum('total_credit');
+    
+            // حساب الفرق (الربح/الخسارة)
+            $Sale_priceSum = abs($SumDebtor_amount - $SumCredit_amount);
+    
+            // تحويل القيمة إلى كلمات
+            $numberToWords = new NumberToWords();
+            $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
+            $currencySetting = CurrencySetting::find(1);
+            $currencyName = $currencySetting->currency_name ?? 'ريال يمني';
+    
+            $priceInWords = is_numeric($Sale_priceSum)
+                ? $numberTransformer->toWords($Sale_priceSum) . ' ' . $currencyName
+                : 'القيمة غير صالحة';
+                $accountClasses = [
+                    1 => 'العميل',
+                    2 => 'المورد',
+                    3 => 'المخزن',
+                    5 => 'الصندوق',
+                ];
+                $AccountClassName = $accountClasses[$customer->AccountClass] ?? 'غير معروف';
+
+                $AccountClassName ='';
+                $UserName = User::where('id',auth()->user()->id,)->pluck('name')->first();
+
+
+            // إرجاع العرض
+            return view('customers.statement', compact(
+                'startDate', 'endDate',
+                'customer',
+                'Myanalysis',
+                'entriesTotally',
+                'currencyName',
+                'accountingPeriod',
+                'SumCredit_amount',
+                'SumDebtor_amount',
+                'priceInWords',
+                'AccountClassName',
+                'UserName',
+                'Sale_priceSum'
+
+            ));
+    
+        } catch (\Exception $e) {
+            // التعامل مع الأخطاء
+            return response()->json(['error' => 'حدث خطأ أثناء معالجة الطلب: ' . $e->getMessage()], 500);
+        }
+    }
+    public function showStatementSubAccountTotally($validated, $id)
+    {
+        $Myanalysis="كلي";
+
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+        $customer = SubAccount::where('sub_account_id',$id)->first(); // استرجاع بيانات العميل
+        $idCurr=1;
+        $curre=CurrencySetting::where('currency_settings_id',$idCurr)->first(); 
+        $UserName = User::where('id',auth()->user()->id,)->pluck('name')->first();    
+        $currencysettings=$curre->currency_name ?? 'ريال يمني';
+    
+     
+        $query = DailyEntrie::with(['debitAccount', 'debitAccount.mainAccount', 'creditAccount', 'creditAccount.mainAccount'])
+        ->selectRaw(
+            '
+             SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_debit ELSE 0 END) as total_debit,
+             SUM(CASE WHEN daily_entries.account_Credit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_Credit ELSE 0 END) as total_credit'
+        )
+        ->join('sub_accounts', function ($join) {
+            $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')
+                 ->orOn('daily_entries.account_Credit_id', '=', 'sub_accounts.sub_account_id');
+        })
+        ->where('sub_accounts.sub_account_id', $id); // إضافة الشرط للحساب الفرعي
+        $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
+        $startDate = null;
+$endDate = null;
+
+      // تخصيص الفترة الزمنية بناءً على المدخلات
+      switch ($validated) {
+        case '2': // اليوم
+            $startDate = now()->toDateString();
+            $endDate = now()->toDateString();
+            $query->whereDate('daily_entries.created_at', $startDate);
+            break;
+        case '3': // هذا الأسبوع
+            $startDate = now()->startOfWeek()->toDateString();
+            $endDate = now()->endOfWeek()->toDateString();
+            $query->whereBetween('daily_entries.created_at', [$startDate, $endDate]);
+            break;
+        case '4': // هذا الشهر
+            $startDate = now()->startOfMonth()->toDateString();
+            $endDate = now()->endOfMonth()->toDateString();
+            $query->whereMonth('daily_entries.created_at', now()->month)
+                  ->whereYear('daily_entries.created_at', now()->year);
+            break;
+        default: // عرض كل القيود
+            $startDate = $accountingPeriod->created_at?->format('Y-m-d') ?? 'غير متوفر';
+            $endDate = now()->toDateString();
+            break;
+    }
+                                    // جلب القيود اليومية مع الإجماليات
+                                    $entriesTotally = $query->get();
+                             
+                                                        
+                                    // حساب الإجماليات (بناءً على البيانات المسترجعة)
+                                    $SumDebtor_amount = $entriesTotally->sum('total_debit');
+                                    $SumCredit_amount = $entriesTotally->sum('total_credit');    
+                                
+                                    $Sale_priceSum = abs($SumDebtor_amount - $SumCredit_amount);
+                                
+                                   $numberToWords = new NumberToWords();
+                                    $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
+                                    $priceInWords=is_numeric($Sale_priceSum) 
+                                    ? $numberTransformer->toWords( abs($SumDebtor_amount - $SumCredit_amount)) . ' ' . $currencysettings
+                                    : 'القيمة غير صالحة';
+                               $accountClasses = [
+                                1 => 'العميل',
+                                2 => 'المورد',
+                                3 => 'المخزن',
+                                4 => 'الحساب',
+                                5 => 'الصندوق',
+                            ];
+                            $AccountClassName = $accountClasses[$customer->AccountClass] ?? 'غير معروف';
+        
+      
+                            return view('customers.statement', compact('startDate', 'endDate',
+'customer','Myanalysis', 'entriesTotally','AccountClassName','currencysettings','UserName','accountingPeriod','SumCredit_amount','SumDebtor_amount','priceInWords','Sale_priceSum'))->render(); // إرجاع المحتوى كـ HTML
+
+
+}
+    public function showStatementSubAccountMyanalysis($validated, $id)
 {
+    $Myanalysis="تحليلي";
 
     $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
     $customer = SubAccount::where('sub_account_id',$id)->first(); // استرجاع بيانات العميل
     $idCurr=1;
     $curre=CurrencySetting::where('currency_settings_id',$idCurr)->first(); 
-    $UserName = User::where('id',auth()->user()->id,)->pluck('name')->first();
-    
-    // $curre2=Currency::where('currency_id',$curre->Currency_id)->first();
-    
+    $UserName = User::where('id',auth()->user()->id,)->pluck('name')->first();    
     $currencysettings=$curre->currency_name ?? 'ريال يمني';
 
-    $SumDebtor_amount=DailyEntrie::where('account_debit_id',$customer->sub_account_id)->sum('Amount_debit');
-    $SumCredit_amount=DailyEntrie::where('account_Credit_id',$customer->sub_account_id)->sum('Amount_Credit');
-    $Sale_priceSum = abs($SumDebtor_amount - $SumCredit_amount);
-
-   $numberToWords = new NumberToWords();
-    $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
-    $priceInWords=is_numeric($Sale_priceSum) 
-    ? $numberTransformer->toWords( abs($SumDebtor_amount - $SumCredit_amount)) . ' ' . $currencysettings
-    : 'القيمة غير صالحة';
-    $entries = DailyEntrie::where('account_debit_id', $id)
-                           ->orWhere('account_Credit_id', $id)
-                           ->get(); // استرجاع القيود المرتبطة بالعميل
+ 
+    $query = DailyEntrie::with(['debitAccount', 'debitAccount.mainAccount', 'creditAccount', 'creditAccount.mainAccount'])
+    ->selectRaw(
+        'daily_entries.account_debit_id,
+         daily_entries.daily_entries_type,
+         daily_entries.account_Credit_id,
+         daily_entries.Invoice_type,
+         daily_entries.Invoice_id,
+         daily_entries.Statement,
+         daily_entries.entrie_id,
+         daily_entries.created_at,
+  
+         SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_debit ELSE 0 END) as total_debit,
+         SUM(CASE WHEN daily_entries.account_Credit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_Credit ELSE 0 END) as total_credit'
+    )
+    ->join('sub_accounts', function ($join) {
+        $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')
+             ->orOn('daily_entries.account_Credit_id', '=', 'sub_accounts.sub_account_id');
+    })
+    ->where('sub_accounts.sub_account_id', $id) // إضافة الشرط للحساب الفرعي
+    ->groupBy(
+    
+        'daily_entries.account_debit_id',
+        'daily_entries.Invoice_type',
+        'daily_entries.account_Credit_id',
+        'daily_entries.daily_entries_type',
+        'daily_entries.Statement',
+        'daily_entries.entrie_id',
+        'daily_entries.Invoice_id',
+        'daily_entries.created_at'
+    )
+    ->orderBy('daily_entries.created_at', 'asc'); // تصحيح ترتيب النتائج
+    $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
+    $startDate = null;
+    $endDate = null;
+          // تخصيص الفترة الزمنية بناءً على المدخلات
+          switch ($validated ?? '') {
+            case '2': // اليوم
+                $startDate = now()->toDateString();
+                $endDate = now()->toDateString();
+                $query->whereDate('daily_entries.created_at', $startDate);
+                break;
+            case '3': // هذا الأسبوع
+                $startDate = now()->startOfWeek()->toDateString();
+                $endDate = now()->endOfWeek()->toDateString();
+                $query->whereBetween('daily_entries.created_at', [$startDate, $endDate]);
+                break;
+            case '4': // هذا الشهر
+                $startDate = now()->startOfMonth()->toDateString();
+                $endDate = now()->endOfMonth()->toDateString();
+                $query->whereMonth('daily_entries.created_at', now()->month)
+                      ->whereYear('daily_entries.created_at', now()->year);
+                break;
+            default: // عرض كل القيود
+                $startDate = $accountingPeriod->created_at?->format('Y-m-d') ?? 'غير متوفر';
+                $endDate = now()->toDateString();
+                break;
+        }
+                                // جلب القيود اليومية مع الإجماليات
+                                $entries = $query->get();
+                         
+                                                    
+                                // حساب الإجماليات (بناءً على البيانات المسترجعة)
+                                $SumDebtor_amount = $entries->sum('total_debit');
+                                $SumCredit_amount = $entries->sum('total_credit');    
+                            
+                            $AccountClassName = $accountClasses[$customer->AccountClass] ?? 'غير معروف';
+                                $Sale_priceSum = abs($SumDebtor_amount - $SumCredit_amount);
+                            
+                               $numberToWords = new NumberToWords();
+                                $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
+                                $priceInWords=is_numeric($Sale_priceSum) 
+                                ? $numberTransformer->toWords( abs($SumDebtor_amount - $SumCredit_amount)) . ' ' . $currencysettings
+                                : 'القيمة غير صالحة';
                            $accountClasses = [
                             1 => 'العميل',
                             2 => 'المورد',
@@ -84,10 +397,137 @@ return view('customers.show', compact('balances'));
                         ];
                         $AccountClassName = $accountClasses[$customer->AccountClass] ?? 'غير معروف';
     
-                           return view('customers.statement', compact('customer', 'entries','AccountClassName','currencysettings','UserName','accountingPeriod','SumCredit_amount','SumDebtor_amount','priceInWords','Sale_priceSum'))->render(); // إرجاع المحتوى كـ HTML
+                           return view('customers.statement', compact('customer','startDate', 'endDate','Myanalysis', 'entries','AccountClassName','currencysettings','UserName','accountingPeriod','SumCredit_amount','SumDebtor_amount','priceInWords','Sale_priceSum'))->render(); // إرجاع المحتوى كـ HTML
                         }
+                    
+                        public function getDailyEntriesMainAccountMyanalysis($validated, $id)
+                        {
+                            $Myanalysis="تحليلي";
 
-    public function create(){
+                            try {
+                                // التحقق من الحساب الرئيسي
+                                $customer = MainAccount::where('main_account_id', $id)->first();
+                                if (!$customer) {
+                                    return response()->json(['error' => 'الحساب الرئيسي غير موجود'], 404);
+                                }
+                        
+                                // الحصول على الفترة المحاسبية المفتوحة
+                                $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+                        
+                                $query = DailyEntrie::with(['debitAccount', 'debitAccount.mainAccount', 'creditAccount', 'creditAccount.mainAccount'])
+                                ->selectRaw(
+                                    'daily_entries.account_debit_id,
+                                     daily_entries.daily_entries_type,
+                                     daily_entries.account_Credit_id,
+                                     daily_entries.Invoice_type,
+                                     daily_entries.Invoice_id,
+                                     daily_entries.Statement,
+                                     daily_entries.entrie_id,
+                                     daily_entries.created_at,
+                                     sub_accounts.sub_account_id,
+                                     main_accounts.main_account_id,
+                                     SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_debit ELSE 0 END) as total_debit,
+                                     SUM(CASE WHEN daily_entries.account_Credit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_Credit ELSE 0 END) as total_credit'
+                                )
+                                ->join('sub_accounts', function ($join) {
+                                    $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')
+                                         ->orOn('daily_entries.account_Credit_id', '=', 'sub_accounts.sub_account_id');
+                                })
+                                ->join('main_accounts', 'sub_accounts.Main_id', '=', 'main_accounts.main_account_id')
+                                ->where('main_accounts.main_account_id', $id)
+                                ->groupBy(
+                                    'sub_accounts.sub_account_id',
+                                    'main_accounts.main_account_id',
+                                    'daily_entries.account_debit_id',
+                                    'daily_entries.Invoice_type',
+                                    'daily_entries.account_Credit_id',
+                                    'daily_entries.daily_entries_type',
+                                    'daily_entries.Statement',
+                                    'daily_entries.entrie_id',
+                                    'daily_entries.Invoice_id',
+                                    'daily_entries.created_at'
+                                )
+                                ->orderBy('created_at', 'asc'); // تصحيح ترتيب النتائج
+                                $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
+
+                                // dd($validated );
+                                switch ($validated ?? '') {
+                                    case '2': // اليوم
+                                        $startDate = now()->toDateString();
+                                        $endDate = now()->toDateString();
+                                        $query->whereDate('daily_entries.created_at', $startDate);
+                                        break;
+                                    case '3': // هذا الأسبوع
+                                        $startDate = now()->startOfWeek()->toDateString();
+                                        $endDate = now()->endOfWeek()->toDateString();
+                                        $query->whereBetween('daily_entries.created_at', [$startDate, $endDate]);
+                                        break;
+                                    case '4': // هذا الشهر
+                                        $startDate = now()->startOfMonth()->toDateString();
+                                        $endDate = now()->endOfMonth()->toDateString();
+                                        $query->whereMonth('daily_entries.created_at', now()->month)
+                                              ->whereYear('daily_entries.created_at', now()->year);
+                                        break;
+                                    default: // عرض كل القيود
+                                        $startDate = $accountingPeriod->created_at?->format('Y-m-d') ?? 'غير متوفر';
+                                        $endDate = now()->toDateString();
+                                        break;
+                                }
+                                
+                                // جلب القيود اليومية مع الإجماليات
+                                $entries = $query->get();
+                        
+                                // حساب الإجماليات (بناءً على البيانات المسترجعة)
+                                $SumDebtor_amount = $entries->sum('total_debit');
+                                $SumCredit_amount = $entries->sum('total_credit');
+                        
+                                // حساب الفرق (الربح/الخسارة)
+                                $Sale_priceSum = abs($SumDebtor_amount - $SumCredit_amount);
+                        
+                                // تحويل القيمة إلى كلمات
+                                $numberToWords = new NumberToWords();
+                                $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
+                                $currencySetting = CurrencySetting::find(1);
+                                $currencyName = $currencySetting->currency_name ?? 'ريال يمني';
+                        
+                                $priceInWords = is_numeric($Sale_priceSum)
+                                    ? $numberTransformer->toWords($Sale_priceSum) . ' ' . $currencyName
+                                    : 'القيمة غير صالحة';
+                                    $accountClasses = [
+                                        1 => 'العميل',
+                                        2 => 'المورد',
+                                        3 => 'المخزن',
+                                        4 => 'الحساب',
+                                        5 => 'الصندوق',
+                                    ];
+                                    $AccountClassName ='الحساب';
+                                    $UserName = User::where('id',auth()->user()->id,)->pluck('name')->first();
+
+                                 
+                                // إرجاع العرض
+                                return view('customers.statement', compact(
+                                    'startDate', 'endDate',
+                                    'customer',
+                                    'Myanalysis',
+                                    'entries',
+                                    'currencyName',
+                                    'accountingPeriod',
+                                    'SumCredit_amount',
+                                    'SumDebtor_amount',
+                                    'priceInWords',
+                                    'AccountClassName',
+                                    'UserName',
+                                    'Sale_priceSum'
+
+                                ));
+                        
+                            } catch (\Exception $e) {
+                                // التعامل مع الأخطاء
+                                return response()->json(['error' => 'حدث خطأ أثناء معالجة الطلب: ' . $e->getMessage()], 500);
+                            }
+                        }
+                        
+                            public function create(){
 
         return view('customers.create');
     }
@@ -182,8 +622,6 @@ return view('customers.show', compact('balances'));
             return response()->json(['message' => ' تم حفظ بنجاح ودخال مبلغ للحساب', 'DataSubAccount' => $mainAccount], 201);
         }  
           
-                  
-            
         return response()->json(['success' => true, 'message' => 'تمت العملية بنجاح', 'DataSubAccount' => $mainAccount], 201);
     
     }

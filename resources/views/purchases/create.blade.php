@@ -60,35 +60,40 @@
                             @endforeach
                         </select>
                     </div>
-                        <div >
-                            <label for="mainaccount_debit_id" class="  labelSale">  حساب التصدير  </label>
-                           <select name="mainaccount_debit_id"  id="mainaccount_debit_id" dir="ltr" class="input-field  select2 inputSale" required >
-                              @isset($MainAccounts)
-                            <option value="" selected>اختر الحساب</option>
-                             @foreach ($MainAccounts as $mainAccount)
-                                  <option value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
-                             @endforeach
-                             @endisset 
-                           </select>
-                       </div>
+                        
                        <div>
                         <label for="Supplier_id" class="labelSale">اسم المورد</label>
                         <select name="Supplier_id" id="Supplier_id" dir="ltr" class="input-field w-full select2 inputSale" >
+                            <option selected value=""></option>
+                            @isset($Supplier_id)
+                            @foreach ($Supplier_id as $Supplier)
+                            <option value="{{$Supplier->sub_account_id}}">{{$Supplier->sub_name}}</option>
+                             @endforeach
+                             @endisset
                         </select>
                     </div>
+                  
                     <div >
-                        <label for="Receipt_number" class="labelSale">رقم الإيصال</label>
-                        <input type="text" name="Receipt_number" id="Receipt_number" placeholder="0" class="inputSale english-numbers" />
-                    </div>
-                    <div>
-                        <label for="Total_cost" class="labelSale">اجمالي التكلفة</label>
-                        <input type="text" name="Total_cost" id="Total_cost" placeholder="0" class="inputSale" />
-                    </div>
-                    <div >
-                        
-                        <label for="Yr_cost" class="labelSale">  اتكلفه الريال </label>
-                        <input type="number" name="Yr_cost" id="Yr_cost" placeholder="0" class="inputSale" />
-                    </div>
+                        <label for="main_account_debit_id" class="  labelSale">  حساب التصدير  </label>
+                       <select name="main_account_debit_id" id="main_account_debit_id" dir="ltr" class="input-field  select2 inputSale" required >
+                          @isset($MainAccounts)
+                        <option value="" selected>اختر الحساب</option>
+                         @foreach ($MainAccounts as $mainAccount)
+                              <option value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
+                         @endforeach
+                         @endisset 
+                       </select>
+                   </div>
+                   <div >
+                       <label for="sub_account_debit_id" class="labelSale   ">  تحديد الدائن</label>
+                       <select name="sub_account_debit_id" id="sub_account_debit_id" dir="ltr" class="input-field select2 inputSale" required>
+                           <option value="" selected>اختر الحساب الفرعي</option>
+                           </select>
+               </div>
+               <div >
+                <label for="Receipt_number" class="labelSale">رقم الإيصال</label>
+                <input type="text" name="Receipt_number" id="Receipt_number" placeholder="0" class="inputSale english-numbers" />
+            </div>
                     <div >
                         <label for="Total_invoice" class="labelSale">أجمالي الفاتورة</label>
                         <input type="text" name="Total_invoice" id="Total_invoice" placeholder="0" class="inputSale" />
@@ -135,23 +140,7 @@
                       @endisset 
                     </select>
                 </div>
-                <div >
-                    <label for="main_account_debit_id" class="  labelSale">  حساب التصدير  </label>
-                   <select name="main_account_debit_id" id="main_account_debit_id" dir="ltr" class="input-field  select2 inputSale" required >
-                      @isset($MainAccounts)
-                    <option value="" selected>اختر الحساب</option>
-                     @foreach ($MainAccounts as $mainAccount)
-                          <option value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
-                     @endforeach
-                     @endisset 
-                   </select>
-               </div>
-               <div >
-                   <label for="sub_account_debit_id" class="labelSale   ">  تحديد الدائن</label>
-                   <select name="sub_account_debit_id" id="sub_account_debit_id" dir="ltr" class="input-field select2 inputSale" required>
-                       <option value="" selected>اختر الحساب الفرعي</option>
-                       </select>
-           </div>
+               
             </div>
             <div class="flex gap-1 px-1"> 
                 <div >
@@ -457,6 +446,11 @@ $(document).on('click', '.delete-payment', function (e) {
 
     $(document).ready(function () {
 
+        $('#account_debitid').on('change', function() {
+    $(this).select2('close');
+    $('#product_id').select2('open');
+
+});   
      
         $('#Supplier_id').on('change', function() {
     const receipt_number = $('#Receipt_number');

@@ -30,14 +30,17 @@
             <label for="main_account_debit_id" class="labelSale">الحساب الرئيسي</label>
             <select name="main_account_debit_id" id="main_account_debit_id" class="input-field select2 inputSale" required>
                 <option value="" selected>اختر الحساب</option>
+                @isset($MainAccounts)
+                    
                 @foreach($MainAccounts as $mainAccount)
                     <option value="{{ $mainAccount->main_account_id }}">
                         {{ $mainAccount->account_name }}-{{ $mainAccount->main_account_id }}
                     </option>
                 @endforeach
+                @endisset
+
             </select>
         </div>
-
         <div>
             <label for="sub_account_debit_id" class="labelSale">الحساب الفرعي</label>
             <select name="sub_account_debit_id" id="sub_account_debit_id" class="input-field select2 inputSale" required>
@@ -47,17 +50,23 @@
 
         <div class="gap-2 grid grid-cols-2">
             @foreach(['mainAccount' => 'الحساب الرئيسي', 'subAccount' => 'الحساب الفرعي'] as $key => $label)
-                <div class="flex">
-                    <input type="radio" name="account-list-radio" value="{{ $key }}" class="mr-2" {{ $key == 'subAccount' ? 'checked' : '' }}>
-                    <label class="labelSale">{{ $label }}</label>
-                </div>
-            @endforeach
+            <div class="flex">
+                <input 
+                    type="radio" 
+                    name="account-list-radio" 
+                    value="{{ $key }}" 
+                    class="mr-2"
+                    {{ (old('account-list-radio', $selectedAccountListRadio ?? 'subAccount') === $key) ? 'checked' : '' }}>
+                <label class="labelSale">{{ $label }}</label>
+            </div>
+        @endforeach
+        
             <div class="flex ">
-                <input type="radio" name="list" value="sumAmuont" class="mr-2">  
+                <input type="radio" name="list" value="summary" class="mr-2">  
                 <label for="" class="labelSale"> كشف كلي</label>
             </div>
             <div class="flex ">
-                <input type="radio" name="list" value="allAmuont" checked class="mr-2">  
+                <input type="radio" name="list" value="detail" checked class="mr-2">  
                 <label for="" class="labelSale  ">  كشف تحليلي</label>
             </div>
         </div>
@@ -69,71 +78,81 @@
 <div id="successMessage" style="display:none;" class="text-red-500 font-semibold mt-2"></div>
 
 <script>
- function openInvoiceWindow(e) {
+   function openInvoiceWindow(e) {
     e.preventDefault(); // منع تحديث الصفحة
 
-    const successMessage = $('#successMessage');
-    const invoiceField = $('#sub_account_debit_id').val();
-    const listRadio = $('input[name="list-radio"]:checked').val(); // الحصول على قيمة الخيار المحدد
-    const accountListRadio = $('input[name="account-list-radio"]:checked').val(); // الحصول على الخيار المحدد
-    const viewType = $('input[name="list"]:checked').val(); // الحصول على خيار كشف الكلي أو التحليلي
+    let invoiceField = 0; // تعريف المتغير بـ let لتجنب الأخطاء
+    const invoiceField1 = $('#sub_account_debit_id').val();
+    const invoiceField2 = $('#main_account_debit_id').val();
+
+    const listRadio = $('input[name="list-radio"]:checked').val(); // الخيار المحدد لعرض القائمة
+    const accountListRadio = $('input[name="account-list-radio"]:checked').val(); // الحساب الرئيسي أو الفرعي
+    const viewType = $('input[name="list"]:checked').val(); // كشف كلي أو تحليلي
+if(accountListRadio=="subAccount")
+{
+    if (invoiceField1) {
+        invoiceField = invoiceField1;
+    }
+}
+if(accountListRadio=="mainAccount")
+{
+    if (invoiceField2) {
+        invoiceField = invoiceField2;
+    }
+}
+    
 
     if (invoiceField) {
-        // توليد الرابط مع القيم المحددة
         const url = `{{ route('customers.statement', ':invoiceField') }}`
             .replace(':invoiceField', invoiceField)
             + `?list=${viewType}&listradio=${listRadio}&accountlistradio=${accountListRadio}`;
 
-        // فتح الرابط في نافذة جديدة
         window.open(url, '_blank', 'width=800,height=800');
     } else {
-        // عرض رسالة خطأ إذا لم يتم تحديد الحساب الفرعي
-        successMessage.text('لا توجد فاتورة').show();
+        displayMessage('يرجى تحديد الحساب الفرعي', 'error'); // عرض رسالة خطأ
+    }
+}
+
+    
+    function openAndPrintInvoice2(e) {
+        e.preventDefault(); // منع تحديث الصفحة
+    
+        const invoiceField = $('#sub_account_debit_id').val();
+    
+        if (invoiceField) {
+            const url = `{{ route('customers.statement', ':invoiceField') }}`
+                .replace(':invoiceField', invoiceField);
+    
+            const newWindow = window.open(url, '_blank', 'width=600,height=800');
+            if (newWindow) {
+                newWindow.onload = function() {
+                    setTimeout(() => {
+                        newWindow.print();
+                        newWindow.close();
+                    }, 1000);
+                };
+            } else {
+                displayMessage('تعذر فتح النافذة. يرجى التحقق من إعدادات المتصفح.', 'error');
+            }
+        } else {
+            displayMessage('يرجى تحديد الحساب الفرعي', 'error');
+        }
+    }
+    
+    function displayMessage(message, type) {
+        const successMessage = $('#successMessage');
+        successMessage
+            .text(message)
+            .removeClass()
+            .addClass(type === 'error' ? 'text-red-500 font-semibold' : 'text-green-500 font-semibold')
+            .fadeIn();
+    
         setTimeout(() => {
-            successMessage.hide();
+            successMessage.fadeOut();
         }, 3000);
     }
-}
-
-</script>
-<script>function openAndPrintInvoice2(e) {
-    const successMessage = $('#successMessage');
-    var invoiceField = $('#sub_account_debit_id').val();
-    var invoiceField = $('#sub_account_debit_id').val();
-
-    if (invoiceField) {
-        e.preventDefault(); // منع تحديث الصفحة
-        const url = `{{ route('customers.statement', ':invoiceField?') }}`.replace(':invoiceField', invoiceField);
-
-        // فتح الرابط في نافذة جديدة
-        const newWindow = window.open(url, '_blank', 'width=600,height=800');
-
-        if (newWindow) {
-            newWindow.onload = function() {
-                setTimeout(() => {
-                    newWindow.print();
-                    newWindow.close();
-                }, 1000);
-            };
-        } else {
-            displayMessage('تعذر فتح النافذة. يرجى التحقق من إعدادات المتصفح.', 'error');
-        }
-    } else {
-        displayMessage('لا توجد فاتورة', 'error');
-    }
-}
-
-// وظيفة عرض الرسائل
-function displayMessage(message, type) {
-    const successMessage = $('#successMessage');
-    successMessage.text(message).removeClass().addClass(type === 'error' ? 'text-red-500 font-semibold' : 'text-green-500 font-semibold').fadeIn();
-
-    setTimeout(() => {
-        successMessage.fadeOut();
-    }, 3000);
-}
-
-</script>
+    </script>
+    
 
 <script src="{{url('purchases/purchases.js')}}"></script>
 <script src="{{ url('purchases.js') }}"></script>

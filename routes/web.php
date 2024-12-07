@@ -52,6 +52,8 @@ use Illuminate\Support\Facades\Route;
 
 
 
+Route::get('/all-products/{id}/show', [ProductCoctroller::class, 'allProducts'])->name('all-products');
+Route::get('/all-products/{id}/print', [ProductCoctroller::class, 'print'])->name('report.print');
 
 Route::get('/products', [ProductCoctroller::class, 'index'])->name('products.index');
 Route::get('/products/create', [ProductCoctroller::class, 'create'])->name('products.create');
@@ -94,7 +96,7 @@ Route::get('/customers/create', [CustomerCoctroller::class, 'create'])->name('cu
 Route::post('/customers/store', [CustomerCoctroller::class, 'store'])->name('customers.store');
 
 Route::get('/customers/show', [CustomerCoctroller::class, 'show'])->name('customers.show');
-Route::get('/customers/{id}/statement', [CustomerCoctroller::class, 'showStatement'])->name('customers.statement');
+Route::get('/customers/{id}/statement', [CustomerCoctroller::class, 'createStatement'])->name('customers.statement');
 Route::get('/report/create',[reportsConreoller::class,'create'])->name('report.create');
 
 Route::post('/invoicePurchases/store', [PurchaseController::class, 'store'])->name('invoicePurchases.store');

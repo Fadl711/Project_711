@@ -245,7 +245,6 @@ if ($DataSubAccount->debtor_amount>0 || $DataSubAccount->creditor_amount>0) {
         'accounting_period_id' =>$accountingPeriod->accounting_period_id,
         'Invoice_id' => null,
         'daily_entries_type' =>'رصيد افتتاحي',
-
         'status_debit' => 'غير مرحل',
         'status' => 'غير مرحل',
     ]);

@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     use HasFactory;
+    protected $table = 'products';
+    protected $primaryKey = 'product_id';
 protected static function boot()
 {
     parent::boot();
@@ -32,6 +34,7 @@ protected static function boot()
             'currency_id',
             'warehouse_id',
             'User_id',
+            'supplier_id',
     ];
      // تحويل Purchase_price إلى أرقام إنجليزية
 }

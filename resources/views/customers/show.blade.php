@@ -15,7 +15,6 @@
                 <th class="px-4 py-2 border border-gray-300">إجمالي الدائن</th>
                 <th class="px-4 py-2 border border-gray-300">الفارق</th>
                 <th class="px-4 py-2 border border-gray-300">نوع الفارق</th>
-                <th class="px-4 py-2 border border-gray-300">الإجراءات</th>
             </tr>
         </thead>
         <tbody class="bg-white">
@@ -28,10 +27,7 @@
                     <td class="px-4 py-2 border border-gray-300">{{ number_format($balance->total_credit, 2) }}</td>
                     <td class="px-4 py-2 border border-gray-300">{{ number_format(abs($balance->difference), 2) }}</td>
                     <td class="px-4 py-2 border border-gray-300">{{ $balance->difference_type }}</td>
-                    <td class="px-4 py-2 border border-gray-300">
-                        <a href="{{ route('customers.statement', ['id' => $balance->sub_account_id]) }}"
-                            class="text-blue-500 hover:underline">كشف الحساب</a>
-                    </td>
+                   
                 </tr>
             @endforeach
         </tbody>

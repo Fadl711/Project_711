@@ -70,9 +70,18 @@ class AppServiceProvider extends ServiceProvider
             ]);
         }
 
+        $subAccountSupplier_id=SubAccount::where('AccountClass',2)->get();
+
         if(isset($subAccount)){
             View::share([
                 'Warehouse'=>$subAccount,
+
+               
+            ]);
+        }
+        if(isset($subAccountSupplier_id)){
+            View::share([
+                'Supplier_id'=>$subAccountSupplier_id,
 
                
             ]);

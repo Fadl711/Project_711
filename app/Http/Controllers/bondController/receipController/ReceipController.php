@@ -245,8 +245,7 @@ public function getPaymentBond(Request $request, $filterType)
     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
     ->where('transaction_type',  $validated['transactionType'])
 ;
-  // فلترة بناءً على نوع السند
-  // فلترة بناءً على نوع السند
+
  // تطبيق الفلترة بناءً على نوع الفلترة (تواريخ)
     switch ($filterType) {
        
@@ -260,7 +259,8 @@ public function getPaymentBond(Request $request, $filterType)
         case '4': // هذا الشهر
             $query->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year);
             break;
-        default: // الفترة المخصصة
+            case '5':
+                // الفترة المخصصة
             if ($request->filled(['fromDate', 'toDate'])) {
                 $query->whereBetween('created_at', [$request->fromDate, $request->toDate]);
             }

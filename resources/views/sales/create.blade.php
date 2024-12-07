@@ -331,8 +331,14 @@
 <!-- إطار الطباعة -->
 <script>
     $(document).ready(function () {
-    // الاستماع لتغيير القيمة في قائمة التصنيفات
-   
+    
+
+    
+    $('#account_debitid').on('change', function() {
+        $(this).select2('close');
+        $('#main_account_debit_id').select2('open');
+
+    });
 });
     function openInvoiceWindow(e) {
 const successMessage= $('#successMessage');

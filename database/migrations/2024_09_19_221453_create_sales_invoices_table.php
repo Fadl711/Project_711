@@ -45,6 +45,7 @@ return new class extends Migration
    // عمود المبلغ المتبقي
    $table->decimal('remaining_amount', 15, 2)->default(0)->comment('المبلغ المتبقي');
 
+   $table->integer('account_id')->unsigned()->nullable()->comment('الحساب المرتبط بدفع');
 
    // عمود ID العملة
    $table->integer('currency_id')->unsigned()->comment('معرف العملة');
@@ -67,6 +68,7 @@ return new class extends Migration
    
    // إنشاء علاقات المفاتيح الأجنبية
    $table->foreign('Customer_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null')->comment('الربط مع جدول الحسابات الفرعية');
+   $table->foreign('account_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
    $table->foreign('User_id')->references('id')->on('users')->comment('الربط مع جدول المستخدمين');
 });
 Schema::enableForeignKeyConstraints();

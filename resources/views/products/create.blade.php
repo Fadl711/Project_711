@@ -46,6 +46,21 @@
           <label for="Quantity" class="btn">الكمية</label>
           <input type="number" name="Quantity" id="Quantity" placeholder="0" class="inputSale"required />
         </div>
+        <div class="flex flex-col">
+          <label for="Purchase_invoice_id" class="btn">رقم الفاتورة</label>
+          <input type="number" name="Purchase_invoice_id" id="Purchase_invoice_id" placeholder="0" class="inputSale"required />
+        </div>
+        <div>
+          <label for="Supplier_id" class="labelSale">اسم المورد</label>
+          <select name="Supplier_id" id="Supplier_id" dir="ltr" class="input-field w-full select2 inputSale" >
+            <option selected value=""></option>
+              @isset($Supplier_id)
+              @foreach ($Supplier_id as $Supplier)
+              <option value="{{$Supplier->sub_account_id}}">{{$Supplier->sub_name}}</option>
+               @endforeach
+               @endisset
+          </select>
+      </div>
         <div>
           <label for="account_debitid" class="labelSale"> مخازن </label>
           {{-- warehouse_to_id --}}

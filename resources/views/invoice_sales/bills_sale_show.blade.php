@@ -45,31 +45,8 @@
 <body class="bg-white">
     <div class="container mx-auto print-container">
         <!-- العنوان -->
-        {{-- @include('includes.header2') --}}
+        @include('includes.header2')
 
-        @isset($buss)
-        <div class="header-section border-2 border-black rounded-b-lg my-2">
-            <div class="bg-[#1749fd15] p-5 rounded-lg grid grid-cols-3 justify-between w-full">
-                <div class="text-right">
-                    <h2 class="text-xl font-bold mb-2">{{ $buss->Company_Name }}</h2>
-                    <p>{{ $buss->Services }}</p>
-                    <p>العنوان: {{ $buss->Company_Address }}</p>
-                    <p>التلفون: {{ $buss->Phone_Number }}</p>
-                </div>
-                <div class="flex items-center justify-center px-2">
-                    <div class="w-24 h-20   flex items-center justify-center translate-x-10">
-                        <img class=" bg-[#1749fd15] rounded-3xl" src="{{ url($buss->Company_Logo ? 'images/' . $buss->Company_Logo : '') }}" alt="">
-                    </div>
-                </div>
-                <div class="text-left">
-                    <h2 class="text-xl font-bold mb-2">{{ $buss->Company_NameE }}</h2>
-                    <p>{{ $buss->ServicesE }}</p>
-                    <p>Address: {{ $buss->Company_AddressE }}</p>
-                    <p>Phone: {{ $buss->Phone_Number }}</p>
-                </div>
-            </div>
-        </div>
-        @endisset
 
         <header class="flex justify-between items-center border-b-2 border-gray-800 pb-4 mb-4">
             <div>

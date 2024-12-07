@@ -307,12 +307,6 @@ $(document).on('keydown', function(event) {
     }
 });
 
-  
-    $('#account_debitid').on('change', function() {
-        $(this).select2('close');
-        $('#main_account_debit_id').select2('open');
-
-    });
     $('#sub_account_debit_id').on('change', function() {
         $(this).select2('close');
         $('#product_id').select2('open');
@@ -341,16 +335,19 @@ $(document).on('keydown', function(event) {
     $(this).select2('close');
         $('#Categorie_name').select2('open');
     });
+ $('#Categorie_name').on('change', function() {
+    $(this).select2('close');
+    setTimeout(function() {
+        $('#Quantity').focus();
+        console.log('Focused on Quantity'); // للتأكد من التركيز
+    }, 10);});
     // $('#Categorie_name').on('change', function() {
         
 
     //     $(this).select2('close');
 
     //     // تركيز المؤشر على حقل Quantity بعد تأخير بسيط
-        setTimeout(function() {
-            $('#Quantity').focus();
-            console.log('Focused on Quantity'); // للتأكد من التركيز
-        }, 100); // تأخير 100 مللي ثانية
+       // تأخير 100 مللي ثانية
     // });
    
 

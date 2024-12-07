@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title> كشف حساب تحليلي</title>
+    <title> كشف حساب {{$Myanalysis}}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         /* تخصيص للطباعة */
@@ -70,17 +70,20 @@
                 </div>
             </div>
             <div class="text-center space-y-4">
-                <p class="font-extrabold text-lg ">كشف حساب تحليلي - رصيد نهاية التقرير</p>
-
+                <p class="font-extrabold text-lg">
+                    كشف حساب {{ $Myanalysis }} - رصيد نهاية التقرير
+                </p>
+            
                 <div class="grid grid-cols-2 w-full gap-2 text-sm text-gray-700">
-                    <div>من تاريخ: 
-                        {{ $accountingPeriod->created_at ? $accountingPeriod->created_at->format('Y-m-d') : 'غير متوفر' }}
+                    <div>من تاريخ:
+                        {{ $startDate }}
                     </div>
-                    <div>{{ __('الى التاريخ  ') }}: 
-                        {{ $customer->created_at ? $customer->created_at->format('Y-m-d') : __('غير متوفر') }}
+                    <div>{{ __('الى التاريخ  ') }}:
+                        {{ $endDate }}
                     </div>
                 </div>
             </div>
+            
         </div>
     @endisset
 
@@ -88,9 +91,9 @@
             <div>
                 <div class="flex">
                     <div class="flex mt-2 gap-5">
-                        <div class="font-extrabold">{{ __('رقم ') }}  {{ $AccountClassName ?? __('غير متوفر') }}:</div>
-                        <div>{{ $customer->sub_account_id ?? __('غير متوفر') }}</div>
-                        <div>{{ $customer->sub_name ?? __('غير متوفر') }}/{{ $customer->name_The_known ?? __(' ') }}</div>
+                        <div class="font-extrabold">{{ __('رقم ') }}  {{ $AccountClassName  ?? __('غير متوفر') }}:</div>
+                        <div>{{ $customer->sub_account_id ?? $customer->main_account_id ?? __('غير متوفر') }}</div>
+                        <div>{{ $customer->sub_name ??$customer->account_name?? __('غير متوفر') }}/{{ $customer->name_The_known ?? __(' ') }}</div>
                     </div>
                 </div>
             </div>
@@ -100,10 +103,13 @@
                     <div>{{ $currencysettings ?? __('YR') }}</div>
                 </div>
             </div>
+            
         </header>
         <!-- جدول المنتجات -->
         <table class="w-full text-sm">
             <thead>
+                @isset($entries)
+
                 <tr class="bg-[#1749fd15]">
                     <th class=" text-right">التاريخ</th>
                     <th class=" text-right">نوع المستند</th>
@@ -113,8 +119,25 @@
                     <th class=" text-center">مبلغ المدين</th>
                     <th class=" text-center">مبلغ الدائن</th>
                 </tr>
+                @endisset
+                @isset($entriesTotally)
+                <tr class="bg-[#1749fd15]">
+                    <th class=" text-center">البيان</th>
+                </tr>
+                @endisset
+
             </thead>
             <tbody>
+                @isset($entriesTotally)
+                <td class=" text-center"><div class="flex mt-2 gap-5">
+                    <div class="font-extrabold">{{ __('كشف حساب كلي للمبالغ المدينة والمبالغ الدائنة ') }}  {{  __('لحساب ').__(' '). $AccountClassName ??''}}:
+                        {{ $customer->sub_name ??$customer->account_name?? __('غير متوفر') }}/{{ $customer->name_The_known ?? __(' ') }}
+                    </div>
+                </div>
+            </td>
+               
+                @endisset
+
                 @isset($entries)
                     @foreach ($entries as $entrie)
                         <tr class="bg-white">
@@ -124,7 +147,7 @@
 
                                          }
                                          if ($entrie->Invoice_type==1) {
-                            $Invoice_type  = "نقد"   ;
+                            $Invoice_type  = "نقدآ"   ;
 
                                          }
                                          if ($entrie->Invoice_type==3) {
@@ -140,29 +163,12 @@
                                 {{ $entrie->created_at ? $entrie->created_at->format('Y-m-d') : __('غير متوفر') }}
                             </td>
                             <td class=" text-right ">{{ $entrie->daily_entries_type }} {{ $Invoice_type ?? ""}}</td>
-                            <td class=" text-center">{{ $entrie->Invoice_id }}</td>
+                            <td class=" text-center">{{ $entrie->Invoice_id ?? ''}}</td>
                             <td class=" text-right ">{{ $entrie->Statement }}</td>
                             <td class=" text-center">{{ $entrie->entrie_id }}</td>
-                            <td class=" text-center">
-                                @isset($customer)
-                                    @if ($customer->sub_account_id === $entrie->account_debit_id)
-                                        {{ number_format($entrie->Amount_debit ?? 0) }}
-                                    @else
-                                        {{ 0 }}
-                                    @endif
-                                @endisset
-                            </td>
-                            <td class="text-center">
-                                @isset($customer)
-                                    @if ($customer->sub_account_id === $entrie->account_Credit_id)
-                                        {{ number_format($entrie->Amount_Credit ?? 0) }}
-                                    @else
-                                        {{ 0 }}
-                                    @endif
-                                @endisset
-                            </td>
-                        </tr>
-                        
+                            <td class=" text-center">{{ number_format($entrie->total_debit ?? 0) }}</td>
+                            <td class="text-center">{{ number_format( $entrie->total_credit ?? 0) }}</td>
+                        </tr
                     @endforeach
                 @endisset
                 <tr class="bg-blue-100">
@@ -187,8 +193,6 @@
             </tbody>
         </table>
         <table class="w-[60%] text-sm ">
-           
-                    
             <thead>
                 <tr class="bg-blue-100">
                     <th class="px-2 text-right w-">
@@ -220,7 +224,7 @@
             <div class="flex justify-between">
                 <div>
                    
-                        <div class="text-sm">{{ __('  مصادقة الحساب  من  ') }}  {{ $AccountClassName ?? __('غير متوفر') }}: {{ $customer->sub_name ?? __('غير متوفر') }}</div>
+                        <div class="text-sm">{{ __('  مصادقة الحساب  من  ') }}  {{ $AccountClassName ?? __('غير متوفر') }}: {{  $customer->sub_name ??$customer->account_name?? __('غير متوفر') }}</div>
                        
                         <div>
                             <p class="text-sm" dir="ltr">................ التوقيع </p>
