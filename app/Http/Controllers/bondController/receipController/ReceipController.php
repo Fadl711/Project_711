@@ -25,7 +25,14 @@ class ReceipController extends Controller
         $dailyPage = GeneralJournal::whereDate('created_at', $today)->first(); // البحث عن الصفحة
         return view('bonds.receipt_bonds.create',compact('curr','dailyPage'),['mainAccounts'=> $mainAccount,$dailyPage]);
     }
+    private function removeCommas($value)
+    {
+        return floatval(str_replace(',', '', $value)); // إزالة الفواصل وتحويل إلى float
+    }
+ 
     public function store(Request $request){
+       
+            $Amount_debit = $this->removeCommas($request->Amount_debit);
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
 
 if (!$accountingPeriod) {
@@ -52,7 +59,7 @@ $paymentBond = PaymentBond::updateOrCreate(
         'Credit_sub_account_id' => $request->CreditAmount,
         'payment_type' => $request->payment_type,
         'Currency_id' => $request->Currency,
-        'Amount_debit' => $request->Amount_debit,
+        'Amount_debit' => $Amount_debit,
         'transaction_type' =>$request->transaction_type,
         'Statement' => $request->Statement ?? $request->transaction_type,
         'User_id' => $request->User_id,

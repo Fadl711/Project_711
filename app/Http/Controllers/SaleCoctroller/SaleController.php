@@ -19,7 +19,7 @@ use App\Models\SubAccount;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Log;
 
 class SaleController extends Controller
 {
@@ -40,8 +40,22 @@ class SaleController extends Controller
         'financialts'=>$financialt,
     ]);
     }
+    private function removeCommas($value)
+    {
+        return floatval(str_replace(',', '', $value)); // إزالة الفواصل وتحويل إلى float
+    }
     public function store(Request $request)
     {
+        $purchasePrice = $this->removeCommas($request->Purchase_price);
+        $Selling_price = $this->removeCommas($request->Selling_price);
+        $Selling_price = $this->removeCommas($request->Selling_price);
+        $total_price = $this->removeCommas($request->total_price);
+        $total_price = $this->removeCommas($request->total_price);
+        $Cost = $this->removeCommas($request->Cost);
+        $discount_rate = $this->removeCommas($request->discount_rate);
+        $Profit = $this->removeCommas($request->Profit);
+        $total_discount_rate = $this->removeCommas($request->total_discount_rate);
+       
         // التحقق من صحة البيانات
         $validatedData = $request->validate([
             'product_id' => 'required|integer|exists:products,product_id',
@@ -51,9 +65,8 @@ class SaleController extends Controller
             'Selling_price' => 'required|numeric|min:0',
             'Category_name' => 'nullable|string|max:255',
             'account_debitid' => 'required|integer|exists:sub_accounts,sub_account_id',
-            'financial_account_id' => 'required|integer|exists:sub_accounts,sub_account_id',
             'Barcode' => 'nullable|numeric',
-            'total_price' => 'required|numeric|min:0',
+            'total_price' => 'required|string|',
             'total_discount_rate' => 'required|numeric|min:0',
             'note' => 'nullable|string|max:500',
         ]);
@@ -76,14 +89,17 @@ class SaleController extends Controller
             if (!$saleInvoice) {
                 return response()->json(['success' => false, 'message' => 'الفاتورة غير موجودة.'], 404);
             }
-    
-            // حفظ أو تحديث عملية البيع
+            // if (($saleInvoice->transaction_type)) {
+            //     return response()->json(['success' => false, 'message' => 'نوع المعاملة غير محدد.'.$saleInvoice->transaction_type]);
+            // }
+           // حفظ أو تحديث عملية البيع
+           $Transaction_type=  $saleInvoice->transaction_type;
+
             $sales = Sale::updateOrCreate(
                 [
                     'sale_id' => $request->sale_id,
                     'accounting_period_id' => $accountingPeriod->accounting_period_id,
                     'Invoice_id' => $saleInvoice->sales_invoice_id,
-
                 ],
                 [
                     'Product_name' => $Product->product_name,
@@ -91,18 +107,18 @@ class SaleController extends Controller
                     'Barcode' => $Product->Barcode ?? '',
                     'Quantityprice' => $request->Quantity,
                     'quantity' => $request->Quantityprice,
-                    'Selling_price' => $request->Selling_price,
-                    'discount_rate' => $request->discount_rate ?? 0,
-                    'discount' => $request->total_discount_rate ?? 0,
-                    'total_amount' => $request->Quantity * $request->Selling_price,
-                    'total_price' => $request->total_price,
-                    'currency' => $saleInvoice->currency,
-                    'transaction_type' => $saleInvoice->transaction_type,
-                    'supplier_id' => $Product->supplier_id,
-                    'Customer_id' => $saleInvoice->Customer_id ?? null,
+                    'Selling_price' => $Selling_price,
+                    'discount_rate' => $discount_rate ?? 0,
+                    'discount' => $total_discount_rate ?? 0,
+                    'total_amount' => $request->Quantity * $Selling_price,
+                    'total_price' => $total_price,
+                    'currency' =>'d',
+                    'transaction_type' => $Transaction_type,
+                    'supplier_id' => $request->Supplier?? null ,
+                    'Customer_id' => $saleInvoice->Customer_id ,
                     'User_id' => auth()->id(),
                     'warehouse_to_id' => $request->account_debitid,
-                    'financial_account_id' => $request->financial_account_id,
+                    'financial_account_id' => $saleInvoice->account_id,
                     'shipping_cost' => $request->shipping_cost ?? 0,
                     'note' => $request->note ?? '',
                     'Category_name' => $Categorie_name,
@@ -130,7 +146,7 @@ class SaleController extends Controller
         if (in_array($saleInvoice->payment_type, [1, 3, 4])){
         $payment_type="نقدا";
                 $account_Credit= $request->account_debitid;
-                $account_debit = $request->financial_account_id;
+                $account_debit = $saleInvoice->account_id;
                 $paid_amount = $net_total_after_discount;
 
             } elseif ($saleInvoice->payment_type === 2) {
@@ -188,15 +204,17 @@ class SaleController extends Controller
                 'net_total_after_discount' => $net_total_after_discount,
                 'discount' => $discount,
             ]);
-        } catch (\Exception $e) {
-            // تسجيل الخطأ في السجل
-    
+        }  
+        
+      catch (\Exception $e) {
+            Log::error($e->getMessage());
+ 
             return response()->json([
                 'success' => false,
-                'message' => 'حدث خطأ أثناء الحفظ. حاول مجددًا.',
+                'message' => 'حدث خطأ أثناء الحفظ. حاول مجددًا.'.$e->getMessage(),
                 'error' => $e->getMessage(),
-            ], 500);
-        }
+            ]);      
+          }
     }
     private function createOrUpdateDailyEntry($saleInvoice, $accountingPeriod,$account_Credit, $account_debit, $net_total_after_discount,$Getentrie_id,$payment_type,$daily_page_id)
     {
@@ -307,40 +325,48 @@ return response()->json(['message' => 'تم حذف البيانات بنجاح']
 public function deleteInvoice($id)
 {
     try {
+        // البحث عن الفاتورة
         $invoice = SaleInvoice::where('sales_invoice_id', $id)->first();
         if (!$invoice) {
             return response()->json([
                 'success' => false,
                 'message' => 'لم يتم العثور على معرف الفاتورة.'
             ]);      
-          }
-          $transactiontype=   TransactionType::fromValue($invoice->transaction_type)?->label();
-
+        }
+        
+        // $transactionType = $invoice->transaction_type;
+        $transactiontype=   TransactionType::fromValue($invoice->transaction_type)?->label();
         // حذف جميع المشتريات المرتبطة إن وجدت
         if ($invoice->sales()->exists()) {
             $invoice->sales()->delete();
         }
+
+        // البحث عن فترة محاسبية مفتوحة
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
         if (!$accountingPeriod) {
             return response()->json(['success' => false, 'message' => 'لا توجد فترة محاسبية مفتوحة.']);
         }
-        // حذف الفاتورة نفسها
         $invoice->delete();
-        $Getentrie_id = DailyEntrie::where('Invoice_id',$invoice->sales_invoice_id)
-            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-            ->where('daily_entries_type',$transactiontype)
-            ->first();
-            $Getentrie_id->delete();
 
-        // DB::commit();
+        // البحث عن السجل المرتبط في DailyEntrie
+        $GetentrieId = DailyEntrie::where('Invoice_id', $id)
+            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+            ->where('daily_entries_type', $transactiontype)
+            ->first();
+        
+        // التحقق مما إذا كان السجل موجودًا قبل الحذف
+        if ($GetentrieId) {
+            $GetentrieId->delete(); // حذف السجل المرتبط
+        }
+
+        // حذف الفاتورة نفسها
+        
         return response()->json([
             'success' => true,
-            'message' => 'تم حذف الفاتورة وجميع المشتريات المرتبطة بها بنجاح'
+            'message' => 'تم حذف الفاتورة وجميع المشتريات والقيود المرتبطة بها بنجاح'
         ]);
 
     } catch (\Exception $e) {
-        // DB::rollBack();
-
         return response()->json([
             'success' => false,
             'message' => 'حدث خطأ أثناء الحذف: ' . $e->getMessage()

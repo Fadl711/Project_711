@@ -60,26 +60,23 @@ class CategoryController extends Controller
         Category::where('categorie_id',$id)->delete();
         return back();
     }
-    public function getUnitPrice($categoryId)
-    {
-        // البحث عن المنتج بناءً على $categoryId
-        $product = Category::where('categorie_id', $categoryId)->first();
+   public function getUnitPrice(Request $request)
+{
+    $categoryId = $request->Categoriename;
+    $productId = $request->mainAccountId;
 
-    
-        if ($product && $product->Selling_price) {
-            return response()->json($product);
-        }
-    
-        return response()->json([
-            'error' => 'لم يتم العثور على المنتج أو سعر البيع غير متوفر.'
-        ], 404);
-        if ($product && $product->Purchase_price) {
-            return response()->json($product);
-        }
-        return response()->json([
-            'error' => 'لم يتم العثور على المنتج أو سعر الشراء غير متوفر.'
-        ], 404);
+    $product = Category::where('categorie_id', $categoryId)
+        ->where('product_id', $productId)
+        ->first();
+
+    if ($product) {
+        return response()->json(['product'=>$product]);
     }
+
+    return response()->json([
+        'error' => 'لم يتم العثور على المنتج.'
+    ], 404);
+}
   
     
     

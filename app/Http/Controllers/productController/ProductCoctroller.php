@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\productController;
 
+use App\Enum\AccountClass;
 use App\Http\Controllers\Controller;
 use App\Models\AccountingPeriod;
 use App\Models\Category;
@@ -44,105 +45,411 @@ class ProductCoctroller extends Controller
     'Quantit' => 'nullable|',
     'DisplayMethod' => 'nullable|string|max:255',
 ]);
+        $warehouse_to_id = $validated['warehouseid'];
+        $warehouse_to_id = $this->convertArabicNumbersToEnglish($warehouse_to_id);
+        $productname = $validated['productname'];
+        $productname = $this->convertArabicNumbersToEnglish($productname);
+        $Quantit = $validated['Quantit'];
+        $DisplayMethod = $validated['DisplayMethod'];
+
+        if ($Quantit=== "QuantityCostsSupplier")
+        {
+            return $this->QuantityAndCostsAccordingToSuppliersMovement($warehouse_to_id,$productname,$Quantit,$DisplayMethod  );
+        }
+        if ($Quantit === "QuantitySupplier")
+        {
+            return $this->QuantityAndCostsAccordingToSuppliersMovement($warehouse_to_id,$productname,$Quantit,$DisplayMethod  );
+        }
+        
+        if ($validated['Quantit'] === "QuantityCosts")
+        {
+            return $this->ShowAllProducts($warehouse_to_id,$productname,$Quantit,$DisplayMethod  );
+
+            // return $this->ShowAllProducts( $warehouse_to_id,$productname,$Quantit,$DisplayMethod );
+        }
+
+        if ($validated['Quantit'] === "Quantityonly") 
+        {
+            return $this->ShowAllProducts($warehouse_to_id,$productname,$Quantit,$DisplayMethod  );
+
+            // return $this->Quantityonly($warehouse_to_id,$productname,$Quantit,$DisplayMethod );
+
+        }
+
     if ($validated['DisplayMethod'] === "ShowAllProducts") 
     {
-        return $this->ShowAllProducts( $request->Quantit, $request->warehouseid,$request->productname );
+      
+        if ($validated['Quantit'] === "QuantityCosts")
+        {
+            return $this->QuantityAndCostsAccordingToSuppliersMovement($warehouse_to_id,$productname,$Quantit,$DisplayMethod  );
 
+            // return $this->ShowAllProducts( $warehouse_to_id,$productname,$Quantit,$DisplayMethod );
+        }
     }
     if ($validated['DisplayMethod'] === "SelectedProduct") 
     {
         if ($validated['Quantit'] === "Quantityonly") 
         {
-            return $this->Quantityonly( $request->Quantit, $request->warehouseid,$request->productname );
+            // return $this->QuantityAndCostsAccordingToSuppliersMovement($warehouse_to_id,$productname,$Quantit,$DisplayMethod  );
+
+            // return $this->Quantityonly($warehouse_to_id,$productname,$Quantit,$DisplayMethod );
 
         }
         
         elseif ($validated['Quantit'] === "QuantityCosts")
         {
-            return $this->Quantityonly( $request->Quantit, $request->warehouseid,$request->productname );
+            return $this->Quantityonly($warehouse_to_id,$productname,$Quantit,$DisplayMethod );
             
         }
+      
 
 
     } 
 
 
     }
-    public function ShowAllProducts($Quantit, $warehouse_to_id, $id)
+    public function ShowAllProducts( $warehouse_to_id,$productname,$Quantit,$DisplayMethod )
     {
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+        if($Quantit=="QuantityCosts")
+        {
+            $Myanalysis="الكمية والتكاليف  ";
     
-        // التحقق من وجود المنتجات
-        $warehouseName = SubAccount::where('sub_account_id', $warehouse_to_id)->value('sub_name');
-        $productData = Product::where('product_id', $id)->get();
     
-        if ($productData->isEmpty()) {
-            return response()->json(['success' => false, 'message' => 'المنتج غير موجود']);
         }
+        if($Quantit=="Quantityonly")
+        {
+            $Myanalysis="للكمية فقط  ";
     
-        $Getproduct = []; // تخزين المنتجات
+        }
+        $warehouseName = SubAccount::where('sub_account_id', $warehouse_to_id)->value('sub_name');
+
+        if($DisplayMethod =="ShowAllProducts")
+            {
+                $productname=null;
+            }
+            if($DisplayMethod =="ShowAllProducts")
+            {
+            $uniqueProducts = Purchase::where('warehouse_to_id', $warehouse_to_id)
+            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+            ->where(function ($query) {
+                $query->where('transaction_type', 1)
+                      ->orWhere('transaction_type', 6);
+            })
+            ->select('product_id', 'Product_name') // اختيار الأعمدة المطلوبة
+            ->distinct() // التأكد من جلب القيم المميزة
+            ->get();// جلب النتائج كمجموعة بيانات
+        }
+        if( $DisplayMethod=="SelectedProduct")
+        {
+                //    dd($productname);
+
+            $uniqueProducts = Purchase::where('warehouse_to_id', $warehouse_to_id)
+            ->where('product_id', $productname)
+            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+            ->select('product_id', 'Product_name') // اختيار الأعمدة المطلوبة
+            ->distinct() 
+            ->get();
+
+          // جلب النتائج كمجموعة بيانات
+        }
+      
+        $allQuantityonly = []; // تخزين المنتجات
+        $allQuantityCosts = []; // تخزين المنتجات
+ 
+        foreach ($uniqueProducts as $products) {
+            $product_id=$products->product_id ?? $productname;
+
+            $product = Product::where('product_id',  $product_id)->first();
+            if( $product)
+            {
+
         
-        foreach ($productData as $product) {
-            $categories = Category::where('product_id', $product->product_id)->first();            // حساب الكميات بناءً على نوع المعاملة والمخزن
-            $purchaseToQuantity = Purchase::where('product_id', $product->product_id)
-                ->where('warehouse_to_id', $warehouse_to_id)
-                ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-                ->whereIn('transaction_type', [1, 6])
-                ->sum('quantity');
-    
-            $warehouseFromQuantity = Purchase::where('product_id', $product->product_id)
+            $categories = Category::where('product_id', $product_id)->first();  
+                      // حساب الكميات بناءً على نوع المعاملة والمخزن
+            $purchaseToQuantity = Purchase::where('product_id', $product_id)
+            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+            ->where('warehouse_to_id', $warehouse_to_id)
+            ->whereIn('transaction_type', [1, 6])
+            ->sum('quantity');
+            $warehouseFromQuantity = Purchase::where('product_id', $product_id)
                 ->where('warehouse_from_id', $warehouse_to_id)
                 ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
                 ->where('transaction_type', 2)
                 ->sum('quantity');
     
-            $warehouseFromQuantity3 = Purchase::where('product_id', $product->product_id)
+            $warehouseFromQuantity3 = Purchase::where('product_id', $product_id)
                 ->where('warehouse_from_id', $warehouse_to_id)
                 ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
                 ->where('transaction_type', 3)
                 ->sum('quantity');
     
-            $saleQuantity5 = Sale::where('product_id', $product->product_id)
+            $saleQuantity5 = Sale::where('product_id', $product_id)
                 ->where('warehouse_to_id', $warehouse_to_id)
                 ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
                 ->where('transaction_type', 5)
                 ->sum('quantity');
     
-            $saleQuantity4 = Sale::where('product_id', $product->product_id)
+            $saleQuantity4 = Sale::where('product_id', $product_id)
                 ->where('warehouse_to_id', $warehouse_to_id)
                 ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
                 ->where('transaction_type', 4)
                 ->sum('quantity');
-    
-            $productPurchase = $purchaseToQuantity - $warehouseFromQuantity - $saleQuantity4 + $saleQuantity5;
+               
+
+            $productPurchase =( $purchaseToQuantity+$saleQuantity5 )- $warehouseFromQuantity - $warehouseFromQuantity3- $saleQuantity4 ;
     
             // تخزين البيانات في مصفوفة
-            $Getproduct[] = [
-                'product_id' => $product->product_id,
+             $allQuantityonly[] = [
+                'product_id' => $product_id,
                 'product_name' => $product->product_name,
+                'note' => $product->note,
                 'categories' => $categories,
                 'warehouse_name' => $warehouseName,
-                'product_purchase' => $productPurchase,
+                'SumQuantity' => $productPurchase,
+                '$accountingPeriod' => $accountingPeriod->created_at,
+                'Myanalysis' => $Myanalysis,
+
+
+            ];
+             $allQuantityCosts[] = [
+                '$accountingPeriod' => $accountingPeriod->created_at,
+
+                'product_id' => $product_id,
+                'product_name' => $product->product_name,
+                'Purchase_price' => $product->Purchase_price,
+                'note' => $product->note,
+                'categories' => $categories,
+                'warehouse_name' => $warehouseName,
+                'SumQuantity' => $productPurchase,
+                'Myanalysis' => $Myanalysis,
             ];
         }
+        }
+    // dd($allQuantityonly);
+    if($DisplayMethod =="ShowAllProducts")
+    {
+        $productname=" تقرير  المخزني   لكل الاصناف في مخزن  "."  ".$warehouseName;
+        
+    }
+if($DisplayMethod =="SelectedProduct")
+    {
+        $productname="تقرير  المخزني لصنف :  ".$product->product_name." /في المخزن: ".$warehouseName;
+        
+    }
     
-        return view('report.print', compact('Getproduct'))->render(); // إرجاع المحتوى كـ HTML
+     
+    $accountingPeriod = $accountingPeriod->created_at;
+    if($Quantit=="QuantityCosts")
+    {
+     return view('report.print', compact('allQuantityCosts','productname','Myanalysis','accountingPeriod'))->render(); // إرجاع المحتوى كـ HTML
+    }
+    if($Quantit=="Quantityonly")
+    {
+     return view('report.print', compact('allQuantityonly','productname','accountingPeriod','Myanalysis'))->render(); // إرجاع المحتوى كـ HTML
+    }
+    }
+    public function QuantityAndCostsAccordingToSuppliersMovement( $warehouse_to_id,$productname,$Quantit,$DisplayMethod )
+    {
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+        // التحقق من وجود المنتجات
+        // $uniqueProducts=null;
+        //    dd($productname);
+        $warehouseName = SubAccount::where('sub_account_id', $warehouse_to_id)->value('sub_name');
+        $Suppliers = SubAccount::where('AccountClass',2)->get();
+        if($Quantit=="QuantityCostsSupplier")
+        {
+            $Myanalysis="الكمية والتكاليف حسب حركة الموردين";
     
-    // return view('report.print', compact('Getproduct','productPurchase','categories','warehouseName'))->render(); // إرجاع المحتوى كـ HTML
-    //    if($Quantit=="Quantityonly")
-    //    {
-    //        return view('report.print', compact('productData','productPurchase','categories','warehouseName'))->render(); // إرجاع المحتوى كـ HTML
-    //    }
-    //    if($Quantit=="QuantityCosts")
-    //    {
-    //        $productDataCosts=$productData;
-    //        return view('report.print', compact('productDataCosts','productPurchase','categories','warehouseName'))->render(); // إرجاع المحتوى كـ HTML
-       
-    //    }
+        }
+        if($Quantit=="QuantitySupplier")
+        {
+            $Myanalysis="للكمية  حسب حركة الموردين";
+        }
+      
+        if( $DisplayMethod=="ShowAllProducts")
+        {
+            if($DisplayMethod =="ShowAllProducts")
+            {
+                $productname=null;
+            }
+            $uniqueProducts = Purchase::where('warehouse_to_id', $warehouse_to_id)
+            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+            ->where(function ($query) {
+                $query->where('transaction_type', 1)
+                      ->orWhere('transaction_type', 6);
+            })
+            ->select('product_id', 'Product_name') // اختيار الأعمدة المطلوبة
+            ->distinct() // التأكد من جلب القيم المميزة
+            ->get(); // جلب النتائج كمجموعة بيانات
+   
+        }
+        if( $DisplayMethod=="SelectedProduct")
+        {
+
+            $uniqueProducts = Purchase::where('warehouse_to_id', $warehouse_to_id)
+            ->where('product_id', $productname)
+            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+            ->select('product_id', 'Product_name') // اختيار الأعمدة المطلوبة
+            ->distinct() 
+            ->get();
+
+          // جلب النتائج كمجموعة بيانات
+        }
+
+
+      
+   
+        $QuantitySupplier = []; // تخزين المنتجات
+        $QuantityCostsSupplier = []; // تخزين المنتجات
+        foreach ($uniqueProducts as $products) {
+            // حساب الكميات بناءً على نوع المعاملة والمخزن
+            $product_id=$products->product_id ?? $productname;
+
+            $product = Product::where('product_id',  $product_id)->first();
+            foreach($Suppliers as $Supplier)
+            {
+                    if( $product)
+                    {
+                    
+                          $categories = Category::where('product_id', $product_id)->first();  
+                        $SupplierData = SubAccount::where('sub_account_id',$Supplier->sub_account_id)->first();
+                      $purchaseToQuantity = Purchase::where('product_id', $product_id)
+                      ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                      ->where('warehouse_to_id', $warehouse_to_id)
+                      ->where('Supplier_id', $Supplier->sub_account_id)
+                      ->whereIn('transaction_type', [1, 6])
+                      ->sum('quantity');
+                   
+                      $lastPurchase = Purchase::where('product_id', $product_id)
+                        ->where('Supplier_id', $Supplier->sub_account_id)
+                        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                        ->where('warehouse_to_id', $warehouse_to_id)
+                        ->whereIn('transaction_type', [1, 6])
+                        ->sum('Purchase_price');
+
+            $warehouseFromQuantity = Purchase::where('product_id', $product_id)
+                ->where('warehouse_from_id', $warehouse_to_id)
+                ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                ->where('transaction_type', 2)
+                ->where('Supplier_id', $Supplier->sub_account_id)
+                ->sum('quantity');
+    
+            $warehouseFromQuantity3 = Purchase::where('product_id', $product_id)
+                ->where('warehouse_from_id', $warehouse_to_id)
+                ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                ->where('transaction_type', 3)
+                ->where('Supplier_id', $Supplier->sub_account_id)
+                ->sum('quantity');
+    
+            $saleQuantity5 = Sale::where('product_id', $product_id)
+                ->where('warehouse_to_id', $warehouse_to_id)
+                ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                ->where('transaction_type', 5)
+                ->where('supplier_id', $Supplier->sub_account_id)
+                ->sum('quantity');
+            $astsaleQuantity = Sale::where('product_id', $product_id)
+                ->where('warehouse_to_id', $warehouse_to_id)
+                ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                ->where('transaction_type', 5)
+                ->where('supplier_id', $Supplier->sub_account_id)
+                ->sum('Selling_price');
+    
+            $saleQuantity4 = Sale::where('product_id', $product_id)
+                ->where('warehouse_to_id', $warehouse_to_id)
+                ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                ->where('transaction_type', 4)
+                ->where('supplier_id', $Supplier->sub_account_id)
+                ->sum('quantity');
+            $productPurchase =( $purchaseToQuantity+$saleQuantity4 ) - $warehouseFromQuantity - $warehouseFromQuantity3- $saleQuantity4 ;
+            // تخزين البيانات في مصفوفة
+            if($purchaseToQuantity)
+            {
+
+                
+             $QuantitySupplier[] = [
+                'product_id' => $product->product_id,
+                'Purchase_price' => $product->Purchase_price,
+                'astPurchase' => $lastPurchase,
+                'accountingPeriod' => $accountingPeriod->created_at,
+                'product_name' => $product->product_name,
+                'note' => $product->note,
+                'SupplierData' => $SupplierData,
+                'categories' => $categories,
+                'warehouse_name' => $warehouseName,
+                'SumQuantity' => $productPurchase,
+                'saleQuantity5'=>$saleQuantity5,
+                'purchaseToQuantity' => $purchaseToQuantity,
+                'returnPurchaseToQuantity' => $warehouseFromQuantity,
+                'warehouseFromQuantity3' => $warehouseFromQuantity3,
+                'Myanalysis'=>  $Myanalysis,
+
+            ];
+             $QuantityCostsSupplier[] = [
+                'product_id' => $product->product_id,
+                'Purchase_price' => $product->Purchase_price,
+                'astPurchase' => $lastPurchase,
+                'astsaleQuantity' => $astsaleQuantity,
+                'accountingPeriod' => $accountingPeriod->created_at,
+                'product_name' => $product->product_name,
+                'saleQuantity5'=>$saleQuantity5,
+                'note' => $product->note,
+                'SupplierData' => $SupplierData,
+                'categories' => $categories,
+                'warehouse_name' => $warehouseName,
+                'SumQuantity' => $productPurchase,
+                'purchaseToQuantity' => $purchaseToQuantity,
+                'returnPurchaseToQuantity' => $warehouseFromQuantity,
+                'warehouseFromQuantity3' => $warehouseFromQuantity3,
+                'Myanalysis'=>  $Myanalysis,
+            ];
+          
+        }
+        }
+        }
+    }
+        // dd($QuantityCostsSupplier);
+        // dd($QuantitySupplier);
+
+    $accountingPeriod=$accountingPeriod->created_at;
+    if($DisplayMethod =="ShowAllProducts")
+        {
+            $productname=" تقرير  المخزني   لكل الاصناف في مخزن  "."  ".$warehouseName;
+            
+        }
+    if($DisplayMethod =="SelectedProduct")
+        {
+            $productname="تقرير  المخزني لصنف :  ".$product->product_name." /في المخزن: ".$warehouseName;
+            
+        }
+    if($Quantit=="QuantityCostsSupplier")
+    {
+      
+     return view('report.print', compact('QuantityCostsSupplier','productname','Myanalysis','accountingPeriod'))->render(); // إرجاع المحتوى كـ HTML
+    }
+    if($Quantit=="QuantitySupplier")
+    {
+     return view('report.print', compact('QuantitySupplier','productname','Myanalysis','accountingPeriod'))->render(); // إرجاع المحتوى كـ HTML
+
+    }
+    
     }
     public function Quantityonly($Quantit,$warehouse_to_id,$id)
     {
+        if($Quantit=="QuantityCosts")
+        {
+            $Myanalysis="الكمية والتكاليف  ";
+    
+    
+        }
+        if($Quantit=="Quantityonly")
+        {
+            $Myanalysis="الكمية فقط  ";
+    
+        }
+        // 'Myanalysis'=>  $Myanalysis,
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+
  // التحقق من وجود المنتج
  $productData = Product::where('product_id', $id)->first();
 
@@ -183,26 +490,24 @@ $warehouse_Fromid = Purchase::where('product_id', $id)
  ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
  ->where('transaction_type', 4)
  ->sum('quantity');
+ $accountingPeriod = $accountingPeriod->created_at;
+
  $productPurchase = $Purchase_warehouse_to_id - $warehouseFromid -$warehouse_Fromid_Sale- $warehouse_Fromid+$warehouse_Fromid4;
+ 
 if($Quantit=="Quantityonly")
 {
-    return view('report.print', compact('productData','productPurchase','categories','warehouseName'))->render(); // إرجاع المحتوى كـ HTML
+    return view('report.print', compact('productData','Myanalysis','accountingPeriod','productPurchase','categories','warehouseName'))->render(); // إرجاع المحتوى كـ HTML
 }
 if($Quantit=="QuantityCosts")
 {
     $productDataCosts=$productData;
-    return view('report.print', compact('productDataCosts','productPurchase','categories','warehouseName'))->render(); // إرجاع المحتوى كـ HTML
+    return view('report.print', compact('productDataCosts','Myanalysis','accountingPeriod','productPurchase','categories','warehouseName'))->render(); // إرجاع المحتوى كـ HTML
 
 }
 
-    }
-
-    public function prindt($id)
-    {
-
-        return view('report.print', compact('customer','startDate', 'endDate','Myanalysis', 'entries','AccountClassName','currencysettings','UserName','accountingPeriod','SumCredit_amount','SumDebtor_amount','priceInWords','Sale_priceSum'))->render(); // إرجاع المحتوى كـ HTML
 
     }
+
     public function store(Request $request)
     {
         // تحويل الأرقام العربية إلى الإنجليزية
@@ -238,7 +543,7 @@ if($Quantit=="QuantityCosts")
             'Cost' => $request->Cost,
             'Profit' => $request->Profit,
             'note' => $request->note,
-            'warehouse_id' => $request->account_debitid,
+            'warehouse_id' => $request->account_debitid ,
         ]);
     
         // التحقق من كمية المنتج وإنشاء سجل في جدول المشتريات
@@ -255,10 +560,10 @@ if($Quantit=="QuantityCosts")
                 [
 
                     'accounting_period_id' => $accountingPeriod->accounting_period_id,
-                    'Purchase_invoice_id' =>$request->Purchase_invoice_id,
 
                 ],
                 [
+                    'Purchase_invoice_id' =>$request->Purchase_invoice_id,
                     'Product_name' => $productName,
                     'Barcode' => $ProductNew->Barcode ?? 0,
                     'quantity' => $Quantity,
@@ -351,7 +656,6 @@ if($Quantit=="QuantityCosts")
             ->select('product_id', 'Product_name') // اختيار الأعمدة المطلوبة
             ->distinct() // التأكد من جلب القيم المميزة
             ->get(); // جلب النتائج كمجموعة بيانات
-    
         return response()->json($uniqueProducts);
     }
 

@@ -38,9 +38,6 @@ class PurchaseController extends Controller
         return view('invoice_purchases.bills_purchase_show');
     }
   
-
-
-
     public function create() {
         $Currency_name=Currency::all();
     
@@ -109,7 +106,7 @@ class PurchaseController extends Controller
             $purchaseInvoice->Paid = 0;
             $purchaseInvoice->User_id = $request->User_id ?? auth()->id();
             $purchaseInvoice->accounting_period_id = $accountingPeriod->accounting_period_id;
-            $purchaseInvoice->Invoice_type = $request->payment_type;
+            $purchaseInvoice->Invoice_type = $request->Payment_type;
             $purchaseInvoice->account_id = $request->sub_account_debit_id;
             $purchaseInvoice->Supplier_id = $request->Supplier_id;
             $purchaseInvoice ->Currency_id= $request->Currency_id;
@@ -132,8 +129,17 @@ class PurchaseController extends Controller
     public function storc(Request $request)
     {
         // التحقق من عدم تطابق الحسابات
-      
-    
+        $accountingPeriod = ModelsAccountingPeriod::where('is_closed', false)->first();
+
+        $purchaseInvoice = PurchaseInvoice::where('purchase_invoice_id', $request->purchase_invoice_id)
+        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        ->first();
+    if (!$purchaseInvoice) {
+        return response()->json([
+            'success' => false,
+            'message' => 'الفاتورة غير موجودة.'
+        ], 404);
+    }
         // التحقق من وجود المنتج في النظام
         $product = Product::where('product_id', $request->product_id)->first();
         if (!$product) {
@@ -156,7 +162,6 @@ class PurchaseController extends Controller
         }
     
         // الحصول على الفترة المحاسبية المفتوحة
-        $accountingPeriod = ModelsAccountingPeriod::where('is_closed', false)->first();
         if (!$accountingPeriod) {
             return response()->json([
                 'success' => false,
@@ -165,15 +170,7 @@ class PurchaseController extends Controller
         }
     
         // التحقق من وجود الفاتورة
-        $purchaseInvoice = PurchaseInvoice::where('purchase_invoice_id', $request->purchase_invoice_id)
-            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-            ->first();
-        if (!$purchaseInvoice) {
-            return response()->json([
-                'success' => false,
-                'message' => 'الفاتورة غير موجودة.'
-            ], 404);
-        }
+      
         if ($request->account_debitid === $purchaseInvoice->account_id) {
             return response()->json([
                 'success' => false,
@@ -193,13 +190,12 @@ class PurchaseController extends Controller
                 $warehouse_to_id = $request->account_debitid;
                 $account_id = $purchaseInvoice->account_id;
                 $warehouse_from_id = null;
-
                 break;
         
             case 2: // عملية خروج المخزون
                 $Productquantity=   $Product->Quantity - $request->Quantity;
 
-                $supplier_id= $Product->supplier_id;
+                $supplier_id= $purchaseInvoice->Supplier_id;
                 $warehouse_from_id = $request->account_debitid;
             $account_id = $purchaseInvoice->account_id;
             $warehouse_to_id = null;
@@ -211,8 +207,7 @@ class PurchaseController extends Controller
                         'message' => 'يجب عليك تحديد مخازن مختلفة.'
                     ]);
                 }
-                $supplier_id= $Product->supplier_id;
-
+                $supplier_id= $purchaseInvoice->Supplier_id;
                 $Productquantity=   $Product->Quantity - $request->Quantity;
                 $warehouse_to_id = $request->account_debitid;
                 $warehouse_from_id = $purchaseInvoice->account_id;
@@ -235,7 +230,11 @@ class PurchaseController extends Controller
                     : 'يجب عليك تحديد حساب التصدير الدائن آخر غير حساب المخازن لإنك تقوم بعملية شراء.'
             ]);
         }
-
+        $purchasePrice = $this->removeCommas($request->Purchase_price);
+        $Selling_price = $this->removeCommas($request->Selling_price);
+        $TotalPurchase = $this->removeCommas($request->TotalPurchase);
+        $Cost = $this->removeCommas($request->Cost);
+        $Profit = $this->removeCommas($request->Profit);
         $categorieId = Category::where('categorie_id', $request->Categorie_name)
         ->where('product_id', $request->product_id)
         ->value('Categorie_name');
@@ -251,17 +250,17 @@ class PurchaseController extends Controller
                 'Supplier_id' => $supplier_id,
                 'Barcode' => $Product->Barcode ?? 0,
                 'quantity' => $request->Quantity,
-                'Purchase_price' => $request->Purchase_price,
-                'Selling_price' => $request->Selling_price,
+                'Purchase_price' => $purchasePrice,
+                'Selling_price' => $Selling_price,
                 'Quantityprice' => $request->Quantity,
-                'Total' => $request->TotalPurchase,
-                'Cost' => $request->Cost,
+                'Total' => $TotalPurchase,
+                'Cost' => $Cost,
                 'Currency_id' => $purchaseInvoice->Currency_id ??null,
                 'User_id' => $request->User_id ?? auth()->id(),
                 'warehouse_to_id' => $warehouse_to_id,
                 'warehouse_from_id' => $warehouse_from_id,
                 'Discount_earned' => $request->Discount_earned ?? 0,
-                'Profit' => $request->Profit ?? 0,
+                'Profit' => $Profit ?? 0,
                 'Exchange_rate' => $request->Exchange_rate ?? 1.0,
                 'note' => $request->note ?? '',
                 'product_id' => $Product->product_id,
@@ -313,7 +312,10 @@ $categoryName = Category::where('categorie_id', $purchase->categorie_id)->pluck(
             ]);
         }
     }
-    
+    private function removeCommas($value)
+    {
+        return floatval(str_replace(',', '', $value)); // إزالة الفواصل وتحويل إلى float
+    }
     
  private function convertArabicNumbersToEnglish($value)
     {
@@ -340,46 +342,39 @@ public function search(Request $request)
         return response()->json(['success' => false, 'message' => 'المنتج غير موجود'], 404);
     }
     
-    // حساب الكميات بناءً على نوع المعاملة والمخزن
-    $Purchase_warehouse_to_id = Purchase::where('product_id', $id)
-        ->where('warehouse_to_id', $warehouse_to_id)
-        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-        ->where('transaction_type', 1)
-        ->orwhere('transaction_type', 6)
-        ->sum('quantity');
-    $warehouseFromid = Purchase::where('product_id', $id)
-        ->where('warehouse_from_id', $warehouse_to_id)
-        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-
-        ->where('transaction_type', 2)
-        ->sum('quantity');
-    
-    $warehouse_Fromid = Purchase::where('product_id', $id)
-        ->where('warehouse_from_id', $warehouse_to_id)
-        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-        ->where('transaction_type', 3)
-        ->sum('quantity');
-        $warehouse_Fromid2 = Purchase::where('product_id', $id)
-        ->where('warehouse_to_id', $warehouse_to_id)
-        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-        ->where('transaction_type', 3)
-        ->sum('quantity');
+                // حساب الكميات بناءً على نوع المعاملة والمخزن
+                $purchaseToQuantity = Purchase::where('product_id', $id)
+                ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                ->where('warehouse_to_id', $warehouse_to_id)
+                ->whereIn('transaction_type', [1, 6])
+                ->sum('quantity');
+                $warehouseFromQuantity = Purchase::where('product_id', $id)
+                    ->where('warehouse_from_id', $warehouse_to_id)
+                    ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                    ->where('transaction_type', 2)
+                    ->sum('quantity');
         
-        $warehouse_Fromid4 = Sale::where('product_id', $id)
-        ->where('warehouse_to_id', $warehouse_to_id)
-        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-        ->where('transaction_type', 5)
-        ->sum('quantity');
-        $warehouse_Fromid_Sale = Sale::where('product_id', $id)
-        ->where('warehouse_to_id', $warehouse_to_id)
-        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-        ->where('transaction_type', 4)
-        ->sum('quantity');
-      
-  
-        $productPurchase = $Purchase_warehouse_to_id - $warehouseFromid -$warehouse_Fromid_Sale- $warehouse_Fromid+$warehouse_Fromid2+$warehouse_Fromid4;
- 
+                $warehouseFromQuantity3 = Purchase::where('product_id', $id)
+                    ->where('warehouse_from_id', $warehouse_to_id)
+                    ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                    ->where('transaction_type', 3)
+                    ->sum('quantity');
+        
+                $saleQuantity5 = Sale::where('product_id', $id)
+                    ->where('warehouse_to_id', $warehouse_to_id)
+                    ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                    ->where('transaction_type', 5)
+                    ->sum('quantity');
 
+                $saleQuantity4 = Sale::where('product_id', $id)
+                    ->where('warehouse_to_id', $warehouse_to_id)
+                    ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                    ->where('transaction_type', 4)
+                    ->sum('quantity');
+                   
+    
+                $productPurchase =( $purchaseToQuantity+$saleQuantity5 )- $warehouseFromQuantity - $warehouseFromQuantity3- $saleQuantity4 ;
+        
  $categories = Category::where('product_id', $id)
  ->select('categorie_id', 'Categorie_name')
  ->get();        // حساب الكمية النهائية المتاحة في المخزن
@@ -397,7 +392,6 @@ public function search(Request $request)
             'Quantity' => $productData->quantity,
             'QuantityPurchase'=> $productPurchase,
             'Categorie_names' => $categories, // أسماء الفئات كقائمة
-
         ];
         // تحويل الأرقام العربية إلى إنجليزية
         $product['Barcode'] = $this->convertArabicNumbersToEnglish($product['Barcode']);
@@ -480,6 +474,7 @@ public function print($id)
     {
         $AccountClassName="الحساب";
     }
+    
 
     $DataPurchase = Purchase::where('Purchase_invoice_id', $id)->get();
     $Categorys = Category::all();
@@ -493,7 +488,7 @@ public function print($id)
   $numberToWords = new NumberToWords();
   $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
   
-  
+// dd($DataPurchaseInvoice->Invoice_type);
     // تحويل القيمة إلى نص مكتوب
     return view('invoice_purchases.bills_purchase_show', [
         'DataPurchaseInvoice' => $DataPurchaseInvoice,
@@ -502,7 +497,7 @@ public function print($id)
         'Purchase_CostSum' => $Purchase_CostSum,
         'Purchase_priceSum' => $Purchase_priceSum,
         'Invoice_type' => PaymentType::tryFrom($DataPurchaseInvoice->Invoice_type)?->label() ?? 'غير معروف',
-        'transaction_type' => TransactionType::tryFrom($DataPurchaseInvoice->transaction_type)?->label() ?? 'غير معروف',
+        'transaction_type' => TransactionType::fromValue($DataPurchaseInvoice->transaction_type)?->label() ?? 'غير معروف',
 
         'priceInWords' =>  is_numeric($Purchase_priceSum) 
         ? $numberTransformer->toWords($Purchase_priceSum) . ' ' . $curre

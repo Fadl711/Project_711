@@ -54,13 +54,13 @@
               <p class="text-sm text-gray-700">العنوان: {{ $buss->Company_Address }}</p>
               <p class="text-sm text-gray-700">التلفون: {{ $buss->Phone_Number }}</p>
           </div>
+
           <!-- القسم الأوسط - تحليل الحسابات -->
           <div class="flex items-center justify-center px-2">
               <div class="w-24 h-20   flex items-center justify-center translate-x-10">
                   <img class=" bg-[#1749fd15] rounded-3xl" src="{{ url($buss->Company_Logo ? 'images/' . $buss->Company_Logo : '') }}" alt="">
               </div>
           </div>
-
           <!-- القسم الأيسر - English content -->
           <div class="text-left space-y-2">
               <h2 class="font-extrabold  ">{{ $buss->Company_NameE }}</h2>
@@ -69,40 +69,11 @@
               <p class="text-sm text-gray-700">Phone: {{ $buss->Phone_Number }}</p>
           </div>
       </div>
-      <div class="text-center space-y-4">
-          <p class="font-extrabold text-lg">
-            التقرير المخزن -  {{ $Myanalysis }} 
-            من تاريخ:
-                {{ $accountingPeriod }}
-            
-          </p>
-      
-         
-      </div>
-      
+     
   </div>
   <div class="grid grid-cols-2 w-full gap-2  text-gray-700">
-          {{$productname }}    
+          {{$productname ??'' }}    
 </div>
-@endisset
-@isset($productData)
-@include('components.storesData.Quantit-yonly')
-@endisset
-@isset($productDataCosts)
-@include('components.storesData.Quantity-Costs')
-@endisset
-@isset($allQuantityonly)
-@include('components.storesData.all-Quantit-yonly')
-@endisset
-@isset($allQuantityCosts)
-@include('components.storesData.all-Quantity-Costs')
-@endisset
-@isset($QuantityCostsSupplier)
-@include('components.storesData.Quantity-Costs-Supplier')
-@endisset
-@isset($QuantitySupplier)
-@include('components.storesData.Quantity-Supplier')
-@endisset
 
 
 

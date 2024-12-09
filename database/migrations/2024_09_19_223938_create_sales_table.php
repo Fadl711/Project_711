@@ -38,7 +38,6 @@ return new class extends Migration
             $table->integer('User_id')->unsigned();
             $table->integer('Invoice_id')->unsigned();
             $table->integer('supplier_id')->unsigned()->nullable();
-
             $table->unsignedTinyInteger('transaction_type')->comment('يحدد نوع المعاملة');
 
             $table->timestamps();

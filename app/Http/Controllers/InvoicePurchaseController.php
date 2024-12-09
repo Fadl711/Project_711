@@ -97,14 +97,16 @@ class InvoicePurchaseController extends Controller
                 }
                 break;
         }
+        // 'transaction_type' => TransactionType::fromValue($DataPurchaseInvoice->transaction_type)?->label() ?? 'غير معروف',
+        // $transaction_type=TransactionType::fromValue($invoice->transaction_type)?->label() ?? 'غير معروف';
         // جلب البيانات وتحويلها
         $purchaseInvoices = $query->get()->transform(function ($invoice) {
             return [
                 'formatted_date' => $invoice->formatted_date ?? 'غير متاح',
                 'supplier_name' => optional($invoice->supplier)->sub_name ?? 'غير معروف',
                 'main_account_class' => optional($invoice->supplier?->mainAccount)->accountClassLabel() ?? 'غير معروف',
-                'transaction_type' => TransactionType::tryFrom($invoice->transaction_type)?->label() ?? 'غير معروف',
-                'invoice_number' => $invoice->purchase_invoice_id ?? 'غير متاح',
+         'transaction_type' => TransactionType::tryFrom($invoice->transaction_type)?->label() ?? 'غير معروف',
+        'invoice_number' => $invoice->purchase_invoice_id ?? 'غير متاح',
                 'receipt_number' => $invoice->Receipt_number ?? 'غير متاح',
                 'Invoice_type' => PaymentType::tryFrom($invoice->Invoice_type)?->label() ?? 'غير معروف',
                 'total_invoice' => $invoice->Total_invoice ?? 0,
@@ -201,16 +203,17 @@ class InvoicePurchaseController extends Controller
             $query->orderBy('created_at', $orderDirection);
         }
         // الحصول على النتائج
-        $purchaseInvoices = $query->get()->transform(function ($invoice) {
+        $purchaseInvoices  = $query->get()->transform(function ($invoice) {
+          
             return [
                 'formatted_date' => $invoice->formatted_date ?? 'غير متاح',
                 'supplier_name' => optional($invoice->supplier)->sub_name ?? 'غير معروف', // عرض اسم المورد
                 'main_account_class' => optional($invoice->supplier?->mainAccount)->accountClassLabel() ?? 'غير معروف',
-                'transaction_type' => TransactionType::tryFrom($invoice->transaction_type)?->label() ?? 'غير معروف',
+                'transaction_type' => TransactionType::fromValue($invoice->transaction_type)?->label() ?? 'غير معروف',
                 'invoice_number' => $invoice->purchase_invoice_id ?? 'غير متاح',
                 'receipt_number' => $invoice->Receipt_number ?? 'غير متاح',
-                // 'Invoice_type' => $invoice->Invoice_type ?? 'غير متاح',
                 'Invoice_type' => PaymentType::tryFrom($invoice->Invoice_type)?->label() ?? 'غير معروف',
+
 
                 'total_invoice' => $invoice->Total_invoice ?? 0,
                 'total_cost' => $invoice->Total_cost ?? 0,

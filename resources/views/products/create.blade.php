@@ -14,55 +14,56 @@
     @csrf
     <div class="grid grid-cols-2 gap-1 md:grid-cols-8 lg:grid-cols-8">
         <div class="flex flex-col">
-          <label for="Barcode" class="btn">الباركود</label>
+          <label for="Barcode" class="labelSale">الباركود</label>
           <input type="number" name="Barcode" placeholder="0" class="inputSale"  />
         </div>
 
         <div class="flex flex-col">
-          <label for="product_name" class="btn">اسم الصنف</label>
+          <label for="product_name" class="labelSale">اسم الصنف</label>
           <input type="text" name="product_name" id="product_name" placeholder="name" class="inputSale" required />
         </div>
         
         <div class="flex flex-col">
-          <label for="Purchase_price" class="btn">سعر الشراء</label>
+          <label for="Purchase_price" class="labelSale">سعر الشراء</label>
           <input type="number" name="Purchase_price" id="Purchase_price" placeholder="0" class="inputSale"required />
         </div>
         <div class="flex flex-col">
-          <label for="Selling_price" class="btn"> سعر البيع</label>
+          <label for="Selling_price" class="labelSale"> سعر البيع</label>
           <input type="number" name="Selling_price" id="Selling_price" placeholder="0" class="inputSale" required/>
         </div>
         
         
         <div class="flex flex-col">
-          <label for="Regular_discount" class="btn">خصم عادي</label>
+          <label for="Regular_discount" class="labelSale">خصم عادي</label>
           <input type="number" name="Regular_discount" id="Regular_discount" placeholder="0" class="inputSale" required/>
         </div>
         
         <div class="flex flex-col">
-          <label for="Special_discount" class="btn">خصم خاص </label>
+          <label for="Special_discount" class="labelSale">خصم خاص </label>
           <input type="number" name="Special_discount" id="Special_discount" placeholder="0" class="inputSale" required/>
         </div>
         <div class="flex flex-col">
-          <label for="Quantity" class="btn">الكمية</label>
+          <label for="Quantity" class="labelSale">الكمية</label>
           <input type="number" name="Quantity" id="Quantity" placeholder="0" class="inputSale"required />
         </div>
         <div class="flex flex-col">
-          <label for="Purchase_invoice_id" class="btn">رقم الفاتورة</label>
-          <input type="number" name="Purchase_invoice_id" id="Purchase_invoice_id" placeholder="0" class="inputSale"required />
+          <label for="note" class="labelSale"> ملاحظه  </label>
+          <input type="text" name="note" id="note"  class="inputSale" required/>
         </div>
+      
         <div>
-          <label for="Supplier_id" class="labelSale">اسم المورد</label>
+          <label for="Supplier_id" class="labelSale">اسم المورد الصنف</label>
           <select name="Supplier_id" id="Supplier_id" dir="ltr" class="input-field w-full select2 inputSale" >
             <option selected value=""></option>
-              @isset($Supplier_id)
-              @foreach ($Supplier_id as $Supplier)
+              @isset($subAccountSupplierid)
+              @foreach ($subAccountSupplierid as $Supplier)
               <option value="{{$Supplier->sub_account_id}}">{{$Supplier->sub_name}}</option>
                @endforeach
                @endisset
           </select>
       </div>
         <div>
-          <label for="account_debitid" class="labelSale"> مخازن </label>
+          <label for="account_debitid" class="labelSale"> توريد الكمية الى المخازن </label>
           {{-- warehouse_to_id --}}
           <select name="account_debitid" id="account_debitid"  dir="ltr" class="input-field select2 inputSale" required>
             <option selected value=""></option>
@@ -75,13 +76,12 @@
                @endforeach
                @endisset
           </select>
-          {{-- <option value="{{ $mainAccount->sub_account_id }}">{{ $mainAccount->sub_name }}</option> --}}
-
       </div>
-        <div class="flex flex-col">
-          <label for="note" class="btn"> ملاحظه  </label>
-          <input type="text" name="note" id="note"  class="inputSale" required/>
-        </div>
+      <div class="">
+        <label for="Purchase_invoice_id" class="labelSale">رقم الفاتورة</label>
+        <input type="number" name="Purchase_invoice_id" id="Purchase_invoice_id" placeholder="0" class="inputSale"required />
+      </div>
+     
 
       
        

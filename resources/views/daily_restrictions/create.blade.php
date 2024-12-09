@@ -117,7 +117,7 @@
           <div class="grid grid-cols-2 md:grid-cols-2 gap-4">
           <div>
             <label for="Amount_debit" class="block font-medium mb-2">المبلغ المدين</label>
-            <input name="Amount_debit" id="Amount_debit" type="number" step="0.01" class=" inputSale input-field" placeholder="أدخل المبلغ" required>
+            <input name="Amount_debit" id="Amount_debit" type="text"  class=" inputSale input-field" placeholder="أدخل المبلغ" required>
         </div>
             <div class="">
                 <label for="Currency_name" class="block font-medium mb-2">العملة</label>
@@ -166,6 +166,24 @@
       // تفعيل Select2
       $('.select2').select2();
 
+        $('#Amount_debit').on('input', function() {
+        let value = $(this).val();
+        // إزالة أي شيء ليس رقماً أو فاصلة عشرية
+        value = value.replace(/[^0-9.]/g, '');
+        // التأكد من أن الفاصلة العشرية تظهر مرة واحدة فقط
+        const parts = value.split('.');
+        if (parts.length > 2) {
+            value = parts[0] + '.' + parts.slice(1).join('');
+        }
+        // إضافة الفاصلة بعد كل ثلاثة أرقام (فصل الآلاف) 
+        if (value) {
+            let [integer, decimal] = value.split('.');
+            integer = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ",");  // إضافة الفواصل بين الآلاف
+            value = decimal ? integer + '.' + decimal : integer;  // إعادة تركيب الرقم
+        }
+        // تعيين القيمة المعدلة للحقل
+        $(this).val(value);
+    });
       // التركيز على الحقل الأول عند التحميل
       $('#account_debit_id').focus();
       // إضافة مؤشر تحميل
@@ -175,7 +193,6 @@
                 event.preventDefault();
                 // جمع بيانات النموذج
                 var formData = $('#dailyRestrictionsForm').serialize();
-
             // إرسال الطلب باستخدام AJAX
             $.ajax({
                 url: '{{ route("daily_restrictions.saveAndPrint") }}',

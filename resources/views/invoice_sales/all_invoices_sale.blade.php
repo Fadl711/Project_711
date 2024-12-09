@@ -82,7 +82,7 @@
     // إنشاء كارت الفاتورة
     function renderInvoiceCard(sale) {
         return `
-            <div class="mb-3 border border-gray-300 rounded-lg px-4 py-2 shadow-sm">
+            <div  class="mb-3 border border-gray-300 rounded-lg px-4 py-2 shadow-sm" id="invoice-${sale.invoice_number}">
                 <div class="flex justify-between items-center ">
                     <div class="text-right">
                         <div class="text-gray-700 text-right">تاريخ الفاتورة: <span class="text-sm">${sale.formatted_date}</span></div>
@@ -116,7 +116,11 @@
                             <td class="py-1 px-4">${sale.net_total_after_discount.toLocaleString()}</td>
                             <td class="py-1 px-4">${sale.paid_amount.toLocaleString()}</td>
                             <td class="py-1 px-4">
-                                <button value="${sale.invoice_number}" onclick="openInvoiceWindow(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح الفاتورة</button>
+                                  <div class="flex gap-8 space-x-2">
+                       <a href="#" class="text-red-600 hover:underline show-payment" data-id="${sale.invoice_number}" data-url="${sale.view_url}">عرض</a>
+                            <a href="${sale.edit_url}" class="text-green-600 hover:underline">تعديل</a>
+                           <a href="#" class="text-red-600 hover:underline delete-payment" data-id="${sale.invoice_number}" data-url="${sale.destroy_url}">حذف</a>
+                                                </div>
                             </td>
                         </tr>
                     </tbody>
@@ -127,6 +131,41 @@
                 </div>
             </div>`;
     }
+    $(document).on('click', '.show-payment', function (e) {
+    e.preventDefault();
+
+    let invoiceField = $(this).data('id');
+    const url = `{{ route('invoiceSales.print', ':invoiceField') }}`.replace(':invoiceField', invoiceField);
+
+window.open(url, '_blank', 'width=600,height=800');// فتح الرابط في نافذة جديدة
+  });
+  $(document).on('click', '.delete-payment', function (e) {
+    e.preventDefault();
+
+    let paymentId = $(this).data('id');
+    let url = $(this).data('url');
+
+    if (confirm('هل أنت متأكد أنك تريد حذف هذا فاتورة?')) {
+        $.ajax({
+            url: url,
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+            },
+            success: function (response) {
+                if (response.success) {
+                
+                    // إخفاء السند من الواجهة
+                    $('#invoice-' + paymentId).fadeOut(); // يمكن استخدام fadeOut لإخفاء العنصر مع تأثير } else {
+                }
+            },
+            error: function (error) {
+                console.error('Error deleting payment bond:', message.responseText);
+                alert('حدث خطأ أثناء الحذف. يرجى المحاولة لاحقًا.');
+            }
+        });
+    }
+});
 
     // البحث بالمدخل
     searchInput.on('input', function () {

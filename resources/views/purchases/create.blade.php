@@ -65,8 +65,8 @@
                         <label for="Supplier_id" class="labelSale">اسم المورد</label>
                         <select name="Supplier_id" id="Supplier_id" dir="ltr" class="input-field w-full select2 inputSale" >
                             <option selected value=""></option>
-                            @isset($Supplier_id)
-                            @foreach ($Supplier_id as $Supplier)
+                            @isset($subAccountSupplierid)
+                            @foreach ($subAccountSupplierid as $Supplier)
                             <option value="{{$Supplier->sub_account_id}}">{{$Supplier->sub_name}}</option>
                              @endforeach
                              @endisset

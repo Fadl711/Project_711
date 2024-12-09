@@ -19,15 +19,21 @@ const errorMessage = $('#errorMessage');
 function parseNumber(value) {
     return parseFloat(value?.replace(/,/g, '')) || 0;
 }
+function formatNumber(num) {
+          // تنسيق الأرقام مع فواصل الآلاف
 
+    return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
 function TotalPrice() {
     var price = parseNumber($('#Purchase_price').val());
     var Purchase_price = parseNumber($('#Purchase_price').val());
     var sellingPrice = parseNumber($('#Selling_price').val());
     var quantity = parseNumber($('.quantity-field').val());
     var Yr_cost = parseNumber($('#Yr_cost').val());
+    var Profit = parseNumber($('#Profit').val());
     var discount_rate = parseNumber($('#discount_rate').val());
     var QuantityCategorie= parseNumber($('#QuantityCategorie').val());
+
     if ((price > 0 || sellingPrice > 0) && quantity > 0) {
         let Quantityprice = QuantityCategorie * quantity ||quantity * QuantityCategorie;
         let total_price = price * quantity;
@@ -36,6 +42,7 @@ function TotalPrice() {
         let PurchasePrice = Purchase_price * quantity;
         let discount = (discount_rate > 0 && sellingPrice > 0) ? (total_priceS * discount_rate) / 100 : 0;
         let cost = Yr_cost * total_price;
+        let Profit = total_price2 - PurchasePrice;
         let loss = total_priceS - (total_price + discount);
 
         // تقريب القيم
@@ -44,16 +51,21 @@ function TotalPrice() {
         discount = discount.toFixed(2);
         Quantityprice = Quantityprice.toFixed(2);
         cost = cost.toFixed(2);
+        Profit = Profit.toFixed(2);
         loss = loss.toFixed(2);
 
         // تحديث القيم
-        $('#total_Purchase_price').val(total_price).trigger('change');
-        $('#Quantityprice').val(Quantityprice).trigger('change');
-        $('#Total').val(total_price2).trigger('change');
-        $('#TotalPurchase').val(PurchasePrice).trigger('change');
-        $('#total_price').val(total_priceS - discount).trigger('change');
-        $('#total_discount_rate').val(discount).trigger('change');
-        $('#Cost').val(cost).trigger('change');
+
+
+// تعيين القيم مع التنسيق
+$('#total_Purchase_price').val(formatNumber(total_price)).trigger('change');
+$('#Quantityprice').val(formatNumber(Quantityprice)).trigger('change');
+$('#Total').val(formatNumber(total_price2)).trigger('change');
+$('#TotalPurchase').val(formatNumber(PurchasePrice)).trigger('change');
+$('#total_price').val(formatNumber(total_priceS - discount)).trigger('change');
+$('#total_discount_rate').val(formatNumber(discount)).trigger('change');
+$('#Cost').val(formatNumber(cost)).trigger('change');
+$('#Profit').val(formatNumber(Profit)).trigger('change'); // عرض الربح مع تقريب إلى خانتين عشريتين
         // إضافة التنسيق عند الخسارة
         if (loss < 0) {
             $('#loss').val(loss).trigger('change');
@@ -70,10 +82,14 @@ function TotalPrice() {
         else {
             $('#loss').addClass('inputSale');
             $('#loss').val('').trigger('change'); // تحديث القيمة
+
         }
 
     } else {
         // تفريغ الحقول
+        $('#Total').val('').trigger('change');
+        $('#Profit').val('').trigger('change');
+        $('#TotalPurchase').val('').trigger('change');
         $('#total_Purchase_price').val('').trigger('change');
         $('#total_Selling_price').val('').trigger('change');
         $('#total_discount_rate').val('').trigger('change');
@@ -83,7 +99,6 @@ function TotalPrice() {
         $('#Quantityprice').val('').trigger('change');
     }
 }
-
 // إضافة الحدث
 $('#Purchase_price, #Selling_price, #total_discount_rate, #discount_rate, .quantity-field, #Yr_cost').on('input keyup', TotalPrice);
 
@@ -202,15 +217,13 @@ function addToTable(account) {
        categorieSelect.empty();
         // تفريغ القائمة السابقة
         console.time('Select2 Initialization');
-        // const  GetCategorie_name = product.forEach(subAccount =>
-        //     `<option value="${subAccount.categorie_id}">${subAccount.Categorie_name}</option>`
-        // ).join('');
-        // Categorie_name.append(GetCategorie_name);
-
-        product.Categorie_names.forEach(categorie => {
-            $('#Categorie_name').append(new Option(categorie.Categorie_name, categorie.categorie_id));
-        });
-        
+     
+    
+    product.Categorie_names.forEach(categorie => {
+        $('#Categorie_name').append(new Option(categorie.Categorie_name, categorie.categorie_id));
+    });
+    
+    categorieSelect.append( `<option selected  value=""></option>`);
         $('#Categorie_name').select2(); // إعادة التهيئة بعد الإضافة
         
         console.timeEnd('Select2 Initialization'); // عرض الوقت المستغرق
@@ -335,12 +348,52 @@ $(document).on('keydown', function(event) {
     $(this).select2('close');
         $('#Categorie_name').select2('open');
     });
- $('#Categorie_name').on('change', function() {
+//  $('#Categorie_name').on('change', function() {
+//     $(this).select2('close');
+//     setTimeout(function() {
+//         $('#Quantity').focus();
+//         console.log('Focused on Quantity'); // للتأكد من التركيز
+//     }, 10);});
+    
+
+$('#Categorie_name').on('change', function() {
+    const Categoriename = $(this).val();
+    var  mainAccountId= $('#product_id').val();
+    getUnitPriceCategorie(mainAccountId,Categoriename);
     $(this).select2('close');
     setTimeout(function() {
         $('#Quantity').focus();
         console.log('Focused on Quantity'); // للتأكد من التركيز
-    }, 10);});
+    }, 10);
+    
+});
+
+function getUnitPriceCategorie(mainAccountId,categoryName)
+{
+    
+    if (mainAccountId!==null) {
+
+        $.ajax({
+            url: `/GetProduct/${mainAccountId}/price?mainAccountId=${mainAccountId}&Categoriename=${categoryName}`,
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                if (response.product) {
+                //    displayProductDetails(response.product);
+                    $('#Purchase_price').val(response.product.Purchase_price).trigger('change');
+                    $('#QuantityCategorie').val(response.product.Quantityprice).trigger('change');
+                    $('#Selling_price').val(response.product.Selling_price).trigger('change');
+                } else {
+                    console.error('لم يتم العثور على المنتج أو السعر غير متوفر.');
+                }
+            },
+            error: function(xhr) {
+                console.error('حدث خطأ في الحصول على المنتج.', xhr.responseText);
+            }
+        });
+    };
+}
+
     // $('#Categorie_name').on('change', function() {
         
 
@@ -361,7 +414,7 @@ $('#mainaccount_debit_id').on('change', function() {
     $('#Supplier_id').select2('open');
 });
      // عند الكتابة في حقل اجمالي التكلفة
-     $('#Total_cost, #Total_invoice,#Yr_cost,#Purchase_price,#Selling_price,#Cost,#Total,#Discount_earned,#Profit').on('input', function() {
+     $('#Total_cost, #Total_invoice,#Yr_cost,#Purchase_price,#Selling_price,#Cost,#Total,#Discount_earned,#Profit,#TotalPurchase').on('input', function() {
         let value = $(this).val();
         // إزالة أي شيء ليس رقماً أو فاصلة عشرية
         value = value.replace(/[^0-9.]/g, '');
@@ -383,7 +436,6 @@ $('#mainaccount_debit_id').on('change', function() {
      // إزالة الفواصل من الحقول قبل إرسالها
      $('#Receipt_number,#Quantity').on('input', function() {
         let value = $(this).val();
-    
         // إزالة أي شيء ليس رقماً أو فاصلة عشرية
         value = value.replace(/[^0-9.]/g, '');
         $(this).val(value);

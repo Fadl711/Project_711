@@ -106,6 +106,36 @@
                             إضافة الفاتورة
                         </button>
                     </div>
+                    <div>
+                        <label for="financial_account_id_main" class="labelSale"> حساب الدفع</label>
+                        <select name="financial_account_id_main" id="financial_account_id_main" dir="ltr" class="input-field select2 inputSale" required>
+                            @isset($MainAccounts)
+                                <option value="" selected>اختر الحساب</option>
+                                @foreach ($MainAccounts as $mainAccount)
+                                    <option value="{{ $mainAccount['main_account_id'] }}">{{ $mainAccount->account_name }} - {{ $mainAccount->main_account_id }}</option>
+                                @endforeach
+                            @endisset
+                        </select>
+                    </div>
+                    <div>
+                        <label for="financial_account_id" class="labelSale"> تحديد الحساب</label>
+                        <select name="financial_account_id" id="financial_account_id" dir="ltr" class="input-field select2 inputSale" required>
+                            <option value="" selected>اختر الحساب </option>
+                             @isset($financialts)
+                             @isset($financial_account)
+                            @foreach ($financialts as $financialt)
+                            @if ($financialt->sub_account_id==$financial_account)
+                            <option  selected value="{{$financialt->sub_account_id}}">{{$financialt->sub_name}}</option>
+    
+                            @endif
+                            @endforeach
+                            @endisset
+                            @endisset
+    
+    
+    
+                        </select>
+                    </div>
                 </div>
             </form>
         </div>
@@ -153,35 +183,17 @@
                     </select>
                 </div>
                 <div>
-                    <label for="financial_account_id_main" class="labelSale"> حساب الدفع</label>
-                    <select name="financial_account_id_main" id="financial_account_id_main" dir="ltr" class="input-field select2 inputSale" required>
-                        @isset($MainAccounts)
-                            <option value="" selected>اختر الحساب</option>
-                            @foreach ($MainAccounts as $mainAccount)
-                                <option value="{{ $mainAccount['main_account_id'] }}">{{ $mainAccount->account_name }} - {{ $mainAccount->main_account_id }}</option>
-                            @endforeach
-                        @endisset
+                    <label for="Supplier" class="labelSale">اسم المورد الصنف</label>
+                    <select name="Supplier" id="Supplier" dir="ltr" class="input-field w-full select2 inputSale" >
+                      <option selected value=""></option>
+                        @isset($subAccountSupplierid)
+                        @foreach ($subAccountSupplierid as $Supplier)
+                        <option value="{{$Supplier->sub_account_id}}">{{$Supplier->sub_name}}</option>
+                         @endforeach
+                         @endisset
                     </select>
                 </div>
-                <div>
-                    <label for="financial_account_id" class="labelSale"> تحديد الحساب</label>
-                    <select name="financial_account_id" id="financial_account_id" dir="ltr" class="input-field select2 inputSale" required>
-                        <option value="" selected>اختر الحساب </option>
-                         @isset($financialts)
-                         @isset($financial_account)
-                        @foreach ($financialts as $financialt)
-                        @if ($financialt->sub_account_id==$financial_account)
-                        <option  selected value="{{$financialt->sub_account_id}}">{{$financialt->sub_name}}</option>
-
-                        @endif
-                        @endforeach
-                        @endisset
-                        @endisset
-
-
-
-                    </select>
-                </div>
+              
             </div>
             <div class="grid grid-cols-1 gap-1 px-1">
                 <div>
@@ -195,6 +207,7 @@
                         @endisset
                     </select>
                 </div>
+               
             </div>
 
             <div class="grid grid-cols-4 gap-1 px-1">
@@ -202,6 +215,7 @@
                 <div>
                     <label for="Categorie_name" class="block labelSale">الوحدة </label>
                     <select name="Categorie_name" id="Categorie_name" dir="ltr" class="input-field select2 inputSale" required>
+                        <option selected value=""></option>
                     </select>
                 </div>
                 <div>
@@ -427,14 +441,14 @@ form.on('keydown', function (event) {
             submitButton.prop('disabled', true);
     
             $.ajax({
-                url: '{{ route("sales.store") }}',
-                type: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                data: formData,
-                processData: false,
-                contentType: false,
+    url: '{{ route("sales.store") }}',
+    type: 'POST',
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    },
+    data: formData,
+    processData: false,
+    contentType: false,
                 success: function (response) {
                     handleAjaxSuccess(response);
                     submitButton.prop('disabled', false);
@@ -463,19 +477,21 @@ form.on('keydown', function (event) {
     
         // التعامل مع الأخطاء في الطلب
         function handleAjaxError(xhr) {
-            if (xhr.status === 422) {
-                const errors = xhr.responseJSON.errors;
-                for (const field in errors) {
-                    const inputField = $(`#${field}`);
-                    const parentDiv = inputField.closest('div');
-                    parentDiv.find('.error-message').remove();
-                    inputField.addClass('is-invalid');
-                    parentDiv.append(`<div class="error-message text-danger text-sm">${errors[field][0]}</div>`);
-                }
-            } else {
-                alert('خطأ في الاتصال! لم يتم الاتصال بالخادم، يرجى المحاولة لاحقًا.');
-            }
+    if (xhr.status === 422) {
+        const errors = xhr.responseJSON.errors;
+        for (const field in errors) {
+            const inputField = $(`#${field}`);
+            const parentDiv = inputField.closest('div');
+            parentDiv.find('.error-message').remove();
+            inputField.addClass('is-invalid');
+            parentDiv.append(`<div class="error-message text-danger text-sm">${errors[field][0]}</div>`);
         }
+    } else if (xhr.status === 0) {
+        alert('خطأ في الاتصال بالخادم. يرجى التحقق من إعدادات الشبكة.');
+    } else {
+        alert('خطأ في الاتصال! لم يتم الاتصال بالخادم، يرجى المحاولة لاحقًا. (رمز الخطأ: ' + xhr.status + ')');
+    }
+}
         // إزالة الأخطاء عند تغيير القيم
         $('select, input').on('input change', function () {
             const parentDiv = $(this).closest('div');

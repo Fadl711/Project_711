@@ -25,14 +25,19 @@ use InvalidArgumentException;
 class RestrictionController extends Controller
 {
     //
-
+    private function removeCommas($value)
+    {
+        return floatval(str_replace(',', '', $value)); // إزالة الفواصل وتحويل إلى float
+    }
     // تحقق من صحة البيانات
     public function store(Request $request)
     {
+    
+
+            $Amount_debit = $this->removeCommas($request->Amount_debit);
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
         $validated = $request->validate([
             'sub_account_debit_id' => 'required|integer',
-            'Amount_debit' => 'required|numeric',
             'account_Credit_id' => 'required|integer',
             'sub_account_Credit_id' => 'required|integer',
             'Statement' => 'nullable|string',
@@ -96,9 +101,9 @@ if (!$invoices) {
 $dailyEntrie->Invoice_type =$request->payment_type ;
 $dailyEntrie->Invoice_id = $Invoice_id??null;
 $dailyEntrie->account_debit_id = $validated['sub_account_debit_id'];
-$dailyEntrie->Amount_debit = $validated['Amount_debit'];
+$dailyEntrie->Amount_debit = $Amount_debit;
 $dailyEntrie->account_Credit_id = $validated['sub_account_Credit_id'];
-$dailyEntrie->Amount_Credit = $validated['Amount_debit']; // هل المدين يساوي الدائن دائماً؟
+$dailyEntrie->Amount_Credit = $Amount_debit; // هل المدين يساوي الدائن دائماً؟
 $dailyEntrie->Statement = $validated['Statement'];
 $dailyEntrie->Currency_name = $validated['Currency_name'];
 $dailyEntrie->accounting_period_id = $accountingPeriod->accounting_period_id;

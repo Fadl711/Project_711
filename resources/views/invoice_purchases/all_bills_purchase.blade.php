@@ -111,6 +111,11 @@
                             <td class="py-1 px-4">${purchase.total_cost.toLocaleString()}</td>
                             <td class="py-1 px-4">${purchase.paid.toLocaleString()}</td>
                             <td class="py-1 px-4">
+                                 <div class="flex gap-8 space-x-2">
+                       <a href="#" class="text-red-600 hover:underline show-payment" data-id="${purchase.invoice_number}" data-url="${invoice.destroy_url}">عرض</a>
+                            <a href="${purchase.edit_url}" class="text-green-600 hover:underline">تعديل</a>
+                           <a href="#" class="text-red-600 hover:underline delete-payment" data-id="${purchase.invoice_number}" data-url="${invoice.destroy_url}">حذف</a>
+                                                </div>
                                 <button value="${purchase.invoice_number}" onclick="openInvoiceWindow(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح الفاتورة</button>
                             </td>
                         </tr>

@@ -23,7 +23,6 @@ return new class extends Migration
             $table->integer('Credit_sub_account_id')->unsigned();
             $table->string('Statement');
             $table->string('transaction_type');
-
             $table->integer('Currency_id')->unsigned();
             $table->integer('User_id')->unsigned();
             $table->timestamps();

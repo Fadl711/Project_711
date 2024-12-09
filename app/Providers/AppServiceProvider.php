@@ -69,8 +69,20 @@ class AppServiceProvider extends ServiceProvider
                
             ]);
         }
+        $mainAccount_Supplier=MainAccount::where('AccountClass',AccountClass::SUPPLIER->value)->first();
+        if ($mainAccount_Warehouse) 
+        {
+            $subAccountSupplierid=SubAccount::where('Main_id',$mainAccount_Supplier->main_account_id)->get();
+        }
+        if(isset($subAccountSupplierid)){
+            View::share([
+                'subAccountSupplierid' => $subAccountSupplierid,
 
-        $subAccountSupplier_id=SubAccount::where('AccountClass',2)->get();
+               
+            ]);
+        }
+
+        // $subAccountSupplierid=SubAccount::where('AccountClass',AccountClass::SUPPLIER->value)->get();
 
         if(isset($subAccount)){
             View::share([
@@ -79,13 +91,7 @@ class AppServiceProvider extends ServiceProvider
                
             ]);
         }
-        if(isset($subAccountSupplier_id)){
-            View::share([
-                'Supplier_id'=>$subAccountSupplier_id,
-
-               
-            ]);
-        }
+       
         $accountClasses = AccountClass::cases();
       $PaymentType=PaymentType::cases();
             $transactionTypes = TransactionType::cases();
@@ -138,7 +144,6 @@ $ASSETSAccountType_id=AccountType::FIXED_ASSETS;
  $REVENUE_name=Deportatton::REVENUE;
 
  $MainAccount4= MainAccount::where('typeAccount',$REVENUE_id)->get();
- $mainAccount= MainAccount::all();
  $SubAccounts=SubAccount::all();
 
 //  $SubAccounts= SubAccount::where('Main_id',$ $MainAccount->main_account_id)->get();

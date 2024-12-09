@@ -33,7 +33,7 @@ return new class extends Migration
             $table->timestamps();
             $table->foreign('Categorie_id')->references('categorie_id')->on('categories');
             $table->foreign('warehouse_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
-            $table->foreign('supplier_id')->references('sub_account_id')->on('sub_accounts');
+            $table->foreign('supplier_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
             $table->foreign('User_id')->references('id')->on('users');
             $table->foreign('currency_id')->references('currency_id')->on('currencies');
         });

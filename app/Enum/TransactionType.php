@@ -16,8 +16,8 @@ enum TransactionType: int
             self::PURCHASE => 'شراء',
             self::RETURN => 'مردود المشتريات',
             self::INVENTORY_TRANSFER => 'تحويل مخزني',
-            self::RETURN_SALE => 'مردود المبيعات',
             self::SALE => 'المبيعات',
+            self::RETURN_SALE => 'مردود المبيعات',
 
         };
     }

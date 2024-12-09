@@ -4,37 +4,37 @@
 <div id="acc" class="w-full  bg-white overflow-hidden sm:rounded-lg ">
     <div class=" ">
         <div class="w-full ">
-            <form class="">
-                <div class=" p-2 md:flex max-md:flex   max-sm:grid grid-cols-2 gap-1 border shadow-md rounded-md"  style="display: ">
-                    {{-- <label class="labelSale" for="" > انشاء فاتورت جرد </label> --}}
+            <form id="inventory" method="POST" class="mb-2">
+                @csrf                <div class=" p-2 md:flex max-md:flex   max-sm:grid grid-cols-2 gap-1 border shadow-md rounded-md"  style="display: ">
                     <div id="namecus"class="text-right" >
                         <label class="labelSale" for="payment_type">عنوان الجرد</label>
                       <input type="text" name="payment_type" class="inputSale" id="payment_type">
                     </div>
-                    <div id="namecus"class="text-right" >
-                        <label class="labelSale"for=""> المخزن</label>
-                        <select   dir="ltr" id="accountty" class="inputSale "  required>
-                            <option value="CA" selected>  </option>
-                            <option value="US" >المخزن رئيسي </option>
-                            <option value="DE">المخزن 2</option>
-                          </select>  
+                    <div>
+                        <label for="warehouse_id" class="labelSale"> المخزن</label>
+                        <select name="warehouse_id" id="warehouse_id" class="input-field select2 inputSale" required>
+                            <option value="" selected>اختر المخزن</option>
+                            @isset($Warehouse)
+                            @foreach($Warehouse as $mainAccount)
+                                <option value="{{ $mainAccount->sub_account_id }}">
+                                    {{ $mainAccount->sub_name }}-{{ $mainAccount->sub_account_id }}
+                                </option>
+                            @endforeach
+                            @endisset
+                        </select>
                     </div>
                     <div id="namecus"class="text-right" >
                         <label class="labelSale" for="">   تاريخ الجرد</label>
                         <input name="" class="inputSale " id="" type="date" placeholder=""/>
                     </div>
-                   
                     <div id="namecus"class=" text-center" >
                         <label class=" text-sm  font-bold" for="lastName" >طريقة الجرد</label>
                               <select  id="pricingType" name="pricingType" class=" inputSale text-left">
                                   <option value="تلقائي">تلقائي</option>
                                   <option value="يدوي">يدوي</option>
                               </select>
-                          
                       </div>
-                     
-                      
-                    <div style="display: block"  id="buttonbill"  class="" >
+                    <div style="display: flex"  id="buttonbill"  class="" >
                         <div class=" ">
                             <button type="submit"
                              class=" inline-flex items-center shadow-md border hover:bg-stone-400  font-medium rounded-lg text-sm px-3 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
@@ -42,12 +42,20 @@
                               انشاء فاتورت جرد  
                           </button>
                             </div>
+                        <div class=" ">
+                            <button
+                            id="CreateInventoryList"
+                             type="button"
+                             class=" inline-flex items-center shadow-md border hover:bg-stone-400  font-medium rounded-lg text-sm px-3 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                              <svg class="me-1 -ms-1 w-5 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
+                              انشاء ورقة جرد  
+                          </button>
+                            </div>
                     </div>
                 </div>
                 <br>
                 <form>
                     <div class=" p-2 md:flex max-md:flex   max-sm:grid grid-cols-2 gap-1 border shadow-md rounded-md"  style="display: ">
-
                     <div id="namecus" class="text-right" >
                         <label class="labelSale" for=""> اسم الصنف</label>
                         <input name="" class="inputSale " id="brand" type="text" placeholder="اسم الصنف"/>
@@ -60,7 +68,6 @@
                         <label class="labelSale" for="email"> اجمالي  الصادرة </label>
                         <input name="" class="inputSale " id="" type="text"  placeholder="الكمية "/>
                     </div>
-                    
                       <div id="namecus"class="text-right" >
                         <label class="labelSale" for="email"> اجمالي الكميه  في المخرن</label>
                         <input name="" class="inputSale " id="" type="text " placeholder="الكمية"/>
@@ -76,8 +83,6 @@
                     </button>
                       </div>
                 </div>
-             
-              
             </div>
             </form>
         </div>
@@ -85,6 +90,26 @@
 </div>
 
 <br>
+<script>
+    $(document).ready(function() {
+$('.select2').select2();
+
+$('#warehouse_id').on('change', function() {
+const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي
+ $('#warehouse_id').select2('close');
+
+showProductName(mainAccountId);
+setTimeout(() => {
+$('#warehouse_id').select2('close'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
+// $('#Supplier_id').select2('open');
+}, 1000);
+
+});
+
+});
+</script>
+
+
 <script>
     document.getElementById('pricingType').addEventListener('input',function(){
         var Pricing= document.getElementById('pricingType').value;

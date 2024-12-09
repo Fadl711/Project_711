@@ -127,7 +127,7 @@ Route::get('/get-sales-by-invoice/ArrowRight', [SaleController::class, 'getSales
 Route::get('/get-sales-by-invoice/ArrowLeft', [SaleController::class, 'getSalesByInvoiceArrowLeft'])->name('getSalesByInvoiceArrowLeft');
 Route::get('/invoiceSales/{id}/print', [InvoiceSaleController::class, 'print'])->name('invoiceSales.print');
 Route::get('/api/sale-invoices/{filterType}', [InvoiceSaleController::class, 'getSaleInvoice']);
-Route::get('/api/sale-invoices', [InvoiceSaleController::class, 'searchInvoices']);
+Route::get('/api/sale-invoices', [InvoiceSaleController::class, 'searchInvoices'])->name('searchInvoices');
 
 
 Route::get('/all_bills_sale', [AllBillsController::class, 'all_bills_sale'])->name('invoice_sales.all_bills_sale');

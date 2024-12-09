@@ -116,7 +116,6 @@ function editDataSale(id) {
 };
 
 function deleteInvoiceSale()  {
-    CsrfToken();
     const invoiceId = $('#sales_invoice_id').val();        // الحصول على معرف الفاتورة من الحقل
     if (!invoiceId) {
         $('#errorMessage').show().text('لم يتم العثور على معرف الفاتورة.');
@@ -222,4 +221,47 @@ function displaySales(sales) {
     `).join('');
 
     $('#mainAccountsTable tbody').append(rows);
+}
+
+$('#warehouse_id').on('change', function() {
+    const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي
+    showProductName(mainAccountId);
+    setTimeout(() => {
+        $('#warehouse_id').select2('close'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
+    }, 1000);
+    
+});
+
+function showProductName(mainAccountId)
+{
+     var  productname= $('#product_name');
+  
+    if (mainAccountId!==null) {
+        
+        $.ajax({
+            url: `/all-products/${mainAccountId}/show`, // استخدام القيم الديناميكية
+            
+            type: 'GET',
+            dataType: 'json',
+            
+            success: function(data) {
+                productname.empty();
+                const productnameOptions = data.map(uniqueProduct =>
+
+                `
+                <option value="${uniqueProduct.product_id}">${uniqueProduct.Product_name}</option>`
+            ).join('');
+
+        // إضافة الخيارات الجديدة إلى القائمة الفرعية
+        productname.append( `<option value=""></option>`);
+        productname.append(productnameOptions);
+        productname.select2('destroy').select2();
+        
+        // إعادة تهيئة Select2 بعد إضافة الخيارات
+    },
+        error: function(xhr) {
+            console.error('حدث خطأ في الحصول على  المنتاج.', xhr.responseText);
+        }
+    });
+};
 }

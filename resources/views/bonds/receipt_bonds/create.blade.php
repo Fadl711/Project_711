@@ -61,7 +61,7 @@
             <div class="  text-center  ">
                 <div class="flex  " role="">
                     <div  class=" text-center  ">
-                        <label for="" class=" text-center" >العمله </label>
+                        <label for="Currency" class=" text-center" >العمله </label>
                         <select   dir="ltr" id="Currency" class="inputSale select2 input-field " name="Currency"  >
                             @isset($currs)
                             <option selected value="{{$currs->currency_id}}">{{$currs->currency_name}}</option>
@@ -80,15 +80,15 @@
                        
 
                 <div class="">
-                <label for="" class=" text-center " >المبلغ </label>
-                <input name="Amount_debit" id="maont" type="number" @isset($ExchangeBond->Amount_debit)
+                <label for="Amount_debit" class=" text-center " >المبلغ </label>
+                <input name="Amount_debit" id="Amount_debit" type="text" @isset($ExchangeBond->Amount_debit)
                     value="{{$ExchangeBond->Amount_debit}}"  @endisset class="inputSale px-1" placeholder="0" required>
                 </div>
 
                 </div>
             </div>
             <div class=" text-center ">
-                <label for="b" class="text-center ">  حساب القبض </label>
+                <label for="AccountReceivable" class="text-center ">  حساب القبض </label>
                 <select name="AccountReceivable" id="AccountReceivable" dir="ltr" class="input-field  select2 inputSale" required>
                     <!-- إضافة خيارات الحسابات -->
                     @isset($mainAccounts)
@@ -103,7 +103,7 @@
                  </select>
             </div>
             <div class="text-center ">
-                 <label for="b" class="text-center ">  إيداع في حساب </label>
+                 <label for="DepositAccount" class="text-center ">  إيداع في حساب </label>
                  <select name="DepositAccount" id="DepositAccount" dir="ltr" class="input-field select2 inputSale" >
                     @isset($Debitsub_account_id)
                     <option  value="{{$Debitsub_account_id->sub_account_id}}">{{$Debitsub_account_id->sub_name}}</option>
@@ -191,6 +191,27 @@
 <script>
 
   $(document).ready(function() {
+  
+    $('#Amount_debit').on('input', function() {
+        let value = $(this).val();
+        // إزالة أي شيء ليس رقماً أو فاصلة عشرية
+        value = value.replace(/[^0-9.]/g, '');
+        // التأكد من أن الفاصلة العشرية تظهر مرة واحدة فقط
+        const parts = value.split('.');
+        if (parts.length > 2) {
+            value = parts[0] + '.' + parts.slice(1).join('');
+        }
+        // إضافة الفاصلة بعد كل ثلاثة أرقام (فصل الآلاف) 
+        if (value) {
+            let [integer, decimal] = value.split('.');
+            integer = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ",");  // إضافة الفواصل بين الآلاف
+            value = decimal ? integer + '.' + decimal : integer;  // إعادة تركيب الرقم
+        }
+        // تعيين القيمة المعدلة للحقل
+        $(this).val(value);
+    });
+
+
     $('#PaymentParty').on('change', function() {
     const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي (الدائن)
 
@@ -262,6 +283,7 @@
 
 
 $(document).ready(function() {
+    
     $('#submitButton').click(function(event) {
         event.preventDefault();
         var buttonValue = $(this).val(); // الحصول على قيمة الزر الذي تم الضغط عليه

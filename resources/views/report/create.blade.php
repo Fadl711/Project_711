@@ -123,7 +123,7 @@ if(accountListRadio=="mainAccount")
             const url = `{{ route('customers.statement', ':invoiceField') }}`
                 .replace(':invoiceField', invoiceField);
     
-            const newWindow = window.open(url, '_blank', 'width=600,height=800');
+            const newWindow = window.open(url, '_blank', 'width=800,height=800');
             if (newWindow) {
                 newWindow.onload = function() {
                     setTimeout(() => {

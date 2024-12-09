@@ -25,7 +25,7 @@
               <a href="{{route('report.earningsReports')}}" class="sm:px-3 border-b-2 {{ Request::is('earningsReports') ? 'text-blue-700 border-blue-700' : 'text-gray-600' }} border-transparent   dark:text-gray-400 pb-1.5">تقارير ارباح وخسائر الاصناف</a>
               <a href="{{route('report.salesReport')}}" class="sm:px-3 border-b-2 {{ Request::is('salesReport') ? 'text-blue-700 border-blue-700' : 'text-gray-600' }} border-transparent dark:text-gray-400 pb-1.5">تقارير المبيعات</a>
               <a href="#" class="sm:px-3 border-b-2 border-transparent text-gray-600 dark:text-gray-400 pb-1.5 ">تقارير</a>
-              <a href="" onclick="myfun()"  class="sm:px-3 border-b-2 border-transparent text-gray-600 dark:text-gray-400 pb-1.5 flex">
+              {{-- <a href="" onclick="myfun()"  class="sm:px-3 border-b-2 border-transparent text-gray-600 dark:text-gray-400 pb-1.5 flex">
                <svg class="w-6 h-5 text-gray-800 dark:text-white"
                    aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                       <path stroke="currentColor" stroke-linejoin="round"
@@ -33,35 +33,17 @@
                     </svg>
                        <span class=" mr-1">طباعة التقرير</span>
 
-                </a>
+                </a> --}}
             </div>
           </div>
         </div>
     
  
-          <h1>تقرير كشف حساب</h1>
+          <h1>تقرير  المخزني</h1>
           
           <form id="Account" method="POST" class="mb-2">
               @csrf
-              <ul class="flex flex-col sm:flex-row gap-4 items-center bg-white p-1 rounded-lg shadow-md mb-2">
-                  <li class="w-full text-center">
-                      <label for="horizontal-list-radio-license" class="labelSale">إعدادات العرض</label>
-                  </li>
-                  @foreach(['1' => 'تلقائي', '2' => 'اليوم', '3' => 'هذا الأسبوع', '4' => 'هذا الشهر'] as $key => $label)
-                      <li class="w-full text-center">
-                          <input type="radio" name="dateList" value="{{ $key }}" {{ $key == 1 ? 'checked' : '' }} class="mr-2"> {{ $label }}
-                      </li>
-                  @endforeach
-                  <li class="w-full flex items-center justify-center">
-                      <input type="checkbox" name="list-radio" value="5" class="mr-2">
-                      <label class="text-sm font-medium">من:</label>
-                      <input type="date" name="from-date" class="mx-2 p-2 border rounded-md focus:ring-2 focus:ring-indigo-500">
-                  </li>
-                  <li class="w-full flex items-center justify-center">
-                      <label class="text-sm font-medium">إلى:</label>
-                      <input type="date" name="to-date" class="mx-2 p-2 border rounded-md focus:ring-2 focus:ring-indigo-500">
-                  </li>
-              </ul>
+            
           
               <div class="gap-2 grid grid-cols-4 bg-white p-1 rounded-lg shadow-md mb-2">
                   <div>
@@ -86,14 +68,17 @@
                       </select>
                   </div>
                   <div class="">
-                    <label for="Report_Type" class="labelSale"> نوع التقرير</label>
-                    <select name="Report_Type" id="Report_Type" class="input-field select2 inputSale" required>
+                    <label for="Quantit" class="labelSale"> نوع التقرير</label>
+                    <select name="Quantit" id="Quantit" class="input-field select2 inputSale" required>
                         <option value="" selected>اختر المخزن</option>
-                        @foreach(['storeData' => 'بيانات المخزن', 'stordeData' => ' المنتج المحدد'] as $key => $label)
-
+                        @foreach(['Quantityonly' => ' الكمية ',
+                         'QuantityCosts' => 'الكمية والتكاليف' ,
+                         'QuantityCostsSupplier' => 'الكمية والتكاليف حسب حركة الموردين',
+                         'QuantitySupplier' => 'الكمية حسب حركة الموردين',
+                         ] 
+                        as $key => $label)
                         <option value="{{ $key }}" > {{ $label }}</option>
                         @endforeach
-
                     </select>
 
 
@@ -111,14 +96,8 @@
                       </div>
                   @endforeach
                   
-                      <div class="flex ">
-                          <input type="radio" name="Quantit" value="Quantityonly" class="mr-2">  
-                          <label for="" class="labelSale">  الكمية فقط</label>
-                      </div>
-                      <div class="flex ">
-                          <input type="radio" name="Quantit" value="QuantityCosts" checked class="mr-2">  
-                          <label for="" class="labelSale  ">   الكمية والتكاليف</label>
-                      </div>
+
+                    
                   </div>
                   
               </div>
@@ -139,7 +118,6 @@
     showProductName(mainAccountId);
     setTimeout(() => {
         $('#warehouse_id').select2('close'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
-        // $('#Supplier_id').select2('open');
     }, 1000);
 
 });
@@ -159,10 +137,13 @@ function showProductName(mainAccountId)
             success: function(data) {
                 productname.empty();
                 const productnameOptions = data.map(uniqueProduct =>
-                `<option value="${uniqueProduct.product_id}">${uniqueProduct.Product_name}</option>`
+
+                `
+                <option value="${uniqueProduct.product_id}">${uniqueProduct.Product_name}</option>`
             ).join('');
 
         // إضافة الخيارات الجديدة إلى القائمة الفرعية
+        productname.append( `<option value=""></option>`);
         productname.append(productnameOptions);
         productname.select2('destroy').select2();
         
@@ -182,7 +163,7 @@ function showProductName(mainAccountId)
               const warehouseid = $('#warehouse_id').val();
               const productname = $('#product_name').val();
               const DisplayMethod = $('input[name="DisplayMethod"]:checked').val(); // الخيار المحدد لعرض القائمة
-              const Quantit = $('input[name="Quantit"]:checked').val(); // الخيار المحدد لعرض القائمة
+              const Quantit = $('#Quantit').val(); // الخيار المحدد لعرض القائمة
               const dateList = $('input[name="dateList"]:checked').val(); // الخيار المحدد لعرض القائمة
               const Report_Type = $('#Report_Type').val(); // الحساب الرئيسي أو الفرعي
             //   const viewType = $('input[name="list"]:checked').val(); // كشف كلي أو تحليلي
@@ -209,8 +190,8 @@ function showProductName(mainAccountId)
                       .replace(':invoiceField', invoiceField)
                       + `?warehouseid=${warehouseid}&productname=${productname}&DisplayMethod=${DisplayMethod}&Quantit=${Quantit}`;
           
-                  window.open(url, '_blank', 'width=800,height=800');
-              } else {
+                      window.open(url, '_blank', 'width=100,height=100');
+                    } else {
                   displayMessage('يرجى تحديد الحساب الفرعي', 'error'); // عرض رسالة خطأ
               }
           }
@@ -226,8 +207,8 @@ function showProductName(mainAccountId)
                       .replace(':invoiceField', invoiceField)
                       + `?warehouseid=${warehouseid}&productname=${productname}&DisplayMethod=${DisplayMethod}`;
           
-                  window.open(url, '_blank', 'width=800,height=800');
-               if (newWindow) {
+                      window.open(url, '_blank', 'width=100,height=100');
+                      if (newWindow) {
                           newWindow.onload = function() {
                               setTimeout(() => {
                                   newWindow.print();

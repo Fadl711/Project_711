@@ -43,6 +43,7 @@ class InvoiceSaleController extends Controller
         'paid_amount' => 'nullable|numeric|min:0',
         'remaining_amount' => 'nullable|numeric|min:0',
         'payment_type' => 'required|numeric',
+        'financial_account_id' => 'required|numeric',
         'currency_id' => 'required|exists:currencies,currency_id', // assuming there's a currencies table
         'exchange_rate' => 'nullable|numeric|min:0',
         'shipping_bearer' => 'required|in:customer,merchant',
@@ -63,6 +64,7 @@ class InvoiceSaleController extends Controller
         $salesInvoice->shipping_amount = $validatedData['shipping_amount'] ?? 0;
         $salesInvoice->remaining_amount =0;
         $salesInvoice->payment_type = $validatedData['payment_type'];
+        $salesInvoice->account_id = $validatedData['financial_account_id'];
         $salesInvoice->currency_id = $validatedData['currency_id'];
         $salesInvoice->exchange_rate = $validatedData['exchange_rate'] ?? 0;
         $salesInvoice->transaction_type =$validatedData['transaction_type'];
@@ -139,6 +141,9 @@ public function getSaleInvoice(Request $request, $filterType)
             'remaining_amount' => $invoice->remaining_amount ?? 0,
             'user_name' => $invoice->userName ?? 'غير معروف',
             'updated_at' => optional($invoice->updated_at)->format('Y-m-d') ?? 'غير متاح',
+            'view_url' => route('searchInvoices', $invoice->sales_invoice_id),
+            'edit_url' => route('receip.edit', $invoice->sales_invoice_id),
+            'destroy_url' => route('sales-invoice.delete', $invoice->sales_invoice_id),
         ];
     });
 

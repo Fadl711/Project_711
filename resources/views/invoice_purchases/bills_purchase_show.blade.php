@@ -62,12 +62,11 @@
 
             </div>
             <div>
-                <h2 class="text-lg font-bold">فاتورة :
-                
+                <h2 class="text-lg">فاتورة :
                     {{$transaction_type}}
                     /
-                    {{($Invoice_type)}}
                   
+                    {{ $Invoice_type }}
                 </h2>
             </div>
             <div>
