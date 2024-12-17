@@ -153,7 +153,8 @@ public function getSaleInvoice(Request $request, $filterType)
 
 public function print($id)
 {
-    
+    $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+
     $DataPurchaseInvoice = SaleInvoice::where('sales_invoice_id', $id)->first();
     $SubAccount = SubAccount::where('sub_account_id', $DataPurchaseInvoice->Customer_id)->first();
     $UserName = User::where('id', $DataPurchaseInvoice->User_id)->pluck('name')->first();
@@ -167,6 +168,7 @@ public function print($id)
     {
         $AccountClassName="العميل";
     }
+
     if($SubAccount->AccountClass===2)
     {
         $AccountClassName="المورد";
@@ -180,15 +182,35 @@ public function print($id)
         $AccountClassName="الحساب";
     }
 
+    if($DataPurchaseInvoice->payment_type===1)
+    {
+        $paymentype="نقداً";
+    }
     $DataSale = Sale::where('Invoice_id', $id)->get();
     $Categorys = Category::all();
-   $currency=Currency::where('currency_id', $DataPurchaseInvoice->Currency_id)->first();
    $curre=Currency::where('currency_id', $DataPurchaseInvoice->currency_id)->first();
     // حساب مجموع السعر والتكلفة
     $Sale_priceSum = Sale::where('Invoice_id', $id)->sum('total_price');
     $Sale_CostSum = Sale::where('Invoice_id', $id)->sum('total_amount');
     $SumDebtor_amount=DailyEntrie::where('account_debit_id',$SubAccount->sub_account_id)->sum('Amount_debit');
     $SumCredit_amount=DailyEntrie::where('account_Credit_id',$SubAccount->sub_account_id)->sum('Amount_Credit');
+    $query = DailyEntrie::with(['debitAccount', 'debitAccount.mainAccount', 'creditAccount', 'creditAccount.mainAccount'])
+    ->selectRaw(
+        '
+         SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_debit ELSE 0 END) as total_debit,
+         SUM(CASE WHEN daily_entries.account_Credit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_Credit ELSE 0 END) as total_credit'
+    )
+    ->join('sub_accounts', function ($join) {
+        $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')
+             ->orOn('daily_entries.account_Credit_id', '=', 'sub_accounts.sub_account_id');
+    })
+    ->where('sub_accounts.sub_account_id', $SubAccount->sub_account_id); // إضافة الشرط للحساب الفرعي
+    $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
+    $entriesTotally = $query->get();
+
+    $SumDebtor_amount = $entriesTotally->sum('total_debit');
+    $SumCredit_amount = $entriesTotally->sum('total_credit');  
+
     $Sum_amount=$SumDebtor_amount-$SumCredit_amount;
     // تحويل القيمة إلى نص مكتوب
     $numberToWords = new NumberToWords();
@@ -204,10 +226,9 @@ public function print($id)
         ? $numberTransformer->toWords($Sale_priceSum) . ' ' . $curre->currency_name
         : 'القيمة غير صالحة', // القيمة النصية
         'Categorys' => $Categorys,
-        'currency' => $currency,
+        'currency' => $curre->currency_name,
         'payment_type' => PaymentType::tryFrom($DataPurchaseInvoice->payment_type)?->label() ?? 'غير معروف',
         'transaction_type' => TransactionType::fromValue($DataPurchaseInvoice->transaction_type)?->label() ?? 'غير معروف',
-     
         'warehouses' => $SubName,
         'UserName' => $UserName,
         'accountCla' => $AccountClassName,

@@ -24,14 +24,14 @@ return new class extends Migration
             $table->decimal('Quantityprice', 9, 2)->comment('كمية المنتج  المباعه حسب الوحدة');
             $table->decimal('Selling_price', 15, 2);  // سعر الوحدة للمنتج
             $table->string('note')->nullable();
-            $table->decimal('total_amount', 15, 2); // إجمالي المبلغ
             $table->decimal('discount_rate', 5, 2)->nullable()->default(0); // نسبة الخصم (٪)
-            $table->decimal('tax_rate', 5, 2)->nullable()->default(0); // نسبة الضريبة (٪)
+            $table->decimal('tax_rate', 15, 2)->nullable()->default(0); // نسبة الضريبة (٪)
             $table->decimal('discount', 15, 2)->nullable()->default(0); // خصم المطبقة (إن وجد)
             $table->decimal('tax', 15, 2)->nullable()->default(0); // ضريبة المطبقة (إن وجدت)
+            $table->decimal('total_amount', 15, 2); // إجمالي السعر قبل الخصم والضريبة
             $table->decimal('total_price', 15, 2);// إجمالي السعر بعد الخصم والضريبة
             $table->string('currency')->nullable(); // العملة المستخدمة في الفاتورة
-            $table->decimal('shipping_cost', 10, 2)->nullable()->default(0); // تكلفة الشحن (إن وجدت)
+            $table->decimal('shipping_cost', 15, 2)->nullable()->default(0); // تكلفة الشحن (إن وجدت)
             $table->integer('financial_account_id')->unsigned()->nullable()->comment('المخزني)');
             $table->integer('warehouse_to_id')->unsigned()->nullable()->comment('المخزن الوجهة (للتحويل المخزني)');
             $table->integer('Customer_id')->unsigned()->nullable();// الرقم التعريفي للحساب المالي

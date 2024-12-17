@@ -1,10 +1,7 @@
 @extends('layout')
 @section('conm')
 <style>
-    .select2-container--default .select2-dropdown {
-    max-height: 200px; /* ارتفاع القائمة */
-    overflow-y: auto; /* تمكين التمرير إذا تجاوز المحتوى الارتفاع */
-}
+ 
 .select2-container--default .select2-selection--single {
     height: 40px; /* ارتفاع العنصر الأساسي */
     line-height: 45px; لتوسيط النص عموديًا
@@ -19,89 +16,65 @@
         <div class="flex-grow bg-white dark:bg-gray-900 overflow-y-auto">
           <div class="sm:px-7 sm:pt-7  pt-4 flex flex-col sm:w-full border-b border-gray-200 bg-white dark:bg-gray-900 dark:text-white dark:border-gray-800 sticky top-0">
             <div class="flex items-center space-x-3 sm:mt-7 mt-4  sm:text-lg">
-              <a href="{{route('report.summary')}}" class="sm:px-3 border-b-2 {{ Request::is('summary') ? 'dark:alert("gamal")  text-blue-700 border-blue-700 ' : 'text-gray-600' }}   border-transparent  dark:text-white dark:border-white pb-1.5 ">كشف حساب</a>
               <a href="{{route('report.create')}}" class="sm:px-3 border-b-2 {{ Request::is('report/create') ? 'dark:alert("gamal")  text-blue-700 border-blue-700 ' : 'text-gray-600' }}   border-transparent  dark:text-white dark:border-white pb-1.5 ">كشف حساب</a>
               <a href="{{route('report.inventoryReport')}}" class="sm:px-3 border-b-2 border-transparent {{ Request::is('inventoryReport') ? 'text-blue-700 border-blue-700' : 'text-gray-600' }} dark:text-gray-400 pb-1.5"> تقارير المخازن </a>
               <a href="{{route('report.earningsReports')}}" class="sm:px-3 border-b-2 {{ Request::is('earningsReports') ? 'text-blue-700 border-blue-700' : 'text-gray-600' }} border-transparent   dark:text-gray-400 pb-1.5">تقارير ارباح وخسائر الاصناف</a>
               <a href="{{route('report.salesReport')}}" class="sm:px-3 border-b-2 {{ Request::is('salesReport') ? 'text-blue-700 border-blue-700' : 'text-gray-600' }} border-transparent dark:text-gray-400 pb-1.5">تقارير المبيعات</a>
               <a href="#" class="sm:px-3 border-b-2 border-transparent text-gray-600 dark:text-gray-400 pb-1.5 ">تقارير</a>
-              {{-- <a href="" onclick="myfun()"  class="sm:px-3 border-b-2 border-transparent text-gray-600 dark:text-gray-400 pb-1.5 flex">
-               <svg class="w-6 h-5 text-gray-800 dark:text-white"
-                   aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                      <path stroke="currentColor" stroke-linejoin="round"
-                       stroke-width="2" d="M16.444 18H19a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h2.556M17 11V5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v6h10ZM7 15h10v4a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-4Z"/>
-                    </svg>
-                       <span class=" mr-1">طباعة التقرير</span>
-
-                </a> --}}
+           
             </div>
           </div>
         </div>
-    
- 
-          <h1>تقرير  المخزني</h1>
-          
-          <form id="Account" method="POST" class="mb-2">
-              @csrf
-            
-          
-              <div class="gap-2 grid grid-cols-4 bg-white p-1 rounded-lg shadow-md mb-2">
-                  <div>
-                      <label for="warehouse_id" class="labelSale"> المخزن</label>
-                      <select name="warehouse_id" id="warehouse_id" class="input-field select2 inputSale" required>
-                          <option value="" selected>اختر المخزن</option>
-                          @isset($Warehouse)
-                              
-                          @foreach($Warehouse as $mainAccount)
-                              <option value="{{ $mainAccount->sub_account_id }}">
-                                  {{ $mainAccount->sub_name }}-{{ $mainAccount->sub_account_id }}
-                              </option>
-                          @endforeach
-                          @endisset
-
-                      </select>
-                  </div>
-                  <div>
-                      <label for="product_name" class="labelSale"> اسم المنتج</label>
-                      <select name="product_name" id="product_name" class="input-field select2 inputSale" required>
-                          <option value="" selected>اختر  المنتج</option>
-                      </select>
-                  </div>
-                  <div class="">
-                    <label for="Quantit" class="labelSale"> نوع التقرير</label>
-                    <select name="Quantit" id="Quantit" class="input-field select2 inputSale" required>
+        <h1 class="text-center text-2xl font-bold mb-6">تقرير المخزني</h1>
+        <form id="Account" method="POST" class="mb-2">
+            @csrf
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-white p-4 rounded-lg shadow-md ">
+                <div>
+                    <label for="warehouse_id" class="block text-sm font-semibold mb-1">المخزن</label>
+                    <select name="warehouse_id" id="warehouse_id" class="input-field select2 w-full border border-gray-300 rounded-lg p-2" required>
                         <option value="" selected>اختر المخزن</option>
-                        @foreach(['Quantityonly' => ' الكمية ',
-                         'QuantityCosts' => 'الكمية والتكاليف' ,
-                         'QuantityCostsSupplier' => 'الكمية والتكاليف حسب حركة الموردين',
-                         'QuantitySupplier' => 'الكمية حسب حركة الموردين',
-                         ] 
-                        as $key => $label)
-                        <option value="{{ $key }}" > {{ $label }}</option>
+                        @isset($Warehouse)
+                        @foreach($Warehouse as $mainAccount)
+                            <option value="{{ $mainAccount->sub_account_id }}">
+                                {{ $mainAccount->sub_name }} - {{ $mainAccount->sub_account_id }}
+                            </option>
+                        @endforeach
+                        @endisset
+                    </select>
+                </div>
+                <div>
+                    <label for="product_name" class="block text-sm font-semibold mb-1">اسم المنتج</label>
+                    <select name="product_name" id="product_name" class="input-field select2 w-full border border-gray-300 rounded-lg p-2" required>
+                        <option value="" selected>اختر المنتج</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="Quantit" class="block text-sm font-semibold mb-1">نوع التقرير</label>
+                    <select name="Quantit"  id="Quantit" class="input-field select2 w-full border border-gray-300 rounded-lg p-2 text-right" required>
+                        <option value="" selected>اختر النوع</option>
+                        @foreach(['Quantityonly' => 'الكمية',
+                                  'QuantityCosts' => 'الكمية والتكاليف',
+                                  'QuantityCostsSupplier' => 'الكمية والتكاليف حسب حركة الموردين',
+                                  'QuantitySupplier' => 'الكمية حسب حركة الموردين'] as $key => $label)
+                            <option value="{{ $key }}">{{ $label }}</option>
                         @endforeach
                     </select>
-
-
                 </div>
-                  <div class="gap-2 grid grid-cols-2">
-                      @foreach(['ShowAllProducts' => ' عرض كل المنتجات', 'SelectedProduct' => ' المنتج المحدد'] as $key => $label)
-                      <div class="flex">
-                          <input 
-                              type="radio" 
-                              name="DisplayMethod" 
-                              value="{{ $key }}" 
-                              class="mr-2"
-                              {{ (old('DisplayMethod', $selectedAccountListRadio ?? 'SelectedProduct') === $key) ? 'checked' : '' }}>
-                          <label class="labelSale">{{ $label }}</label>
-                      </div>
-                  @endforeach
-                  
-
-                    
-                  </div>
-                  
-              </div>
-          </form>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    @foreach(['ShowAllProducts' => 'عرض كل المنتجات', 'SelectedProduct' => 'المنتج المحدد'] as $key => $label)
+                        <div class="flex items-center mb-2">
+                            <input 
+                                type="radio" 
+                                name="DisplayMethod" 
+                                value="{{ $key }}" 
+                                class="mr-2" 
+                                {{ (old('DisplayMethod', $selectedAccountListRadio ?? 'SelectedProduct') === $key) ? 'checked' : '' }}>
+                            <label class="text-sm font-semibold">{{ $label }}</label>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </form>
           <div id="errorMessage" class="text-red-500 text-xs mt-2 hidden"></div>
           <button onclick="openInvoiceWindow(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح الفاتورة</button>
           <button onclick="openAndPrintInvoice2(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح وطباعة الفاتورة</button>
@@ -133,7 +106,6 @@ function showProductName(mainAccountId)
             
             type: 'GET',
             dataType: 'json',
-            
             success: function(data) {
                 productname.empty();
                 const productnameOptions = data.map(uniqueProduct =>
@@ -141,12 +113,10 @@ function showProductName(mainAccountId)
                 `
                 <option value="${uniqueProduct.product_id}">${uniqueProduct.Product_name}</option>`
             ).join('');
-
         // إضافة الخيارات الجديدة إلى القائمة الفرعية
         productname.append( `<option value=""></option>`);
         productname.append(productnameOptions);
         productname.select2('destroy').select2();
-        
         // إعادة تهيئة Select2 بعد إضافة الخيارات
     },
         error: function(xhr) {
@@ -158,7 +128,6 @@ function showProductName(mainAccountId)
 });
              function openInvoiceWindow(event) {
                 event.preventDefault(); // منع تحديث الصفحة
-             
               let invoiceField = 0; // تعريف المتغير بـ let لتجنب الأخطاء
               const warehouseid = $('#warehouse_id').val();
               const productname = $('#product_name').val();
@@ -190,7 +159,7 @@ function showProductName(mainAccountId)
                       .replace(':invoiceField', invoiceField)
                       + `?warehouseid=${warehouseid}&productname=${productname}&DisplayMethod=${DisplayMethod}&Quantit=${Quantit}`;
           
-                      window.open(url, '_blank', 'width=100,height=100');
+                      window.open(url, '_blank', 'width=1000,height=800');
                     } else {
                   displayMessage('يرجى تحديد الحساب الفرعي', 'error'); // عرض رسالة خطأ
               }

@@ -31,26 +31,13 @@ class MainaccountController extends Controller
     public function create(){
         $mainAccount=MainAccount::all();//
         $subAccount = SubAccount::all();
-        $dataDeportattons=[
-            ['Deportatton'=> (Deportatton::FINANCAL_CENTER_LIST ),'id'=>(IntOrderStatus::FINANCAL_CENTER_LIST )],
-            ['Deportatton'=> (Deportatton::INCOME_STATEMENT),'id'=>(IntOrderStatus::INCOME_STATEMENT)],
- ];
- $TypesAccountName=[
-     ['TypesAccountName' => Deportatton::CURRENT_ASSETS, 'id' => AccountType::CURRENT_ASSETS],
-     ['TypesAccountName' => Deportatton::FIXED_ASSETS, 'id' => AccountType::FIXED_ASSETS],
-    ['TypesAccountName' => Deportatton::LIABILITIES_OPPONENTS, 'id' => AccountType::LIABILITIES_OPPONENTS],
-    ['TypesAccountName' => Deportatton::EXPENSES, 'id' => AccountType::EXPENSES],
-    ['TypesAccountName' => Deportatton::REVENUE, 'id' => AccountType::REVENUE],
-
- ];
+ 
  $classd=AccountClass::cases();
  $cus = MainAccount::where('AccountClass', $classd[0])->get();//+
 
 
 return view('accounts.Main_Account.create',
-[ 'mainAccounts'=>$mainAccount,'subAccounts'=>$subAccount,
-'TypesAccounts'=> $TypesAccountName,
-'Deportattons'=> $dataDeportattons,'cuo'=> $cus]);  }
+[ 'mainAccounts'=>$mainAccount,'subAccounts'=>$subAccount,'cuo'=> $cus]);  }
 
     public function convertArabicToEnglish($number)
     {

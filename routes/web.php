@@ -70,11 +70,6 @@ Route::get('/Category/{Category}/edit', [CategoryController::class, 'edit'])->na
 Route::put('/Category/{Category}', [CategoryController::class, 'update'])->name('Category.update');
 Route::delete('/Category/{Category}',[CategoryController::class,'destroy'])->name('Category.destroy');
 
-Route::get('/purchases/{id}',[PurchaseController::class,'edit'])->name('purchases.edit');
-Route::delete('/purchases/{id}',[PurchaseController::class,'destroy'])->name('purchases.destroy');
-// Route::delete('/purchases/destroyInvoice/{id}',[PurchaseController::class,'destroyInvoice'])->name('purchases.destroyInvoice');
-Route::delete('/purchase-invoices/{id}', [InvoicePurchaseController::class, 'deleteInvoice'])->name('purchase-invoice.delete');
-
 
 
 Route::get('/Default_Supplier', [default_supplierController::class, 'index'])->name('default_suppliers.index');
@@ -113,6 +108,11 @@ Route::post('/invoicePurchases/saveAndPrint', [PurchaseController::class, 'saveA
 Route::get('/get-purchases-by-invoice', [PurchaseController::class, 'getPurchasesByInvoice'])->name('getPurchasesByInvoice');
 Route::get('/invoice_purchases/{id}/print', [PurchaseController::class, 'print'])->name('invoicePurchases.print');
 Route::get('/invoice_purchases/{id}/GetInvoiceNumber', [InvoicePurchaseController::class, 'GetInvoiceNumber'])->name('GetInvoiceNumber');
+
+Route::get('/purchases/{id}',[PurchaseController::class,'edit'])->name('purchases.edit');
+Route::delete('/purchases/{id}',[PurchaseController::class,'destroy'])->name('purchases.destroy');
+// Route::delete('/purchases/destroyInvoice/{id}',[PurchaseController::class,'destroyInvoice'])->name('purchases.destroyInvoice');
+Route::delete('/purchase-invoices/{id}', [InvoicePurchaseController::class, 'deleteInvoice'])->name('purchase-invoice.delete');
 
 Route::get('/balancing', [AccountCoctroller::class, 'balancing'])->name('accounts.balancing');
 
@@ -194,12 +194,18 @@ Route::get('/refunds/sale/show', [Sale_RefundController::class, 'show'])->name('
 Route::get('/payments', [PaymentCoctroller::class, 'index'])->name('payments.index');
 // Route::get('/refunds', [RefundController::class, 'index'])->name('refunds.index');
 Route::get('/inventory/index', [InventoryController::class, 'index'])->name('inventory.index');
+Route::post('/inventory/store', [InventoryController::class, 'store'])->name('inventory.store');
+Route::post('/inventory/storeProduct', [InventoryController::class, 'newInventory'])->name('inventory.storeProduct');
+Route::get('/inventory/{currency}/edit',[InventoryController::class,'edit'])->name('inventory.edit');
+Route::delete('/inventory/{id}/destroy',[InventoryController::class,'destroy'])->name('inventory.destroy');
+Route::delete('/inventory/Invoice/{id}/destroy',[InventoryController::class,'destroy_invoice'])->name('Inventory.Invoice.destroy');
+Route::get('/inventory/export', [InventoryController::class, 'export'])->name('inventory.export');
 Route::get('/inventory/create', [InventoryController::class, 'create'])->name('inventory.create');
+Route::get('/create-an-inventory-list/createList', [InventoryController::class, 'createList'])->name('inventory.createList');
 Route::get('/inventory/show_inventory', [InventoryController::class, 'show_inventory'])->name('show_inventory');
-Route::get('/inventory/show', [InventoryController::class, 'show'])->name('inventory.show');
-
-
-
+Route::get('/inventory/accountingPeriod', [InventoryController::class, 'show_inventoryAccountingPeriod'])->name('accountingPeriod');
+Route::get('/inventory/{id}/show', [InventoryController::class, 'show_inventory'])->name('inventory.show');
+Route::get('/inventory/{id}/print', [InventoryController::class, 'ShowAllProducts'])->name('inventory.print');
 
 Route::get('/fixedAssets', [FixedAssetsController::class, 'index'])->name('fixed.index');
 Route::get('/usersControl', [UsersController::class, 'index'])->name('users.index');

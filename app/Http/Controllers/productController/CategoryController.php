@@ -15,11 +15,12 @@ class CategoryController extends Controller
         return view('products.category.categorie',['products'=>$product]);
     }
     public function store(Request $request){
-        if (Category::where('Categorie_name', $request->input('cate'))->exists()) {
+        if (Category::where('Categorie_name', $request->input('cate'))
+        ->where('Categorie_name', $request->input('product_id'))
+    ->exists()) {
             // Record already exists
             return response()->json(['error' => 'الاسم موجود مسبقاً'], 422);
         }
-
     $Post = new Category;
     $Post->Categorie_name=$request->cate;
     $Post->product_id=$request->product_id;

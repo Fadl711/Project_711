@@ -7,12 +7,11 @@ function addToTableSale(account) {
         $(`${rowId} td:nth-child(1)`).text(account.Barcode);
         $(`${rowId} td:nth-child(2)`).text(account.Product_name);
         $(`${rowId} td:nth-child(3)`).text(account.Category_name);
-        $(`${rowId} td:nth-child(4)`).text(account.quantity ? Number(account.quantity).toLocaleString() : '0');
+        $(`${rowId} td:nth-child(4)`).text(account.Quantityprice ? Number(account.Quantityprice).toLocaleString() : '0');
         $(`${rowId} td:nth-child(5)`).text(account.Selling_price ? Number(account.Selling_price).toLocaleString() : '0');
         $(`${rowId} td:nth-child(6)`).text(account.warehouse_to_id ? Number(account.warehouse_to_id).toLocaleString() : '0');
         $(`${rowId} td:nth-child(7)`).text(account.total_amount ? Number(account.total_amount).toLocaleString() : '0');
-        // $(`${rowId} td:nth-child(9)`).text(account.purchase_id ? Number(account.purchase_id).toLocaleString() : '0');
-        // $(`${rowId} td:nth-child(10)`).text(account.purchase_id ? Number(account.purchase_id).toLocaleString() : '0');
+        $(`${rowId} td:nth-child(9)`).text(account.sale_id ? Number(account.sale_id).toLocaleString() : '0');
     } else {
         // إضافة الصف الجديد إلى الجدول إذا لم يكن موجودًا
         const newRow = `
@@ -20,28 +19,32 @@ function addToTableSale(account) {
                 <td class="text-right tagTd">${account.Barcode}</td>
                 <td class="text-right tagTd">${account.Product_name}</td>
                 <td class="text-right tagTd">${account.Category_name}</td>
-                <td class="text-right tagTd">${account.quantity ? Number(account.quantity).toLocaleString() : '0'}</td>
+                <td class="text-right tagTd">${account.Quantityprice ? Number(account.Quantityprice).toLocaleString() : '0'}</td>
                 <td class="text-right tagTd">${account.Selling_price ? Number(account.Selling_price).toLocaleString() : '0'}</td>
                 <td class="text-right tagTd">${account.warehouse_to_id ? Number(account.warehouse_to_id).toLocaleString() : '0'}</td>
                 <td class="text-right tagTd">${account.total_amount ? Number(account.total_amount).toLocaleString() : '0'}</td>
              <td class="flex">
-
-              <button class="" onclick="editDataSale(${account.sale_id})">                     <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
-</svg>
-</button>
-              <button class="" onclick="deleteDataSale(${account.sale_id})">                    <svg class="w-6 h-6 text-red-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <button class="edit-btn" onclick="editData(${account.sale_id})">
+                        <svg class="w-6 h-6 text-gray-800 dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
+                        </svg>
+                    </button>
+                            <button class="delete-payment" onclick="deleteDataSale(${account.sale_id})">
+                                     <svg class="w-6 h-6 text-red-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
   <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
 </svg>
-</button>
-          </td>
-            </tr>
-        `;
-        tableBody.append(newRow); // إضافة الصف الجديد إلى الجدول
+                        </button>
+
+                    
+                </td>
+              </tr>
+              `;
+          tableBody.append(newRow); // إضافة الصف الجديد إلى الجدول
     }
 }
 
 function deleteDataSale(id) {
+    var successMessage = $('#successMessage');
     var successMessage = $('#successMessage');
     CsrfToken();
     if (confirm('هل أنت متأكد من حذف البيانات؟')) {
@@ -50,7 +53,11 @@ function deleteDataSale(id) {
             url: `/sales/${id}`, // مسار الحذف
             success: function(response) {
                 // إزالة الصف من DOM بدون إعادة تحميل الصفحة
-                $('#row-' + id).remove();
+                $('#row-' + id).fadeOut(); // إخفاء الصف
+                // تحديث إجمالي الفاتورة
+                $('#total_price_sale').val(response.total_price_sale || '0'); 
+                $('#net_total_after_discount').val(response.net_total_after_discount || '0'); 
+                $('#discount').val(response.discount || '0'); 
                 successMessage.text('تم حذف البيانات بنجاح!').show();
                 setTimeout(() => {
                     successMessage.hide();
@@ -66,7 +73,9 @@ function deleteDataSale(id) {
 };
 
 
+
 function editDataSale(id) {
+    categorie_name= $('#Categorie_name'),
 
     $.ajax({
         type: 'GET',
@@ -78,33 +87,31 @@ function editDataSale(id) {
             $('#Quantityprice').val(data.quantity);
             $('#Selling_price').val(data.Selling_price);
             $('#Total').val(data.total_amount);
-            $('#loss').val(data.loss);
             $('#total_discount_rate').val(data.discount);
             $('#total_price').val(data.total_price);
             $('#sales_invoice_id').val(data.Invoice_id);
             $('#Customer_id').val(data.Customer_id);
             $('#sale_id').val(data.sale_id);
-          let discount_rate=  $('#discount_rate');
-          let categorie_name=  $('#Categorie_name');
-
-          discount_rate.empty();
-            categorie_name.empty();
-            const  subAccountOptions = 
-                  `
-                  <option value="${data.Category_name}">${data.Category_name}</option>`
-             ;
+            $('#Categorie_name').val(data.Category_name);
+            let discount_rate=  $('#discount_rate');
+            let categorie_name=  $('#Categorie_name');
   
-          categorie_name.append(subAccountOptions);
-          const  discount = 
-          `
-          <option value="${data.discount_rate}">${data.discount_rate}</option>
-          `
-     ;
-
-     discount_rate.append(discount);
-     
-            
-  },
+            discount_rate.empty();
+              categorie_name.empty();
+              const  subAccountOptions = 
+                    `
+                    <option value="${data.Category_name}">${data.Category_name}</option>`
+               ;
+    
+            categorie_name.append(subAccountOptions);
+            const  discount = 
+            `
+            <option value="${data.discount_rate}">${data.discount_rate}</option>
+            `
+       ;
+  
+       discount_rate.append(discount);
+      },
         error: function(xhr, status, error) {
             // console.error("خطأ في جلب بيانات التعديل:", error);
             errorMessage.show().text(data.message);
@@ -113,10 +120,9 @@ function editDataSale(id) {
             }, 5000);
         }
     });
-};
-
-function deleteInvoiceSale()  {
-    const invoiceId = $('#sales_invoice_id').val();        // الحصول على معرف الفاتورة من الحقل
+}
+$(document).on('click', '#delete_invoiceSales', function (e) {
+    e.preventDefault();    const invoiceId = $('#sales_invoice_id').val();        // الحصول على معرف الفاتورة من الحقل
     if (!invoiceId) {
         $('#errorMessage').show().text('لم يتم العثور على معرف الفاتورة.');
         setTimeout(() => {
@@ -132,7 +138,10 @@ function deleteInvoiceSale()  {
     $.ajax({
         url: `/sales-invoices/${invoiceId}`, // مسار الحذف
         type: 'DELETE',
-        success: function(response) {
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+                success: function(response) {
             if (response.success) {
                 window.location.reload();
                 successMessage.show().text(response.message);
@@ -153,7 +162,9 @@ function deleteInvoiceSale()  {
                   errorMessage.hide();
                 }, 5000);   }
     });
-};
+    });
+
+
 $(document).on('keydown', function (event) {
     let currentInvoiceId = $('#sales_invoice_id').val();
 
@@ -196,33 +207,51 @@ function fetchSalesByInvoice(url, currentInvoiceId) {
     });
 }
 
+
 function displaySales(sales) {
-    let rows = sales.map(sale => `
-        <tr>
-            <td  class="text-right tagTd">${sale.Barcode || '-'}</td>
+    let uniqueInvoices = new Set(); // Set لتخزين الفواتير الفريدة
+    let rows = ''; // متغير لتخزين الصفوف
+    $('#mainAccountsTable tbody').empty(); // تنظيف الجدول
+    sales.forEach(function (sale) {
+        // إضافة شرط للتأكد من عدم تكرار البيانات
+        if (!uniqueInvoices.has(sale.sale_id)) {
+            uniqueInvoices.add(sale.sale_id);
+            rows += `
+                <tr id="row-${sale.sale_id}">
+                     <td  class="text-right tagTd">${sale.Barcode || '-'}</td>
             <td  class="text-right tagTd">${sale.Product_name || '-'}</td>
             <td  class="text-right tagTd">${sale.Category_name || '-'}</td>
             <td  class="text-right tagTd">${sale.Quantityprice || '0'}</td>
             <td  class="text-right tagTd">${sale.Selling_price || '0.00'}</td>
             <td  class="text-right tagTd">${sale.warehouse_to_id || '-'}</td>
             <td  class="text-right tagTd">${sale.total_price || '0.00'}</td>
-            <td class="flex">
-
-              <button class="" onclick="editDataSale(${sale.sale_id})">                     <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <td class="flex">
+                        <button class="" onclick="editDataSale(${sale.sale_id})">
+                                           <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
   <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
 </svg>
-</button>
-              <button class="" onclick="deleteDataSale(${sale.sale_id})">                    <svg class="w-6 h-6 text-red-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        </button>
+                        <button class="delete-payment" onclick="deleteDataSale(${sale.sale_id})">
+                                     <svg class="w-6 h-6 text-red-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
   <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
 </svg>
-</button>
-          </td>
-        </tr>
-    `).join('');
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }
+    });
 
     $('#mainAccountsTable tbody').append(rows);
 }
-
+     
+function CsrfToken() {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+}
 $('#warehouse_id').on('change', function() {
     const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي
     showProductName(mainAccountId);
@@ -240,23 +269,18 @@ function showProductName(mainAccountId)
         
         $.ajax({
             url: `/all-products/${mainAccountId}/show`, // استخدام القيم الديناميكية
-            
             type: 'GET',
             dataType: 'json',
-            
             success: function(data) {
                 productname.empty();
                 const productnameOptions = data.map(uniqueProduct =>
-
                 `
                 <option value="${uniqueProduct.product_id}">${uniqueProduct.Product_name}</option>`
             ).join('');
-
         // إضافة الخيارات الجديدة إلى القائمة الفرعية
         productname.append( `<option value=""></option>`);
         productname.append(productnameOptions);
         productname.select2('destroy').select2();
-        
         // إعادة تهيئة Select2 بعد إضافة الخيارات
     },
         error: function(xhr) {

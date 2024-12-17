@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>              التقرير المخزن -  {{ $Myanalysis }} 
-    </title>
+    <title>  تقرير  المخزني {{$Myanalysis}}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         /* تخصيص للطباعة */
@@ -69,18 +68,50 @@
               <p class="text-sm text-gray-700">Phone: {{ $buss->Phone_Number }}</p>
           </div>
       </div>
-     
+      تقرير  المخزني {{$Myanalysis}}
   </div>
+
+
   <div class="grid grid-cols-2 w-full gap-2  text-gray-700">
           {{$productname ??'' }}    
 </div>
 
 
+@endisset
+@isset($inventoryList)
 
+<div class="rounded-lg grid grid-cols-3 gap-6 p-2 w-full">
+  <!-- القسم الأيمن - Arabic content -->
+  <div class="text-right space-y-2">
+      <p class="text-sm text-gray-700"><span class=" font-medium">مسؤول الجرد:</span> </p>
+      <p class="text-sm text-gray-700"> <span class=" font-medium">تاريخ الجرد:</span>{{ $toDate ??'' }}</p>
+  </div>
+  <!-- القسم الأوسط - تحليل الحسابات -->
+  <div class="flex items-center justify-center px-2">
 
-
+  </div>
+  <!-- القسم الأيسر - English content -->
+  <div class="text-left space-y-2">
+      <p class="text-sm text-gray-700"><span class=" font-medium">المخزن: </span>{{ $warehouseName }}</p>
+  </div>
 </div>
+@endisset
+@isset($QuantityIncomplete)
+@include('components.InventoryReports.Missing-quantities-report')
+@endisset
+@isset($CostIncomplete)
+@include('components.InventoryReports.Missing-quantities-report')
+@endisset
+@isset($QuantityAppendix)
+@include('components.InventoryReports.excess-quantity-report')
+@endisset
+@isset($inventoryList)
+@include('components.storesData.inventory-list')
+@endisset
+</div>
+
 <div class="mt-4 no-print">
+
     <button onclick="printAndClose()" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">طباعة</button>
 
     <script>
@@ -91,9 +122,7 @@
             }, 500); // فترة الانتظار نصف ثانية فقط
         }
     </script>
-    
     <button onclick="closeWindow()" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700">إلغاء الطباعة</button>
-
     <script>
         function closeWindow() {
             if (window.history.length > 1) {
@@ -104,8 +133,7 @@
         }
     </script>
 </div>
-<Script>
-</Script>
+
 
 </body>
 

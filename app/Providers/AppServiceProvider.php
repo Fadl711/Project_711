@@ -70,10 +70,9 @@ class AppServiceProvider extends ServiceProvider
             ]);
         }
         $mainAccount_Supplier=MainAccount::where('AccountClass',AccountClass::SUPPLIER->value)->first();
-        if ($mainAccount_Warehouse) 
-        {
-            $subAccountSupplierid=SubAccount::where('Main_id',$mainAccount_Supplier->main_account_id)->get();
-        }
+      
+            $subAccountSupplierid=SubAccount::where('AccountClass',AccountClass::SUPPLIER->value)->get();
+        
         if(isset($subAccountSupplierid)){
             View::share([
                 'subAccountSupplierid' => $subAccountSupplierid,
@@ -95,11 +94,13 @@ class AppServiceProvider extends ServiceProvider
         $accountClasses = AccountClass::cases();
       $PaymentType=PaymentType::cases();
             $transactionTypes = TransactionType::cases();
+            $AccountType = AccountType::cases();
             View::share('transactionTypes', $transactionTypes);
         $users=User::all();
         View::share([
             'accountClasses'=>$accountClasses,
             'TypesAccounts'=>$TypesAccountName,
+            'AccountTypes'=>$AccountType,
             'Deportattons'=>$dataDeportattons,
             'PaymentType'=>$PaymentType,
             'today '=> Carbon::now()->toDateString(),
@@ -138,7 +139,6 @@ $ASSETSAccountType_id=AccountType::FIXED_ASSETS;
  $EXPENSES_id=AccountType::EXPENSES;
  $EXPENSES_name=Deportatton::EXPENSES;
  $MainAccount3= MainAccount::where('typeAccount',$EXPENSES_id)->get();
-
 
  $REVENUE_id=AccountType::REVENUE;
  $REVENUE_name=Deportatton::REVENUE;

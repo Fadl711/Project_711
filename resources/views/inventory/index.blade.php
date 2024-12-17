@@ -17,6 +17,7 @@
 <br>
        
     @yield('inventory')
+    
         </div>
 
         

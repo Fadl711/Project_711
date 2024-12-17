@@ -76,13 +76,10 @@
             </div>
             <div>
                 <h2 class="text-lg font-bold">فاتورة :
-                   {{$DataPurchaseInvoice->transaction_type??null}}/
-                   @if ($DataPurchaseInvoice->payment_type==="cash")
-                       {{"نقداً"}}
-                   @endif
-                   @if ($DataPurchaseInvoice->payment_type==="on_credit")
-                   {{"آجلة"}}
-               @endif
+                   {{$transaction_type??null}}/
+                   {{$payment_type}}
+                   
+                  
 
                 </h2>
             </div>
@@ -138,7 +135,7 @@
                          
                             {{ $Sale->Category_name }}
                             </td>
-                        <td class="px-2 text-right">{{ $Sale->quantity }}</td>
+                        <td class="px-2 text-right">{{ $Sale->Quantityprice }}</td>
                         <td class="px-2 text-right">{{number_format( $Sale->Selling_price) }}</td>
                         <td class="px-2 text-right">
                             @isset($warehouses)
@@ -167,29 +164,51 @@
                                 <p class="font-">المبلغ المستحق</p>
                             </th>
                             <th class="px-2 text-right">
-                                {{ number_format($Sale_priceSum) ?? 0 }}
+                                {{ number_format($Sale_CostSum) ?? 0 }}
                                 <p class="text-sm">{{ $priceInWords }}</p>
                             </th>
+
                         </tr>
+                        @php
+                        $sum1 = $Sum_amount-$Sale_CostSum  ;
+                    @endphp
                         <tr class="bg-blue-100">
+                            @if($sum1>0)
                             <th class="px-2 text-right">رصيد سابق</th>
                             <th class="px-2 text-right">
-                                    @php
-                                        $sum = $Sum_amount - $Sale_priceSum;
-                                    @endphp
-                                    @if ($sum >= 0)
-                                        {{ number_format($sum) ?? 0 }}
+                                @if(isset( $sum1) &&   $sum1> 0)
+                                @if($payment_type=="أجل")
+
+                                        {{ number_format($sum1) ?? 0 }}
+                                        @endif
+                                @if($payment_type!=="أجل" && $Sum_amount>0)
+
+                                        {{ number_format($Sum_amount) ?? 0 }}
+                                        @endif
+
+
+                                       
+
                                 @endif
                             </th>
+                            @endif
+
                         </tr>
+                        @if($payment_type=="أجل")
                         <tr class="bg-blue-100">
+                            @php
+                          $Sum_amount ;
+                        @endphp
                             <th class="px-2 text-right">الجمالي رصيد</th>
+
                             <th class="px-2 text-right">
-                                @if(isset($sum) && $sum > 0)
+                                @if(isset($Sum_amount) && $Sum_amount > 0)
                                     {{ number_format($Sum_amount) ?? 0 }}
                                 @endif
                             </th>
                         </tr>
+                        @endif
+
                     </thead>
                     
                    

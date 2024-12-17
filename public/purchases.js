@@ -9,8 +9,8 @@ function Profitproduct() {
     } else {
         $('#Profit').val(''); // تفريغ الحقل في حال وجود قيم غير صالحة
     }
-}
-$('#Purchase_price, #Selling_price').on('input', function() {
+} 
+$('#Purchase_price, #Selling_price,#Quantityprice').on('input', function() {
     Profitproduct(); // بدء الحساب عند تغيير القيم في الحقول
 });
 const successMessage = $('#successMessage');
@@ -217,8 +217,6 @@ function addToTable(account) {
        categorieSelect.empty();
         // تفريغ القائمة السابقة
         console.time('Select2 Initialization');
-     
-    
     product.Categorie_names.forEach(categorie => {
         $('#Categorie_name').append(new Option(categorie.Categorie_name, categorie.categorie_id));
     });
@@ -256,8 +254,9 @@ function addToTable(account) {
 }
 
   function emptyData(){
-                  $('#product_name,#total_price,#loss').val('');
+                  $('#product_name,#total_price,#loss,#Quantityprice,#QuantityCategorie,#TotalPurchase').val('');
                       $('#Barcode').val('');
+                      $('#InventoryId').val('');
                       $('#Quantity').val('');
                       $('#Purchase_price').val('');
                       $('#Selling_price').val('');
@@ -348,17 +347,11 @@ $(document).on('keydown', function(event) {
     $(this).select2('close');
         $('#Categorie_name').select2('open');
     });
-//  $('#Categorie_name').on('change', function() {
-//     $(this).select2('close');
-//     setTimeout(function() {
-//         $('#Quantity').focus();
-//         console.log('Focused on Quantity'); // للتأكد من التركيز
-//     }, 10);});
-    
 
 $('#Categorie_name').on('change', function() {
     const Categoriename = $(this).val();
     var  mainAccountId= $('#product_id').val();
+ $('#TotalPurchase,#Profit').val('');
     getUnitPriceCategorie(mainAccountId,Categoriename);
     $(this).select2('close');
     setTimeout(function() {
@@ -379,6 +372,7 @@ function getUnitPriceCategorie(mainAccountId,categoryName)
             dataType: 'json',
             success: function(response) {
                 if (response.product) {
+
                 //    displayProductDetails(response.product);
                     $('#Purchase_price').val(response.product.Purchase_price).trigger('change');
                     $('#QuantityCategorie').val(response.product.Quantityprice).trigger('change');
@@ -393,16 +387,6 @@ function getUnitPriceCategorie(mainAccountId,categoryName)
         });
     };
 }
-
-    // $('#Categorie_name').on('change', function() {
-        
-
-    //     $(this).select2('close');
-
-    //     // تركيز المؤشر على حقل Quantity بعد تأخير بسيط
-       // تأخير 100 مللي ثانية
-    // });
-   
 
  $('#transaction_type').on('change', function() {
     $(this).select2('close');
@@ -464,6 +448,7 @@ Cost           = $('#Cost').val(),
             method: 'GET',
             data:account_debitid,
             success: function(product) {
+
                 displayProductDetails(product);
                 setTimeout(() => {
                 }, 100);
@@ -505,7 +490,6 @@ function editData(id) {
             $('#supplier_name').val(data.Supplier_id);
             $('#purchase_id').val(data.purchase_id);
             $('#Categorie_name').val(data.categorie_id);
-            // var categorie_name   =$('#Categorie_name');
 
             categorie_name.empty();
             const  subAccountOptions = 

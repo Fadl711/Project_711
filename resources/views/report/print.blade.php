@@ -60,7 +60,6 @@
                   <img class=" bg-[#1749fd15] rounded-3xl" src="{{ url($buss->Company_Logo ? 'images/' . $buss->Company_Logo : '') }}" alt="">
               </div>
           </div>
-
           <!-- القسم الأيسر - English content -->
           <div class="text-left space-y-2">
               <h2 class="font-extrabold  ">{{ $buss->Company_NameE }}</h2>
@@ -72,18 +71,21 @@
       <div class="text-center space-y-4">
           <p class="font-extrabold text-lg">
             التقرير المخزن -  {{ $Myanalysis }} 
-            من تاريخ:
-                {{ $accountingPeriod }}
-            
+             :
+                {{ $accountingPeriod ?? ''}}
           </p>
-      
-         
       </div>
-      
   </div>
+
+  {{-- <div class="grid grid-cols-2 w-full gap-2  text-gray-700">
+          {{$productname }}    
+</div> --}}
+{{-- @if(!$inventoryList)
   <div class="grid grid-cols-2 w-full gap-2  text-gray-700">
           {{$productname }}    
-</div>
+</div> 
+@endif --}}
+
 @endisset
 @isset($productData)
 @include('components.storesData.Quantit-yonly')
@@ -103,11 +105,14 @@
 @isset($QuantitySupplier)
 @include('components.storesData.Quantity-Supplier')
 @endisset
-
-
-
-
-
+@isset($inventoryList)
+@include('components.storesData.inventory-list')
+@endisset
+{{-- @isset($inventoryList)
+  <div class="grid grid-cols-2 w-full gap-2  text-gray-700">
+          {{$productname }}    
+</div> 
+@endisset --}}
 </div>
 <div class="mt-4 no-print">
     <button onclick="printAndClose()" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">طباعة</button>

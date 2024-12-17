@@ -58,7 +58,7 @@ return new class extends Migration
 
 
    // عمود الدافع للشحن
-   $table->enum('shipping_bearer', ['customer', 'merchant'])->default('customer')->comment('الطرف المسؤول عن الشحن: العميل أو التاجر');
+   $table->enum('shipping_bearer', ['customer', 'merchant','null'])->default('null')->comment('الطرف المسؤول عن الشحن: العميل أو التاجر');
    $table->decimal('shipping_amount', 15, 2)->nullable()->comment('مبلغ الشحن ');
 
    // عمود ID الفترة المحاسبية

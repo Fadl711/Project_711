@@ -1,7 +1,10 @@
 @extends('layout')
 @section('conm')
 <style>
- 
+    .select2-container--default .select2-dropdown {
+    max-height: 200px; /* ارتفاع القائمة */
+    overflow-y: auto; /* تمكين التمرير إذا تجاوز المحتوى الارتفاع */
+}
 .select2-container--default .select2-selection--single {
     height: 40px; /* ارتفاع العنصر الأساسي */
     line-height: 45px; لتوسيط النص عموديًا
@@ -18,28 +21,7 @@
     @csrf
     <div class="gap-2 grid grid-cols-4 bg-white p-1 rounded-lg shadow-md mb-2">
         <div>
-            <label for="accountingPeriod" class="labelSale"> السنة</label>
-            
-            <select name="accountingPeriod" id="accountingPeriod" class="input-field select2 inputSale" required>
-                @isset($accountingPeriodOpen)
-                <option  @isset($accountingPeriodOpen)
-                value="{{$accountingPeriodOpen->accounting_period_id}}" 
-                    
-                @endisset > {{$accountingPeriodOpen['created_at']->format('Y') }}</option>
-                @endisset 
-                @isset($accountingPeriod)
-                @foreach ($accountingPeriod as $item)  
-                                  <option value="{{ $item->accounting_period_id }}">
-                                    {{ $item['created_at']->format('Y') }}
-                    </option>
-                @endforeach
-                @endisset
-            </select>
-        </div>
-        <div>
-            <label for="warehouse_id" class="labelSale"> المخزن</label>
-            
-            <select name="warehouse_id" id="warehouse_id" class="input-field select2 inputSale" required>
+            <label for="warehouse_id" class="labelSale"> المخزن</label>            <select name="warehouse_id" id="warehouse_id" class="input-field select2 inputSale" required>
                 <option value="" selected>اختر المخزن</option>
                 @isset($Warehouse)
                 @foreach($Warehouse as $mainAccount)
@@ -58,17 +40,9 @@
         </div>
         <div class="">
           <label for="Quantit" class="labelSale"> نوع التقرير</label>
-          
           <select name="Quantit" id="Quantit" class="input-field select2 inputSale" required>
               <option value="" selected>اختر المخزن</option>
-              @foreach([
-                'inventoryList' => 'امر جرد',
-                'AllAbstractQuantities' => 'كل الكميات المجرودة',
-                'AllAbstractQuantitiesWithCosts' => 'كل الكميات المجرودة مع التكاليف',
-                'MissingQuantitiesInventoryTeams' => 'فارق الجرد للكميات الناقصة',
-                'InventoryDifferenceMissingQuantitiesWithCosts' => ' فارق الجرد للكميات الناقصة مع التكاليف',
-                'appendix' => 'فارق الجرد للكميات الزائدة',
-                'Costappendix' => 'فارق الجرد للكميات الزائدة مع التكاليف',
+              @foreach(['inventoryList' => 'امر جرد',
               
                ] 
               as $key => $label)
@@ -147,12 +121,12 @@ error: function(xhr) {
       event.preventDefault(); // منع تحديث الصفحة
     let invoiceField = 0; // تعريف المتغير بـ let لتجنب الأخطاء
     const warehouseid = $('#warehouse_id').val();
-    const accountingPeriodData = $('#accountingPeriod').val();
     const productname = $('#product_name').val();
     const DisplayMethod = $('input[name="DisplayMethod"]:checked').val(); // الخيار المحدد لعرض القائمة
     const Quantit = $('#Quantit').val(); // الخيار المحدد لعرض القائمة
     const dateList = $('input[name="dateList"]:checked').val(); // الخيار المحدد لعرض القائمة
     const Report_Type = $('#Report_Type').val(); // الحساب الرئيسي أو الفرعي
+  //   const viewType = $('input[name="list"]:checked').val(); // كشف كلي أو تحليلي
 
 
 if(DisplayMethod=="SelectedProduct")
@@ -172,9 +146,9 @@ if(DisplayMethod=="ShowAllProducts")
 
 
     if (invoiceField) {
-        const url = `{{ route('inventory.print', ':invoiceField') }}`
+        const url = `{{ route('report.print', ':invoiceField') }}`
             .replace(':invoiceField', invoiceField)
-            + `?warehouseid=${warehouseid}&productname=${productname}&DisplayMethod=${DisplayMethod}&Quantit=${Quantit}&accountingPeriodData=${accountingPeriodData}`;
+            + `?warehouseid=${warehouseid}&productname=${productname}&DisplayMethod=${DisplayMethod}&Quantit=${Quantit}`;
 
             window.open(url, '_blank', 'width=1000,height=800');
           } else {
@@ -193,7 +167,7 @@ if(DisplayMethod=="ShowAllProducts")
             .replace(':invoiceField', invoiceField)
             + `?warehouseid=${warehouseid}&productname=${productname}&DisplayMethod=${DisplayMethod}`;
 
-            window.open(url, '_blank', 'width=800,height=800');
+            window.open(url, '_blank', 'width=100,height=100');
             if (newWindow) {
                 newWindow.onload = function() {
                     setTimeout(() => {
@@ -222,24 +196,5 @@ if(DisplayMethod=="ShowAllProducts")
         }, 3000);
     }
     </script>
-{{-- <script>
-function myfun(){
 
-if (window.location.href.includes('/summary')){
-  window.open("summaryPdf", "_blank", "download");
-
-}
-else if(window.location.href.includes('/inventoryReport')){
-  window.open("inventoryReportPdf", "_blank", "download");
-}
-else if(window.location.href.includes('/earningsReports')){
-  window.open("earningsReportsPdf", "_blank", "download");
-}
-else if(window.location.href.includes('/salesReport')){
-  window.open("salesReportPdf", "_blank", "download");
-}
-
-}
-</script> --}}
- 
 @endsection

@@ -235,18 +235,23 @@ class PurchaseController extends Controller
         $TotalPurchase = $this->removeCommas($request->TotalPurchase);
         $Cost = $this->removeCommas($request->Cost);
         $Profit = $this->removeCommas($request->Profit);
-        $categorieId = Category::where('categorie_id', $request->Categorie_name)
-        ->where('product_id', $request->product_id)
+     
+        $categorieId = Category::where('product_id', $request->product_id)
+        ->where('categorie_id', $request->Categorie_name)
+        ->orwhere('Categorie_name', $request->Categorie_name)
         ->value('Categorie_name');
         // إنشاء أو تحديث سجل الشراء
         $purchase = Purchase::updateOrCreate(
             [
-                'purchase_id' => $request->purchase_id,
+                'Product_name' => $Product->product_name,
+                'categorie_id' => $categorieId,
+                'product_id' => $Product->product_id,
+
+                // 'purchase_id' => $request->purchase_id,
                 'Purchase_invoice_id' => $purchaseInvoice->purchase_invoice_id,
                 'accounting_period_id' => $accountingPeriod->accounting_period_id,
             ],
             [
-                'Product_name' => $Product->product_name,
                 'Supplier_id' => $supplier_id,
                 'Barcode' => $Product->Barcode ?? 0,
                 'quantity' => $request->Quantity,
@@ -263,10 +268,8 @@ class PurchaseController extends Controller
                 'Profit' => $Profit ?? 0,
                 'Exchange_rate' => $request->Exchange_rate ?? 1.0,
                 'note' => $request->note ?? '',
-                'product_id' => $Product->product_id,
                 'account_id' => $account_id,
                 'transaction_type' => $transactionType,
-                'categorie_id' => $categorieId,
             ]
         );
 
@@ -275,13 +278,13 @@ class PurchaseController extends Controller
         try {
             $Purchasesum = Purchase::where('Purchase_invoice_id', $purchaseInvoice->purchase_invoice_id )->sum('Total');
             // $Purchasesum = $purchase->sum('Total');
-            $Invoice_type = $request->payment_type;
+            $Invoice_type = $request->Payment_type;
             $pamyment = in_array($Invoice_type, [1, 3, 4]) ? $Purchasesum : 0;
 
             $Currency=   $request->Currency_id;
             
             $purchaseInvoice->update([
-                'Invoice_type' => $Invoice_type,
+                // 'Invoice_type' => $Invoice_type,
                 'Receipt_number' => $request->Receipt_number,
                 'Total_invoice' => $Purchasesum,
                 'Paid' => $pamyment,                
@@ -338,43 +341,45 @@ public function search(Request $request)
     
     // التحقق من وجود المنتج
     $productData = Product::where('product_id', $id)->first();
+    $product_id= $productData->product_id;
     if (!$productData) {
         return response()->json(['success' => false, 'message' => 'المنتج غير موجود'], 404);
     }
-    
                 // حساب الكميات بناءً على نوع المعاملة والمخزن
-                $purchaseToQuantity = Purchase::where('product_id', $id)
+                $purchaseToQuantity = Purchase::where('product_id', $product_id)
+            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+            ->where('warehouse_to_id', $warehouse_to_id)
+            ->whereIn('transaction_type', [1, 6,3])
+            ->sum('quantity');
+         
+            $warehouseFromQuantity = Purchase::where('product_id', $product_id)
+                ->where('warehouse_from_id', $warehouse_to_id)
                 ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-                ->where('warehouse_to_id', $warehouse_to_id)
-                ->whereIn('transaction_type', [1, 6])
+                ->where('transaction_type', 2)
                 ->sum('quantity');
-                $warehouseFromQuantity = Purchase::where('product_id', $id)
-                    ->where('warehouse_from_id', $warehouse_to_id)
-                    ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-                    ->where('transaction_type', 2)
-                    ->sum('quantity');
-        
-                $warehouseFromQuantity3 = Purchase::where('product_id', $id)
-                    ->where('warehouse_from_id', $warehouse_to_id)
-                    ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-                    ->where('transaction_type', 3)
-                    ->sum('quantity');
-        
-                $saleQuantity5 = Sale::where('product_id', $id)
-                    ->where('warehouse_to_id', $warehouse_to_id)
-                    ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-                    ->where('transaction_type', 5)
-                    ->sum('quantity');
-
-                $saleQuantity4 = Sale::where('product_id', $id)
-                    ->where('warehouse_to_id', $warehouse_to_id)
-                    ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-                    ->where('transaction_type', 4)
-                    ->sum('quantity');
-                   
+               
+            $warehouseFromQuantity3 = Purchase::where('product_id', $product_id)
+                ->where('warehouse_from_id', $warehouse_to_id)
+                ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                ->where('transaction_type', 3)
+                ->sum('quantity');
     
-                $productPurchase =( $purchaseToQuantity+$saleQuantity5 )- $warehouseFromQuantity - $warehouseFromQuantity3- $saleQuantity4 ;
-        
+            $saleQuantity5 = Sale::where('product_id', $product_id)
+                ->where('warehouse_to_id', $warehouse_to_id)
+                ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                ->where('transaction_type', 5)
+                ->sum('quantity');
+    
+            $saleQuantity4 = Sale::where('product_id', $product_id)
+                ->where('warehouse_to_id', $warehouse_to_id)
+                ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                ->where('transaction_type', 4)
+                ->sum('quantity');
+               
+
+            $productPurchase =( $purchaseToQuantity+$saleQuantity5 )- $warehouseFromQuantity - $warehouseFromQuantity3- $saleQuantity4 ;
+            // تخزين البيانات في مصفوفة
+       
  $categories = Category::where('product_id', $id)
  ->select('categorie_id', 'Categorie_name')
  ->get();        // حساب الكمية النهائية المتاحة في المخزن
@@ -414,7 +419,6 @@ public function destroy($id)
 {
     // التحقق من وجود السجل
     $purchase = Purchase::where('purchase_id', $id)->first();
-
     if (!$purchase) {
         return response()->json([
             'status' => 'error',
@@ -425,7 +429,6 @@ public function destroy($id)
     try {
         // حذف السجل
         $purchase->delete();
-
         // تحديث الإجمالي
         $Purchasesum = Purchase::where('Purchase_invoice_id', $purchase->Purchase_invoice_id)->sum('Total');
 
@@ -450,7 +453,6 @@ public function destroy($id)
 public function print($id)
 {
     $DataPurchaseInvoice = PurchaseInvoice::where('purchase_invoice_id', $id)->first();
-    $accountType = TransactionType::cases();
     $SubAccount = SubAccount::where('sub_account_id', $DataPurchaseInvoice->Supplier_id)->first();
     $UserName = User::where('id', $DataPurchaseInvoice->User_id)->pluck('name')->first();
 
@@ -480,7 +482,7 @@ public function print($id)
     $Categorys = Category::all();
    $currency=Currency::where('currency_id', $DataPurchaseInvoice->Currency_id)->first();
    $curre=Currency::where('currency_id', $DataPurchaseInvoice->Currency_id)->pluck('currency_name')->first();
-
+   $Invoice_type=PaymentType::tryFrom($DataPurchaseInvoice->Invoice_type)?->label() ?? 'غير معروف';
     // حساب مجموع السعر والتكلفة
     $Purchase_priceSum = Purchase::where('Purchase_invoice_id', $id)->sum('Total');
     $Purchase_CostSum = Purchase::where('Purchase_invoice_id', $id)->sum('Cost');
@@ -496,9 +498,8 @@ public function print($id)
         'SubAccounts' => $SubAccount,
         'Purchase_CostSum' => $Purchase_CostSum,
         'Purchase_priceSum' => $Purchase_priceSum,
-        'Invoice_type' => PaymentType::tryFrom($DataPurchaseInvoice->Invoice_type)?->label() ?? 'غير معروف',
+        'Invoice_type' => $Invoice_type,
         'transaction_type' => TransactionType::fromValue($DataPurchaseInvoice->transaction_type)?->label() ?? 'غير معروف',
-
         'priceInWords' =>  is_numeric($Purchase_priceSum) 
         ? $numberTransformer->toWords($Purchase_priceSum) . ' ' . $curre
         : 'ريال', // القيمة النصية

@@ -23,25 +23,26 @@
             <form id="invoiceSales"   >
                 @csrf
                 <div class="flex gap-4">
+                    @isset($PaymentType)
                     @foreach ($PaymentType as $index => $item)
     <div class="flex">
         <label for="" class="labelSale">{{$item->label()}}</label>
-        <input type="radio" name="payment_type" value="{{$item->value}}" 
-            {{ $index === 0 ? 'checked' : '' }} required>
+        <input type="radio" name="payment_type" value="{{$item->value}}" {{ $index === 0 ? 'checked' : '' }} required>
     </div>
-@endforeach
-
-                    
+                       @endforeach
+                       @endisset
                 </div>
                 <div class="grid md:grid-cols-8 gap-2 text-right">
                     <div>
                         <label for="transaction_type" class="labelSale">نوع العملية</label>
                         <select dir="ltr" id="transaction_type" class="inputSale input-field" name="transaction_type">
+                            @isset($transactionTypes)
                             @foreach ($transactionTypes as $transactionType)
                                 @if (in_array($transactionType->value, [4, 5]))
                                     <option value="{{ $transactionType->value }}">{{ $transactionType->label() }}</option>
                                 @endif
                             @endforeach
+                            @endisset
                         </select>
                     </div>
                     <div class="md:ml-6 relative ">
@@ -80,18 +81,18 @@
                              @endisset
                           </select>
                      </div>
-                    <div>
+                    {{-- <div>
                         <label for="shipping_amount" class="labelSale">تكلفة الشحن</label>
                         <input type="text" name="shipping_amount" id="shipping_amount" class="inputSale" step="0.01" placeholder="0.00">
-                    </div>
+                    </div> --}}
                   
                     <div>
                         <label for="total_price_sale" class="labelSale">الإجمالي</label>
-                        <input type="text" name="Purchasesum" id="total_price_sale" class="inputSale" step="0.01" placeholder="0.00">
+                        <input type="text" name="total_price_sale" id="total_price_sale" class="inputSale" step="0.01" placeholder="0.00">
                     </div>
                     <div>
                         <label for="discount" class="labelSale">الخصم  الممنوح</label>
-                        <input type="text" name="discountd" id="discount" class="inputSale"  placeholder="0.00">
+                        <input type="text" name="discount" id="discount" class="inputSale"  placeholder="0.00">
                     </div>
                     <div>
                         <label for="net_total_after_discount" class="labelSale"  > الإجمالي بعد الخصم </label>
@@ -101,11 +102,11 @@
                     @auth
                         <input type="hidden" name="User_id" id="User_id" value="{{ Auth::user()->id }}">
                     @endauth
-                    <div id="newInvoice1" style="display: block">
+                    {{-- <div id="newInvoice1" style="display: block">
                         <button id="saveinvoiceSales" type="button" class="inputSale flex font-bold">
                             إضافة الفاتورة
                         </button>
-                    </div>
+                    </div> --}}
                     <div>
                         <label for="financial_account_id_main" class="labelSale"> حساب الدفع</label>
                         <select name="financial_account_id_main" id="financial_account_id_main" dir="ltr" class="input-field select2 inputSale" required>
@@ -142,26 +143,7 @@
     </div>
 </div>
 
-{{-- alert --}}
-<div id="crud-modal" tabindex="-1" aria-hidden="true" class=" bg-black bg-opacity-50  hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0  h-full">
-    <div class="relative p-4 w-full max-w-md max-h-full">
-        <!-- Modal content -->
-        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-            <!-- Modal header -->
-            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">اضافة عميل جديد</h3>
-                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
-                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                    </svg>
-                    <span class="sr-only">Close modal</span>
-                </button>
-            </div>
-            <!-- Modal body -->
-            {{-- @include('includes.form') --}}
-        </div>
-    </div>
-</div>
+
 {{-- alert --}}
 <div class="flex max-md:block p-1 ">
     <div class="min-w-[30%] border-x bg-white   rounded-xl">
@@ -292,29 +274,20 @@
                     <label for="sales_invoice_id" class="labelSale">رقم الفاتورة</label>
                     <input type="text" name="sales_invoice_id" id="sales_invoice_id" placeholder="0" class="inputSale" required />
                 </div>
-                <div>
-                    <label for="Customer_id" class="labelSale">العميل</label>
-                    <input type="text" name="Customer_id" id="Customer_id" class="inputSale" required />
-                </div>
-                <div>
-                    <label for="sale_id" class="labelSale">رقم القيد</label>
-                    <input type="text" name="sale_id" id="sale_id" class="inputSale" />
-                </div>
+                <div class="" >
+                    <button class="flex inputSale mt-2 " type="button" id="delete_invoiceSales">
+                            <svg class="w-6 h-5 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M11 16h2m6.707-9.293-2.414-2.414A1 1 0 0 0 16.586 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V7.414a1 1 0 0 0-.293-.707ZM16 20v-6a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v6h8ZM9 4h6v3a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V4Z"/>
+                            </svg>
+                            <span class="textNav mr-1"> حذف</span>
+                    </button>
+                    </div>
+                    <div class="col-span-6 sm:col-span-3" >
+                        <button onclick="openInvoiceWindow(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح الفاتورة</button>
+                    </div>
+               
             </div>
-            <div class="flex px-1 gap-1">
-
-            <div class="col-span-6 sm:col-span-3" >
-                <button class="flex inputSale mt-2 " type="button" onclick="deleteInvoiceSale()" >
-                        <svg class="w-6 h-5 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M11 16h2m6.707-9.293-2.414-2.414A1 1 0 0 0 16.586 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V7.414a1 1 0 0 0-.293-.707ZM16 20v-6a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v6h8ZM9 4h6v3a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V4Z"/>
-                        </svg>
-                        <span class="textNav mr-1"> حذف</span>
-                </button>
-                </div>
-                <div class="col-span-6 sm:col-span-3" >
-                    <button onclick="openInvoiceWindow(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح الفاتورة</button>
-                </div>
-            </div>
+           
 
         </form>
     </div>
@@ -345,13 +318,16 @@
 <!-- إطار الطباعة -->
 <script>
     $(document).ready(function () {
-    
-
-    
+        function CsrfToken() {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+}
     $('#account_debitid').on('change', function() {
         $(this).select2('close');
         $('#main_account_debit_id').select2('open');
-
     });
 });
     function openInvoiceWindow(e) {
@@ -376,8 +352,9 @@ successMessage.text('لا توجد فاتورة').show();
 </script>
 <script>
 $(document).ready(function () {
+    
+    const inputs = $('.input-field '); // تحديد جميع الحقول
     const form = $('#ajaxForm');
-const inputs = $('.input-field '); // تحديد جميع الحقول
 form.on('keydown', function (event) {
     if (event.key === 'Enter') {
         event.preventDefault(); // منع الحفظ عند الضغط على زر Enter
@@ -459,7 +436,6 @@ form.on('keydown', function (event) {
                 }
             });
         }
-    
         // التعامل مع النجاح في الطلب
         function handleAjaxSuccess(response) {
             if (response.success) {
@@ -474,7 +450,6 @@ form.on('keydown', function (event) {
                 alert('خطأ أثناء الحفظ! ' + response.message || 'حدث خطأ أثناء حفظ البيانات.');
             }
         }
-    
         // التعامل مع الأخطاء في الطلب
         function handleAjaxError(xhr) {
     if (xhr.status === 422) {
@@ -567,7 +542,6 @@ form.on('keydown', function (event) {
             }
         });
     }
-
     // دالة مساعدة لعرض الرسائل
     function displayMessage(element, message, duration = 2000) {
         element.text(message).show();
@@ -576,7 +550,6 @@ form.on('keydown', function (event) {
         }, duration);
     }
 });
-
  </script>
 
 <script>
@@ -633,7 +606,7 @@ form.on('keydown', function (event) {
         
     });
 </script>
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+     {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script> --}}
      <script src="{{ url('sales.js') }}"></script>
      <script src="{{ url('purchases.js') }}"></script>
      <script src="{{url('purchases/purchases.js')}}"></script>

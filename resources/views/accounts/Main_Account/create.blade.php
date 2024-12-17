@@ -41,7 +41,8 @@
     
   <div class="flex px-4">
     <label class="" for=""> نوع الحساب </label>
-        
+        @isset($accountClasses)
+            
    @foreach($accountClasses as $accountClass)
    
         <div class="flex px-4" >
@@ -50,6 +51,7 @@
     </div>
   
   @endforeach
+  @endisset
 
     </div>
   </div>
@@ -63,8 +65,8 @@
     <label class="labelSale  "   for="typeAccount"> تصنيف الحساب</label>
       <select class=" input-field inputSale text-left select2 " required  name="typeAccount" id="typeAccount">
         <option selected></option>
-        @foreach ($TypesAccounts as $TypesAccount)
-        <option value="{{$TypesAccount['id']}}" >{{$TypesAccount['TypesAccountName']}} </option>
+        @foreach ($AccountTypes as $AccountType)
+        <option value="{{$AccountType->value}}" >{{$AccountType->label() }} </option>
         @endforeach
 
 

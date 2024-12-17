@@ -1,10 +1,6 @@
 @extends('layout')
 @section('conm')
-{{-- @if($errors->any())
-    @foreach ($errors()->all() as $error)
-    <div class="alert alert-danger">{{$error}}</div>
-    @endforeach
-@endif --}}
+
 <style>
     /* تثبيت الأرقام بالإنجليزية */
     .english-numbers {
@@ -28,6 +24,9 @@
     padding-top: 5px; /* تحسين النصوص */
 }
   </style>
+  <div id="successMessage" class="hidden fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
+    <p class="font-bold">تم بنجاح!</p>
+  </div>
 <div id="errorMessage" style="display: none;" class="alert alert-danger"></div>
 <div id="successMessage" style="display: none;" class="alert alert-success"></div>
 <div class="min-w-[20%] px-1  bg-white rounded-xl ">
@@ -93,7 +92,7 @@
                <div >
                 <label for="Receipt_number" class="labelSale">رقم الإيصال</label>
                 <input type="text" name="Receipt_number" id="Receipt_number" placeholder="0" class="inputSale english-numbers" />
-            </div>
+               </div>
                     <div >
                         <label for="Total_invoice" class="labelSale">أجمالي الفاتورة</label>
                         <input type="text" name="Total_invoice" id="Total_invoice" placeholder="0" class="inputSale" />
@@ -106,10 +105,7 @@
                         <select   dir="ltr" id="Currency_id" class="inputSale input-field " name="Currency_id"  >
                             @isset($Currency_name)
                           @foreach ($Currency_name as $cur)
-                          <option @isset($cu)
-                          @selected($cur->currency_id==$cu->Currency_id)
-                          @endisset
-                          value="{{$cur->currency_id}}">{{$cur->currency_name}}</option>
+                          <option @isset($cu) @selected($cur->currency_id==$cu->Currency_id)@endisset value="{{$cur->currency_id}}">{{$cur->currency_name}}</option>
                            @endforeach
                            @endisset
                           </select>
@@ -128,7 +124,7 @@
     <div class="min-w-[30%] border-x bg-white   rounded-xl">
         <form   id="ajaxForm">
             @csrf 
-            <div  class=" gap-2 grid grid-cols-3 px-1  ">
+            <div  class=" gap-2 grid grid-cols-2   ">
                 <div>
                     <label for="account_debitid" class="labelSale  ">  مخازن الستيراد</label>
                     <select name="account_debitid" id="account_debitid" dir="ltr" class="input-field  select2 inputSale" required>
@@ -140,9 +136,6 @@
                       @endisset 
                     </select>
                 </div>
-               
-            </div>
-            <div class="flex gap-1 px-1"> 
                 <div >
                     <label for="product_id" class="block   labelSale">بحث  </label>
                     <select name="product_id" id="product_id" dir="ltr" class="input-field select2 inputSale" required>
@@ -154,11 +147,8 @@
                         @endisset
                     </select>
                 </div>
-                 
-                {{-- <div class="">
-                    <label for="product_name" class="labelSale">اسم المنتج</label>
-                    <input type="text" name="product_name" id="product_name" class="inputSale " required />
-                </div> --}}
+            </div>
+            <div  class=" gap-2 grid grid-cols-3 px-1  ">
                 <div>
                     <label for="Categorie_name" class="block  labelSale">الوحده  </label>
                     <select name="Categorie_name" id="Categorie_name" dir="ltr" class="input-field select2 inputSale" >
@@ -168,10 +158,7 @@
                     <label for="Quantity" class="labelSale">الكمية</label>
                     <input type="number" name="Quantity" id="Quantity" placeholder="0" class="inputSale quantity-field english-numbers" required />
                 </div>
-
-               
             </div>
-           
             <div class="flex gap-1 px-1">
                 <div class="">
                     <label for="Purchase_price" class="labelSale">سعر الشراء</label>
@@ -206,7 +193,6 @@
                     <label for="Barcode" class="labelSale">الباركود</label>
                     <input type="number" name="Barcode" id="Barcode" placeholder="0" class="inputSale" />
                 </div>
-               
                 <div class="">
                     <label for="QuantityPurchase" class="labelSale"> الكمية المتوفره</label>
                     <input type="number" name="QuantityPurchase" id="QuantityPurchase" placeholder="0" class="inputSale english-numbers"   />
@@ -215,41 +201,32 @@
                     <label for="note" class="labelSale">الوصف</label>
                     <textarea name="note" id="note"  class="inputSale"></textarea>
             </div>
-            </div>            <div class="flex px-1 gap-1">
-
-                
+            </div>
+            <div class="flex px-1 gap-1">
                 <div>
                 <label for="purchase_invoice_id" class="labelSale">رقم الفاتورة</label>
                 <input type="number" name="purchase_invoice_id" id="purchase_invoice_id" placeholder="0" class="inputSale" required />
             </div>
-            <div class="">
-                <label for="supplier_name" class="labelSale">رقم المورد</label>
-                <input type="number" name="supplier_name" id="supplier_name" placeholder="0" class="inputSale" required />
-            </div>
-            <div class="">
-                <label for="purchase_id" class="labelSale">رقم القيد</label>
-                <input type="number" name="purchase_id"   id="purchase_id"  class="inputSale"  />
-            </div>
-            </div>
-            <div class="flex" id="printEndSave">
-                    <div class="flex flex-col">
-                        @auth
-                            
-                        <input type="hidden" name="User_id" value="{{Auth::user()->id}}"/>
-                        @endauth
-
-                      </div>
-                      <div class="col-span-6 sm:col-span-3 mt-2 px-4" >
-                        <button class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700"  id="saveButton">اضافة </button>
-                    </div>
-                <div class="col-span-6 sm:col-span-3" >
-                <button class="flex inputSale mt-2 " id="delete_invoice" type="button" onclick="deleteInvoice()" >
+            <div class="col-span-6 sm:col-span-3" >
+                <button class="flex inputSale mt-2 " id="delete_invoice" type="button" >
                         <svg class="w-6 h-5 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M11 16h2m6.707-9.293-2.414-2.414A1 1 0 0 0 16.586 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V7.414a1 1 0 0 0-.293-.707ZM16 20v-6a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v6h8ZM9 4h6v3a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V4Z"/>
                         </svg>
                         <span class="textNav mr-1"> حذف</span>
                 </button>
                 </div>
+                <div class="col-span-6 sm:col-span-3 mt-2 px-4" >
+                    <button class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700"  id="saveButton">اضافة </button>
+                </div>
+            </div>
+            <div class="flex" id="printEndSave">
+                    <div class="flex flex-col">
+                        @auth
+                        <input type="hidden" name="User_id" value="{{Auth::user()->id}}"/>
+                        @endauth
+                      </div>
+                     
+               
             </div>
         </form>
     </div>
@@ -402,13 +379,11 @@ else{
         });
     });
 });
-
     </script>
  
 <script type="text/javascript">
 $(document).on('click', '.delete-payment', function (e) {
     e.preventDefault();
-
     var successMessage = $('#successMessage'); // الرسالة الناجحة
     var errorMessage = $('#errorMessage'); // الرسالة الخطأ
     const Total_invoice = $('#Total_invoice'); // إجمالي الفاتورة
@@ -416,7 +391,7 @@ $(document).on('click', '.delete-payment', function (e) {
     let paymentId = $(this).data('id');
     let url = `/purchases/${paymentId}`; // تصحيح مسار الحذف
 
-    if (confirm('هل أنت متأكد أنك تريد حذف هذا السند؟')) {
+    if (confirm('هل أنت متأكد أنك تريد حذف هذا الصنف؟')) {
         $.ajax({
             url: url,
             method: 'DELETE',
@@ -441,68 +416,36 @@ $(document).on('click', '.delete-payment', function (e) {
         });
     }
 });
-
-
-
     $(document).ready(function () {
-
         $('#account_debitid').on('change', function() {
     $(this).select2('close');
     $('#product_id').select2('open');
-
 });   
-     
         $('#Supplier_id').on('change', function() {
     const receipt_number = $('#Receipt_number');
-
     $('#Receipt_number').focus(); // تركيز المؤشر على الحقل
-
     $('#Supplier_id').select2('close');
-  // الانتقال إلى الحقل التالي
-
-
 });
 const Product_name = $('#product_name');
       const form = $('#ajaxForm');
-   
       const inputs = $('.input-field'); // تحديد جميع الحقول
       const selectedPaymentType = $('input[name="Payment_type"]');
-
       selectedPaymentType.focus();
     form.on('keydown', function (event) {
           if (event.key === 'Enter') {
               event.preventDefault(); // منع الحفظ عند الضغط على زر Enter
           }
       });
-      $(document).on('keydown', function (event) {      // التنقل بين الحقول باستخدام السهم الأيمن أو الأيسر
-          if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
-              let currentIndex = inputs.index(document.activeElement);
-              if (currentIndex !== -1) {
-                  if (event.key === "ArrowRight") {
-                      if (currentIndex < inputs.length - 1) {
-                          $(inputs[currentIndex + 1]).focus(); // نقل التركيز إلى الحقل التالي
-                      }
-                  } else if (event.key === "ArrowLeft") {
-                      if (currentIndex > 0) {
-                          $(inputs[currentIndex - 1]).focus(); // نقل التركيز إلى الحقل السابق
-                      }
-                  }
-              }
-          }
-      });
-
-      $(document).keydown(function(event) {
-            if (event.ctrlKey && event.shiftKey) {
-                event.preventDefault(); // منع السلوك الافتراضي (حفظ الصفحة)
+          // استدعاء وظيفة الحفظ عند الضغط على زر +
+             $(document).on('keydown', function (event) {
+            if (event.key === '+') {
+                event.preventDefault();
                 saveData(event); // استدعاء دالة الحفظ
             }
         });
         $('#saveButton').click(function() {
             saveData(event); // استدعاء دالة الحفظ
         });
-   // دالة لحذف السند باستخدام AJAX بعد التأكيد
-
-       
       function saveData(event) {
         event.preventDefault(); // منع تحديث الصفحة
             const formData = new FormData($('#ajaxForm')[0]);
@@ -523,10 +466,14 @@ const Product_name = $('#product_name');
               success: function (data) {
                   if (data.success) {
                       errorMessage.hide();
-                       successMessage.show().text(data.message);
-                      setTimeout(() => {
-                          successMessage.hide();
-                      }, 3000);
+                      successMessage.removeClass('hidden').text(data.message);
+
+// إخفاء التنبيه بعد 3 ثوانٍ
+setTimeout(function() {
+    $('#successAlert').addClass('hidden');
+}, 3000);
+location.r
+
                       addToTable(data.purchase);
                       $('#Total_invoice').val(data.Purchasesum);
                       emptyData();
@@ -549,7 +496,6 @@ const Product_name = $('#product_name');
         }
           });
       };
-
       function displayPurchases(purchases) {
     let uniqueInvoices = new Set(); // Set لتخزين الفواتير الفريدة
     let rows = ''; // متغير لتخزين الصفوف
@@ -574,21 +520,15 @@ const Product_name = $('#product_name');
   <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
 </svg>
                         </button>
-                        <button class="" onclick="deleteData(${purchase.purchase_id})">
-                                     <svg class="w-6 h-6 text-red-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
-</svg>
-                        </button>
+<a href="#" class="text-red-600 hover:underline delete-payment" data-id="${purchase.purchase_id}" >حذف</a>
+
                     </td>
                 </tr>
             `;
         }
     });
-
     $('#mainAccountsTable tbody').append(rows);
 }
-     
-
 function CsrfToken() {
     $.ajaxSetup({
         headers: {
@@ -597,49 +537,50 @@ function CsrfToken() {
     });
 }
 
-
-      function deleteInvoice()  {
-        CsrfToken();
-        const invoiceId = $('#purchase_invoice_id').val();        // الحصول على معرف الفاتورة من الحقل
-        if (!invoiceId) {
-            $('#errorMessage').show().text('لم يتم العثور على معرف الفاتورة.');
-            setTimeout(() => {
-                errorMessage.hide();
-              }, 5000);
-            return;
-        }
-        // تأكيد الحذف
-        if (!confirm('هل أنت متأكد من حذف الفاتورة وجميع المشتريات المرتبطة بها؟')) {
-            return;
-        }
-        // إرسال طلب الحذف باستخدام Ajax
-        $.ajax({
-            url: `/purchase-invoices/${invoiceId}`, // مسار الحذف
-            type: 'DELETE',
-            success: function(response) {
-                if (response.success) {
-                    window.location.reload();
-                    successMessage.show().text(response.message);
-                    // $('#Total_invoice').val(response.Purchasesum);
-                    setTimeout(() => {
-                        successMessage.hide();
-                    }, 5000); // هذا سيقوم بإعادة تحميل الصفحة بالكامل
-                    // إزالة الصف المرتبط بالفاتورة من الجدول بدون إعادة تحميل الصفحة
-                } else {
-                    $('#errorMessage').show().text(response.message);
-                    setTimeout(() => {
-                      errorMessage.hide();
-                    }, 5000);
-                }
-            },
-            error: function(xhr, status, error) {
+$(document).on('click', '#delete_invoice', function (e) {
+    e.preventDefault();
+    const invoiceId = $('#purchase_invoice_id').val(); // الحصول على معرف الفاتورة من الحقل
+    if (!invoiceId) {
+        $('#errorMessage').show().text('لم يتم العثور على معرف الفاتورة.');
+        setTimeout(() => {
+            $('#errorMessage').hide();
+        }, 5000);
+        return;
+    }
+    // تأكيد الحذف
+    if (!confirm('هل أنت متأكد من حذف الفاتورة وجميع المشتريات المرتبطة بها؟')) {
+        return;
+    }
+    // إرسال طلب الحذف باستخدام Ajax
+    $.ajax({
+        url: `/purchase-invoices/${invoiceId}`, // مسار الحذف
+        type: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(response) {
+            if (response.success) {
+                successMessage.show().text(response.message);
+                setTimeout(() => {
+                    successMessage.hide();
+                    window.location.reload(); // إعادة تحميل الصفحة بعد إخفاء الرسالة
+                }, 5000);
+            } else {
                 $('#errorMessage').show().text(response.message);
-                    setTimeout(() => {
-                      errorMessage.hide();
-                    }, 5000);   }
-        });
-};
+                setTimeout(() => {
+                    $('#errorMessage').hide();
+                }, 5000);
+            }
+        },
+        error: function(xhr) {
+            $('#errorMessage').show().text(xhr.responseJSON.message);
+            setTimeout(() => {
+                $('#errorMessage').hide();
+            }, 5000);
+        }
     });
+});
+});
     </script>
 <script src="{{url('purchases/purchases.js')}}"></script>
 <script src="{{ url('purchases.js') }}"></script>

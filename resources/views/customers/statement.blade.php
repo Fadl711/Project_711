@@ -75,7 +75,7 @@
                 </p>
             
                 <div class="grid grid-cols-2 w-full gap-2 text-sm text-gray-700">
-                    <div>من تاريخ:
+                    <div> تاريخ:
                         {{ $startDate }}
                     </div>
                     <div>{{ __('الى التاريخ  ') }}:

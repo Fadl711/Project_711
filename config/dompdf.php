@@ -214,7 +214,7 @@ return [
          * @var int
          */
         'dpi' => 96,
-
+'font_dir' => storage_path('fonts/'),
         /**
          * Enable embedded PHP
          *

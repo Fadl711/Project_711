@@ -59,11 +59,9 @@ class SaleController extends Controller
         // التحقق من صحة البيانات
         $validatedData = $request->validate([
             'product_id' => 'required|integer|exists:products,product_id',
-            'Customer_id' => 'required|integer|exists:sub_accounts,sub_account_id',
             'sales_invoice_id' => 'required|integer|exists:sales_invoices,sales_invoice_id',
             'Quantity' => 'required|numeric|min:0',
             'Selling_price' => 'required|numeric|min:0',
-            'Category_name' => 'nullable|string|max:255',
             'account_debitid' => 'required|integer|exists:sub_accounts,sub_account_id',
             'Barcode' => 'nullable|numeric',
             'total_price' => 'required|string|',
@@ -73,7 +71,10 @@ class SaleController extends Controller
         
         try {
           
-            $Categorie_name=Category::where('categorie_id',$request->Categorie_name)->value('Categorie_name');
+            $categorieId = Category::where('product_id', $request->product_id)
+        ->where('categorie_id', $request->Categorie_name)
+        ->orwhere('Categorie_name', $request->Categorie_name)
+        ->value('Categorie_name');
             // الحصول على اسم المنتج
             $Product = Product::where('product_id', $request->product_id)->first();
 
@@ -89,21 +90,20 @@ class SaleController extends Controller
             if (!$saleInvoice) {
                 return response()->json(['success' => false, 'message' => 'الفاتورة غير موجودة.'], 404);
             }
-            // if (($saleInvoice->transaction_type)) {
-            //     return response()->json(['success' => false, 'message' => 'نوع المعاملة غير محدد.'.$saleInvoice->transaction_type]);
-            // }
+         
            // حفظ أو تحديث عملية البيع
            $Transaction_type=  $saleInvoice->transaction_type;
-
             $sales = Sale::updateOrCreate(
                 [
-                    'sale_id' => $request->sale_id,
                     'accounting_period_id' => $accountingPeriod->accounting_period_id,
                     'Invoice_id' => $saleInvoice->sales_invoice_id,
-                ],
-                [
                     'Product_name' => $Product->product_name,
                     'product_id' => $Product->product_id,
+                    'Category_name' => $categorieId,
+
+
+                ],
+                [
                     'Barcode' => $Product->Barcode ?? '',
                     'Quantityprice' => $request->Quantity,
                     'quantity' => $request->Quantityprice,
@@ -112,7 +112,7 @@ class SaleController extends Controller
                     'discount' => $total_discount_rate ?? 0,
                     'total_amount' => $request->Quantity * $Selling_price,
                     'total_price' => $total_price,
-                    'currency' =>'d',
+                    'currency' =>$saleInvoice->currency_id?? null,
                     'transaction_type' => $Transaction_type,
                     'supplier_id' => $request->Supplier?? null ,
                     'Customer_id' => $saleInvoice->Customer_id ,
@@ -121,7 +121,6 @@ class SaleController extends Controller
                     'financial_account_id' => $saleInvoice->account_id,
                     'shipping_cost' => $request->shipping_cost ?? 0,
                     'note' => $request->note ?? '',
-                    'Category_name' => $Categorie_name,
                 ]
             );
             $total_price_sale = Sale::where('Invoice_id', $saleInvoice->sales_invoice_id )
@@ -139,10 +138,7 @@ class SaleController extends Controller
             
             // تحديد الحساب المدين والمبلغ المدفوع بناءً على نوع الدفع
             if ($saleInvoice->transaction_type ===4) {
-
-           
         }          
-
         if (in_array($saleInvoice->payment_type, [1, 3, 4])){
         $payment_type="نقدا";
                 $account_Credit= $request->account_debitid;
@@ -268,6 +264,7 @@ class SaleController extends Controller
 public function destroy($id)
 {
 
+
     $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
     if (!$accountingPeriod) {
         return response()->json(['success' => false, 'message' => 'لا توجد فترة محاسبية مفتوحة.']);
@@ -320,7 +317,24 @@ $total_price_sale = Sale::where('Invoice_id', $saleInvoice->sales_invoice_id )
             'Amount_Credit' => $net_total_after_discount ?: 0,
             'Amount_debit' => $net_total_after_discount ?: 0,
         ]);
-return response()->json(['message' => 'تم حذف البيانات بنجاح']);
+         $total_price_sale = $total_price_sale;
+         $discount = $discount;
+         $net_total_after_discount =$total_price_sale-$discount;
+
+         if( $total_price_sale)
+         {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'تم حذف الصنف بنجاح.',
+                'total_price_sale' => $total_price_sale,
+                'discount' => $discount,
+                'net_total_after_discount' => $net_total_after_discount,
+            ]);
+         }
+         return response()->json([
+            'status' => 'success',
+            'message' => 'تم حذف الصنف بنجاح.',
+               ]);
 }
 public function deleteInvoice($id)
 {
@@ -347,13 +361,11 @@ public function deleteInvoice($id)
             return response()->json(['success' => false, 'message' => 'لا توجد فترة محاسبية مفتوحة.']);
         }
         $invoice->delete();
-
         // البحث عن السجل المرتبط في DailyEntrie
         $GetentrieId = DailyEntrie::where('Invoice_id', $id)
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->where('daily_entries_type', $transactiontype)
             ->first();
-        
         // التحقق مما إذا كان السجل موجودًا قبل الحذف
         if ($GetentrieId) {
             $GetentrieId->delete(); // حذف السجل المرتبط

@@ -72,7 +72,6 @@ class InvoicePurchaseController extends Controller
                 TransactionType::PURCHASE->value,
                 TransactionType::RETURN->value,
                 TransactionType::INVENTORY_TRANSFER->value,
-                TransactionType::RETURN_SALE->value,
             ]);
     
         // تطبيق الفلترة بناءً على نوع الفلترة
@@ -97,9 +96,6 @@ class InvoicePurchaseController extends Controller
                 }
                 break;
         }
-        // 'transaction_type' => TransactionType::fromValue($DataPurchaseInvoice->transaction_type)?->label() ?? 'غير معروف',
-        // $transaction_type=TransactionType::fromValue($invoice->transaction_type)?->label() ?? 'غير معروف';
-        // جلب البيانات وتحويلها
         $purchaseInvoices = $query->get()->transform(function ($invoice) {
             return [
                 'formatted_date' => $invoice->formatted_date ?? 'غير متاح',
@@ -114,6 +110,10 @@ class InvoicePurchaseController extends Controller
                 'paid' => $invoice->Paid ?? 0,
                 'user_name' => $invoice->userName ?? 'غير معروف',
                 'updated_at' => optional($invoice->updated_at)->format('Y-m-d') ?? 'غير متاح',
+                'view_url' => route('invoicePurchases.print', $invoice->purchase_invoice_id),
+            // 'edit_url' => route('receip.edit', $invoice->sales_invoice_id),
+            'destroy_url' => route('purchase-invoice.delete', $invoice->purchase_invoice_id),
+      
             ];
         });
         return response()->json(['purchaseInvoices' => $purchaseInvoices], 200);
@@ -128,6 +128,8 @@ class InvoicePurchaseController extends Controller
                 'message' => 'لم يتم العثور على معرف الفاتورة.'
             ]);      
           }
+          $transaction_type=  TransactionType::fromValue($invoice->transaction_type)?->label();
+
         // حذف جميع المشتريات المرتبطة إن وجدت
         if ($invoice->purchases()->exists()) {
             $invoice->purchases()->delete();
@@ -138,9 +140,9 @@ class InvoicePurchaseController extends Controller
         }
         // حذف الفاتورة نفسها
         $invoice->delete();
-        $Getentrie_id = DailyEntrie::where('Invoice_id',$invoice->purchase_invoice_id)
+        $Getentrie_id = DailyEntrie::where('Invoice_id',$id)
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-            ->where('daily_entries_type',$invoice->transaction_type)
+            ->where('daily_entries_type',$transaction_type)
             ->first();
             if($Getentrie_id )
             {
@@ -181,7 +183,6 @@ class InvoicePurchaseController extends Controller
                 TransactionType::PURCHASE->value,
                 TransactionType::RETURN->value,
                 TransactionType::INVENTORY_TRANSFER->value,
-                TransactionType::RETURN_SALE->value,
             ]);    
             if ($validated['searchQuery'] ?? false) {
                 $searchQuery = $validated['searchQuery'];
@@ -189,7 +190,6 @@ class InvoicePurchaseController extends Controller
                 $query->where(function ($query) use ($searchQuery) {
                     // البحث باستخدام رقم الفاتورة
                     $query->where('purchase_invoice_id','like', $searchQuery . '%')
-                    
                     // البحث باستخدام اسم المورد
                     ->orWhereHas('supplier', function ($query) use ($searchQuery) {
                         $query->where('sub_name', 'like', $searchQuery . '%'); // البحث عن الأسماء التي تبدأ بالقيمة المدخلة
@@ -213,13 +213,15 @@ class InvoicePurchaseController extends Controller
                 'invoice_number' => $invoice->purchase_invoice_id ?? 'غير متاح',
                 'receipt_number' => $invoice->Receipt_number ?? 'غير متاح',
                 'Invoice_type' => PaymentType::tryFrom($invoice->Invoice_type)?->label() ?? 'غير معروف',
-
-
                 'total_invoice' => $invoice->Total_invoice ?? 0,
                 'total_cost' => $invoice->Total_cost ?? 0,
                 'paid' => $invoice->Paid ?? 0,
                 'user_name' => $invoice->userName ?? 'غير معروف',
                 'updated_at' => optional($invoice->updated_at)->format('Y-m-d') ?? 'غير متاح',
+                'view_url' => route('invoicePurchases.print', $invoice->purchase_invoice_id),
+                // 'edit_url' => route('receip.edit', $invoice->sales_invoice_id),
+                'destroy_url' => route('purchase-invoice.delete', $invoice->purchase_invoice_id),
+          
             ];
         });
     

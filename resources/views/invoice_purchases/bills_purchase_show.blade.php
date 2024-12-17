@@ -82,7 +82,6 @@
                     <th class="px-2 text-right">م</th>
                     <th class="px-2 text-right">اسم الصنف</th>
                     <th class="px-2 text-right"> الوحده</th>
-
                     <th class="px-2 text-center">الكمية</th>
                     <th class="px-2 text-right">سعر الشراء</th>
                     <th class="border  text-right px-2 ">المخزن</th>
@@ -99,7 +98,6 @@
                         <td>{{$loop->iteration}}</td>
                         <td class="px-2 text-right">{{ $Purchase->Product_name }}</td>
                         <td class="px-2 text-right">
-                           
                             {{ $Purchase->categorie_id }}
                            
 
