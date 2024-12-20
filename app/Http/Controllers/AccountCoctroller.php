@@ -164,18 +164,29 @@ return response()->json( $data);
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
         $descriptionText = '';
         $descriptionCommint = '';
-    
         // تحديد نوع القيد (مدين أو دائن) والتعليق
         if ($accountCreditId) {
             $accountId = $accountCreditId;
+
+            $entries = DailyEntrie::where('accounting_period_id',$accountingPeriod->accounting_period_id)
+            ->where('entrie_id', $entryId)
+            ->where('account_Credit_id', $accountId)
+            ->first();
+            $amount= $entries->Amount_Credit ??0;
             $descriptionCommint = "الى ح/";
             $entryType = "credit";
-        } else {
+        } 
+        if ($accountDebitId) {
             $accountId = $accountDebitId;
+            $entries = DailyEntrie::where('accounting_period_id',$accountingPeriod->accounting_period_id)
+            ->where('entrie_id', $entryId)
+            ->where('account_debit_id', $accountId)
+            ->first();
+            $amount= $entries->Amount_debit??0;
+
             $descriptionCommint = "من ح/";
             $entryType = "debit";
         }
-    
         // جلب الحسابات الفرعية والرئيسية
         $subAccount = SubAccount::where('sub_account_id',$accountId)->firstOrFail();
         $Main_id=$subAccount->Main_id;
@@ -196,14 +207,12 @@ return response()->json( $data);
                 'User_id' => auth()->id(),
             ]
         );
-    
         // إنشاء أو استرجاع السجل من GeneralLedge
         $generalLedge = GeneralLedge::where([
             'Account_id' => $accountId,
             'accounting_id' => $accountingPeriod->accounting_period_id,
             'Main_id' => $mainAccount->main_account_id,
         ])->first();
-    
         $id = $generalLedge ? $generalLedge->general_ledge_id : GeneralLedge::firstOrCreate(
             [
                 'Account_id' => $accountId,
@@ -214,7 +223,10 @@ return response()->json( $data);
                 'User_id' => auth()->id(),
             ]
         )->id;
-    
+      
+        if($amount!=0)
+        {
+
         // إنشاء السجل في GeneralEntrie باستخدام المعرف الصحيح
         $generalEntry = GeneralEntrie::firstOrCreate([
             'Daily_entry_id' => $entry->entrie_id,
@@ -222,53 +234,55 @@ return response()->json( $data);
             'accounting_period_id' => $accountingPeriod->accounting_period_id,
             'sub_id' => $subAccount->sub_account_id,
             'Main_id' => $mainAccount->main_account_id,
-            
             'typeAccount' => $subAccount->typeAccount,
             'entry_type' => $entryType,
         ], [
-            'amount' => $entryType === 'debit' ? $entry->Amount_debit : $entry->Amount_Credit,
+            'amount' => $amount,
             'description' => $descriptionCommint . $descriptionText . " " . $subAccount->sub_name,
             'entry_date' => $entry->created_at,
-            'status' => $entry->status,
+            'status' =>'غير مرحل',
             'Invoice_type' => $entry->Invoice_type,
             'Invoice_id' => $entry->Invoice_id,
-
             'Currency_name' => $entry->Currency_name,
             'General_ledger_page_number_id' => $id,
             'User_id' => auth()->id(),
         ]);
-        
+
         if (!$generalEntry) {
             throw new \Exception("حدث خطأ أثناء إنشاء السجل في GeneralEntrie.");
         }
         // تحديث حالة القيد اليومي بعد الترحيل
-        $entry->update(['status_debit' => 'مرحل']);
+        if ($accountDebitId) {
+            $entry->update(['status_debit' => 'مرحل']);
+        }
+        if ($accountCreditId) {
+            $entry->update(['status' => 'مرحل']);
+        }
+    }
     }
     
     public function storeAllEntries()
     {
         try {
             $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
-    
-            // استرجاع جميع القيود غير المرحل في الفترة المحاسبية الحالية
-            $entries = DailyEntrie::where('accounting_period_id', $accountingPeriod->accounting_period_id)
+            
+                  $entries = DailyEntrie::where('accounting_period_id', $accountingPeriod->accounting_period_id)
                     ->get();
-    
             if ($entries->isEmpty()) {
                 return response()->json(['error' => 'لا توجد قيود غير مرحل لترحيلها.'], 404);
             }
-            foreach ($entries as $entry) {
-             
-                    $this->processEntry($entry->account_debit_id, null, $entry->entrie_id);
-            
-              
-                    $this->processEntry(null, $entry->account_Credit_id, $entry->entrie_id);
-              
+            foreach ($entries as $entry)
+                 {
+                   
+                        $this->processEntry($entry->account_debit_id, null, $entry->entrie_id);
+
+                 
+                        $this->processEntry(null, $entry->account_Credit_id, $entry->entrie_id);
+
+                    
+
                   }
-    
             return response()->json(['success' => 'تم ترحيل جميع القيود بنجاح!']);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['error' => 'لم يتم العثور على الفترة المحاسبية المفتوحة.'], 404);
         } catch (\Exception $e) {
             return response()->json(['error' => 'حدث خطأ أثناء ترحيل القيود: ' . $e->getMessage()], 500);
         }
@@ -281,7 +295,6 @@ return response()->json( $data);
 
         if ($subAccount == "all") {
             $mainAccount = MainAccount::with('subAccounts')->findOrFail($main_account);
-
             // الحصول على معرفات الحسابات الفرعية المرتبطة بالحساب الرئيسي فقط
             $subAccountIds = $mainAccount->subAccounts->pluck('sub_account_id');
 
@@ -318,7 +331,6 @@ return response()->json( $data);
                 $this->processEntry($hasDebit ? $entry->account_debit_id : null, $hasCredit ? $entry->account_Credit_id : null, $entry->entrie_id);
             }
         }
-
         return response()->json(['success' => 'تم ترحيل جميع القيود بنجاح!']);
     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
         return response()->json(['error' => 'لم يتم العثور على الفترة المحاسبية المفتوحة.'], 404);

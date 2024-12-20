@@ -191,7 +191,8 @@ function addToTable(account) {
         if ($('#Purchase_price').length) {
             $('#Purchase_price').val(product.Purchase_price).trigger('change');
         }
-        if ($('#QuantityPurchase').length) {
+        if ($('#QuantityPurchase').length) 
+            {
             $('#QuantityPurchase').val(product.QuantityPurchase).trigger('change');
         }
         if ($('#discount_rate').length) {

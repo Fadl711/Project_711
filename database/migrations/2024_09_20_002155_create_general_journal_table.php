@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('general_journal', function (Blueprint $table) {
             $table->increments('page_id')->unsigned();
+            $table->integer('accounting_period_id')->unsigned();
+
             $table->timestamps();
         });
     }

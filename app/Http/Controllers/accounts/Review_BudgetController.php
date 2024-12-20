@@ -16,24 +16,33 @@ class Review_BudgetController extends Controller
    
     public function review_budget($year)
     {
-        // جلب الفترة المحاسبية المحددة
-        $accountingPeriod = AccountingPeriod::where('Year', $year)->firstOrFail();
-    
-        // استرجاع الحسابات الرئيسية مع حساباتها الفرعية وجمع الأرصدة
-        $mainAccountsTotals = MainAccount::with(['subAccounts' => function ($query) {
-            $query->select([
-                'sub_accounts.sub_account_id',
-                'sub_accounts.Main_id',
-                'sub_accounts.sub_name',
-                DB::raw('SUM(DISTINCT COALESCE(sub_accounts.debtor_amount, 0) + COALESCE(debit.Amount_debit, 0)) as total_debit'),
-                DB::raw('SUM(DISTINCT COALESCE(sub_accounts.creditor_amount, 0) + COALESCE(credit.Amount_credit, 0)) as total_credit'),
-                DB::raw('(SUM(DISTINCT COALESCE(sub_accounts.debtor_amount, 0) + COALESCE(debit.Amount_debit, 0)) - SUM(DISTINCT COALESCE(sub_accounts.creditor_amount, 0) + COALESCE(credit.Amount_credit, 0))) as balance')
-            ])
-            ->leftJoin('daily_entries AS debit', 'sub_accounts.sub_account_id', '=', 'debit.account_debit_id')
-            ->leftJoin('daily_entries AS credit', 'sub_accounts.sub_account_id', '=', 'credit.account_Credit_id')
-            ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.Main_id', 'sub_accounts.sub_name');
-        }])->get();
-    
+       // استرجاع الفترة المحاسبية المفتوحة
+       $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+ if ($accountingPeriod) {
+    // استرجاع الحسابات الرئيسية مع حساباتها الفرعية وجمع الأرصدة
+    $mainAccountsTotals = MainAccount::with(['subAccounts' => function ($query) use ($accountingPeriod) {
+        $query->select([
+            'sub_accounts.sub_account_id',
+            'sub_accounts.Main_id',
+            'sub_accounts.sub_name',
+            DB::raw('SUM(COALESCE(debit.Amount_debit, 0)) as total_debit'),
+            DB::raw('SUM(COALESCE(credit.Amount_credit, 0)) as total_credit'),
+            DB::raw('(SUM(COALESCE(debit.Amount_debit, 0)) - SUM(COALESCE(credit.Amount_credit, 0))) as balance')
+        ])
+        ->leftJoin('daily_entries AS debit', function($join) use ($accountingPeriod) {
+            $join->on('sub_accounts.sub_account_id', '=', 'debit.account_debit_id')
+                 ->whereBetween('debit.accounting_period_id', [$accountingPeriod->accounting_period_id, now()]); // تأكد من أن القيود في الفترة
+        })
+        ->leftJoin('daily_entries AS credit', function($join) use ($accountingPeriod) {
+            $join->on('sub_accounts.sub_account_id', '=', 'credit.account_Credit_id')
+                 ->whereBetween('credit.accounting_period_id', [$accountingPeriod->accounting_period_id, now()]); // تأكد من أن القيود في الفترة
+        })
+        ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.Main_id', 'sub_accounts.sub_name');
+    }])->get();
+ } else {
+    // إذا لم توجد فترة محاسبية مفتوحة
+    $mainAccountsTotals = collect(); // أو يمكنك إرجاع رسالة مناسبة
+}
         // استخدام المجموعات لتحسين العمليات الحسابية
         $totals = $mainAccountsTotals->reduce(function ($carry, $mainAccount) {
             $debitSum = 0;
@@ -48,7 +57,6 @@ class Review_BudgetController extends Controller
                     $creditSum += $balance; // مجموع الأرصدة الدائنة
                 }
             }
-    
             if (in_array($mainAccount->typeAccount, [1, 2])) {
                 $carry['totalDebit'] += $debitSum+$creditSum;
                 $carry['totalCredit'] += $creditSum;

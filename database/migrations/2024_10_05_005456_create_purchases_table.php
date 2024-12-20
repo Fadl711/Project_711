@@ -29,7 +29,7 @@ return new class extends Migration
             $table->decimal('quantity',9,2)->default(0)->comment('كمية المنتج في المعاملة');
             $table->decimal('Quantityprice', 9, 2)->comment('كمية المنتج  المباعه حسب الوحدة');
 
-            $table->integer('Purchase_invoice_id')->unsigned();
+            $table->integer('Purchase_invoice_id')->nullable()->unsigned();
             $table->integer('accounting_period_id')->unsigned();
             $table->unsignedTinyInteger('transaction_type')->comment('نوع المعاملة: 1 للشراء، 2 للبيع، 3 للترحيل المخزني');
             $table->integer('account_id')->unsigned()->nullable()->comment('الحساب المرتبط بدفع');
@@ -39,7 +39,7 @@ return new class extends Migration
             $table->string('categorie_id')->nullable();
             $table->timestamps();
             $table->foreign('Purchase_invoice_id')->references('Purchase_invoice_id')->on('purchase_invoices')
-            ->onDelete('cascade');
+            ->onDelete('set null');
             $table->foreign('account_id')->references('sub_account_id')->on('sub_accounts')
             ->onDelete('set null');
             $table->foreign('warehouse_to_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');

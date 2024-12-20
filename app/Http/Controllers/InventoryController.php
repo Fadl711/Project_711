@@ -122,13 +122,10 @@ private function convertArabicNumbersToEnglish($value)
 {
     $arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
     $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-
     return str_replace($arabicNumbers, $englishNumbers, $value);
 }
 public function ShowAllProducts(Request $request,$id)
 {
-  
-
     $validated = $request->validate([
         'warehouseid' => 'nullable|',
         'productname' => 'nullable|',
@@ -136,7 +133,6 @@ public function ShowAllProducts(Request $request,$id)
         'Quantit' => 'nullable|',
         'DisplayMethod' => 'nullable|string|max:255',
     ]);
- 
             $warehouse_to_id = $validated['warehouseid'];
             $accountingPeriodData =$validated['accountingPeriodData'];
             $warehouse_to_id = $this->convertArabicNumbersToEnglish($warehouse_to_id);
@@ -161,7 +157,6 @@ public function ShowAllProducts(Request $request,$id)
             $CostIncomplete = []; 
             $AllQuantitiyCosts = []; 
             $Appendix =[]; 
-
     $warehouseName = SubAccount::where('sub_account_id', $warehouse_to_id)->value('sub_name');
 
     if($DisplayMethod =="ShowAllProducts")
@@ -195,6 +190,7 @@ public function ShowAllProducts(Request $request,$id)
     }
 
     }
+    
     foreach ($uniqueProducts as $products) {
         if( $DisplayMethod=="SelectedProduct")
         {
@@ -213,14 +209,13 @@ public function ShowAllProducts(Request $request,$id)
       $purchaseToQuantity = Purchase::where('product_id', $product_id)
       ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
       ->where('warehouse_to_id', $warehouse_to_id)
-      ->whereIn('transaction_type', [1, 6,3])
+      ->whereIn('transaction_type', [1, 6, 3,7])
       ->sum('quantity');
       $warehouseFromQuantity = Purchase::where('product_id', $product_id)
           ->where('warehouse_from_id', $warehouse_to_id)
           ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
           ->where('transaction_type', 2)
           ->sum('quantity');
-         
       $warehouseFromQuantity3 = Purchase::where('product_id', $product_id)
           ->where('warehouse_from_id', $warehouse_to_id)
           ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
@@ -286,7 +281,7 @@ public function ShowAllProducts(Request $request,$id)
           if($QuantityDifference>0  && $inventoryData!==null )
           {
             $CostIncomplete[]=[
-                'CostPrice' => $inventoryData->CostPrice,
+                'CostPrice' => $inventoryData->CostPrice ??0,
                 'TotalCost' => $TotalCost,
                 'product_id' => $inventoryData->product_id,
                 'id' => $inventoryData->id,
@@ -363,9 +358,7 @@ public function ShowAllProducts(Request $request,$id)
           if($QuantityDifference<0 && $inventoryData!==null )
           {
         $producta = Product::where('product_id',  $inventoryData->product_id)->first();
-
             $QuantityIncomplete[]=[
-          
                 'product_id' => $inventoryData->product_id,
                 'id' => $inventoryData->id,
                 'warehouse_name' => $inventoryData->StoreId,
@@ -385,7 +378,6 @@ public function ShowAllProducts(Request $request,$id)
         //   'InventoryDifferenceMissingQuantitiesWithCosts' => ' فارق الجرد للكميات الناقصة مع التكاليف',
           if($Quantit=="InventoryDifferenceMissingQuantitiesWithCosts")
           {
-
           if($QuantityDifference<0 && $inventoryData!==null )
           {
         $producta = Product::where('product_id',  $inventoryData->product_id)->first();
@@ -601,6 +593,9 @@ public function edit($id)
                 'message' => 'حدث خطأ أثناء الحذف: ' . $e->getMessage()
             ]);
         }
+
+
+      
     }
     public function destroy($id){
         $inventory = Inventory::where('id',$id)->first();
@@ -640,11 +635,13 @@ public function edit($id)
     }
     public function createList(){
         $accountingPeriod = AccountingPeriod::all();
+        $accountingPeriodOpen = AccountingPeriod::where('is_closed', false)->first();
+
         // التحقق من وجود فترة محاسبية مفتوحة
         if (!$accountingPeriod) {
             return redirect()->back()->with('error', 'لا توجد فترة محاسبية مفتوحة.');
         }
-        return view('inventory.Create-an-inventory-list', ['accountingPeriod' => $accountingPeriod]);
+        return view('inventory.Create-an-inventory-list', ['accountingPeriod' => $accountingPeriod,'accountingPeriodOpen'=>$accountingPeriodOpen]);
 
     }
     public function show_inventoryAccountingPeriod() {
@@ -658,7 +655,7 @@ public function edit($id)
         // جلب الفواتير مع العلاقات
         
         // عرض البيانات في العرض
-        return view('inventory.show_inventory', ['accountingPeriodOpen','accountingPeriod' => $accountingPeriod]);
+        return view('inventory.show_inventory', ['accountingPeriodOpen'=>$accountingPeriodOpen,'accountingPeriod' => $accountingPeriod]);
     }
     public function show_inventory($id) {
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();

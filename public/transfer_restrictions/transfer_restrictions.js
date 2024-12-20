@@ -8,7 +8,6 @@ $('#main_account_id').on('change', function() {
     }
 });
 
-
 // دالة لجلب الحسابات الفرعية
 function SubAccount(mainAccountId) {
     const subAccountDiv = $('#subAccountDiv'); // الحصول على الحقل المخفي

@@ -7,6 +7,7 @@ use App\Models\AccountingPeriod;
 use App\Models\DailyEntrie;
 use App\Models\MainAccount;
 use App\Models\SubAccount;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -105,11 +106,7 @@ class TransferController extends Controller
     {
         $query = DB::table('daily_entries')
         ->select('entrie_id', 'Amount_debit', 'Amount_Credit', 'account_debit_id', 'account_Credit_id', 'Statement', 'Daily_page_id', 'User_id', 'status', 'status_debit', 'created_at')
-        ->where('accounting_period_id', $accountingPeriodId)
-        ->where(function($query) {
-            $query->where('status', 'غير مرحل')
-                  ->orWhere('status_debit', 'غير مرحل');
-        });
+        ->where('accounting_period_id', $accountingPeriodId);
     
     // إضافة الحسابات الفرعية إلى الاستعلام
     if ($subAccounts instanceof \Illuminate\Database\Eloquent\Collection) {
@@ -171,21 +168,27 @@ class TransferController extends Controller
             // جلب الحساب الفرعي المحدد كـ كائن واحد
             return SubAccount::where('sub_account_id', $subAccountId)->first();  // استخدام first() لجلب كائن فردي
         }
-        
         return null;
     }
-    
-
-
 private function fetchEntries($subAccountIdsCollection, $date, $TypeRestrictions)
 {
     $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
+//     $accountingPeriod = $accountingPeriod->created_at;
+// $accountingPeriodyear = Carbon::now()->format('Y');
+// $start_month = Carbon::now()->format('m');
+// $today = Carbon::now()->toDateString();
+    // $months = DailyEntrie::whereYear('created_at', $accountingPeriodyear)
+    // ->whereMonth('created_at', '>=', $start_month)
+    // ->whereMonth('created_at', '<=', $today)
+    // ->selectRaw('MONTH(created_at) as month, YEAR(created_at) as year')
+    // ->distinct()
+    // ->orderBy('year')
+    // ->orderBy('month')
+    // ->get();
+    // dd( $months);
     $query = DB::table('daily_entries')
         ->select('entrie_id', 'Amount_debit', 'Amount_Credit', 'account_debit_id', 'account_Credit_id', 'Statement', 'Daily_page_id', 'User_id', 'status','status_debit', 'created_at')
-        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-        ->where('status', 'غير مرحل')
-        ->orWhere('status_debit', 'غير مرحل');
-    
+        ->where('accounting_period_id', $accountingPeriod->accounting_period_id);
     // إضافة الحسابات الفرعية في الاستعلام
     if ($subAccountIdsCollection) {
         $query->where(function ($subQuery) use ($subAccountIdsCollection) {
@@ -193,10 +196,8 @@ private function fetchEntries($subAccountIdsCollection, $date, $TypeRestrictions
                      ->orWhereIn('account_Credit_id', $subAccountIdsCollection->pluck('sub_account_id'));
         });
     }
-
     // احصل على جميع الإدخالات أولاً
     $entries = $query->get(); 
-
     // تصفية الإدخالات حسب التاريخ إذا كان النوع 2 والتاريخ محدد
     if ($TypeRestrictions == 2 && !empty($date)) {
         try {
@@ -211,8 +212,6 @@ private function fetchEntries($subAccountIdsCollection, $date, $TypeRestrictions
 
     return $entries; // إرجاع الإدخالات
 }
-
-
 
 private function prepareResponse($entries, $mainAccount = null, $date, $TypeRestrictions, Request $request)
 {
@@ -252,7 +251,6 @@ public function transferEntry(Request $request)
     try {
         // جلب القيد باستخدام ID
         $entry = DailyEntrie::findOrFail($request->entrie_id);
-
         // عملية ترحيل القيد
         // (قم بتعديل هذا القسم حسب المنطق الخاص بك)
         $entry->status = 'مرحلة'; // تحديث الحالة

@@ -165,17 +165,18 @@ class SaleController extends Controller
                 'remaining_amount' => $net_total_after_discount - $paid_amount,
             ]);
             $today = Carbon::now()->toDateString();
-            $dailyPage = GeneralJournal::whereDate('created_at', $today)->first();
+            $dailyPage = GeneralJournal::whereDate('created_at', $today)->latest()->first();
+            
             if (!$dailyPage) {
-                $dailyPage = GeneralJournal::create([]);
+                $dailyPage = GeneralJournal::create([
+                    'accounting_period_id'=>$accountingPeriod->accounting_period_id,
+                ]);
+            }
+            if (!$dailyPage || !$dailyPage->page_id) {
+                return response()->json(['success' => false, 'message' => 'فشل في إنشاء صفحة يومية']);
             }
             $transactiontype=   TransactionType::fromValue($saleInvoice->transaction_type)?->label();
-  // الاستجابة بنجاح
-//   return response()->json([
-//     'success' => true,
-//     'message' => 'تمت إضافة عملية البيع بنجاح!'.$transactiontype,
-   
-// ]);
+
             // إعداد بيانات الإدخالات اليومية
             $entrie_id = DailyEntrie::where('Invoice_id',$saleInvoice->sales_invoice_id)
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
@@ -214,8 +215,16 @@ class SaleController extends Controller
     }
     private function createOrUpdateDailyEntry($saleInvoice, $accountingPeriod,$account_Credit, $account_debit, $net_total_after_discount,$Getentrie_id,$payment_type,$daily_page_id)
     {
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+
         $today = Carbon::now()->toDateString();
-        $dailyPage = GeneralJournal::whereDate('created_at', $today)->first() ?? GeneralJournal::create([]);
+        $dailyPage = GeneralJournal::whereDate('created_at', $today)->latest()->first();
+
+        if (!$dailyPage) {
+            $dailyPage = GeneralJournal::create([
+                'accounting_period_id'=>$accountingPeriod->accounting_period_id,
+            ]);
+        }
             // التحقق من وجود الصفحة اليومية
             if (!$dailyPage || !$dailyPage->page_id) {
                 return response()->json(['success' => false, 'message' => 'فشل في إنشاء صفحة يومية']);

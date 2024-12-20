@@ -82,60 +82,13 @@ return view('accounts.Main_Account.create',
             'Type_migration' => $Type_migration,
             'AccountClass'=>$request->input('AccountClass')
         ]);
-
-      // __________________________ SubAccount ______________________________________
-        // $data=MainAccount::where('User_id',$User_id)->latest()->first();
-        // $DataSubAccount=new SubAccount();
-        // $DataSubAccount->Main_id=$mainAccount->main_account_id;
-        // $DataSubAccount->sub_name=$account_name ;
-        // $DataSubAccount->AccountClass =$mainAccount->AccountClass;
-        // $DataSubAccount->typeAccount =$mainAccount->typeAccount;
-        // $DataSubAccount-> User_id= $User_id;
-        // $DataSubAccount->debtor_amount = !empty($debtor_amount) ? $debtor_amount :0;
-        // $DataSubAccount-> creditor_amount= !empty($creditor_amount ) ? $creditor_amount :0;
-        // $DataSubAccount->Phone = ($Phone1 ) ;
-        // $DataSubAccount-> name_The_known= !empty($name_The_known ) ? $name_The_known : null ;
-        // $DataSubAccount->Known_phone = !empty($Known_phone ) ? $Known_phone : null ;
-        // $DataSubAccount->save();
-        // if ($DataSubAccount->debtor_amount>0 || $DataSubAccount->creditor_amount>0) {
-        //     $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
-
-        //     $DSubAccount = SubAccount::where('sub_account_id', $DataSubAccount->sub_account_id)->first();
-        //         $today = Carbon::now()->toDateString();
-        //         $dailyPage = GeneralJournal::whereDate('created_at', $today)->first() ?? GeneralJournal::create([]);
-        
-        //         if (!$dailyPage || !$dailyPage->page_id) {
-        //             return response()->json(['success' => false, 'message' => 'فشل في إنشاء صفحة يومية']);
-        //         }
-        
-        //     $dailyEntry = DailyEntrie::create([
-        //         'Amount_debit' => $DataSubAccount->debtor_amount  ?: 0,
-        //         'account_debit_id' => $DSubAccount->sub_account_id ,
-        //         'Amount_Credit' => $DataSubAccount->creditor_amount  ?: 0,
-        
-        //         'account_Credit_id' => $DSubAccount->sub_account_id ,
-        //         'Statement' => 'إدخال رصيد افتتاحي',
-        //         'Daily_page_id' =>  $dailyPage->page_id,
-        //         'Currency_name' => 'ر',
-        //         'User_id' =>$DataSubAccount->User_id,
-        //         'Invoice_type' => 'رصيد افتتاحي',
-        //         'Invoice_id' => null,
-        //         'accounting_period_id' =>  $accountingPeriod->accounting_period_id ,
-        //         'status_debit' => 'غير مرحل',
-        //         'status' => 'غير مرحل',
-        //     ]);
-        //     return response()->json(['success' => ' تم حفظ بنجاح ودخال مبلغ للحساب', 'DataSubAccount' => $mainAccount], 201);
-        // }  
-          
-                  
-            
+                          
         return response()->json(['success' => true, 'message' => 'تمت العملية بنجاح', 'DataSubAccount' => $mainAccount], 201);
     
     }
 
     public function update(Request $request, $id)
     {
-
             MainAccount::where('main_account_id',$id)
             ->update([
                 'account_name'=>$request->account_name,
@@ -212,12 +165,19 @@ $DataSubAccount = SubAccount::firstOrCreate(
 if ($DataSubAccount->debtor_amount>0 || $DataSubAccount->creditor_amount>0) {
     $DSubAccount = SubAccount::where('sub_account_id', $DataSubAccount->sub_account_id)->first();
         $today = Carbon::now()->toDateString();
-        $dailyPage = GeneralJournal::whereDate('created_at', $today)->first() ?? GeneralJournal::create([]);
+        $dailyPage = GeneralJournal::whereDate('created_at', $today)->latest()->first();
+        
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
 
+    
+        if (!$dailyPage) {
+            $dailyPage = GeneralJournal::create([
+                'accounting_period_id'=>$accountingPeriod->accounting_period_id,
+            ]);
+        }
         if (!$dailyPage || !$dailyPage->page_id) {
             return response()->json(['success' => false, 'message' => 'فشل في إنشاء صفحة يومية']);
         }
-        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
 
     $dailyEntry = DailyEntrie::create([
         'Amount_debit' => $DataSubAccount->debtor_amount  ?: 0,

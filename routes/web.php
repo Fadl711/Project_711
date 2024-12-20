@@ -181,7 +181,7 @@ Route::get('/transfer_restrictions/record', [TransferController::class, 'record'
 Route::post('/transfer_restrictions/store', [AccountCoctroller::class, 'store'])->name('transfer_restrictions.store');
 
 Route::get('/Locks_financial_period/index', [LocksFinancialPeriodsController::class, 'index'])->name('Locks_financial_period.index');
-Route::get('/Locks_financial_period/getProfitAndLossData', [LocksFinancialPeriodsController::class, 'getProfitAndLossData'])->name('Locks_financial_period.getProfitAndLossData');
+Route::get('/Locks_financial_period/{id}/getProfitAndLossData', [LocksFinancialPeriodsController::class, 'getProfitAndLossData'])->name('Locks_financial_period.getProfitAndLossData');
 Route::get('/refunds/index', [Sale_RefundController::class, 'index'])->name('refunds.index');
 Route::get('/refunds/create/sale', [Sale_RefundController::class, 'create'])->name('sale_refunds.create');
 Route::get('/refunds/show_purchase_refund', [Purchase_RefundController::class, 'show_purchase_refund'])->name('show_purchase_refund');

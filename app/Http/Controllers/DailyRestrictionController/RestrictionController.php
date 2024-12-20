@@ -52,10 +52,13 @@ class RestrictionController extends Controller
         // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
         $today = Carbon::now()->toDateString();
         $dailyPage = GeneralJournal::whereDate('created_at', $today)->first();
-        
-        // إذا لم توجد صفحة، قم بإنشائها
+
+
+        // إذا كنت بحاجة لإنشاء سجل جديد في حال عدم وجود سجلات على الإطلاق
         if (!$dailyPage) {
-            $dailyPage = GeneralJournal::create([]);
+            $dailyPage = GeneralJournal::create([
+                'accounting_period_id'=>$accountingPeriod->accounting_period_id,
+            ]);
         }
         // حفظ القيد اليومي
         $dailyEntrie = new DailyEntrie();
@@ -95,7 +98,6 @@ if (!$invoices) {
     throw new \Exception('الفاتورة غير موجودة.');
 }
 }
-// تحديد المعرف ونوع الدفع
 
 // إنشاء القيد اليومي
 $dailyEntrie->Invoice_type =$request->payment_type ;
@@ -137,9 +139,11 @@ $dailyEntrie->save();
             return response()->json(['success' => 'يجب عدم تساوي الحسابات الفرعية المدين والدائن.']);
         }
         $today = Carbon::now()->toDateString();// الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
-        $dailyPage = GeneralJournal::whereDate('created_at', $today)->first();
+        $dailyPage = GeneralJournal::whereDate('created_at', $today)->latest()->first();
         if (!$dailyPage) {
-            $dailyPage = GeneralJournal::create([]);// إذا لم توجد صفحة، قم بإنشائها
+            $dailyPage =  GeneralJournal::create([
+                'accounting_period_id'=>$accountingPeriod->accounting_period_id,
+            ]);// إذا لم توجد صفحة، قم بإنشائها
         }
         $dailyEntrie = new DailyEntrie();
         $invoice_type=$request->Invoice_type;
@@ -166,23 +170,29 @@ $dailyEntrie->save();
 
     }
 public function stor(Request $request){
+    $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+    if (!$accountingPeriod) {
+        return response()->json(['success' => false, 'message' => 'لا توجد فترة محاسبية مفتوحة.']);
+    }
     $today = Carbon::now()->toDateString(); // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
     $dailyPage = GeneralJournal::whereDate('created_at', $today)->first(); // البحث عن الصفحة
     if ($dailyPage) {
-            $generalJournal1=GeneralJournal::all();
-            $mainAccount=MainAccount::all();
+        $generalJournal1=GeneralJournal::where('accounting_period_id',$accountingPeriod->accounting_period_id)->get();
+        $mainAccount=MainAccount::all();
         $curr=Currency::all();
         return view('daily_restrictions.create',compact('curr','dailyPage'),['mainAccounts'=> $mainAccount]);
     } else {
         $Statement=$request->Statement;
-             GeneralJournal::create([
-            ]);
+        GeneralJournal::create([
+            'accounting_period_id'=>$accountingPeriod->accounting_period_id,
+        ]);
             // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
             $today = Carbon::now()->toDateString();
             $dailyPage = GeneralJournal::whereDate('created_at', $today)->first(); // البحث عن الصفحة
             if ($dailyPage) {
                 // إذا تم العثور على الصفحة، عرض رقم الصفحة
-                $generalJournal1=GeneralJournal::all();
+                $generalJournal1=GeneralJournal::where('accounting_period_id',$accountingPeriod->accounting_period_id)->get();
+                
                 $mainAccount=MainAccount::all();
             // dd($generalJournal1);
             $curr=Currency::all();

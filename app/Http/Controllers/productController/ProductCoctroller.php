@@ -114,7 +114,7 @@ class ProductCoctroller extends Controller
     public function ShowAllProducts( $warehouse_to_id,$productname,$Quantit,$DisplayMethod )
     {
                     //    dd($Quantit);
-                    $Myanalysis="الكمية والتكاليف من تاريخ";
+                    // $Myanalysis="الكمية والتكاليف من تاريخ";
 
 
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
@@ -141,9 +141,8 @@ class ProductCoctroller extends Controller
             $uniqueProducts = Purchase::where('warehouse_to_id', $warehouse_to_id)
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->where(function ($query) {
-                $query->where('transaction_type', 1)
-                      ->orWhere('transaction_type', 6)
-                      ->orWhere('transaction_type', 3);
+                $query->whereIn('transaction_type', [1, 6, 3,7]);
+
             })
             ->select('product_id', 'Product_name') // اختيار الأعمدة المطلوبة
             ->distinct() // التأكد من جلب القيم المميزة
@@ -159,7 +158,7 @@ class ProductCoctroller extends Controller
             $uniqueProduc = Purchase::where('warehouse_to_id', $warehouse_to_id)
             ->where('product_id', $produ)
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-            ->select('product_id', 'Product_name') // اختيار الأعمدة المطلوبة
+            ->select('product_id', 'Product_name','Quantityprice') // اختيار الأعمدة المطلوبة
             ->distinct() 
             ->get();
             $product = Product::where('product_id',  $produ)->first();
@@ -229,57 +228,8 @@ class ProductCoctroller extends Controller
           ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
           ->sum('quantity');
           $QuantityDifference= $productPurchase-$InventoryQuantity;
-        //   if($QuantityDifference>0)
-        //   {
-            $sumTotalCost=Inventory::where('product_id',$product_id)->sum('TotalCost');
-           $inventoryData=Inventory::where('product_id', $product_id)->first();
-
-            $QuantityAppendix=[
-                'CostPrice' => $inventoryData->CostPrice,
-                'product_id' => $product->product_id,
-                'id' => $inventoryData->id,
-                'warehouse_name' => $inventoryData->StoreId,
-                'InventoryOfficerId' => $inventoryData->InventoryOfficerId,
-                'Quantityprice' => $inventoryData->Quantityprice,
-                'AvailableQuantity' => $productPurchase,
-                'InventoryQuantity' => $InventoryQuantity,
-                'QuantityDifference' => $QuantityDifference,
-                'User_id' => $inventoryData->User_id,
-                'id' => $inventoryData->id,
-                'InventoryInvoiceId' => $inventoryData->InventoryInvoiceId,
-                'accounting_period_id' => $inventoryData->accounting_period_id,
-                'product_name' => $product->product_name,
-                'categories' => $categories,
-                ]
-            ;
-
-        //   }
-
-        //   if($QuantityDifference<0)
-        //   {
-            $sumTotalCost=Inventory::where('product_id',$product_id)->sum('TotalCost');
-           $inventoryData=Inventory::where('product_id', $product_id)->first();
-        $producta = Product::where('product_id',  $inventoryData->product_id)->first();
-        if($Quantit=="Incomplete")
-        {
-            $QuantityIncomplete=[
-                'CostPrice' => $inventoryData->CostPrice,
-                'product_id' => $inventoryData->product_id,
-                'id' => $inventoryData->id,
-                'warehouse_name' => $inventoryData->StoreId,
-                'InventoryOfficerId' => $inventoryData->InventoryOfficerId,
-                'AvailableQuantity' => $productPurchase,
-                'InventoryQuantity' => $InventoryQuantity,
-                'QuantityDifference' => $QuantityDifference,
-                'InventoryInvoiceId' => $inventoryData->InventoryInvoiceId,
-                'accounting_period_id' => $inventoryData->accounting_period_id,
-                'product_name' => $producta->product_name,
-                'categories' => $categories,
-                ]
-            ;
-             // تخزين البيانات في مصفوفة
-            }
-
+        
+       
             if($Quantit=="QuantityCosts")
            {
         $allQuantityCosts[] = [
@@ -368,7 +318,9 @@ if($Quantit=="Incomplete")
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->where(function ($query) {
                 $query->where('transaction_type', 1)
-                      ->orWhere('transaction_type', 6);
+                      ->orWhere('transaction_type', 6)
+                      ->orWhere('transaction_type', 7)
+                      ;
             })
             ->select('product_id', 'Product_name') // اختيار الأعمدة المطلوبة
             ->distinct() // التأكد من جلب القيم المميزة
@@ -634,7 +586,6 @@ if($Quantit=="QuantityCosts")
                 ]);
             }
             $productName = Product::where('product_id', $ProductNew->product_id)->value('Product_name');
-
             $purchase = Purchase::updateOrCreate(
                 [
 
@@ -642,7 +593,7 @@ if($Quantit=="QuantityCosts")
 
                 ],
                 [
-                    'Purchase_invoice_id' =>$request->Purchase_invoice_id,
+                    'Purchase_invoice_id' =>$request->Purchase_invoice_id ??null,
                     'Product_name' => $productName,
                     'Barcode' => $ProductNew->Barcode ?? 0,
                     'quantity' => $Quantity,
@@ -722,12 +673,14 @@ if($Quantit=="QuantityCosts")
     
     public function allProducts($id)
     {
+        
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
         $uniqueProducts = Purchase::where('warehouse_to_id', $id)
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->where(function ($query) {
                 $query->where('transaction_type', 1)
                       ->orWhere('transaction_type', 6)
+                      ->orWhere('transaction_type', 7)
                       ->orWhere('transaction_type', 3);
             })
             ->select('product_id', 'Product_name') // اختيار الأعمدة المطلوبة

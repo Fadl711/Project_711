@@ -44,15 +44,14 @@ if ($request->DepositAccount == $request->CreditAmount) {
     return response()->json(['error' => 'لايمكن اختيار نفس الحساب']);
 }
 }
-
 $payment_bond_id = $request->payment_bond_id;
 $paymentBond = PaymentBond::updateOrCreate(
     [
         'payment_bond_id' => $payment_bond_id,
         'accounting_period_id' => $accountingPeriod->accounting_period_id,
-        'created_at' => $request->date,
     ],
     [
+        'created_at' => $request->date,
         'Main_debit_account_id' => $request->AccountReceivable,
         'Debit_sub_account_id' => $request->DepositAccount,
         'Main_Credit_account_id' => $request->PaymentParty,
@@ -65,20 +64,20 @@ $paymentBond = PaymentBond::updateOrCreate(
         'User_id' => $request->User_id,
     ]
 );
-
         // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
-
-        $today = Carbon::now()->toDateString();
-        $dailyPage = GeneralJournal::whereDate('created_at', $today)->first();
-        $curr=Currency::all();
         $curre=Currency::where('currency_id', $paymentBond->Currency_id)->pluck('currency_name')->first();
-
         // إذا لم توجد صفحة، قم بإنشائها
+        $today = Carbon::now()->toDateString();
+        $dailyPage = GeneralJournal::whereDate('created_at', $today)->latest()->first();
+        
         if (!$dailyPage) {
-            $dailyPage = GeneralJournal::create([]);
+            $dailyPage = GeneralJournal::create([
+                'accounting_period_id'=>$accountingPeriod->accounting_period_id,
+            ]);
         }
-
-
+        if (!$dailyPage || !$dailyPage->page_id) {
+            return response()->json(['success' => false, 'message' => 'فشل في إنشاء صفحة يومية']);
+        }
         $Getentrie_id = DailyEntrie::where('Invoice_id', $paymentBond->payment_bond_id)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->where('daily_entries_type', $paymentBond->transaction_type)
@@ -86,7 +85,6 @@ $paymentBond = PaymentBond::updateOrCreate(
     
     $entrie_id = $Getentrie_id->entrie_id ?? null;
     $daily_page_id = $Getentrie_id->Daily_page_id ?? $dailyPage->page_id;
-    
     DailyEntrie::updateOrCreate(
         [
             'entrie_id' => $entrie_id,
@@ -109,14 +107,10 @@ $paymentBond = PaymentBond::updateOrCreate(
         ]
     );
   
-    
     return response()->json([
         'success' => 'تم بنجاح',
         'payment_bond_id' => $paymentBond->payment_bond_id ?? $payment_bond_id
     ]);
-    
-    // return redirect()->route('Receip.create', ['id' => $paymentBond->payment_bond_id??$payment_bond_id])->with('success', 'تم تعديل السند بنجاح');
-
 
     }
     public function show($id){
@@ -229,7 +223,6 @@ $result = is_numeric($PaymentBond->Amount_debit)
     // استخدام $currency بشكل صحيح
     return view('bonds.receipt_bonds.print', compact('payment_type','PaymentBond', 'result'));
 }
-
 
 public function getPaymentBond(Request $request, $filterType)
 {

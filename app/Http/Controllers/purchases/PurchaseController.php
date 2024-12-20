@@ -21,6 +21,7 @@ use App\Models\Sale;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\EscposImage;
@@ -201,6 +202,7 @@ class PurchaseController extends Controller
             $warehouse_to_id = null;
                 break;
             case 3: // عملية تحويل المخزون
+
                 if ($request->account_debitid === $purchaseInvoice->account_id) {
                     return response()->json([
                         'success' => false,
@@ -329,6 +331,7 @@ $categoryName = Category::where('categorie_id', $purchase->categorie_id)->pluck(
 
 public function search(Request $request)
 {$accountingPeriod = ModelsAccountingPeriod::where('is_closed', false)->first();
+
     if (!$accountingPeriod) {
         return response()->json(['success' => false, 'message' => 'لا توجد فترة محاسبية مفتوحة'], 404);
     }
@@ -338,46 +341,63 @@ public function search(Request $request)
    
         $warehouse_to_id = $request->account_debitid;
 
-    
     // التحقق من وجود المنتج
     $productData = Product::where('product_id', $id)->first();
     $product_id= $productData->product_id;
     if (!$productData) {
         return response()->json(['success' => false, 'message' => 'المنتج غير موجود'], 404);
     }
-                // حساب الكميات بناءً على نوع المعاملة والمخزن
-                $purchaseToQuantity = Purchase::where('product_id', $product_id)
-            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-            ->where('warehouse_to_id', $warehouse_to_id)
-            ->whereIn('transaction_type', [1, 6,3])
-            ->sum('quantity');
-         
-            $warehouseFromQuantity = Purchase::where('product_id', $product_id)
-                ->where('warehouse_from_id', $warehouse_to_id)
-                ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-                ->where('transaction_type', 2)
-                ->sum('quantity');
-               
-            $warehouseFromQuantity3 = Purchase::where('product_id', $product_id)
-                ->where('warehouse_from_id', $warehouse_to_id)
-                ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-                ->where('transaction_type', 3)
-                ->sum('quantity');
-    
-            $saleQuantity5 = Sale::where('product_id', $product_id)
-                ->where('warehouse_to_id', $warehouse_to_id)
-                ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-                ->where('transaction_type', 5)
-                ->sum('quantity');
-    
-            $saleQuantity4 = Sale::where('product_id', $product_id)
-                ->where('warehouse_to_id', $warehouse_to_id)
-                ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-                ->where('transaction_type', 4)
-                ->sum('quantity');
-               
 
-            $productPurchase =( $purchaseToQuantity+$saleQuantity5 )- $warehouseFromQuantity - $warehouseFromQuantity3- $saleQuantity4 ;
+// استعلام لجمع كميات المشتريات
+$purchases = Purchase::select('product_id', 'warehouse_to_id', DB::raw('SUM(quantity) as total_quantity'))
+    ->where('product_id', $product_id)
+    ->where('warehouse_to_id', $warehouse_to_id)
+    ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+    ->whereIn('transaction_type', [1, 6, 3,7])
+    ->groupBy('product_id', 'warehouse_to_id');
+    
+
+// استعلام لجمع كميات المرتجعات من المشتريات
+$purchasesReturn = Purchase::select('product_id', 'warehouse_to_id', DB::raw('SUM(quantity) as totalquantity'))
+    ->where('product_id', $product_id)
+    ->where('warehouse_to_id', $warehouse_to_id)
+    ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+    ->where('transaction_type', 2)
+    ->groupBy('product_id', 'warehouse_to_id');
+
+// جمع الكمية من المخزن المحدد
+$warehouseFromQuantity3 = Purchase::where('product_id', $product_id)
+    ->where('warehouse_from_id', $warehouse_to_id)
+    ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+    ->where('transaction_type', 3)
+    ->sum('quantity');
+// استعلام لجمع كميات المرتجعات من المبيعات
+$saleReturn = Sale::select('product_id', 'warehouse_to_id', DB::raw('SUM(quantity) as total_quantity'))
+    ->where('product_id', $product_id)
+    ->where('warehouse_to_id', $warehouse_to_id)
+    ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+    ->where('transaction_type', 5)
+    ->groupBy('product_id', 'warehouse_to_id');
+
+// استعلام لجمع كميات المبيعات
+$sales = Sale::select('product_id', 'warehouse_to_id', DB::raw('SUM(quantity) as totalquantity'))
+    ->where('product_id', $product_id)
+    ->where('warehouse_to_id', $warehouse_to_id)
+    ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+    ->where('transaction_type', 4)
+    ->groupBy('product_id', 'warehouse_to_id');
+
+// دمج كميات المشتريات مع كميات المرتجعات من المبيعات
+$purchasesSummary = $purchases->union($saleReturn)->get();
+// حساب إجمالي الكميات
+$totalQuantity = $purchasesSummary->sum('total_quantity');
+
+// دمج كميات المبيعات مع كميات المرتجعات من المشتريات
+$purchasesReturnEndSalesSummary = $sales->union($purchasesReturn)->get();
+$purchasesReturnEndSales = $purchasesReturnEndSalesSummary->sum('totalquantity');
+
+// حساب الكمية النهائية للمنتج
+$productPurchase = $totalQuantity - $warehouseFromQuantity3 - $purchasesReturnEndSales;
             // تخزين البيانات في مصفوفة
        
  $categories = Category::where('product_id', $id)
@@ -404,6 +424,7 @@ public function search(Request $request)
         $product['Purchase_price'] = $this->convertArabicNumbersToEnglish($product['Purchase_price']);
         $product['Categorie_id'] = $this->convertArabicNumbersToEnglish($product['Categorie_id']);
         $product['quantity'] = $this->convertArabicNumbersToEnglish($product['Quantity']);
+        $product['QuantityPurchase'] = $this->convertArabicNumbersToEnglish($product['QuantityPurchase']);
         $product['Special_discount'] = $this->convertArabicNumbersToEnglish($product['Special_discount']);
         return response()->json($product); // إرجاع تفاصيل المنتج إذا تم العثور عليه
     }

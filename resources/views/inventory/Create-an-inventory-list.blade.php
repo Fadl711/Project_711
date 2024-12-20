@@ -160,6 +160,12 @@ if(DisplayMethod=="SelectedProduct")
     if (productname) {
         invoiceField = productname;
     }
+    else 
+    {
+       $('#errorMessage').val('قم بتحديد الاصناف');
+       displayMessage('قم بتحديد الاصناف', 'error');
+
+    }
 }
 if(DisplayMethod=="ShowAllProducts")
 {
@@ -178,7 +184,7 @@ if(DisplayMethod=="ShowAllProducts")
 
             window.open(url, '_blank', 'width=1000,height=800');
           } else {
-        displayMessage('يرجى تحديد الحساب الفرعي', 'error'); // عرض رسالة خطأ
+        displayMessage('يرجى تحديد  المخزن', 'error'); // عرض رسالة خطأ
     }
 }
 
@@ -186,14 +192,31 @@ if(DisplayMethod=="ShowAllProducts")
     function openAndPrintInvoice2(event) {
       event.preventDefault(); // منع تحديث الصفحة
     
-        const invoiceField = $('#product_name').val();
-    
-        if (invoiceField) {
-        const url = `{{ route('report.print', ':invoiceField') }}`
-            .replace(':invoiceField', invoiceField)
-            + `?warehouseid=${warehouseid}&productname=${productname}&DisplayMethod=${DisplayMethod}`;
+if(DisplayMethod=="SelectedProduct")
+{
+    if (productname) {
+        invoiceField = productname;
+    }
+    else 
+    {
+       $('#errorMessage').val('قم بتحديد الاصناف');
+       displayMessage('قم بتحديد الاصناف', 'error');
 
-            window.open(url, '_blank', 'width=800,height=800');
+    }
+}
+if(DisplayMethod=="ShowAllProducts")
+{
+    if (warehouseid) {
+        invoiceField = warehouseid;
+    }
+}
+        const invoiceField = $('#product_name').val();
+        if (invoiceField) {
+        const url = `{{ route('inventory.print', ':invoiceField') }}`
+            .replace(':invoiceField', invoiceField)
+            + `?warehouseid=${warehouseid}&productname=${productname}&DisplayMethod=${DisplayMethod}&Quantit=${Quantit}&accountingPeriodData=${accountingPeriodData}`;
+
+            window.open(url, '_blank', 'width=1000,height=800');
             if (newWindow) {
                 newWindow.onload = function() {
                     setTimeout(() => {
