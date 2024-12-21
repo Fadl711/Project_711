@@ -26,7 +26,6 @@ use App\Http\Controllers\SaleCoctroller;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\settingController\SettingController;
 use App\Http\Controllers\SupplierCoctroller;
-use App\Http\Controllers\PDFReportController;
 use App\Http\Controllers\productController\CategoryController;
 use App\Http\Controllers\productController\ProductCoctroller;
 use App\Http\Controllers\purchases\PurchaseController;
@@ -211,7 +210,7 @@ Route::get('/fixedAssets', [FixedAssetsController::class, 'index'])->name('fixed
 Route::get('/usersControl', [UsersController::class, 'index'])->name('users.index');
 Route::get('/usersShow', [UsersController::class, 'show'])->name('users.details');
 
-Route::get('/reports/pdf', [PDFReportController::class, 'createPDF'])->name('donwload');
+
 
 Route::get('/controle',function(){
 return view('controle');
