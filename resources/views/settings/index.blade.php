@@ -98,19 +98,30 @@
                 </span>
                 <span>Settings</span>
             </a>
-            <a href="#" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
-                <span class="mr-3">
-                    <!-- Integrations Icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 1v22M5 12h14M9 5l6 6-6 6" />
-                    </svg>
-                </span>
-                <span>Integrations - Soon</span>
-            </a>
+                <button  class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded" id="executeBtn">نسخ احتياطي للبيانات</button>
+
+
         </nav>
     </div>
 
     <!-- Footer Note -->
 
 </aside>
+<script>
+    $('#executeBtn').click(function () {
+        $.ajax({
+            url: '/execute-command',
+            type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            success: function (response) {
+                alert(response.message);
+            },
+            error: function () {
+                alert('حدث خطأ أثناء تنفيذ الأمر!');
+            }
+        });
+    });
+</script>
 @endsection
