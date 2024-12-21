@@ -318,6 +318,7 @@
 <!-- إطار الطباعة -->
 <script>
     $(document).ready(function () {
+     
         function CsrfToken() {
     $.ajaxSetup({
         headers: {

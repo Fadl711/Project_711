@@ -94,8 +94,7 @@
     <div id="successMessage" style="display: none;" class="alert alert-success"></div>
 </div>
 <script>
-         // errorMessage.hide();
-        // successMessage.removeClass('hidden').text('');
+    
 $(document).ready(function() {
     const successMessage = $('#successMessage');
     const form = $('#LocksFinancialPeriod');

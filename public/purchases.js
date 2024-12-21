@@ -330,13 +330,10 @@ $(document).on('keydown', function(event) {
         $(this).select2('close');
         $('#financial_account_id').select2('open');
 
-
  });
     $('#account_debitid').on('change', function() {
         $(this).select2('close');
-        $('#financial_account_id_main').select2('open');
-
-
+        $('#product_id').select2('open');
  });
  $('#financial_account_id').on('change', function() {
     $(this).select2('close');

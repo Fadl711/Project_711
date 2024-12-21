@@ -51,7 +51,7 @@ class RestrictionController extends Controller
 
         // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
         $today = Carbon::now()->toDateString();
-        $dailyPage = GeneralJournal::whereDate('created_at', $today)->first();
+        $dailyPage = GeneralJournal::whereDate('created_at', $today)->latest()->first();
 
 
         // إذا كنت بحاجة لإنشاء سجل جديد في حال عدم وجود سجلات على الإطلاق

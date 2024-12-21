@@ -35,7 +35,8 @@ class Review_BudgetController extends Controller
         })
         ->leftJoin('daily_entries AS credit', function($join) use ($accountingPeriod) {
             $join->on('sub_accounts.sub_account_id', '=', 'credit.account_Credit_id')
-                 ->whereBetween('credit.accounting_period_id', [$accountingPeriod->accounting_period_id, now()]); // تأكد من أن القيود في الفترة
+                 ->whereBetween('credit.accounting_period_id', [$accountingPeriod->accounting_period_id, now()]) // تأكد من أن القيود في الفترة
+                 ->whereBetween('debit.accounting_period_id', [$accountingPeriod->accounting_period_id, now()]); // تأكد من أن القيود في الفترة
         })
         ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.Main_id', 'sub_accounts.sub_name');
     }])->get();
