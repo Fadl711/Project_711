@@ -52,7 +52,10 @@
                     <label for="Quantit" class="block text-sm font-semibold mb-1">نوع التقرير</label>
                     <select name="Quantit"  id="Quantit" class="input-field select2 w-full border border-gray-300 rounded-lg p-2 text-right" required>
                         <option value="" selected>اختر النوع</option>
-                        @foreach(['Quantityonly' => 'الكمية',
+                        @foreach([
+                                            'inventoryList' => 'امر جرد',
+
+                            'Quantityonly' => 'الكمية',
                                   'QuantityCosts' => 'الكمية والتكاليف',
                                   'QuantityCostsSupplier' => 'الكمية والتكاليف حسب حركة الموردين',
                                   'QuantitySupplier' => 'الكمية حسب حركة الموردين'] as $key => $label)
@@ -143,6 +146,11 @@ function showProductName(mainAccountId)
               if (productname) {
                   invoiceField = productname;
               }
+              
+          
+               else {
+                  displayMessage('يرجى تحديد المنتج', 'error'); // عرض رسالة خطأ
+                }
           }
           if(DisplayMethod=="ShowAllProducts")
           {

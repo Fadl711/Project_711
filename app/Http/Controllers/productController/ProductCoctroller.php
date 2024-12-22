@@ -194,7 +194,7 @@ class ProductCoctroller extends Controller
           $purchaseToQuantity = Purchase::where('product_id', $product_id)
           ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
           ->where('warehouse_to_id', $warehouse_to_id)
-          ->whereIn('transaction_type', [1, 6,3])
+          ->whereIn('transaction_type', [1, 6, 3,7])
           ->sum('quantity');
 
           $warehouseFromQuantity = Purchase::where('product_id', $product_id)
@@ -244,6 +244,20 @@ class ProductCoctroller extends Controller
             'Myanalysis' => $Myanalysis,
         ];
         }
+        if($Quantit=="inventoryList")
+        {
+         $accountingPerio = Carbon::today()->format('Y-m-d');
+
+         $inventoryList[] = [
+             'product_id' => $product_id,
+             'product_name' => $product->product_name,
+             'note' => $product->note,
+             'categories' => $categories,
+             'warehouse_name' => $warehouseName,
+             'SumQuantity' => $productPurchase,
+             '$accountingPeriod' => $accountingPerio,
+         ];
+     }  
           
              $allQuantityonly[] = [
                 'product_id' => $product_id,
@@ -286,6 +300,24 @@ if($Quantit=="Incomplete")
     if($Quantit=="QuantityCosts")
     {
      return view('report.print', compact('allQuantityCosts','productname','Myanalysis','accountingPeriod'))->render(); // إرجاع المحتوى كـ HTML
+    }
+    if($Quantit=="inventoryList")
+    {
+        if($DisplayMethod =="ShowAllProducts")
+    {
+        $productname="امر جرد لكل الاصناف  "." في المخزن: ".$warehouseName;
+        
+    }
+        if($DisplayMethod =="SelectedProduct")
+    {
+        $productname="امر جرد للاصناف  المذكورة في الجدول  "." /في المخزن: ".$warehouseName;
+        
+    }
+    $toDate = now()->toDateString();
+    
+    $Myanalysis=" امر جرد  ";
+    
+     return view('inventory.print', compact('inventoryList','productname','toDate','accountingPeriod','Myanalysis','warehouseName'))->render(); // إرجاع المحتوى كـ HTML
     }
     if($Quantit=="Quantityonly")
     {
@@ -494,7 +526,7 @@ if($Quantit=="Incomplete")
   $purchaseToQuantity = Purchase::where('product_id', $id)
   ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
   ->where('warehouse_to_id', $warehouse_to_id)
-  ->whereIn('transaction_type', [1, 6,3])
+  ->whereIn('transaction_type', [1, 6, 3,7])
   ->sum('quantity');
 
   $warehouseFromQuantity = Purchase::where('product_id', $id)

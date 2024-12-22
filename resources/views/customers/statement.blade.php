@@ -168,16 +168,17 @@
                             <td class=" text-center">{{ $entrie->entrie_id }}</td>
                             <td class=" text-center">{{ number_format($entrie->total_debit ?? 0) }}</td>
                             <td class="text-center">{{ number_format( $entrie->total_credit ?? 0) }}</td>
-                        </tr
+                        </tr>
                     @endforeach
                 @endisset
                 <tr class="bg-blue-100">
-                    <td colspan="5" class=" text-right">الجمالي رصيد</th>
+                        <td colspan="5" class=" text-right">اجمالي الرصيد</th>
+
                     <td class=" text-right ">
-                        <p class="text-sm ">عليكم/الجمالي  </p>
+                        <p class="text-sm ">عليكم/الإجمالي  </p>
                     </td>
                     <td class=" text-right ">
-                        <p class="">لكم/الجمالي  </p>
+                        <p class="">لكم/الإجمالي  </p>
                    </td>
                 </tr>
                  <tr class="bg-blue-100">

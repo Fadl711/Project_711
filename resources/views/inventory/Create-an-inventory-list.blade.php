@@ -27,13 +27,7 @@
                     
                 @endisset > {{$accountingPeriodOpen['created_at']->format('Y') }}</option>
                 @endisset 
-                @isset($accountingPeriod)
-                @foreach ($accountingPeriod as $item)  
-                                  <option value="{{ $item->accounting_period_id }}">
-                                    {{ $item['created_at']->format('Y') }}
-                    </option>
-                @endforeach
-                @endisset
+             
             </select>
         </div>
         <div>

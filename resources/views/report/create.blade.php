@@ -60,8 +60,28 @@
                 <label class="labelSale">{{ $label }}</label>
             </div>
         @endforeach
-        
-            <div class="flex ">
+        <div class="">
+            <label for="Quantit" class="labelSale"> نوع التقرير</label>
+            
+            <select name="list" id="list" class="input-field select2 inputSale" required>
+                <option value="" selected>اختر نوع التقرير</option>
+                @foreach([
+                  'summary' => ' كشف كلي',
+                  'detail' => ' كشف تحليلي',
+                  'FullDisclosureOfSubAccounts' => 'كشف كلي للحسابات الفرعية ',
+                  'FullDisclosureOfAccounts' => ' كشف كلي للحسابات ',
+                  'Disclosure_of_all_sub_accounts_after_migration' => 'كشف كلي الحسابات الفرعية بعد الترحيل',
+                  'Full_disclosure_of_accounts_after_migration' => 'كشف  كلي للحسابات  بعد الترحيل',
+                
+                 ] 
+                as $key => $label)
+                <option value="{{ $key }}" > {{ $label }}</option>
+                @endforeach
+            </select>
+  
+  
+        </div>
+            {{-- <div class="flex ">
                 <input type="radio" name="list" value="summary" class="mr-2">  
                 <label for="" class="labelSale"> كشف كلي</label>
             </div>
@@ -69,6 +89,14 @@
                 <input type="radio" name="list" value="detail" checked class="mr-2">  
                 <label for="" class="labelSale  ">  كشف تحليلي</label>
             </div>
+            <div class="flex ">
+                <input type="radio" name="list" value="FullDisclosureOfSubAccounts" class="mr-2">  
+                <label for="" class="labelSale"> كشف كلي للحسابات الفرعية</label>
+            </div>
+            <div class="flex ">
+                <input type="radio" name="list" value="FullDisclosureOfAccounts" class="mr-2">  
+                <label for="" class="labelSale"> كشف كلي للحسابات </label>
+            </div> --}}
         </div>
     </div>
 </form>
@@ -87,7 +115,7 @@
 
     const listRadio = $('input[name="list-radio"]:checked').val(); // الخيار المحدد لعرض القائمة
     const accountListRadio = $('input[name="account-list-radio"]:checked').val(); // الحساب الرئيسي أو الفرعي
-    const viewType = $('input[name="list"]:checked').val(); // كشف كلي أو تحليلي
+    const viewType = $('#list').val(); // كشف كلي أو تحليلي
 if(accountListRadio=="subAccount")
 {
     if (invoiceField1) {
@@ -100,7 +128,9 @@ if(accountListRadio=="mainAccount")
         invoiceField = invoiceField2;
     }
 }
-    
+// if (invoiceField2) {
+//         invoiceField = invoiceField2;
+//     }
 
     if (invoiceField) {
         const url = `{{ route('customers.statement', ':invoiceField') }}`
@@ -118,7 +148,18 @@ if(accountListRadio=="mainAccount")
         e.preventDefault(); // منع تحديث الصفحة
     
         const invoiceField = $('#sub_account_debit_id').val();
-    
+        if(accountListRadio=="subAccount")
+{
+    if (invoiceField1) {
+        invoiceField = invoiceField1;
+    }
+}
+if(accountListRadio=="mainAccount")
+{
+    if (invoiceField2) {
+        invoiceField = invoiceField2;
+    }
+}
         if (invoiceField) {
             const url = `{{ route('customers.statement', ':invoiceField') }}`
                 .replace(':invoiceField', invoiceField);

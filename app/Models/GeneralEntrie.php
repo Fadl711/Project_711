@@ -38,4 +38,13 @@ class GeneralEntrie extends Model
         'Invoice_id',
         'Currency_name',
     ];
+    public function generalEntries() {
+        return $this->belongsTo(SubAccount::class, 'sub_id'); // أو حسب ما يناسب
+    }
+    public function debitAccount()
+    {
+        return $this->belongsTo(SubAccount::class, 'sub_id', 'sub_account_id');
+    }
+  
+
 }

@@ -1,7 +1,9 @@
 
 
 @isset($QuantityAppendix)
-<div class="container mx-auto print-container">
+{{-- <div class="container mx-auto print-container"> --}}
+    <div class="w-full overflow-y-auto max-h-[80vh] container mx-auto print-container  bg-white">
+
     <table class="w-full text-sm  bg-white ">
             <tr class="bg-blue-100">
                 <th class="text-right">رقم الصنف</th>

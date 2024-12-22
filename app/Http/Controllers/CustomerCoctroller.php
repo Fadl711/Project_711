@@ -7,6 +7,7 @@ use App\Models\AccountingPeriod;
 use App\Models\Currency;
 use App\Models\CurrencySetting;
 use App\Models\DailyEntrie;
+use App\Models\GeneralEntrie;
 use App\Models\GeneralJournal;
 use App\Models\MainAccount;
 use App\Models\SubAccount;
@@ -52,7 +53,6 @@ $balances = $balances->map(function ($balance) {
 });
 
 return view('customers.show', compact('balances'));
-        // return view('customers.show');
     }
 
     public function createStatement(Request $request, $id)
@@ -62,7 +62,30 @@ return view('customers.show', compact('balances'));
             'listradio' => 'nullable|string',
             'accountlistradio' => 'nullable|string|max:255',
         ]);
+        if ($validated['list'] === "FullDisclosureOfAccounts") 
+        {
+     return $this->FullDisclosureOfAccounts($id,$validated);
+        }
 
+        if ($validated['list'] === "FullDisclosureOfSubAccounts") 
+        {
+            if ($validated['accountlistradio'] === "mainAccount") 
+            {
+            return $this->FullDisclosureOfSubAccounts($id,$validated);
+        }
+        if ($validated['accountlistradio'] === "subAccount") 
+        {
+          
+        return $this->FullDisclosureOfSubAccounts($id,$validated);
+        
+    }
+        }
+        if ($validated['list'] === "Disclosure_of_all_sub_accounts_after_migration") 
+        {
+            return $this->Disclosure_of_all_sub_accounts_after_migration($validated['list'], $id);
+
+        }
+       
         if ($validated['accountlistradio'] === "subAccount") 
         {
             if ($validated['list'] === "summary") 
@@ -75,25 +98,233 @@ return view('customers.show', compact('balances'));
                 return $this->showStatementSubAccountMyanalysis($validated['listradio'], $id);
                 
             }
-
-
         } 
         if ($validated['accountlistradio'] === "mainAccount") 
         {
             if ($validated['list'] === "summary") 
             {
                 return $this->showStatementMainAccountTotally($validated['listradio'], $id);
-
             }
             elseif ($validated['list'] === "detail")
             {
                 return $this->getDailyEntriesMainAccountMyanalysis($validated['listradio'], $id);
-                
             }
-
         }
-        
+
     }
+    public function Disclosure_of_all_sub_accounts_after_migration($validated,$id)
+    {
+        $Myanalysis="كلي";
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+        $idCurr=1;
+        $currencysettings=$curre->currency_name ?? 'ريال يمني';
+        $curre=CurrencySetting::where('currency_settings_id',$idCurr)->first(); 
+        $UserName = User::where('id',auth()->user()->id,)->pluck('name')->first(); 
+     
+        $customerMainAccount = SubAccount::where('sub_account_id',$id)->first(); 
+        $idaccounn=$customerMainAccount->sub_account_id;
+        $balances = GeneralEntrie::selectRaw(
+            'sub_accounts.sub_account_id,
+             sub_accounts.sub_name,
+             sub_accounts.Phone,
+             SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id THEN general_entries.amount ELSE 0 END) as total_debit'
+        )
+        ->where('general_entries.accounting_period_id', $accountingPeriod->accounting_period_id)
+        ->join('sub_accounts', function ($join) {
+            $join->on('general_entries.sub_id', '=', 'sub_accounts.sub_account_id');
+        })
+        ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name', 'sub_accounts.Phone')
+        ->get();
+        
+        $startDate = $accountingPeriod->created_at?->format('Y-m-d') ?? 'غير متوفر';
+        $endDate = now()->toDateString();
+
+// معالجة البيانات لإضافة الفارق ونوعه
+$balances = $balances->map(function ($balance) {
+    $difference = $balance->total_debit - $balance->total_credit;
+    $balance->difference = $difference;
+    $balance->difference_type = $difference > 0 ? 'مدين' : ($difference < 0 ? 'دائن' : 'متوازن');
+    return $balance;
+});
+
+$SumDebtor_amount = $balances->sum('total_debit');
+$Sale_priceSum = abs($SumDebtor_amount );
+
+$numberToWords = new NumberToWords();
+$numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
+$priceInWords=is_numeric($Sale_priceSum) 
+? $numberTransformer->toWords( abs($SumDebtor_amount )) . ' ' . $currencysettings
+: 'القيمة غير صالحة';
+$accountClasses = [
+1 => 'الحساب',
+2 => 'الحساب',
+3 => 'الحساب',
+4 => 'الحساب',
+5 => 'الحساب',
+];
+$AccountClassName ='الحساب';
+dd(  $balances );  
+$Myanalysis=" نهائي لكل لحسابات  قبل الترحيل";
+
+return view('report.Final-full-disclosure', compact('Myanalysis','balances','AccountClassName','currencysettings','UserName','accountingPeriod','SumCredit_amount','SumDebtor_amount',
+'priceInWords','startDate','endDate','Sale_priceSum'))->render(); // إرجاع المحتوى كـ HTML
+
+    }
+    private function FullDisclosureOfAccounts($validated)
+    {
+        $Myanalysis="كلي";
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+        $idCurr=1;
+        $currencysettings=$curre->currency_name ?? 'ريال يمني';
+        $curre=CurrencySetting::where('currency_settings_id',$idCurr)->first(); 
+        $UserName = User::where('id',auth()->user()->id,)->pluck('name')->first(); 
+        // dd($validated['accountlistradio'] );
+     
+        // $customerMainAccount = MainAccount::where('main_account_id', $id)->first();
+        // $idaccounn=$customerMainAccount->main_account_id;
+        $balances = DailyEntrie::selectRaw(
+            'sub_accounts.sub_account_id,
+             sub_accounts.sub_name,
+             sub_accounts.Phone,
+             SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_debit ELSE 0 END) as total_debit,
+             SUM(CASE WHEN daily_entries.account_Credit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_Credit ELSE 0 END) as total_credit'
+        )
+        ->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id)
+        
+        ->join('sub_accounts', function ($join) {
+            $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')
+                 ->orOn('daily_entries.account_Credit_id', '=', 'sub_accounts.sub_account_id');
+        })
+        ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name', 'sub_accounts.Phone')
+        ->get();
+    
+            $startDate = $accountingPeriod->created_at?->format('Y-m-d') ?? 'غير متوفر';
+            $endDate = now()->toDateString();
+
+    // معالجة البيانات لإضافة الفارق ونوعه
+    $balances = $balances->map(function ($balance) {
+        $difference = $balance->total_debit - $balance->total_credit;
+        $balance->difference = $difference;
+        $balance->difference_type = $difference > 0 ? 'مدين' : ($difference < 0 ? 'دائن' : 'متوازن');
+        return $balance;
+    });
+    
+    $SumDebtor_amount = $balances->sum('total_debit');
+    $SumCredit_amount = $balances->sum('total_credit');    
+    $Sale_priceSum = abs($SumDebtor_amount - $SumCredit_amount);
+    
+   $numberToWords = new NumberToWords();
+    $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
+    $priceInWords=is_numeric($Sale_priceSum) 
+    ? $numberTransformer->toWords( abs($SumDebtor_amount - $SumCredit_amount)) . ' ' . $currencysettings
+    : 'القيمة غير صالحة';
+$accountClasses = [
+1 => 'الحساب',
+2 => 'الحساب',
+3 => 'الحساب',
+4 => 'الحساب',
+5 => 'الحساب',
+];
+$AccountClassName ='الحساب';
+// dd(  $Sale_priceSum );  
+$Myanalysis=" نهائي لكل لحسابات  قبل الترحيل";
+
+return view('report.Final-full-disclosure', compact('Myanalysis','balances','AccountClassName','currencysettings','UserName','accountingPeriod','SumCredit_amount','SumDebtor_amount',
+'priceInWords','startDate','endDate','Sale_priceSum'))->render(); // إرجاع المحتوى كـ HTML
+
+    }
+  
+    private function FullDisclosureOfSubAccounts($id,$validated)
+    {
+        $Myanalysis="كلي";
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+        $idCurr=1;
+        $currencysettings=$curre->currency_name ?? 'ريال يمني';
+        $curre=CurrencySetting::where('currency_settings_id',$idCurr)->first(); 
+        $UserName = User::where('id',auth()->user()->id,)->pluck('name')->first(); 
+        // dd($validated['accountlistradio'] );
+       
+        if ($validated['accountlistradio'] === "subAccount") 
+        {
+         
+            $customerMainAccount = SubAccount::where('sub_account_id',$id)->first(); 
+            $idaccounn=$customerMainAccount->sub_account_id;
+            $balances = DailyEntrie::selectRaw(
+                'sub_accounts.sub_account_id,
+                 sub_accounts.sub_name,
+                 sub_accounts.Phone,
+                 SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_debit ELSE 0 END) as total_debit,
+                 SUM(CASE WHEN daily_entries.account_Credit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_Credit ELSE 0 END) as total_credit'
+            )
+            ->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id)
+            
+            ->join('sub_accounts', function ($join) {
+                $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')
+                     ->orOn('daily_entries.account_Credit_id', '=', 'sub_accounts.sub_account_id');
+            })
+            ->where('sub_accounts.sub_account_id',$idaccounn) // إضافة شرط AccountClass = 1
+            ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name', 'sub_accounts.Phone')
+            ->get();
+        }
+        if ($validated['accountlistradio'] === "mainAccount") 
+        {
+            $customerMainAccount = MainAccount::where('main_account_id', $id)->first();
+            $idaccounn=$customerMainAccount->main_account_id;
+            $balances = DailyEntrie::selectRaw(
+                'sub_accounts.sub_account_id,
+                 sub_accounts.sub_name,
+                 sub_accounts.Phone,
+                 SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_debit ELSE 0 END) as total_debit,
+                 SUM(CASE WHEN daily_entries.account_Credit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_Credit ELSE 0 END) as total_credit'
+            )
+            ->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id)
+            
+            ->join('sub_accounts', function ($join) {
+                $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')
+                     ->orOn('daily_entries.account_Credit_id', '=', 'sub_accounts.sub_account_id');
+            })
+            ->where('sub_accounts.Main_id',$idaccounn)
+            ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name', 'sub_accounts.Phone')
+            ->get();
+        }
+                $startDate = $accountingPeriod->created_at?->format('Y-m-d') ?? 'غير متوفر';
+                $endDate = now()->toDateString();
+       // معالجة البيانات لإضافة الفارق ونوعه
+        $balances = $balances->map(function ($balance) {
+            $difference = $balance->total_debit - $balance->total_credit;
+            $balance->difference = $difference;
+            $balance->difference_type = $difference > 0 ? 'مدين' : ($difference < 0 ? 'دائن' : 'متوازن');
+            return $balance;
+        });
+        
+        $SumDebtor_amount = $balances->sum('total_debit');
+        $SumCredit_amount = $balances->sum('total_credit');    
+    
+        $Sale_priceSum = abs($SumDebtor_amount - $SumCredit_amount);
+        
+       $numberToWords = new NumberToWords();
+        $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
+        $priceInWords=is_numeric($Sale_priceSum) 
+        ? $numberTransformer->toWords( abs($SumDebtor_amount - $SumCredit_amount)) . ' ' . $currencysettings
+        : 'القيمة غير صالحة';
+   $accountClasses = [
+    1 => 'الحساب',
+    2 => 'الحساب',
+    3 => 'الحساب',
+    4 => 'الحساب',
+    5 => 'الحساب',
+];
+$AccountClassName = $accountClasses[$customerMainAccount->AccountClass] ?? 'غير معروف';
+// dd(  $Sale_priceSum );  
+$Myanalysis=" نهائي للحسابات الفرعية قبل الترحيل";
+
+   return view('report.Final-full-disclosure', compact('Myanalysis','balances','AccountClassName','currencysettings','UserName','accountingPeriod','SumCredit_amount','SumDebtor_amount',
+   'priceInWords','startDate','endDate','customerMainAccount','Sale_priceSum'))->render(); // إرجاع المحتوى كـ HTML
+
+
+
+    }
+
     public function showStatementMainAccountTotally($validated, $id)
     {
         $Myanalysis="كلي";

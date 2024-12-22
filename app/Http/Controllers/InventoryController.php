@@ -165,11 +165,13 @@ public function ShowAllProducts(Request $request,$id)
         }
         if($DisplayMethod =="ShowAllProducts")
         {
+            
         $uniqueProducts = Inventory::where('StoreId', $warehouse_to_id)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->select('product_id') // اختيار الأعمدة المطلوبة
         ->distinct() // التأكد من جلب القيم المميزة
         ->get();// جلب النتائج كمجموعة بيانات
+
     }
     if( $DisplayMethod=="SelectedProduct")
     {
@@ -243,6 +245,8 @@ public function ShowAllProducts(Request $request,$id)
         if($Quantit=="inventoryList")
         {
          $accountingPerio = Carbon::today()->format('Y-m-d');
+         $producta = Product::where('product_id',  $inventoryData->product_id)->first();
+
          $inventoryList[] = [
              'product_id' => $product_id,
              'product_name' => $product->product_name,
@@ -641,7 +645,7 @@ public function edit($id)
         if (!$accountingPeriod) {
             return redirect()->back()->with('error', 'لا توجد فترة محاسبية مفتوحة.');
         }
-        return view('inventory.Create-an-inventory-list', ['accountingPeriod' => $accountingPeriod,'accountingPeriodOpen'=>$accountingPeriodOpen]);
+        return view('inventory.Create-an-inventory-list', ['accountingPeriod' => $accountingPeriodOpen,'accountingPeriodOpen'=>$accountingPeriodOpen]);
 
     }
     public function show_inventoryAccountingPeriod() {
