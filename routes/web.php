@@ -47,6 +47,7 @@ use App\Models\DefaultSupplier;
 use App\Models\MainAccount;
 use App\Models\SaleInvoice;
 use GuzzleHttp\Psr7\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 
@@ -285,7 +286,10 @@ Route::middleware(['auth'])->group(function () {
 
 });
 
-
+Route::post('/execute-command', function () {
+    Artisan::call('db:backup');
+    return response()->json(['message' => 'تم تنفيذ الأمر بنجاح']);
+});
 Route::get('/suppliers', [SupplierCoctroller::class, 'index'])->name('suppliers.index');
 
 
