@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>              التقرير المخزن -  {{ $Myanalysis }} 
+    <title>              التقرير المخزن -  {{ $Myanalysis }}
     </title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
     <style>
         /* تخصيص للطباعة */
         @media print {
@@ -18,12 +18,12 @@
             .print-container {
                 @apply w-full max-w-full mx-auto p-4;
             }
-            
+
             .no-print {
                 display: none;
             }
         }
-        
+
         /* تحسين مظهر الجدول */
         table {
             border-collapse: collapse;
@@ -33,7 +33,7 @@
         th, td {
             border: 1px solid #000;
         }
-       
+
         .header-section, .totals-section {
             margin-top: 16px;
             border: 2px solid #000;
@@ -70,7 +70,7 @@
       </div>
       <div class="text-center space-y-4">
           <p class="font-extrabold text-lg">
-            التقرير المخزن -  {{ $Myanalysis }} 
+            التقرير المخزن -  {{ $Myanalysis }}
              :
                 {{ $accountingPeriod ?? ''}}
           </p>
@@ -78,12 +78,12 @@
   </div>
 
   {{-- <div class="grid grid-cols-2 w-full gap-2  text-gray-700">
-          {{$productname }}    
+          {{$productname }}
 </div> --}}
 {{-- @if(!$inventoryList)
   <div class="grid grid-cols-2 w-full gap-2  text-gray-700">
-          {{$productname }}    
-</div> 
+          {{$productname }}
+</div>
 @endif --}}
 
 @endisset
@@ -110,8 +110,8 @@
 @endisset
 {{-- @isset($inventoryList)
   <div class="grid grid-cols-2 w-full gap-2  text-gray-700">
-          {{$productname }}    
-</div> 
+          {{$productname }}
+</div>
 @endisset --}}
 </div>
 <div class="mt-4 no-print">
@@ -125,7 +125,7 @@
             }, 500); // فترة الانتظار نصف ثانية فقط
         }
     </script>
-    
+
     <button onclick="closeWindow()" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700">إلغاء الطباعة</button>
 
     <script>

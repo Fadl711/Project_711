@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title> كشف حساب {{$Myanalysis}}</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
     <style>
         /* تخصيص للطباعة */
         @media print {
@@ -17,12 +17,12 @@
             .print-container {
                 @apply w-full max-w-full mx-auto p-4;
             }
-            
+
             .no-print {
                 display: none;
             }
         }
-        
+
         /* تحسين مظهر الجدول */
         table {
             border-collapse: collapse;
@@ -32,7 +32,7 @@
         th, td {
             border: 1px solid #000;
         }
-       
+
         .header-section, .totals-section {
             margin-top: 16px;
             border: 2px solid #000;
@@ -53,14 +53,14 @@
                     <div class="text-sm text-gray-700">العنوان: {{ $buss->Company_Address }}</div>
                     <div class="text-sm text-gray-700">التلفون: {{ $buss->Phone_Number }}</div>
                 </div>
-    
+
                 <!-- القسم الأوسط - تحليل الحسابات -->
                 <div class="flex items-center justify-center px-2">
                     <div class="w-24 h-20   flex items-center justify-center translate-x-10">
                         <img class=" bg-[#1749fd15] rounded-3xl" src="{{ url($buss->Company_Logo ? 'images/' . $buss->Company_Logo : '') }}" alt="">
                     </div>
                 </div>
-    
+
                 <!-- القسم الأيسر - English content -->
                 <div class="text-left space-y-2">
                     <h2 class="font-extrabold  ">{{ $buss->Company_NameE }}</h2>
@@ -71,9 +71,9 @@
             </div>
             <div class="text-center space-y-4">
                 <p class="font-extrabold ">
-                    كشف حساب {{ $Myanalysis ??' '}} 
+                    كشف حساب {{ $Myanalysis ??' '}}
                 </p>
-            
+
                 <div class="grid grid-cols-2 w-full gap-2 text-sm text-gray-700">
                     <div> تاريخ:
                         {{ $startDate }}
@@ -83,7 +83,7 @@
                     </div>
                 </div>
             </div>
-            
+
         </div>
     @endisset
 
@@ -103,12 +103,12 @@
                     <div>{{ $currencysettings ?? __('YR') }}</div>
                 </div>
             </div>
-            
+
         </header>
         <!-- جدول المنتجات -->
             <div class="w-full overflow-y-auto max-h-[80vh] container mx-auto print-container  bg-white">
 
-                <table class="w-full text-sm overflow-y-auto max-h-[80vh]">           
+                <table class="w-full text-sm overflow-y-auto max-h-[80vh]">
                     <tr class="bg-blue-100">
                         <th class="px-4 text-center">#</th>
                     <th class="px-4 text-right">اسم العميل</th>
@@ -141,15 +141,15 @@
                                 }
                                 @endphp
                                 <td class="px-4 text-center">{{ number_format($SumDebtoramount, 2) }}</td>
-                                <td class="px-4 text-center">{{ number_format(abs($SumCreditamount), 2) }}</td>                       
+                                <td class="px-4 text-center">{{ number_format(abs($SumCreditamount), 2) }}</td>
                     </tr>
                 @endforeach
                 <tr class="bg-blue-100">
                     <th colspan="4" class=" text-right">اجمالي الرصيد</th>
                     <th colspan="" class="text-center">    الإجمالي</th> {{-- TotalCostQuantityAvailable --}}
                     <th colspan="" class="text-center">الإجمالي    </th> {{-- TotalCostQuantityAvailable --}}
-    
-    
+
+
                 </tr>
                  <tr class="">
                     <td colspan="4" class=" text-right"> </th>
@@ -158,14 +158,14 @@
                 </tr>
             </tbody>
                 @endisset
-                
+
         </table>
         <table class="w-[60%] text-sm ">
             <thead>
                 <tr class="bg-blue-100">
                     <th >
                         @php
-                        $sum=$SumDebtor_amount-$SumCredit_amount;                        
+                        $sum=$SumDebtor_amount-$SumCredit_amount;
                         if ($sum>=0) {
                             $commintString  = "عليكم/ رصيد"   ;
 
@@ -178,19 +178,19 @@
                     </th>
                     <th class="px-2 text-right">
                         {{ number_format(abs($Sale_priceSum)) ?? 0 }}
-                        
+
                         <p class="text-sm">{{ $priceInWords }}</p>
                     </th>
                 </tr>
-               
+
             </thead>
-            
-           
+
+
 </table>
         <!-- الإجماليات -->
         <div class="totals-section  p-4">
             <div class="flex justify-between">
-              
+
 
                     <div>
                         <p class="text-sm" dir="ltr">المستخدم : {{ $UserName ?? 0 }}</p>
@@ -211,7 +211,7 @@
                     }, 500); // فترة الانتظار نصف ثانية فقط
                 }
             </script>
-            
+
             <button onclick="closeWindow()" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700">إلغاء الطباعة</button>
 
             <script>

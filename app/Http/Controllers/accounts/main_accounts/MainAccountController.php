@@ -27,11 +27,11 @@ use function PHPUnit\Framework\isNull;
 class MainaccountController extends Controller
 
 {
-    
+
     public function create(){
         $mainAccount=MainAccount::all();//
         $subAccount = SubAccount::all();
- 
+
  $classd=AccountClass::cases();
  $cus = MainAccount::where('AccountClass', $classd[0])->get();//+
 
@@ -58,7 +58,7 @@ return view('accounts.Main_Account.create',
         $typeAccount = $request->typeAccount;
         $Nature_account = $request->Nature_account;
         $Type_migration = $request->Type_migration;
-    
+
         // جلب المدخلات وتحويل الأرقام العربية إلى الإنجليزية
         $debtor_amount1 = $request->input('debtor_amount', '٠١٢٣٤٥٦٧٨٩');
         $creditor_amount1 = $request->input('creditor_amount', '٠١٢٣٤٥٦٧٨٩');
@@ -82,9 +82,9 @@ return view('accounts.Main_Account.create',
             'Type_migration' => $Type_migration,
             'AccountClass'=>$request->input('AccountClass')
         ]);
-                          
+
         return response()->json(['success' => true, 'message' => 'تمت العملية بنجاح', 'DataSubAccount' => $mainAccount], 201);
-    
+
     }
 
     public function update(Request $request, $id)
@@ -119,7 +119,7 @@ return view('accounts.Main_Account.create',
 
     public function storc(Request $request)
     {
-        
+
             $Main_id = $request->Main_id;
             $DataSubAccount = new SubAccount();
             $TypeSubAccount = MainAccount::where('main_account_id', $Main_id)->first();
@@ -130,10 +130,10 @@ return view('accounts.Main_Account.create',
             $Phone1 = $this->convertArabicToEnglish($request->input('Phone', '٠١٢٣٤٥٦٧٨٩'));
             $Known_phone = $this->convertArabicToEnglish($request->input('Known_phone'));
             $name_The_known = $request->input('name_The_known');
-    
+
             $creditor_amount = $this->convertArabicToEnglish($creditor_amount1);
             $debtor_amount = $this->convertArabicToEnglish($debtor_amount1);
-    
+
             $account_names_exist = SubAccount::where('Main_id', $Main_id)->pluck('sub_name');
             if ($account_names_exist->contains($sub_name)) {
                 return response()->json(['success' => false, 'message' => 'يوجد نفس هذا الاسم من قبل']);
@@ -166,10 +166,10 @@ if ($DataSubAccount->debtor_amount>0 || $DataSubAccount->creditor_amount>0) {
     $DSubAccount = SubAccount::where('sub_account_id', $DataSubAccount->sub_account_id)->first();
         $today = Carbon::now()->toDateString();
         $dailyPage = GeneralJournal::whereDate('created_at', $today)->latest()->first();
-        
+
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
 
-    
+
         if (!$dailyPage) {
             $dailyPage = GeneralJournal::create([
                 'accounting_period_id'=>$accountingPeriod->accounting_period_id,
@@ -198,30 +198,36 @@ if ($DataSubAccount->debtor_amount>0 || $DataSubAccount->creditor_amount>0) {
     if ($dailyEntry) {
 
     return response()->json(['success'=>true,'message' => ' تم حفظ بنجاح ودخال مبلغ للحساب']);
-}  
-}  
-  
-return response()->json(['success'=>true,'message' => 'تم حفظ  بنجاح']);
-          
-    
-    }
-    
+}
+}
 
-          
+return response()->json(['success'=>true,'message' => 'تم حفظ  بنجاح']);
+
+
+    }
+
+
+
 public function getSubAccounts(Request $request , $id)
 
 {
     $subAccounts = SubAccount::where('Main_id', $id)->get();
-    
+
 
     // إرجاع النتائج بصيغة JSON لاستخدامها في Select2
     return response()->json($subAccounts);
- 
+
 }
 
 public function destroy($id){
-    MainAccount::where('main_account_id',$id)->delete();
-    return redirect()->back();
+    if($id==1){
+
+        return redirect()->back();
+    }else{
+        MainAccount::where('main_account_id',$id)->delete();
+        return redirect()->back();
+
+    }
 }
 
 public function getMainAccountsByType($type)

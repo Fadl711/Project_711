@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Currency;
+use App\Models\MainAccount;
+use App\Models\SubAccount;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -16,14 +18,40 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
+         User::create([
             'id' => 1,
-            'name' => 'Fadl almatari',
+            'name' => 'Fadl',
             'email' => 'fadl@example.com',
             'password' => 'qweasdzxc',
         ]);
-        Currency::create([
+/*         Currency::create([
             'currency_name' => 'يمني',
+        ]); */
+        MainAccount::create([
+            'main_account_id' => 1,
+            'Nature_account' => 'مدين',
+            'AccountClass' => 4,
+            'account_name' => 'حقوق الملكيه',
+            'typeAccount' => 3,
+            'Type_migration' => 2,
+            'User_id' => 1,
+
+        ]);
+        SubAccount::create([
+            'sub_account_id'=>1,
+            'sub_name'=>'راس المال',
+            'Main_id'=>1,
+            'AccountClass'=>4,
+            'typeAccount'=>3,
+            'User_id' => 1,
+        ]);
+        SubAccount::create([
+            'sub_account_id'=>2,
+            'sub_name'=>'الارباح والخسائر',
+            'Main_id'=>1,
+            'AccountClass'=>4,
+            'typeAccount'=>3,
+            'User_id' => 1,
         ]);
     }
 }

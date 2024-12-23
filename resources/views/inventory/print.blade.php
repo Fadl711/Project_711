@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>  تقرير  المخزني {{$Myanalysis}}</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
     <style>
         /* تخصيص للطباعة */
         @media print {
@@ -17,12 +17,12 @@
             .print-container {
                 @apply w-full max-w-full mx-auto p-4;
             }
-            
+
             .no-print {
                 display: none;
             }
         }
-        
+
         /* تحسين مظهر الجدول */
         table {
             border-collapse: collapse;
@@ -32,7 +32,7 @@
         th, td {
             border: 1px solid #000;
         }
-       
+
         .header-section, .totals-section {
             margin-top: 16px;
             border: 2px solid #000;
@@ -73,7 +73,7 @@
 
 
   <div class="grid grid-cols-2 w-full gap-2  text-gray-700">
-          {{$productname ??'' }}    
+          {{$productname ??'' }}
 </div>
 
 

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{$PaymentBond->transaction_type}} ({{$payment_type}})</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
     <style>
         body {
             background-color: #f9fafb;
@@ -51,7 +51,7 @@
             </div>
             <div class="text-right">
                 <p  class="text-center">المبلغ:</p>
-                <p class="text-lg font-bold bg-gray-100 p-2 rounded-md">{{number_format($PaymentBond->Amount_debit)}} 
+                <p class="text-lg font-bold bg-gray-100 p-2 rounded-md">{{number_format($PaymentBond->Amount_debit)}}
                     <span class="text-sm font-normal">{{ $Currencies->where('currency_id', $PaymentBond->Currency_id)->first()->currency_name }}</span>
                 </p>
                 <p>إيداع في حساب: <span class="font-bold text-gray-800">
@@ -64,7 +64,7 @@
     <div class="bg-white border border-gray-300 rounded-lg shadow-md p-4">
         <p>  اسم المستلم: <span class="font-bold text-gray-800">
             @if ($PaymentBond->transaction_type==="سند صرف")
-                
+
             {{ $SubAccounts->where('sub_account_id', $PaymentBond->Debit_sub_account_id)->first()->sub_name ?? '' }}
             @endif
         </span></p>
@@ -72,9 +72,9 @@
 
             {{number_format($PaymentBond->Amount_debit)}}
         </span> {{$result}}</p>
- 
+
         <p>تقيد المبلغ لحساب /الدائن</p>
-        
+
         <table class="w-full text-sm bg-gray-100 border border-gray-300 rounded-lg">
             <thead class="bg-gray-300">
                 <tr>
@@ -98,13 +98,13 @@
         <div class="totals-section py-5">
             <div class="flex justify-between">
                 <div>
-                   
-                       
+
+
                         <div>
                             <p class="text-sm" dir="ltr">................ التوقيع المستلم </p>
-    
+
                         </div>
-                    </div> 
+                    </div>
 
                     <div>
                         <p class="text-sm" dir="ltr">المسؤول : {{ $PaymentBond->UserName ?? 0 }}</p>

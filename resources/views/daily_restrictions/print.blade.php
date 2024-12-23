@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
 </head>
 <body >
 
@@ -35,7 +35,7 @@
     @php
         $resultDebit1 = $suba->where('sub_account_id', $daily->account_debit_id); // البحث عن الحساب المدين
         $debitSubName = null; // تهيئة المتغير
-    
+
         foreach ($resultDebit1 as $key) {
             $resultDebit = $mainc->where('main_account_id', $key->Main_id)->first(); // البحث عن الحساب الرئيسي
             if ($resultDebit && $key->sub_name != $resultDebit->account_name) {
@@ -43,13 +43,13 @@
                 break;
             }
         }
-    
+
         // التحقق من وجود قيمة للحساب الفرعي
         $debitSubName = $debitSubName ?? 'اسم الحساب غير موجود'; // تعيين قيمة افتراضية إذا لم يتم العثور على الحساب
-    
+
         $resultCredit1 = $suba->where('sub_account_id', $daily->account_Credit_id); // البحث عن الحساب الدائن
         $creditSubName = null; // تهيئة المتغير
-    
+
         foreach ($resultCredit1 as $key) {
             $resultCredit = $mainc->where('main_account_id', $key->Main_id)->first(); // البحث عن الحساب الرئيسي
             if ($resultCredit && $key->sub_name != $resultCredit->account_name) {
@@ -57,7 +57,7 @@
                 break;
             }
         }
-    
+
         // التحقق من وجود قيمة للحساب الفرعي
         $creditSubName = $creditSubName ?? 'اسم الحساب غير موجود'; // تعيين قيمة افتراضية إذا لم يتم العثور على الحساب
     @endphp

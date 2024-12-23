@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
 </head>
 <body >
 <div class="container mx-10">
-    
+
 @include('includes.header')
 
 <div class="container p-3 flex justify-between bg-gray-100 border-black border-2 rounded-lg h-40 my-2 text-center font-bold ">
@@ -85,7 +85,7 @@ $oo = convertNumberToWords($number) . ' ريال  يمني';
 
             <p >{{ $users->where('id', $PaymentBond->User_id)->first()->name }}............................ </p>
         </div>
-      
+
     </div>
 </div>
         {{-- body --}}

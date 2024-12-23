@@ -111,7 +111,7 @@ SubAccount::where('sub_account_id',$request->sub_id)->update([
         ]);
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
 
-      
+
             if($SubAccount->debtor_amount!=0  || $SubAccount->creditor_amount!=0  )
             {
                 $Getentrie_id = DailyEntrie::where('Invoice_id',$SubAccount->sub_account_id)
@@ -127,22 +127,29 @@ SubAccount::where('sub_account_id',$request->sub_id)->update([
             // );
         }
 
-        
-     
+
+
         return redirect()->route('subAccounts.allShow');
     }
     public function destroy($id){
-        SubAccount::where('sub_account_id',$id)->delete();
-        $transaction_type="رصيد افتتاحي";
-        // إعداد بيانات الإدخالات اليومية
+        if($id == 1 || $id ==2){
+            return redirect()->back();
+
+        }else{
+
+            SubAccount::where('sub_account_id',$id)->delete();
+            $transaction_type="رصيد افتتاحي";
+            // إعداد بيانات الإدخالات اليومية
             $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
 
-        $Getentrie_id = DailyEntrie::where('Invoice_id',$id)
-        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-        ->where('daily_entries_type',$transaction_type)
+            $Getentrie_id = DailyEntrie::where('Invoice_id',$id)
+            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+            ->where('daily_entries_type',$transaction_type)
             ->value('entrie_id');
 
-        return back();
+            return redirect()->back();
+
+        }
     }
     public function allShow(){
         $SubAccounts=SubAccount::all();

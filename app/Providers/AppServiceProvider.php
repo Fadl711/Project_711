@@ -46,7 +46,7 @@ class AppServiceProvider extends ServiceProvider
  ];
  if (DB::connection()->getPdo()) {
     // منطق الاستعلام هنا
-} 
+}
 
         $TypesAccountName=[
             ['TypesAccountName' => Deportatton::CURRENT_ASSETS, 'id' => AccountType::CURRENT_ASSETS],
@@ -57,7 +57,7 @@ class AppServiceProvider extends ServiceProvider
 
         ];
         $mainAccount_Warehouse=MainAccount::where('AccountClass',AccountClass::STORE->value)->first();
-        if ($mainAccount_Warehouse) 
+        if ($mainAccount_Warehouse)
         {
             $subAccount=SubAccount::where('Main_id',$mainAccount_Warehouse->main_account_id)->get();
         }
@@ -66,18 +66,18 @@ class AppServiceProvider extends ServiceProvider
             View::share([
                 'products' => $products,
 
-               
+
             ]);
         }
         $mainAccount_Supplier=MainAccount::where('AccountClass',AccountClass::SUPPLIER->value)->first();
-      
+
             $subAccountSupplierid=SubAccount::where('AccountClass',AccountClass::SUPPLIER->value)->get();
-        
+
         if(isset($subAccountSupplierid)){
             View::share([
                 'subAccountSupplierid' => $subAccountSupplierid,
 
-               
+
             ]);
         }
 
@@ -87,10 +87,10 @@ class AppServiceProvider extends ServiceProvider
             View::share([
                 'Warehouse'=>$subAccount,
 
-               
+
             ]);
         }
-       
+
         $accountClasses = AccountClass::cases();
       $PaymentType=PaymentType::cases();
             $transactionTypes = TransactionType::cases();

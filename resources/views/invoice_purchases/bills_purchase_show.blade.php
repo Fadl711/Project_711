@@ -7,7 +7,7 @@
     <title>     {{$transaction_type}}
         {{($Invoice_type)}}
       </title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
     <style>
         /* تخصيص للطباعة */
         @media print {
@@ -19,12 +19,12 @@
             .print-container {
                 @apply w-full max-w-full mx-auto p-4;
             }
-            
+
             .no-print {
                 display: none;
             }
         }
-        
+
         /* تحسين مظهر الجدول */
         table {
             border-collapse: collapse;
@@ -34,8 +34,8 @@
         th, td {
             border: 1px solid #000;
         }
-       
-       
+
+
         .header-section, .totals-section {
             margin-top: 16px;
             padding: 12px;
@@ -58,14 +58,14 @@
                     <p>رقم الفاتورة:  {{$DataPurchaseInvoice->purchase_invoice_id??0}}
                 </p>
 
-               
+
 
             </div>
             <div>
                 <h2 class="text-lg">فاتورة :
                     {{$transaction_type}}
                     /
-                  
+
                     {{ $Invoice_type }}
                 </h2>
             </div>
@@ -90,8 +90,8 @@
             </thead>
             <tbody>
                 @isset($DataPurchase)
-                    
-             
+
+
 
                 @foreach ($DataPurchase as $Purchase)
                     <tr class="bg-white">
@@ -99,7 +99,7 @@
                         <td class="px-2 text-right">{{ $Purchase->Product_name }}</td>
                         <td class="px-2 text-right">
                             {{ $Purchase->categorie_id }}
-                           
+
 
                             </td>
                         <td class="px-2 text-center">{{ $Purchase->quantity }}</td>
@@ -114,7 +114,7 @@
                                 @endforeach
                             @endisset
                         </td>
-                        
+
                         <td class="px-2 text-right">{{ number_format($Purchase->Total )}}</td>
                     </tr>
                 @endforeach
@@ -128,7 +128,7 @@
         <!-- الإجماليات -->
         <div class="totals-section bg-gray-100 p-4">
             <div class="flex justify-between">
-              
+
                 <div>
                     <p class="font-semibold">
                         الإجمالي  : {{number_format($Purchase_priceSum) ?? 0}}</p>
@@ -138,7 +138,7 @@
                     <p class="font-semibold">
                         @if ($Purchase_CostSum>0)
                         الجمالي  المصاريف: {{ number_format($Purchase_CostSum ?? 0)}}</p>
-                        <p>العملة: 
+                        <p>العملة:
                             @isset($currency->currency_symbol)
                             {{$currency->currency_symbol}}
 
@@ -148,14 +148,14 @@
 
                         @endif
                 </div>
-                
+
             </div>
         </div>
         <div class=" bg-white p-4">
 
                     <p class=" text-sm" dir="ltr">  المسؤول : {{($UserName) ?? 0}}</p>
-              
-                
+
+
         </div>
 
         <!-- زر الطباعة -->

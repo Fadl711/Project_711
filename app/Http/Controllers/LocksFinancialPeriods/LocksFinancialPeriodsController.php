@@ -239,16 +239,16 @@ class LocksFinancialPeriodsController extends Controller
 
             if ($profit > 0) {
                 $profit = $totalRevenue - $totalExpenses;
-                $account_debit_id = 10;
-                $account_credit_id = 9;
+                $account_debit_id = 2;
+                $account_credit_id = 1;
                 $comment = "إثبات إقفال مجمل الربح ";
             }
 
             if ($profit < 0) {
                 $profit = $totalExpenses - $totalRevenue;
 
-                $account_debit_id = 9;
-                $account_credit_id = 10;
+                $account_debit_id = 1;
+                $account_credit_id = 2;
                 $comment = "إثبات إقفال مجمل الخسارة ";
             }
             if ($profit) {
@@ -393,7 +393,7 @@ class LocksFinancialPeriodsController extends Controller
         Purchase::create(
             [
                 'accounting_period_id' => $accountingPeriodId,
-                'Purchase_invoice_id' => $request->Purchase_invoice_id ?? null,
+                'Purchase_invoice_id' => null,
 
                 'Product_name' => $productName->product_name,
                 'Barcode' => $productName->Barcode ?? 0,

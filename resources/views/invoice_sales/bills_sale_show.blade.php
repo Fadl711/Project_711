@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>فاتورة مبيعات</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
     <style>
         /* تخصيص للطباعة */
         @media print {
@@ -17,12 +17,12 @@
             .print-container {
                 @apply w-full max-w-full mx-auto p-4;
             }
-            
+
             .no-print {
                 display: none;
             }
         }
-        
+
         /* تحسين مظهر الجدول */
         table {
             border-collapse: collapse;
@@ -32,8 +32,8 @@
         th, td {
             border: 1px solid #000;
         }
-       
-       
+
+
         .header-section, .totals-section {
             margin-top: 16px;
             padding: 12px;
@@ -60,7 +60,7 @@
                         </div>
                     </div>
                 </div>
-                
+
 
                 <div>
                     <div class="flex">
@@ -72,14 +72,14 @@
                         </div>
                     </div>
                 </div>
-             
+
             </div>
             <div>
                 <h2 class="text-lg font-bold">فاتورة :
                    {{$transaction_type??null}}/
                    {{$payment_type}}
-                   
-                  
+
+
 
                 </h2>
             </div>
@@ -104,7 +104,7 @@
                         </div>
                     </div>
                 </div>
-              
+
             </div>
         </header>
 
@@ -124,15 +124,15 @@
             </thead>
             <tbody>
                 @isset($DataSale)
-                    
-             
+
+
 
                 @foreach ($DataSale as $Sale)
                     <tr class="bg-white">
                         <td class="px-2 ">{{$loop->iteration}}</td>
                         <td class="px-2 text-right">{{ $Sale->Product_name }}</td>
                         <td class="px-2 text-right">
-                         
+
                             {{ $Sale->Category_name }}
                             </td>
                         <td class="px-2 text-right">{{ $Sale->Quantityprice }}</td>
@@ -150,14 +150,14 @@
                         <td class="p-2 text-right">{{ number_format($Sale->total_amount )}}</td>
                     </tr>
                 @endforeach
-              
+
                 @endisset
             </tbody>
-           
+
         </table>
         <table class="w-[60%] text-sm ">
-           
-                    
+
+
                     <thead>
                         <tr class="bg-blue-100">
                             <th class="px-2 text-right w-[30%]">
@@ -187,7 +187,7 @@
                                         @endif
 
 
-                                       
+
 
                                 @endif
                             </th>
@@ -210,8 +210,8 @@
                         @endif
 
                     </thead>
-                    
-                   
+
+
         </table>
 
         <!-- الإجماليات -->
@@ -223,10 +223,10 @@
                 <div>
                     <p class=" text-sm" dir="ltr">  المسؤول : {{($UserName) ?? 0}}</p>
                 </div>
-                
+
             </div>
         </div>
-       
+
 
         <!-- زر الطباعة -->
         <div class="mt-4 no-print">

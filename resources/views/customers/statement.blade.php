@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title> كشف حساب {{$Myanalysis}}</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
     <style>
         /* تخصيص للطباعة */
         @media print {
@@ -17,12 +17,12 @@
             .print-container {
                 @apply w-full max-w-full mx-auto p-4;
             }
-            
+
             .no-print {
                 display: none;
             }
         }
-        
+
         /* تحسين مظهر الجدول */
         table {
             border-collapse: collapse;
@@ -32,7 +32,7 @@
         th, td {
             border: 1px solid #000;
         }
-       
+
         .header-section, .totals-section {
             margin-top: 16px;
             border: 2px solid #000;
@@ -53,14 +53,14 @@
                     <p class="text-sm text-gray-700">العنوان: {{ $buss->Company_Address }}</p>
                     <p class="text-sm text-gray-700">التلفون: {{ $buss->Phone_Number }}</p>
                 </div>
-    
+
                 <!-- القسم الأوسط - تحليل الحسابات -->
                 <div class="flex items-center justify-center px-2">
                     <div class="w-24 h-20   flex items-center justify-center translate-x-10">
                         <img class=" bg-[#1749fd15] rounded-3xl" src="{{ url($buss->Company_Logo ? 'images/' . $buss->Company_Logo : '') }}" alt="">
                     </div>
                 </div>
-    
+
                 <!-- القسم الأيسر - English content -->
                 <div class="text-left space-y-2">
                     <h2 class="font-extrabold  ">{{ $buss->Company_NameE }}</h2>
@@ -73,7 +73,7 @@
                 <p class="font-extrabold text-lg">
                     كشف حساب {{ $Myanalysis }} - رصيد نهاية التقرير
                 </p>
-            
+
                 <div class="grid grid-cols-2 w-full gap-2 text-sm text-gray-700">
                     <div> تاريخ:
                         {{ $startDate }}
@@ -83,7 +83,7 @@
                     </div>
                 </div>
             </div>
-            
+
         </div>
     @endisset
 
@@ -103,7 +103,7 @@
                     <div>{{ $currencysettings ?? __('YR') }}</div>
                 </div>
             </div>
-            
+
         </header>
         <!-- جدول المنتجات -->
         <table class="w-full text-sm">
@@ -135,7 +135,7 @@
                     </div>
                 </div>
             </td>
-               
+
                 @endisset
 
                 @isset($entries)
@@ -188,7 +188,7 @@
                     </td>
                     <td class=" text-right ">
                         {{ number_format($SumCredit_amount) ?? 0 }}
-                         
+
                     </td>
                 </tr>
             </tbody>
@@ -198,7 +198,7 @@
                 <tr class="bg-blue-100">
                     <th class="px-2 text-right w-">
                         @php
-                        $sum=$SumDebtor_amount-$SumCredit_amount;                        
+                        $sum=$SumDebtor_amount-$SumCredit_amount;
                         if ($sum>=0) {
                             $commintString  = "عليكم/ رصيد"   ;
 
@@ -211,27 +211,27 @@
                     </th>
                     <th class="px-2 text-right">
                         {{ number_format(abs($Sale_priceSum)) ?? 0 }}
-                        
+
                         <p class="text-sm">{{ $priceInWords }}</p>
                     </th>
                 </tr>
-               
+
             </thead>
-            
-           
+
+
 </table>
         <!-- الإجماليات -->
         <div class="totals-section bg-blue-100 p-4">
             <div class="flex justify-between">
                 <div>
-                   
+
                         <div class="text-sm">{{ __('  مصادقة الحساب  من  ') }}  {{ $AccountClassName ?? __('غير متوفر') }}: {{  $customer->sub_name ??$customer->account_name?? __('غير متوفر') }}</div>
-                       
+
                         <div>
                             <p class="text-sm" dir="ltr">................ التوقيع </p>
-    
+
                         </div>
-                    </div> 
+                    </div>
 
                     <div>
                         <p class="text-sm" dir="ltr">المسؤول : {{ $UserName ?? 0 }}</p>
@@ -252,7 +252,7 @@
                     }, 500); // فترة الانتظار نصف ثانية فقط
                 }
             </script>
-            
+
             <button onclick="closeWindow()" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700">إلغاء الطباعة</button>
 
             <script>
