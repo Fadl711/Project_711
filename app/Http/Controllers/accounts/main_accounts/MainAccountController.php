@@ -190,7 +190,7 @@ if ($DataSubAccount->debtor_amount>0 || $DataSubAccount->creditor_amount>0) {
         'User_id' =>$User_id ,
         'Invoice_type' =>1,
         'accounting_period_id' =>$accountingPeriod->accounting_period_id,
-        'Invoice_id' => null,
+        'Invoice_id' => $DSubAccount->sub_account_id ,
         'daily_entries_type' =>'رصيد افتتاحي',
         'status_debit' => 'غير مرحل',
         'status' => 'غير مرحل',

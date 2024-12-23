@@ -2,10 +2,7 @@
 
 @section('restrictions')
 <style>
-    .select2-container--default .select2-dropdown {
-    max-height: 200px; /* ارتفاع القائمة */
-    overflow-y: auto; /* تمكين التمرير إذا تجاوز المحتوى الارتفاع */
-}
+
 .select2-container--default .select2-selection--single {
     height: 40px; /* ارتفاع العنصر الأساسي */
     line-height: 45px; لتوسيط النص عموديًا
@@ -30,8 +27,14 @@
     </div>
     <button type="submit">إنشاء صفحة جديدة</button>
 </form>
-<div id="successMessage" style="display: none;"></div>
-<div id="errorMessage" style="display: none;"></div>
+{{-- <div id="successMessage" style="display: none;"></div> --}}
+<div id="successMessage" class="hidden fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
+
+</div>
+{{-- <div id="errorMessage" style="display: none;"></div> --}}
+<div id="errorMessage" class="hidden fixed top-4 right-4 bg-red-300 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
+</div>
+
 
 <form id="dailyRestrictionsForm" method="POST" class="space-y-6">
     @csrf
@@ -41,27 +44,38 @@
             @foreach ($PaymentType as $index => $item)
 <div class="flex">
 <label for="" class="labelSale">{{$item->label()}}</label>
-<input type="radio" name="payment_type" value="{{$item->value}}" 
-    {{ $index === 0 ? 'checked' : '' }} required>
+<input type="radio" name="payment_type" 
+value="{{$item->value}}" 
+{{ isset($DailyEntrie->Invoice_type) && $DailyEntrie->Invoice_type == $item->value ? 'checked' : ($index === 0 ? 'checked' : '') }} 
+required>
 </div>
 @endforeach
         </div>
         <!-- Form Layout -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-            <div class="">
-                <label for="Invoice_type" class="block font-medium  ">  نوع المستند</label>
-                <select name="Invoice_type" dir="ltr" class=" select2 inputSale" id="Invoice_type">
-                    <option value="" selected>اختر  نوع المستند</option>
-                    @foreach ($transactionTypes as $transactionType)
-                    <option value="{{ $transactionType->value }}">{{ $transactionType->label() }}</option>
-                @endforeach
-            </select>
-            </div>
+                <div class="">
+                    <label for="Invoice_type" class="block font-medium">نوع المستند</label>
+                    <select name="Invoice_type" dir="ltr" class="select2 inputSale" id="Invoice_type">
+                        <option value="" selected>اختر نوع المستند</option>
+                        @foreach ($transactionTypes as $transactionType)
+                            <option value="{{ $transactionType->value }}"
+                                @isset($DailyEntrie->daily_entries_type)
+                                    @if ($DailyEntrie->daily_entries_type == $transactionType->label()) selected 
+                                    @endif
+                                @endisset>
+                                {{ $transactionType->label() }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
             <div class="">
                 <label for="Invoice_id" class="block font-medium  ">  رقم المستند</label>
                 <select name="Invoice_id" dir="ltr" class=" select2 inputSale" id="Invoice_id">
                     <option value="" selected>اختر  رقم المستند</option>
+                    @isset($DailyEntrie->Invoice_id)
+                    <option value="{{$DailyEntrie->Invoice_id}}" selected > {{$DailyEntrie->Invoice_id}} </option>
+                    @endisset
             </select>
                     </select>
             </div>
@@ -75,6 +89,7 @@
                        <!-- إضافة خيارات الحسابات -->
                        @isset($mainAccounts)
                      <option value="" selected>اختر الحساب</option>
+                   
                       @foreach ($mainAccounts as $mainAccount)
                            <option value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
                       @endforeach
@@ -84,8 +99,11 @@
                 <div class="">
                     <label for="sub_account_debit_id" class="block font-medium  ">حساب المدين/الفرعي</label>
                     <select name="sub_account_debit_id" id="sub_account_debit_id" dir="ltr" class="input-field select2 inputSale" >
-                        <!-- سيتم تعبئة الخيارات بناءً على الحساب الرئيسي المحدد -->
                         <option value="" selected>اختر الحساب الفرعي</option>
+                        <!-- سيتم تعبئة الخيارات بناءً على الحساب الرئيسي المحدد -->
+                        @isset($DailyEntrie->account_debit_id)
+                        <option value="{{$DailyEntrie->account_debit_id}}" selected > {{$sub_account_debit->sub_name}} </option>
+                        @endisset
                         </select>
                 </div>
             </div>
@@ -106,6 +124,9 @@
                 <div class=" ">
                     <label for="sub_account_Credit_id" class="block font-medium ">حساب الدائن/الفرعي</label>
                     <select name="sub_account_Credit_id"  step="0.01" id="sub_account_Credit_id" class="block w-full select2 p-2 border rounded-md inputSale">
+                        @isset($DailyEntrie->account_Credit_id)
+                        <option value="{{$DailyEntrie->account_Credit_id}}" selected > {{$sub_account_Credit->sub_name}} </option>
+                        @endisset
                        </select>
                 </div>
 
@@ -117,38 +138,57 @@
           <div class="grid grid-cols-2 md:grid-cols-2 gap-4">
           <div>
             <label for="Amount_debit" class="block font-medium mb-2">المبلغ المدين</label>
-            <input name="Amount_debit" id="Amount_debit" type="text"  class=" inputSale input-field" placeholder="أدخل المبلغ" required>
+            <input name="Amount_debit" id="Amount_debit" type="text"  class=" inputSale input-field" placeholder="أدخل المبلغ"
+               value="{{ $DailyEntrie->Amount_debit ?? $DailyEntrie->Amount_Credit ??null  }}" 
+
+           
+             required>
         </div>
-            <div class="">
-                <label for="Currency_name" class="block font-medium mb-2">العملة</label>
-                <select   dir="ltr" id="Currency_name" class="inputSale input-field " name="Currency_name"  >
-                    @auth
-                  @foreach ($curr as $cur)
-                  <option @isset($cu)
-                  @selected($cur->currency_id==$cu->Currency_id)
-                  @endisset
-                  value="{{$cur->currency_name}}">{{$cur->currency_name}}</option>
-                   @endforeach
-                   @endauth
-                  </select>
-            </div>
+        <div class="">
+            <label for="Currency_name" class="block font-medium mb-2">العملة</label>
+            <select dir="ltr" id="Currency_name" class="inputSale input-field" name="Currency_name">
+                @isset($currs)
+                    <option selected value="{{ $currs->currency_name }}">{{ $currs->currency_name }}</option>
+                @endisset
+        
+                @isset($curr)
+                    @foreach ($curr as $cur)
+                        <option value="{{ $cur->currency_name }}"
+                            @isset($cu)
+                                @selected($cur->currency_id == $cu->Currency_id)
+                            @endisset>
+                            {{ $cur->currency_name }}
+                        </option>
+                    @endforeach
+                @endisset
+            </select>
+        </div>
         </div>
             <div class="">
                 <label for="Statement" class="block font-medium mb-2">البيان</label>
-                <textarea name="Statement" id="Statement" class="block w-full p-2 border rounded-md inputSale" placeholder="أدخل البيان" rows="4" ></textarea>
+                <textarea name="Statement" id="Statement" class="block w-full p-2 border rounded-md inputSale" placeholder="أدخل البيان" rows="4" >
+                    @isset($DailyEntrie->Statement)
+                    {{$DailyEntrie->Statement}}
+                        
+                    @endisset
+                </textarea>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-2 gap-4">
 
             <div class=" justify-">
               <button type="submit" id="submitButton" class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                  حفظ القيد
+                 
+                  {{$submitButton ?? ' حفظ القيد'}}
               </button>
           </div>
-          <div class=" justify-">
-            <button type="submit" id="savaAndPrint" class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                حفظ وطباعه
-            </button>
-        </div>
+            <div>
+                <label for="entrie_id" class="block font-medium mb-2">رقم القيد</label>
+                <input name="entrie_id" id="entrie_id" type="number"  
+                class=" inputSale input-field" placeholder="أدخل المبلغ"
+                @isset($DailyEntrie->entrie_id)    
+                value="{{$DailyEntrie->entrie_id}}"                
+                @endisset >
+            </div>
             </div>
             @auth
 
@@ -231,6 +271,9 @@
     });
       $(document).ready(function() {
             $('#submitButton').click(function(event) {
+                const entrie_id = $('#entrie_id').val(); // الحصول على ID الحساب الرئيسي (المدين)
+
+
                 event.preventDefault();
                 // جمع بيانات النموذج
                 var formData = $('#dailyRestrictionsForm').serialize();
@@ -243,18 +286,33 @@
                 success: function(data) {
                     if (data.success) {
                         // إظهار رسالة النجاح
-                        $('#successMessage').show().text(data.success);
+                        $('#successMessage').show().text(data.success).fadeOut(3000);
+                        if(entrie_id)
+                    {
+                        var invoiceField = data.entrie_id;
+                        const url = `{{ route('restrictions.print', ':invoiceField') }}`.replace(':invoiceField', invoiceField);
+                            window.open(url, '_blank', 'width=600,height=800'); // فتح الرابط في نافذة جديدة
+                            window.location.href = '{{ route("restrictions.create") }}';  // توجيه المستخدم إلى صفحة "إنشاء"
+                        }
                         $('#Amount_debit').val(""); // إعادة تعيين النموذج
                         // إخفاء الرسالة بعد 3 ثوانٍ
                         setTimeout(function() {
+
                             $('#successMessage').hide();
                         }, 3000);
                     }else
                      {
-                        $('#successMessage').show().text(data.success);
-                        setTimeout(function() {
-                            $('#successMessage').hide();
-                        }, 3000);
+
+                        // $('#errorMessage').removeClass('hidden').text(data.success);
+
+// إخفاء التنبيه بعد 3 ثوانٍ
+$('#errorMessage').show().text(data.errorMessage).fadeOut(3000);
+setTimeout(function() {
+$('#errorMessage').addClass('hidden');
+}, 6000);
+                        // setTimeout(function() {
+                        //     $('#successMessage').hide();
+                        // }, 3000);
 
                     }
                 },

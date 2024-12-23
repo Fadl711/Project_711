@@ -6,6 +6,7 @@ use App\Enum\AccountType;
 use App\Enum\Deportatton;
 use App\Enum\IntOrderStatus;
 use App\Http\Controllers\Controller;
+use App\Models\AccountingPeriod;
 use App\Models\DailyEntrie;
 use App\Models\MainAccount;
 use App\Models\SubAccount;
@@ -67,17 +68,6 @@ class SubaccountController extends Controller
         $Main_id= $request->Main_id;
         $sub_name= $request->sub_name;
 
-    // $data=SubAccount::where('Main_id',$Main_id)->latest()->first();
-
-    // $data1=SubAccount::where($data->Main_id);
-    //  dd($data1);
-
-
-    // $account_nametExists = MainAccount::where('sub_name', $sub_name)->where('')->exists();
-    // if ($account_nametExists)
-    //   {
-    //    return response()->json(['message'=>' هذا الاسم موجود من قبل']);
-    //    }
         $DataSubAccount=new SubAccount();
            $DataSubAccount->Main_id=$Main_id;
            $DataSubAccount->sub_name=$sub_name;
@@ -95,22 +85,57 @@ class SubaccountController extends Controller
     }
     public function edit($id){
         $SubAccount=SubAccount::where('sub_account_id',$id)->first();
-        return view('accounts.Sub_Accounts.edit',compact('SubAccount'));
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
+        $transaction_type="رصيد افتتاحي";
+
+        $Getentrie_id = DailyEntrie::where('Invoice_id',$SubAccount->sub_account_id)
+        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        ->where('daily_entries_type',$transaction_type)
+            ->first();
+            // dd($Getentrie_id);
+
+        return view('accounts.Sub_Accounts.edit',compact('SubAccount','Getentrie_id'));
     }
     public function update(Request $request){
-        SubAccount::where('sub_account_id',$request->sub_id)->update([
+        $transaction_type="رصيد افتتاحي";
+        $SubAccount = SubAccount::where('sub_account_id', $request->sub_id)->firstOrFail();
+SubAccount::where('sub_account_id',$request->sub_id)->update([
             'sub_name'=>$request->sub_name,
             'Main_id'=>$request->Main_id,
             'User_id'=>$request->User_id,
             'debtor_amount'=>$request->debtor_amount,
             'creditor_amount'=>$request->creditor_amount,
+            'Phone' =>$request->Phone ,
+            'name_The_known' =>$request->name_The_known ,
+
         ]);
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
+
+      
+            if($SubAccount->debtor_amount!=0  || $SubAccount->creditor_amount!=0  )
+            {
+                $Getentrie_id = DailyEntrie::where('Invoice_id',$SubAccount->sub_account_id)
+                ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                ->where('daily_entries_type',$transaction_type)
+                ->update([
+                'Amount_debit' => $SubAccount->debtor_amount,
+                'Amount_Credit' => $SubAccount->creditor_amount,
+            ]);
+            // DailyEntrie::updateOrCreate(
+            //     ['entrie_id' => $Getentrie_id],
+            //     $dataDailyEntrie
+            // );
+        }
+
+        
+     
         return redirect()->route('subAccounts.allShow');
     }
     public function destroy($id){
         SubAccount::where('sub_account_id',$id)->delete();
         $transaction_type="رصيد افتتاحي";
         // إعداد بيانات الإدخالات اليومية
+            $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
 
         $Getentrie_id = DailyEntrie::where('Invoice_id',$id)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)

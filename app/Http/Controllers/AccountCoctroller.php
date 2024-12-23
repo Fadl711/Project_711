@@ -164,6 +164,8 @@ return response()->json( $data);
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
         $descriptionText = '';
         $descriptionCommint = '';
+        $accountCreditId ?? null;
+        $$accountDebitId ?? null;
         // تحديد نوع القيد (مدين أو دائن) والتعليق
         if ($accountCreditId) {
             $accountId = $accountCreditId;
@@ -175,8 +177,11 @@ return response()->json( $data);
             $amount= $entries->Amount_Credit ??0;
             $descriptionCommint = "الى ح/";
             $entryType = "credit";
-        } 
-        if ($accountDebitId) {
+        }  
+    
+        
+        if ($accountDebitId) 
+        {
             $accountId = $accountDebitId;
             $entries = DailyEntrie::where('accounting_period_id',$accountingPeriod->accounting_period_id)
             ->where('entrie_id', $entryId)
@@ -274,10 +279,16 @@ return response()->json( $data);
             foreach ($entries as $entry)
                  {
                    
+                    if($entry->account_debit_id){
+
                         $this->processEntry($entry->account_debit_id, null, $entry->entrie_id);
+                    }
+                    if($entry->account_Credit_id){
+
+                        $this->processEntry(null, $entry->account_Credit_id, $entry->entrie_id);
+                    }
 
                  
-                        $this->processEntry(null, $entry->account_Credit_id, $entry->entrie_id);
 
                     
 

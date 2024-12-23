@@ -466,6 +466,7 @@ const Product_name = $('#product_name');
               success: function (data) {
                   if (data.success) {
                       errorMessage.hide();
+                      
                       successMessage.removeClass('hidden').text(data.message);
 
 // إخفاء التنبيه بعد 3 ثوانٍ

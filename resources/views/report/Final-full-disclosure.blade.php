@@ -106,10 +106,9 @@
             
         </header>
         <!-- جدول المنتجات -->
-        {{-- <div class="container mx-auto print-container"> --}}
             <div class="w-full overflow-y-auto max-h-[80vh] container mx-auto print-container  bg-white">
 
-                <table class="w-full text-sm ">           
+                <table class="w-full text-sm overflow-y-auto max-h-[80vh]">           
                     <tr class="bg-blue-100">
                         <th class="px-4 text-center">#</th>
                     <th class="px-4 text-right">اسم العميل</th>
@@ -128,9 +127,21 @@
                         <td class="px-4 text-right">{{ $balance->sub_name }}</td>
                         <td class="px-4 text-center">{{ $balance->sub_account_id }}</td>
                         <td class="px-4 text-center">{{ $balance->Phone }}</td>
-                        <td class="px-4 text-center">{{ number_format($balance->total_debit, 2) }}</td>
-                        <td class="px-4 text-center">{{ number_format($balance->total_credit, 2) }}</td>
-                       
+                        @php
+                            $SumDebtoramount=0;
+                            $SumCreditamount=0;
+                            $SumAmount=$balance->total_debit-$balance->total_credit;
+                                if($SumAmount>0)
+                                {
+                                    $SumDebtoramount=$SumAmount;
+                                }
+                                if($SumAmount<0)
+                                {
+                                    $SumCreditamount=$SumAmount;
+                                }
+                                @endphp
+                                <td class="px-4 text-center">{{ number_format($SumDebtoramount, 2) }}</td>
+                                <td class="px-4 text-center">{{ number_format(abs($SumCreditamount), 2) }}</td>                       
                     </tr>
                 @endforeach
                 <tr class="bg-blue-100">

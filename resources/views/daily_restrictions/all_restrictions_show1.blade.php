@@ -3,7 +3,7 @@
 
 
 
-<div class="w-1/2 relative overflow-x-auto shadow-md sm:rounded-lg mx-auto ">
+<div class="w-full overflow-y-auto max-h-[80vh]  bg-white">
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
             <tr>
@@ -20,7 +20,8 @@
         </thead>
         <tbody>
 
-
+@isset($pagesNum)
+    
             @foreach ($pagesNum as $pageNum)
 
             <tr class="bg-gray-50 border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
@@ -55,6 +56,7 @@
                 </td>
             </tr>
             @endforeach
+            @endisset
 
 
         </tbody>

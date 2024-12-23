@@ -241,6 +241,15 @@ private function prepareResponse($entries, $mainAccount = null, $date, $TypeRest
         'subAccount' => $subAccount // التأكد من تضمين الحساب الفرعي
     ]);
 }
+public function record(Request $request)
+{
+      $pageNums = AccountingPeriod::all();
+
+    // $pageNums=GeneralJournal::where('accounting_period_id',$accountingPeriod->accounting_period_id)->get();
+
+    return view('transfer_restrictions.record',['pageNums'=>$pageNums]) ;
+}
+
 public function transferEntry(Request $request)
 {
     // تحقق من البيانات المدخلة

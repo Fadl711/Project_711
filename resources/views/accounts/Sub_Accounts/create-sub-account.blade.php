@@ -144,6 +144,10 @@ $('#creditor_amount').val($('#creditor_amount').val() || 0);
                 <input type="text" name="name_The_known" id="name_The_known" class="input-field inputSale" />
             </div>
            
+            <div class="mb-2">
+                <label for="name_The_known"   class="labelSale">رقم الحساب</label>
+                <input type="text" disabled name="name_The_known" id="name_The_known" class="input-field inputSale" />
+            </div>
         </div>
         @auth
         <input type="hidden" name="User_id" required id="User_id" value="{{Auth::user()->id}}">

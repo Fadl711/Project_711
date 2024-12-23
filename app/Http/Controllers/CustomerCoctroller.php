@@ -82,7 +82,7 @@ return view('customers.show', compact('balances'));
         }
         if ($validated['list'] === "Disclosure_of_all_sub_accounts_after_migration") 
         {
-            return $this->Disclosure_of_all_sub_accounts_after_migration($validated['list'], $id);
+            return $this->Disclosure_of_all_sub_accounts_after_migration($request, $id);
 
         }
        
@@ -120,41 +120,24 @@ return view('customers.show', compact('balances'));
         $currencysettings=$curre->currency_name ?? 'ريال يمني';
         $curre=CurrencySetting::where('currency_settings_id',$idCurr)->first(); 
         $UserName = User::where('id',auth()->user()->id,)->pluck('name')->first(); 
-     
-        $customerMainAccount = SubAccount::where('sub_account_id',$id)->first(); 
-        $idaccounn=$customerMainAccount->sub_account_id;
-        $balances = GeneralEntrie::selectRaw(
-            'sub_accounts.sub_account_id,
-             sub_accounts.sub_name,
-             sub_accounts.Phone,
-             SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id THEN general_entries.amount ELSE 0 END) as total_debit'
-        )
-        ->where('general_entries.accounting_period_id', $accountingPeriod->accounting_period_id)
-        ->join('sub_accounts', function ($join) {
-            $join->on('general_entries.sub_id', '=', 'sub_accounts.sub_account_id');
-        })
-        ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name', 'sub_accounts.Phone')
-        ->get();
+     if($$request->list)
+     {
         
-        $startDate = $accountingPeriod->created_at?->format('Y-m-d') ?? 'غير متوفر';
-        $endDate = now()->toDateString();
+     }
+        $balances = SubAccount::where('sub_account_id',$id)->first(); 
+        $idaccounn=$balances->sub_account_id;
+        $total_debit = GeneralEntrie::where('sub_id',$balances->sub_account_id)->sum('amount');
+           
+      
 
-// معالجة البيانات لإضافة الفارق ونوعه
-$balances = $balances->map(function ($balance) {
-    $difference = $balance->total_debit - $balance->total_credit;
-    $balance->difference = $difference;
-    $balance->difference_type = $difference > 0 ? 'مدين' : ($difference < 0 ? 'دائن' : 'متوازن');
-    return $balance;
-});
+// $SumDebtor_amount = $balances->sum('total_debit');
+// $Sale_priceSum = abs($SumDebtor_amount );
 
-$SumDebtor_amount = $balances->sum('total_debit');
-$Sale_priceSum = abs($SumDebtor_amount );
-
-$numberToWords = new NumberToWords();
-$numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
-$priceInWords=is_numeric($Sale_priceSum) 
-? $numberTransformer->toWords( abs($SumDebtor_amount )) . ' ' . $currencysettings
-: 'القيمة غير صالحة';
+// $numberToWords = new NumberToWords();
+// $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
+// $priceInWords=is_numeric($Sale_priceSum) 
+// ? $numberTransformer->toWords( abs($SumDebtor_amount )) . ' ' . $currencysettings
+// : 'القيمة غير صالحة';
 $accountClasses = [
 1 => 'الحساب',
 2 => 'الحساب',
@@ -301,6 +284,7 @@ return view('report.Final-full-disclosure', compact('Myanalysis','balances','Acc
         $SumCredit_amount = $balances->sum('total_credit');    
     
         $Sale_priceSum = abs($SumDebtor_amount - $SumCredit_amount);
+        $SumAmount = $SumDebtor_amount - $SumCredit_amount;
         
        $numberToWords = new NumberToWords();
         $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
@@ -318,7 +302,7 @@ $AccountClassName = $accountClasses[$customerMainAccount->AccountClass] ?? 'غي
 // dd(  $Sale_priceSum );  
 $Myanalysis=" نهائي للحسابات الفرعية قبل الترحيل";
 
-   return view('report.Final-full-disclosure', compact('Myanalysis','balances','AccountClassName','currencysettings','UserName','accountingPeriod','SumCredit_amount','SumDebtor_amount',
+   return view('report.Final-full-disclosure', compact('Myanalysis','SumAmount','balances','AccountClassName','currencysettings','UserName','accountingPeriod','SumCredit_amount','SumDebtor_amount',
    'priceInWords','startDate','endDate','customerMainAccount','Sale_priceSum'))->render(); // إرجاع المحتوى كـ HTML
 
 

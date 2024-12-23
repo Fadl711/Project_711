@@ -21,7 +21,7 @@
 <form id="dailyRestrictionsForm" method="POST" action="{{ route('transfer_restrictions.optional') }}" class="space-y">
     @csrf
     <div class="container space-y-2">
-        <div class="shadow-lg grid grid-cols-5 rounded-lg bg-white px-1">
+        <div class="shadow-lg grid grid-cols-6 rounded-lg bg-white px-1">
             <!-- طريقة الترحيل -->
             <div id="the_way_of">
                 <label for="the_way_of_deportation" class="block font-medium text-center">طريقة الترحيل</label>
@@ -66,23 +66,28 @@
                 <label for="date" class="block font-medium text-center">التاريخ</label>
                 <input type="date" name="date" id="date" class="inputSale" value="{{ now()->format('Y-m-d') }}">
             </div>
+            <div>
+                <button id="submitShow" type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">عرض</button>
+                <button id="saveButton" name="saveButton" type="button" class="bg-yellow-500 text-white px-4 py-1 rounded">ترحيل الكل</button>
+
+            </div>
+            {{-- <div>
+                <button id="submitShow" type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">عرض</button>
+
+            </div> --}}
+
         </div>
 
         <div class="shadow-lg rounded-lg py-1 bg-white border">
             <div class="grid grid-cols-2 md:grid-cols-2 gap-4">
                 <div class="flex gap-4">
                    
-                    <div>
-                        <button id="submitShow" type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">عرض</button>
-
-                    </div>
+                    
                     <div>
                        
                     </div>
                     <div>
-                        <button type="submit" id="submitButton" class="...">
-                            <i class="fas fa-save"></i> حفظ القيد
-                        </button>
+                       
                                             </div>
                 </div>
                 @auth
@@ -99,14 +104,16 @@
             @endphp
       </div>
       <input type="hidden" name="allDailyEntrie" id="allDailyEntrie" value="1">
-      <button id="saveButton" name="saveButton" type="button" class="bg-yellow-500 text-white px-4 py-1 rounded">ترحيل الكل</button>
      
-    </form>
-    <form id="ajaxForm" >
-        @csrf
-      </form>
-    <div class="min-w-full shadow rounded-lg max-h-screen overflow-x-auto text-sm">
-        <table class="min-w-full bg-white text-sm">
+       </form>
+        {{-- <form id="ajaxForm" >
+        @csrf --}}
+         {{-- </form> --}}
+ 
+
+         <div class="w-full overflow-y-auto max-h-[80vh]   bg-white">
+
+            <table class="w-full text-sm overflow-y-auto max-h-[80vh]"> 
             <thead class="bg-[#2430d3] text-white">
                 <tr>
                     <th class="py-1 text-right bg-white"></th>
@@ -186,10 +193,11 @@
         @endif
         
         </table>
-    </div>
     @auth
-    <input type="text" name="User_id" required id="User_id" value="{{Auth::user()->id}}">
+    <input type="hidden" name="User_id" required id="User_id" value="{{Auth::user()->id}}">
     @endauth
+      </div>
+      
     <script src="{{url('transfer_restrictions/transfer_restrictions.js')}}"></script>
     <script>
         $(document).ready(function() {
@@ -208,15 +216,15 @@
         });
     </script>
 
-<div id="successMessage" style="display: none;">
+    <div id="successMessage" style="display: none;">
     <p>تم الحفظ بنجاح!</p>
   </div>
   <div id="errorMessage" style="display: none; color: red;">
     <p>حدث خطأ أثناء الحفظ.</p>
   </div>
-  </div>
   <!-- منطقة طباعة البيانات المحفوظة -->
   <div id="results" class="results"></div>
+
   <script src="{{url('payments.js')}}">   </script>
   
   <style>

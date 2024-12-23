@@ -4,8 +4,9 @@
 
 <x-nav-transfer-restriction/>
 
-<div class="w-full relative overflow-x-auto shadow-md sm:rounded-lg mx-auto ">
-    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+<div class="w-full overflow-y-auto max-h-[80vh] container mx-auto print-container  bg-white">
+
+    <table class="w-full text-sm overflow-y-auto max-h-[80vh]">    
         <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
             <tr>
                 <th scope="col" class="px-6 py-3">
@@ -28,7 +29,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($accountingPeriods as $pageNum)
+            @foreach ($pageNums as $pageNum)
 
             <tr class="bg-gray-50 border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                 <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">

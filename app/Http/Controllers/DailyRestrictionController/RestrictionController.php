@@ -32,13 +32,19 @@ class RestrictionController extends Controller
     // تحقق من صحة البيانات
     public function store(Request $request)
     {
-    
-
-            $Amount_debit = $this->removeCommas($request->Amount_debit);
+        $dailyPageId=DailyEntrie::where('entrie_id',$request->entrie_id)->first();
+        if ($dailyPageId) {
+            if($dailyPageId->daily_entries_type=="رصيد افتتاحي")
+            {
+                return response()->json(['success'=>false,'errorMessage' => 'لا يمكنك تعديل الرصيد الافتتاحي من هنا يمكنك التعديل علية من صفحة الحسابات الفرعية']);
+            }
+        }
+        $Amount_debit = $this->removeCommas($request->Amount_debit);
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
         $validated = $request->validate([
             'sub_account_debit_id' => 'required|integer',
-            'account_Credit_id' => 'required|integer',
+            'Amount_debit' => 'required',
+            // 'entrie_id' => 'nullable|integer',
             'sub_account_Credit_id' => 'required|integer',
             'Statement' => 'nullable|string',
             'Currency_name' =>  'nullable|string', // تأكد من استخدام الاسم الصحيح هنا
@@ -48,8 +54,9 @@ class RestrictionController extends Controller
         if ($request->sub_account_debit_id == $request->sub_account_Credit_id) {
             return response()->json(['success' => 'يجب عدم تساوي الحسابات الفرعية المدين والدائن.']);
         }
-
-        // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
+        if(!$dailyPageId)
+        {
+            // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
         $today = Carbon::now()->toDateString();
         $dailyPage = GeneralJournal::whereDate('created_at', $today)->latest()->first();
 
@@ -60,8 +67,10 @@ class RestrictionController extends Controller
                 'accounting_period_id'=>$accountingPeriod->accounting_period_id,
             ]);
         }
+        }
+     
         // حفظ القيد اليومي
-        $dailyEntrie = new DailyEntrie();
+        // $dailyEntrie = new DailyEntrie();
         if ($request->Invoice_type) {
             $transactionType = TransactionType::fromValue($request->Invoice_type);
             if ($transactionType) {
@@ -98,75 +107,38 @@ if (!$invoices) {
     throw new \Exception('الفاتورة غير موجودة.');
 }
 }
+$mainc=MainAccount::all();
+$suba=SubAccount::all();
+// // إنشاء القيد اليومي
+$dailyEntrie = DailyEntrie::updateOrCreate(
+    [
+        'entrie_id'=>$request->entrie_id ,
+        'accounting_period_id' => $accountingPeriod->accounting_period_id,
+        
+    ],
+    [
+        'Daily_page_id' => $dailyPage->page_id ??$dailyPageId->Daily_page_id,
+        'daily_entries_type' =>$invoice_type ?? $Payment_type,
+        'Invoice_id' =>  $Invoice_id??null,
+        'account_debit_id' => $validated['sub_account_debit_id'],
+        'Amount_Credit' => $Amount_debit,
+        'Amount_debit' =>  $Amount_debit ,
+        'account_Credit_id' => $validated['sub_account_Credit_id'],
+        'Statement' => $validated['Statement']  ?? "قيد يومي",
+        'Invoice_type' => $request->payment_type ,
+        'Currency_name' => $validated['Currency_name'],
+        'User_id' =>$validated['User_id'],
+        'status_debit' => 'غير مرحل',
+        'status' => 'غير مرحل',
+    ]
+);
+// return view('daily_restrictions.show',['daily'=>$dailyEntrie,'mainc'=>$mainc,'suba'=>$suba]);
 
-// إنشاء القيد اليومي
-$dailyEntrie->Invoice_type =$request->payment_type ;
-$dailyEntrie->Invoice_id = $Invoice_id??null;
-$dailyEntrie->account_debit_id = $validated['sub_account_debit_id'];
-$dailyEntrie->Amount_debit = $Amount_debit;
-$dailyEntrie->account_Credit_id = $validated['sub_account_Credit_id'];
-$dailyEntrie->Amount_Credit = $Amount_debit; // هل المدين يساوي الدائن دائماً؟
-$dailyEntrie->Statement = $validated['Statement'];
-$dailyEntrie->Currency_name = $validated['Currency_name'];
-$dailyEntrie->accounting_period_id = $accountingPeriod->accounting_period_id;
-$dailyEntrie->Daily_page_id = $dailyPage->page_id;
-$dailyEntrie->User_id = $validated['User_id'];
-$dailyEntrie->daily_entries_type = $invoice_type ?? $Payment_type;
-
-// حفظ القيد
-$dailyEntrie->save();
-
-        return response()->json(['success' => 'تم حفظ القيد بنجاح']);
+        return response()->json(['success' => 'تم حفظ القيد بنجاح','entrie_id'=>$dailyEntrie->entrie_id]);
     }
     public function saveAndPrint(Request $request)
     {
-        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
-
-        // $mainAccount=MainAccount::all();
-        // dd($mainAccount);
-        // التحقق من صحة البيانات المدخلة
-        $validated = $request->validate([
-            'sub_account_debit_id' => 'required|integer',
-            'Amount_debit' => 'required|numeric',
-            'account_Credit_id' => 'required|integer',
-            'sub_account_Credit_id' => 'required|integer',
-            'Statement' => 'string',
-            'Currency_name' => 'required|string', // تأكد من استخدام الاسم الصحيح هنا
-            'User_id' => 'required|integer', // تأكد من إضافة User_id إذا كان مطلوباً
-        ]);
-        // التأكد من عدم اختيار حسابين فرعيين متماثلين
-        if ($request->sub_account_debit_id == $request->sub_account_Credit_id) {
-            return response()->json(['success' => 'يجب عدم تساوي الحسابات الفرعية المدين والدائن.']);
-        }
-        $today = Carbon::now()->toDateString();// الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
-        $dailyPage = GeneralJournal::whereDate('created_at', $today)->latest()->first();
-        if (!$dailyPage) {
-            $dailyPage =  GeneralJournal::create([
-                'accounting_period_id'=>$accountingPeriod->accounting_period_id,
-            ]);// إذا لم توجد صفحة، قم بإنشائها
-        }
-        $dailyEntrie = new DailyEntrie();
-        $invoice_type=$request->Invoice_type;
-        $Invoice_num=$request->Invoice_id;
-
-        $dailyEntrie->Invoice_type =$invoice_type ;//+
-        $dailyEntrie->Invoice_id =$Invoice_num ;//+
-    $dailyEntrie->account_debit_id = $validated['sub_account_debit_id'];
-    $dailyEntrie->Amount_debit = $validated['Amount_debit'];
-    $dailyEntrie->account_Credit_id = $validated['sub_account_Credit_id'];
-    $dailyEntrie->Amount_Credit = $validated['Amount_debit'];
-    $dailyEntrie->Statement = $validated['Statement'];
-    $dailyEntrie->Currency_name = $validated['Currency_name']; // استخدم الاسم الصحيح هنا
-    $dailyEntrie->accounting_period_id = $accountingPeriod->accounting_period_id;
-    $dailyEntrie->Daily_page_id = $dailyPage->page_id; // حفظ معرف الصفحة اليومية
-    $dailyEntrie->User_id = $validated['User_id'];
-
-    $dailyEntrie->save();
-    // إرجاع البيانات التي تحتاجها لصفحة الطباعة
-    return response()->json([
-        'success' => 'تم الحفظ بنجاح!',
-        'dailyEntrie' => $dailyEntrie // إرسال القيد اليومي بالكامل
-    ]);
+       
 
     }
 public function stor(Request $request){
@@ -192,7 +164,6 @@ public function stor(Request $request){
             if ($dailyPage) {
                 // إذا تم العثور على الصفحة، عرض رقم الصفحة
                 $generalJournal1=GeneralJournal::where('accounting_period_id',$accountingPeriod->accounting_period_id)->get();
-                
                 $mainAccount=MainAccount::all();
             // dd($generalJournal1);
             $curr=Currency::all();
@@ -217,8 +188,11 @@ public function stor(Request $request){
     }
 
     public function   all_restrictions_show_1()
-    {
-        $pageNums=GeneralJournal::all();
+    {    $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+
+        // $pageNums=GeneralJournal::all();
+        $pageNums=GeneralJournal::where('accounting_period_id',$accountingPeriod->accounting_period_id)->get();
+
         return view('daily_restrictions.all_restrictions_show1',['pagesNum'=>$pageNums,]);
     }
 
@@ -232,15 +206,30 @@ public function stor(Request $request){
 
     public function edit($id)
     {
-        $eail=DailyEntrie::where('entrie_id',$id)->first();
-        $mainAccount=MainAccount::all();
-        $curr=Currency::all();
-        $SubAccount=SubAccount::all();
+        $DailyEntrie=DailyEntrie::where('entrie_id',$id)->first();
+       
+        $Debitsub_account_id=SubAccount::where('sub_account_id',$DailyEntrie->account_debit_id)->first();
+        $Creditsub_account_id=SubAccount::where('sub_account_id',$DailyEntrie->account_Credit_id)->first();
+        $currs=Currency::where('currency_name',$DailyEntrie->Currency_name)->first();
         // الحصول على تاريخ اليوم
         $today = Carbon::now()->toDateString(); // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
-        $dailyPage = GeneralJournal::whereDate('created_at', $today)->first(); // البحث عن الصفحة
-        return view('daily_restrictions.edit',compact('curr','dailyPage','eail','SubAccount'),['mainAccounts'=> $mainAccount,$dailyPage,]);
-    }
+        $dailyPage = GeneralJournal::whereDate('created_at',$today)->first(); // البحث عن الصفحة
+        if ($DailyEntrie) {
+            if($DailyEntrie->daily_entries_type=="رصيد افتتاحي")
+            {
+
+                return back();
+
+            }
+        }
+        return view('daily_restrictions.create', [
+            'DailyEntrie' => $DailyEntrie ,
+            'sub_account_debit' => $Debitsub_account_id,
+            'sub_account_Credit' => $Creditsub_account_id,
+            'currs' => $currs,
+            'submitButton' => 'تعديل القيد',
+        ]);  
+         }
 
     public function update(Request $request,$id){
         $today = Carbon::now()->toDateString();

@@ -33,11 +33,24 @@
             </div>
             <div class="mb-2">
                 <label class="labelSale" for="debtor_amount">رصيد افتتاحي مدين (اخذ)</label>
-                <input value="{{$SubAccount->sub_name}}" name="debtor_amount" class="inputSale input-field" id="debtor_amount" type="number" placeholder="0"/>
+                <input value="{{$Getentrie_id->Amount_debit ??0 }}" name="debtor_amount" class="inputSale input-field" id="debtor_amount" type="number" placeholder="0"/>
             </div>
             <div class="mb-2">
                 <label class="labelSale" for="creditor_amount">رصيد افتتاحي دائن (عاطي)</label>
-                <input value="{{$SubAccount->sub_name}}" name="creditor_amount" class="inputSale input-field" id="creditor_amount" type="number" placeholder="0"/>
+                <input value="{{$Getentrie_id->Amount_Credit  ??0}}" name="creditor_amount" class="inputSale input-field" id="creditor_amount" type="number" placeholder="0"/>
+            </div>
+            <div class="mb-2">
+                <label for="Phone" class="labelSale">رقم التلفون</label>
+                <input type="number" value="{{$SubAccount->Phone ?? null}}" name="Phone" id="Phone" class="input-field inputSale" />
+            </div>
+            <div class="mb-2">
+                <label for="name_The_known" class="labelSale">العنوان</label>
+                <input type="text" name="name_The_known" id="name_The_known" value="{{$SubAccount->name_The_known ?? null}}" class="input-field inputSale" />
+            </div>
+           
+            <div class="mb-2">
+                <label for="entrie_id"   class="labelSale">رقم الحساب</label>
+                <input type="text" value="{{$Getentrie_id->entrie_id ?? null}}" disabled name="entrie_id" id="entrie_id" class="input-field inputSale" />
             </div>
         </div>
         @auth

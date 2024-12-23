@@ -171,7 +171,7 @@ class LocksFinancialPeriodsController extends Controller
                         'account_Credit_id' => $subAccount->sub_account_id,
                         'Statement' => ' رصيد افتتاحي  ',
                         'Daily_page_id' => $dailyPage->page_id,
-                        'Currency_name' => 'ر',
+                        'Currency_name' => 'Y',
                         'User_id' => auth()->id(),
                         'Invoice_type' => 1,
                         'accounting_period_id' => $accountingPeriod->accounting_period_id,
