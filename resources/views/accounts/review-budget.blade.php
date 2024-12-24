@@ -21,7 +21,7 @@
 
         <!-- جدول الأصول -->
         <div class="overflow-x-auto mx-auto px-1">
-            <div class="max-w-7xl mx-auto h-screen overflow-auto">
+            <div class=" min-w-full shadow rounded-lg   overflow-y-auto max-h-[80vh] text-sm ">
 
                 <table class="min-w-full border-collapse border border-gray-200">
                     <thead class="bg-[#2430d3] text-white">
@@ -77,7 +77,7 @@
                                     <!-- الحسابات الفرعية -->
                                     <tr id="subAccounts-{{ $mainAccount->main_account_id }}" class="hidden">
                                         <td colspan="5">
-                                            <div class="bg-gray-50 p-4">
+                                            <div class="bg-gray-50 p-4 overflow-y-auto max-h-[80vh]">
                                                 <table class="min-w-full bg-white rounded-lg shadow-md">
                                                     <thead>
                                                         <tr>
@@ -156,7 +156,7 @@
 
         <!-- جدول الخصوم -->
         <div class="overflow-x-auto mx-auto px-1">
-            <div class=" min-w-full shadow rounded-lg  overflow-x-auto overflow-y-auto text-sm ">
+            <div class=" min-w-full shadow rounded-lg   overflow-y-auto max-h-[80vh] text-sm ">
 
                 <table class="min-w-full bg-white text-sm">
                     <thead class="bg-[#2430d3] text-white">
@@ -218,7 +218,7 @@
                                     <!-- الحسابات الفرعية -->
                                     <tr id="subAccounts-{{ $mainAccount->main_account_id }}" class="hidden">
                                         <td colspan="5">
-                                            <div class="bg-gray-50 p-4">
+                                            <div class="bg-gray-50 p-4 overflow-y-auto max-h-[80vh]">
                                                 <table class="min-w-full bg-white rounded-lg shadow-md">
                                                     <thead>
                                                         <tr>
@@ -260,7 +260,7 @@
                     </tbody>
                 </table>
                 @endif
-
+            </div>
                 <!-- عرض مجموع الفروقات -->
                  <div class="grid gap-4 mb-4 grid-cols-2">
                     @if ($totalCredit2 >0)
@@ -292,7 +292,7 @@
                     </div>
                     @endif
                 </div>
-            </div>
+
         </div>
     </div>
 <script>
