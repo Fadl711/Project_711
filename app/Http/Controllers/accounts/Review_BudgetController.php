@@ -63,7 +63,9 @@ class Review_BudgetController extends Controller
                 $carry['totalCredit'] += $creditSum;
             } elseif ($mainAccount->typeAccount == 3) {
                 $carry['totalDebit2'] += $debitSum;
-                $carry['totalCredit2'] += $creditSum;
+                
+                // $carry['totalCredit2'] += $creditSum;
+                $carry['totalCredit2'] += $creditSum+$debitSum;
             }
     
             return $carry;
