@@ -278,7 +278,7 @@ Route::get('/get-options', [AccountCoctroller::class, 'show_all_accounts']);
 
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/', function () {
+    Route::get('/home', function () {
         return redirect()->route('home.index');
     });
 

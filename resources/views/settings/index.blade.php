@@ -61,7 +61,7 @@
                 </span>
                 <span>العميل الافتراضي</span>
             </a>
-            <a href="{{route('warehouse.index')}}" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+{{--             <a href="{{route('warehouse.index')}}" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
                 <span class="mr-3">
                     <!-- Visual Look Icon -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -69,7 +69,7 @@
                     </svg>
                 </span>
                 <span>المخازن</span>
-            </a>
+            </a> --}}
             <a href="{{route('transfer_restrictions.create')}}" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
                 <span class="mr-3">
                     <!-- Embed Icon -->
@@ -79,7 +79,7 @@
                 </span>
                 <span>الترحيل القيود </span>
             </a>
-            <a href="#" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+{{--             <a href="#" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
                 <span class="mr-3">
                     <!-- Add-ons Icon -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -87,9 +87,9 @@
                     </svg>
                 </span>
                 <span>Add-ons</span>
-            </a>
+            </a> --}}
             <hr class="my-2 border-gray-300">
-            <a href="#" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+{{--             <a href="#" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
                 <span class="mr-3">
                     <!-- Settings Icon -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -97,8 +97,11 @@
                     </svg>
                 </span>
                 <span>Settings</span>
-            </a>
-                <button  class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded" id="executeBtn">نسخ احتياطي للبيانات</button>
+            </a> --}}
+                <button  class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded" id="executeBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 1v3M8.5 2.5l2 2M1 12h3m16 0h3m-9 7l2 2M6.5 21.5l2-2M21 12l2-2M6 9h12v6H6V9z" />
+                    </svg>نسخ احتياطي للبيانات</button>
 
 
         </nav>
