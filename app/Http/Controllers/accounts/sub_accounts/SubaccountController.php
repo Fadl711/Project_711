@@ -98,8 +98,7 @@ class SubaccountController extends Controller
     }
     public function update(Request $request){
         $transaction_type="رصيد افتتاحي";
-        $SubAccount = SubAccount::where('sub_account_id', $request->sub_id)->firstOrFail();
-SubAccount::where('sub_account_id',$request->sub_id)->update([
+        SubAccount::where('sub_account_id',$request->sub_id)->update([
             'sub_name'=>$request->sub_name,
             'Main_id'=>$request->Main_id,
             'User_id'=>$request->User_id,
@@ -107,8 +106,9 @@ SubAccount::where('sub_account_id',$request->sub_id)->update([
             'creditor_amount'=>$request->creditor_amount,
             'Phone' =>$request->Phone ,
             'name_The_known' =>$request->name_The_known ,
-
+            
         ]);
+        $SubAccount = SubAccount::where('sub_account_id', $request->sub_id)->first();
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
 
 
@@ -121,10 +121,7 @@ SubAccount::where('sub_account_id',$request->sub_id)->update([
                 'Amount_debit' => $SubAccount->debtor_amount,
                 'Amount_Credit' => $SubAccount->creditor_amount,
             ]);
-            // DailyEntrie::updateOrCreate(
-            //     ['entrie_id' => $Getentrie_id],
-            //     $dataDailyEntrie
-            // );
+
         }
 
 

@@ -14,7 +14,7 @@
         <!-- Scripts -->
         <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
     </head>
-    <body class="font-sans text-gray-900 antialiased">
+    <body class=" text-gray-900 ">
         <nav x-data="{ open: false }" class="bg-slate-100 border-b border-gray-100">
             <!-- Primary Navigation Menu -->
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

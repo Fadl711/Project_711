@@ -162,7 +162,7 @@ $DataSubAccount = SubAccount::firstOrCreate(
 );
 
 // تحقق مما إذا تم حفظ الكائن بنجاح
-if ($DataSubAccount->debtor_amount>0 || $DataSubAccount->creditor_amount>0) {
+if ($DataSubAccount->debtor_amount!=0 || $DataSubAccount->creditor_amount!=0) {
     $DSubAccount = SubAccount::where('sub_account_id', $DataSubAccount->sub_account_id)->first();
         $today = Carbon::now()->toDateString();
         $dailyPage = GeneralJournal::whereDate('created_at', $today)->latest()->first();

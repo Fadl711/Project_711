@@ -348,56 +348,40 @@ public function search(Request $request)
         return response()->json(['success' => false, 'message' => 'المنتج غير موجود'], 404);
     }
 
-// استعلام لجمع كميات المشتريات
-$purchases = Purchase::select('product_id', 'warehouse_to_id', DB::raw('SUM(quantity) as total_quantity'))
-    ->where('product_id', $product_id)
-    ->where('warehouse_to_id', $warehouse_to_id)
-    ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-    ->whereIn('transaction_type', [1, 6, 3,7])
-    ->groupBy('product_id', 'warehouse_to_id');
-    
+ $purchaseToQuantity = Purchase::where('product_id', $id)
+->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+->where('warehouse_to_id', $warehouse_to_id)
+->whereIn('transaction_type', [1, 6, 3,7])
+->sum('quantity');
 
-// استعلام لجمع كميات المرتجعات من المشتريات
-$purchasesReturn = Purchase::select('product_id', 'warehouse_to_id', DB::raw('SUM(quantity) as totalquantity'))
-    ->where('product_id', $product_id)
-    ->where('warehouse_to_id', $warehouse_to_id)
+$warehouseFromQuantity = Purchase::where('product_id', $id)
+    ->where('warehouse_from_id', $warehouse_to_id)
     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
     ->where('transaction_type', 2)
-    ->groupBy('product_id', 'warehouse_to_id');
-
-// جمع الكمية من المخزن المحدد
-$warehouseFromQuantity3 = Purchase::where('product_id', $product_id)
+    ->sum('quantity');
+   
+$warehouseFromQuantity3 = Purchase::where('product_id', $id)
     ->where('warehouse_from_id', $warehouse_to_id)
     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
     ->where('transaction_type', 3)
     ->sum('quantity');
-// استعلام لجمع كميات المرتجعات من المبيعات
-$saleReturn = Sale::select('product_id', 'warehouse_to_id', DB::raw('SUM(quantity) as total_quantity'))
-    ->where('product_id', $product_id)
+
+$saleQuantity5 = Sale::where('product_id', $id)
     ->where('warehouse_to_id', $warehouse_to_id)
     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
     ->where('transaction_type', 5)
-    ->groupBy('product_id', 'warehouse_to_id');
+    ->sum('quantity');
 
-// استعلام لجمع كميات المبيعات
-$sales = Sale::select('product_id', 'warehouse_to_id', DB::raw('SUM(quantity) as totalquantity'))
-    ->where('product_id', $product_id)
+$saleQuantity4 = Sale::where('product_id', $id)
     ->where('warehouse_to_id', $warehouse_to_id)
     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
     ->where('transaction_type', 4)
-    ->groupBy('product_id', 'warehouse_to_id');
+    ->sum('quantity');
+   
 
-// دمج كميات المشتريات مع كميات المرتجعات من المبيعات
-$purchasesSummary = $purchases->union($saleReturn)->get();
-// حساب إجمالي الكميات
-$totalQuantity = $purchasesSummary->sum('total_quantity');
+$productPurchase =( $purchaseToQuantity+$saleQuantity5 )- $warehouseFromQuantity - $warehouseFromQuantity3- $saleQuantity4 ;
 
-// دمج كميات المبيعات مع كميات المرتجعات من المشتريات
-$purchasesReturnEndSalesSummary = $sales->union($purchasesReturn)->get();
-$purchasesReturnEndSales = $purchasesReturnEndSalesSummary->sum('totalquantity');
-
-// حساب الكمية النهائية للمنتج
-$productPurchase = $totalQuantity - $warehouseFromQuantity3 - $purchasesReturnEndSales;
+// $productPurchase = $totalQuantity - $warehouseFromQuantity3 - $purchasesReturnEndSales;
             // تخزين البيانات في مصفوفة
        
  $categories = Category::where('product_id', $id)
