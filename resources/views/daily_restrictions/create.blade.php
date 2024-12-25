@@ -184,7 +184,7 @@ required>
             <div>
                 <label for="entrie_id" class="block font-medium mb-2">رقم القيد</label>
                 <input name="entrie_id" id="entrie_id" type="number"  
-                class=" inputSale input-field" placeholder="أدخل المبلغ"
+                class=" inputSale input-field"
                 @isset($DailyEntrie->entrie_id)    
                 value="{{$DailyEntrie->entrie_id}}"                
                 @endisset >
