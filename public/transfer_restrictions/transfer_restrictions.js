@@ -2,7 +2,7 @@
 $('#main_account_id').on('change', function() {
     const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي (المدين)
 
-    if (mainAccountId !== null && mainAccountId !== '') {    
+    if (mainAccountId !== null && mainAccountId !== '') {
         // طلب AJAX لجلب الحسابات الفرعية بناءً على الحساب الرئيسي
         SubAccount(mainAccountId);
     }
@@ -14,9 +14,9 @@ function SubAccount(mainAccountId) {
     const the_way_of_deportation1 = $('#the_way_of_deportation1');
     // تفريغ القائمة الفرعية
     $('#sub_account_id').empty();
-    
+
     $.ajax({
-        url: `/main-accounts/${mainAccountId}/sub-accounts`, // استخدام القيم الديناميكية
+        url: "{{ url('/main-accounts/') }}/" + mainAccountId + "/sub-accounts", // استخدام القيم الديناميكية
         type: 'GET',
         dataType: 'json',
         success: function(data) {

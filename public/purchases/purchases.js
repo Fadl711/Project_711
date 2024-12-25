@@ -74,13 +74,13 @@ function showAccounts(mainAccountId2,mainAccountId1)
          var  sub_account_debit_id= $('#Supplier_id');
         }
     if (mainAccountId!==null) {
-        
+
         $.ajax({
-            url: `/main-accounts/${mainAccountId}/sub-accounts`, // استخدام القيم الديناميكية
-            
+            url: "{{ url('/main-accounts/') }}/" + mainAccountId + "/sub-accounts", // استخدام القيم الديناميكية
+
             type: 'GET',
             dataType: 'json',
-            
+
             success: function(data) {
                 sub_account_debit_id.empty();
           const  subAccountOptions = data.map(subAccount =>
@@ -90,7 +90,7 @@ function showAccounts(mainAccountId2,mainAccountId1)
         // إضافة الخيارات الجديدة إلى القائمة الفرعية
         sub_account_debit_id.append(subAccountOptions);
         sub_account_debit_id.select2('destroy').select2();
-        
+
         // إعادة تهيئة Select2 بعد إضافة الخيارات
     },
         error: function(xhr) {

@@ -27,12 +27,12 @@
             @foreach ($PaymentType as $index => $item)
 <div class="flex">
 <label for="" class="labelSale">{{$item->label()}}</label>
-<input type="radio" name="payment_type" value="{{$item->value}}" 
+<input type="radio" name="payment_type" value="{{$item->value}}"
     {{ $index === 0 ? 'checked' : '' }} required>
 </div>
 @endforeach
 
-            
+
         </div>
     </div>
   <div class="flex container  shadow-md py-4 px-2 bg-white">
@@ -160,7 +160,7 @@
     if (mainAccountId) {
         // طلب AJAX لجلب الحسابات الفرعية بناءً على الحساب الرئيسي
         $.ajax({
-            url: `/main-accounts/${mainAccountId}/sub-accounts`, // استخدام القيم الديناميكية
+            url: "{{ url('/main-accounts/') }}/" + mainAccountId + "/sub-accounts", // استخدام القيم الديناميكية
             type: 'GET',
             dataType: 'json',
             success: function(data) {
@@ -195,7 +195,7 @@
     if (mainAccountId) {
         // طلب AJAX لجلب الحسابات الفرعية بناءً على الحساب الرئيسي
         $.ajax({
-            url: `/main-accounts/${mainAccountId}/sub-accounts`, // استخدام القيم الديناميكية
+            url: "{{ url('/main-accounts/') }}/" + mainAccountId + "/sub-accounts", // استخدام القيم الديناميكية
             type: 'GET',
             dataType: 'json',
             success: function(data) {

@@ -3,8 +3,8 @@
 <div id="successAlert" style="display: none" class=" fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
     <p></p>
   </div>
-  
-  
+
+
   <form method="POST" id="Receip">
     @csrf
     <div class="flex gap-4">
@@ -14,18 +14,18 @@
                     <label for="payment_type_{{ $index }}" class="labelSale">
                         {{ $item->label() }}
                     </label>
-                    <input 
-                        type="radio" 
-                        name="payment_type" 
-                        id="payment_type_{{ $index }}" 
-                        value="{{ $item->value }}" 
-                        {{ isset($ExchangeBond->payment_type) && $ExchangeBond->payment_type == $item->value ? 'checked' : ($index === 0 ? 'checked' : '') }} 
+                    <input
+                        type="radio"
+                        name="payment_type"
+                        id="payment_type_{{ $index }}"
+                        value="{{ $item->value }}"
+                        {{ isset($ExchangeBond->payment_type) && $ExchangeBond->payment_type == $item->value ? 'checked' : ($index === 0 ? 'checked' : '') }}
                         required
                     >
                 </div>
             @endforeach
         </div>
-        
+
         </div>
     </div>
     <div class="overflow-y-auto max-h-[80vh] bg-white px-4 py-1 rounded-lg shadow-md">
@@ -43,16 +43,16 @@
             </div>
             <div class="text-center">
                 <label for="date" class="text-center">التاريخ</label>
-                <input 
-                    name="date" 
-                    type="date" 
-                    class="inputSale" 
+                <input
+                    name="date"
+                    type="date"
+                    class="inputSale"
                     @isset($ExchangeBond->created_at)
                         value="{{ \Carbon\Carbon::parse($ExchangeBond->created_at)->format('Y-m-d') }}"
-                    @endisset 
+                    @endisset
                 >
             </div>
-            
+
        </div>
         <div class="text-gray-700  px-2">
 
@@ -77,7 +77,7 @@
                            @endisset
                         </select>
                        </div>
-                       
+
 
                 <div class="">
                 <label for="Amount_debit" class=" text-center " >المبلغ </label>
@@ -131,7 +131,7 @@
                      @foreach ($mainAccounts as $mainAccount)
                           <option @isset($ExchangeBond->Main_Credit_account_id)
                                @selected($ExchangeBond->Main_Credit_account_id==$mainAccount->main_account_id) value="{{$mainAccount['main_account_id']}}"
-  
+
                           @endisset value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
                      @endforeach
                      @endisset
@@ -145,15 +145,15 @@
                     </select>
                 </li>
                 <li class="text-center">
-                    <textarea 
-                        class="inputSale" 
-                        name="Statement" 
-                        id="Statement" 
-                        cols="30" 
+                    <textarea
+                        class="inputSale"
+                        name="Statement"
+                        id="Statement"
+                        cols="30"
                         rows="3"
                     >@isset($ExchangeBond->Statement){{ $ExchangeBond->Statement }}@endisset</textarea>
                 </li>
-                
+
             </ul>
         </li>
      </ul>
@@ -162,7 +162,7 @@
 <div class="flex  py-4 ">
     <div class="mx-10"  >
         <input type="submit" id="submitButton"  @isset($submitButton) value="{{ $submitButton }}" @endisset class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"  value="حفظ" >
-       
+
         </div>
 {{--         <div class="mx-10" id="newInvoice" >
             <button type="button"  class="text-purple-700 hover:text-white border border-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-purple-400 dark:text-purple-400 dark:hover:text-white dark:hover:bg-purple-500 dark:focus:ring-purple-900">
@@ -178,20 +178,20 @@
     <input type="hidden" name="daily_entries_type" value="سند قبض">
 
 
-   
-   
+
+
 </div>
 @auth
     <input type="hidden" name="User_id" value="{{ Auth::user()->id }}">
     @endauth
-   
+
 </form>
 </div>
 
 <script>
 
   $(document).ready(function() {
-  
+
     $('#Amount_debit').on('input', function() {
         let value = $(this).val();
         // إزالة أي شيء ليس رقماً أو فاصلة عشرية
@@ -201,7 +201,7 @@
         if (parts.length > 2) {
             value = parts[0] + '.' + parts.slice(1).join('');
         }
-        // إضافة الفاصلة بعد كل ثلاثة أرقام (فصل الآلاف) 
+        // إضافة الفاصلة بعد كل ثلاثة أرقام (فصل الآلاف)
         if (value) {
             let [integer, decimal] = value.split('.');
             integer = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ",");  // إضافة الفواصل بين الآلاف
@@ -222,7 +222,7 @@
     if (mainAccountId) {
         // طلب AJAX لجلب الحسابات الفرعية بناءً على الحساب الرئيسي
         $.ajax({
-            url: `/main-accounts/${mainAccountId}/sub-accounts`, // استخدام القيم الديناميكية
+            url: "{{ url('/main-accounts/') }}/" + mainAccountId + "/sub-accounts", // استخدام القيم الديناميكية
             type: 'GET',
             dataType: 'json',
             success: function(data) {
@@ -257,7 +257,7 @@
     if (mainAccountId) {
         // طلب AJAX لجلب الحسابات الفرعية بناءً على الحساب الرئيسي
         $.ajax({
-            url: `/main-accounts/${mainAccountId}/sub-accounts`, // استخدام القيم الديناميكية
+            url:"{{ url('/main-accounts/') }}/" + mainAccountId + "/sub-accounts", // استخدام القيم الديناميكية
             type: 'GET',
             dataType: 'json',
             success: function(data) {
@@ -283,7 +283,7 @@
 
 
 $(document).ready(function() {
-    
+
     $('#submitButton').click(function(event) {
         event.preventDefault();
         var buttonValue = $(this).val(); // الحصول على قيمة الزر الذي تم الضغط عليه
@@ -295,9 +295,9 @@ $(document).ready(function() {
         $.ajax({
             url: '{{ route("Receip.store") }}',
             method: 'POST',
-            
+
             data: formData,
-        
+
             success: function(response) {
                 if (response.error) {
                     // عرض رسالة الخطأ
@@ -319,7 +319,7 @@ $(document).ready(function() {
                     var invoiceField = response.payment_bond_id;
                     const url = `{{ route('receip.print', ':invoiceField') }}`.replace(':invoiceField', invoiceField);
                             window.open(url, '_blank', 'width=600,height=800'); // فتح الرابط في نافذة جديدة
-                      
+
                             window.location.href = '{{ route("Receip.create") }}';  // توجيه المستخدم إلى صفحة "إنشاء"
 
                 }

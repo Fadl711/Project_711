@@ -140,7 +140,7 @@
     if (mainAccountId) {
         // طلب AJAX لجلب الحسابات الفرعية بناءً على الحساب الرئيسي
         $.ajax({
-            url: `/main-accounts/${mainAccountId}/sub-accounts`, // استخدام القيم الديناميكية
+            url: "{{ url('/main-accounts/') }}/" + mainAccountId + "/sub-accounts", // استخدام القيم الديناميكية
             type: 'GET',
             dataType: 'json',
             success: function(data) {
@@ -175,7 +175,7 @@
     if (mainAccountId) {
         // طلب AJAX لجلب الحسابات الفرعية بناءً على الحساب الرئيسي
         $.ajax({
-            url: `/main-accounts/${mainAccountId}/sub-accounts`, // استخدام القيم الديناميكية
+            url:"{{ url('/main-accounts/') }}/" + mainAccountId + "/sub-accounts", // استخدام القيم الديناميكية
             type: 'GET',
             dataType: 'json',
             success: function(data) {
