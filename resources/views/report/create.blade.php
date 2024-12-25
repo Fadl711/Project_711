@@ -31,7 +31,7 @@
             <select name="main_account_debit_id" id="main_account_debit_id" class="input-field select2 inputSale" required>
                 <option value="" selected>اختر الحساب</option>
                 @isset($MainAccounts)
-                    
+
                 @foreach($MainAccounts as $mainAccount)
                     <option value="{{ $mainAccount->main_account_id }}">
                         {{ $mainAccount->account_name }}-{{ $mainAccount->main_account_id }}
@@ -51,10 +51,10 @@
         <div class="gap-2 grid grid-cols-2">
             @foreach(['mainAccount' => 'الحساب الرئيسي', 'subAccount' => 'الحساب الفرعي'] as $key => $label)
             <div class="flex">
-                <input 
-                    type="radio" 
-                    name="account-list-radio" 
-                    value="{{ $key }}" 
+                <input
+                    type="radio"
+                    name="account-list-radio"
+                    value="{{ $key }}"
                     class="mr-2"
                     {{ (old('account-list-radio', $selectedAccountListRadio ?? 'subAccount') === $key) ? 'checked' : '' }}>
                 <label class="labelSale">{{ $label }}</label>
@@ -62,7 +62,7 @@
         @endforeach
         <div class="">
             <label for="Quantit" class="labelSale"> نوع التقرير</label>
-            
+
             <select name="list" id="list" class="input-field select2 inputSale" required>
                 <option value="" selected>اختر نوع التقرير</option>
                 @foreach([
@@ -72,29 +72,29 @@
                   'FullDisclosureOfAccounts' => ' كشف كلي للحسابات ',
                   'Disclosure_of_all_sub_accounts_after_migration' => 'كشف كلي الحسابات الفرعية بعد الترحيل',
                   'Full_disclosure_of_accounts_after_migration' => 'كشف  كلي للحسابات  بعد الترحيل',
-                
-                 ] 
+
+                 ]
                 as $key => $label)
                 <option value="{{ $key }}" > {{ $label }}</option>
                 @endforeach
             </select>
-  
-  
+
+
         </div>
             {{-- <div class="flex ">
-                <input type="radio" name="list" value="summary" class="mr-2">  
+                <input type="radio" name="list" value="summary" class="mr-2">
                 <label for="" class="labelSale"> كشف كلي</label>
             </div>
             <div class="flex ">
-                <input type="radio" name="list" value="detail" checked class="mr-2">  
+                <input type="radio" name="list" value="detail" checked class="mr-2">
                 <label for="" class="labelSale  ">  كشف تحليلي</label>
             </div>
             <div class="flex ">
-                <input type="radio" name="list" value="FullDisclosureOfSubAccounts" class="mr-2">  
+                <input type="radio" name="list" value="FullDisclosureOfSubAccounts" class="mr-2">
                 <label for="" class="labelSale"> كشف كلي للحسابات الفرعية</label>
             </div>
             <div class="flex ">
-                <input type="radio" name="list" value="FullDisclosureOfAccounts" class="mr-2">  
+                <input type="radio" name="list" value="FullDisclosureOfAccounts" class="mr-2">
                 <label for="" class="labelSale"> كشف كلي للحسابات </label>
             </div> --}}
         </div>
@@ -143,10 +143,10 @@ if(accountListRadio=="mainAccount")
     }
 }
 
-    
+
     function openAndPrintInvoice2(e) {
         e.preventDefault(); // منع تحديث الصفحة
-    
+
         const invoiceField = $('#sub_account_debit_id').val();
         if(accountListRadio=="subAccount")
 {
@@ -163,7 +163,7 @@ if(accountListRadio=="mainAccount")
         if (invoiceField) {
             const url = `{{ route('customers.statement', ':invoiceField') }}`
                 .replace(':invoiceField', invoiceField);
-    
+
             const newWindow = window.open(url, '_blank', 'width=800,height=800');
             if (newWindow) {
                 newWindow.onload = function() {
@@ -179,7 +179,7 @@ if(accountListRadio=="mainAccount")
             displayMessage('يرجى تحديد الحساب الفرعي', 'error');
         }
     }
-    
+
     function displayMessage(message, type) {
         const successMessage = $('#successMessage');
         successMessage
@@ -187,15 +187,117 @@ if(accountListRadio=="mainAccount")
             .removeClass()
             .addClass(type === 'error' ? 'text-red-500 font-semibold' : 'text-green-500 font-semibold')
             .fadeIn();
-    
+
         setTimeout(() => {
             successMessage.fadeOut();
         }, 3000);
     }
     </script>
-    
 
-<script src="{{url('purchases/purchases.js')}}"></script>
+
 <script src="{{ url('purchases.js') }}"></script>
+<script >
+
+
+$('#main_account_debit_id ,#financial_account_id_main').on('change', function() {
+    const mainAccountId2 = $(this).val(); // الحصول على ID الحساب الرئيسي
+    showAccounts(mainAccountId2,null);
+    setTimeout(() => {
+        $('#main_account_debit_id').select2('close'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
+        $('#financial_account_id_main').select2('close'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
+        $('#sub_account_debit_id').select2('open');
+        $('#financial_account_id').select2('open');
+    }, 1000);
+
+});
+$('#mainaccount_debit_id,#financial_account_id_main').on('change', function() {
+    const mainAccountId1 = $(this).val(); // الحصول على ID الحساب الرئيسي
+    showAccounts(null,mainAccountId1);
+    setTimeout(() => {
+        $('#mainaccount_debit_id').select2('close'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
+        $('#Supplier_id').select2('open');
+    }, 1000);
+
+});
+
+
+// دالة لجلب معلومات المنتج بناءً على التصنيف
+function GetProduct(CategorieId) {
+    const SellingPriceInput = $('#Selling_price'); // حقل سعر البيع
+    const QuantityCategorie = $('#QuantityCategorie'); // حقل سعر البيع
+
+    if (!CategorieId) {
+        alert('يرجى اختيار التصنيف.');
+        return;
+    }
+
+    // إرسال طلب AJAX إذا كان التصنيف صالحًا
+    $.ajax({
+        url: `/GetProduct/${CategorieId}/price`, // رابط API ديناميكي
+        type: 'GET',
+        dataType: 'json',
+        success: function (response) {
+            // التحقق إذا كانت البيانات تحتوي على سعر البيع
+            if (response.Selling_price) {
+                SellingPriceInput.val(response.Selling_price); // تحديث حقل سعر البيع
+                QuantityCategorie.val(response.Quantityprice); // تحديث حقل سعر البيع
+            } else {
+                SellingPriceInput.val(''); // إفراغ الحقل إذا لم تتوفر قيمة
+                alert('سعر البيع غير متوفر.');
+            }
+            $('#Supplier_id').select2('open');
+
+        },
+        error: function (xhr) {
+            // التعامل مع الأخطاء
+            console.error('حدث خطأ أثناء جلب بيانات المنتج:', xhr.responseText);
+
+            // تنبيه المستخدم بخطأ واضح
+            alert('حدث خطأ أثناء جلب سعر المنتج. يرجى المحاولة لاحقًا.');
+        }
+    });
+}
+
+function showAccounts(mainAccountId2,mainAccountId1)
+{
+    var mainAccountId=null;
+    if(mainAccountId2)
+    {
+       var mainAccountId=mainAccountId2;
+     var  sub_account_debit_id= $('#sub_account_debit_id,#financial_account_id');
+     mainAccountId1=null;
+    }
+    if(mainAccountId1)
+        {
+           var mainAccountId=mainAccountId1;
+         var  sub_account_debit_id= $('#Supplier_id');
+        }
+    if (mainAccountId) {
+
+        $.ajax({
+            url: "{{ url('/main-accounts/') }}/" + mainAccountId + "/sub-accounts", // استخدام القيم الديناميكية
+            type: 'GET',
+            dataType: 'json',
+
+            success: function(data) {
+                sub_account_debit_id.empty();
+          const  subAccountOptions = data.map(subAccount =>
+                `<option value="${subAccount.sub_account_id}">${subAccount.sub_name}</option>`
+            ).join('');
+
+        // إضافة الخيارات الجديدة إلى القائمة الفرعية
+        sub_account_debit_id.append(subAccountOptions);
+        sub_account_debit_id.select2('destroy').select2();
+
+        // إعادة تهيئة Select2 بعد إضافة الخيارات
+    },
+        error: function(xhr) {
+            console.error('حدث خطأ في الحصول على الحسابات الفرعية.');
+        }
+    });
+};
+}
+
+</script>
 
 @endsection
