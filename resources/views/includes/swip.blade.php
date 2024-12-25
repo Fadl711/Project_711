@@ -28,21 +28,7 @@
                           </svg>
                            <span class="textNav mr-1"> القيود</span>
                     </a></li>
-                <li class="">
-                    <a
-                    href="{{ route('login') }}"
-                    class="rounded-md px-3 py-2 text-white ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white">
-تسجيل 
-                </a>       
-               </li>
-                <li class="">
-                    <a
-                    href="{{ route('register') }}"
-                    class="rounded-md px-3 py-2 text-white ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
-                >
-                    Register
-                </a>     
-               </li>
+
                 <li class="">
                     <a class="NavTagA" href="{{route('bonds.index')}}">
                         <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
