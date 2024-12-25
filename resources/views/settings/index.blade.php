@@ -113,7 +113,7 @@
 <script>
     $('#executeBtn').click(function () {
         $.ajax({
-            url: '/execute-command',
+            url: "{{route('executeC')}}",
             type: 'POST',
             headers: {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'

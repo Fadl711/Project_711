@@ -8,6 +8,7 @@ use App\Http\Controllers\Accounts\main_accounts\MainaccountController;
 use App\Http\Controllers\accounts\Review_BudgetController;
 use App\Http\Controllers\Accounts\sub_accounts\SubaccountController;
 use App\Http\Controllers\accounts\TreeAccountController;
+use App\Http\Controllers\ArtController;
 use App\Http\Controllers\bondController\BondController;
 use App\Http\Controllers\bondController\exchangeController\ExchangeController;
 use App\Http\Controllers\bondController\receipController\All_Receipt_BondController;
@@ -286,10 +287,10 @@ Route::middleware(['auth'])->group(function () {
 
 });
 
-Route::post('/execute-command', function () {
-    Artisan::call('db:backup');
-    return response()->json(['message' => 'تم تنفيذ الأمر بنجاح']);
-});
+Route::post('/executeC', [ArtController::class,'index'])->name('executeC');
+
+
+
 Route::get('/suppliers', [SupplierCoctroller::class, 'index'])->name('suppliers.index');
 
 
