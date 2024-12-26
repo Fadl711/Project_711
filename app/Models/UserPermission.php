@@ -8,6 +8,18 @@ use Spatie\Permission\Traits\HasRoles;
 
 class UserPermission extends Model
 {
-    use HasRoles;
-    
+    use HasFactory;
+    protected $table = 'user_permissions';
+    protected $fillable  = [
+        'Readability',
+        'Writing_ability',
+        'Ability_modify',
+        'Deletion_authority',
+        'User_id',
+    ];
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }

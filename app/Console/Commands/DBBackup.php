@@ -2,18 +2,12 @@
 
 namespace App\Console\Commands;
 
-use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class DBBackup extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'db:backup';
+    protected $signature = 'db:backup {path}';
 
     /**
      * The console command description.
@@ -27,10 +21,26 @@ class DBBackup extends Command
      */
     public function handle()
     {
+        $path = $this->argument('path');
+
+        // تحقق من أن المسار ليس فارغًا
+        if (empty($path)) {
+            $this->error('The path cannot be empty.');
+            return;
+        }
+
         $fileName = Carbon::now()->format('Y_m_d_H_i_s').".sql";
-        $command = "mysqldump --user=".env('DB_USERNAME')." --password=".env('DB_PASSWORD')." --host=".env('DB_HOST')." ".env("DB_DATABASE")." > "."D:/".$fileName;
+        $backupPath = rtrim($path, '/'); // إزالة الشرطة المائلة الأخيرة إذا كانت موجودة
+
+        // تحقق من أن المسار صالح
+        if (!is_dir($backupPath) && !mkdir($backupPath, 0755, true)) {
+            $this->error('Invalid path: ' . $backupPath);
+            return;
+        }
+
+        $command = "mysqldump --user=".env('DB_USERNAME')." --password=".env('DB_PASSWORD')." --host=".env('DB_HOST')." ".env("DB_DATABASE")." > ".$backupPath.'/'.$fileName;
         exec($command);
 
-
+        $this->info('Backup completed successfully.');
     }
 }

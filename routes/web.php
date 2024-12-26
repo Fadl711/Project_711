@@ -9,6 +9,7 @@ use App\Http\Controllers\accounts\Review_BudgetController;
 use App\Http\Controllers\Accounts\sub_accounts\SubaccountController;
 use App\Http\Controllers\accounts\TreeAccountController;
 use App\Http\Controllers\ArtController;
+use App\Http\Controllers\BackupController;
 use App\Http\Controllers\bondController\BondController;
 use App\Http\Controllers\bondController\exchangeController\ExchangeController;
 use App\Http\Controllers\bondController\receipController\All_Receipt_BondController;
@@ -43,6 +44,7 @@ use App\Http\Controllers\settingController\default_supplierController;
 
 use App\Http\Controllers\settingController\WarehouseController;
 use App\Http\Controllers\Transfers\TransferController;
+use App\Http\Controllers\UserPermissionController;
 use App\Http\Controllers\UsersController\UsersController;
 use App\Models\DefaultSupplier;
 use App\Models\MainAccount;
@@ -212,11 +214,14 @@ Route::get('/fixedAssets', [FixedAssetsController::class, 'index'])->name('fixed
 Route::get('/usersControl', [UsersController::class, 'index'])->name('users.index');
 Route::get('/usersShow', [UsersController::class, 'show'])->name('users.details');
 
-
+Route::get('/backup', [BackupController::class, 'showForm'])->name('backup.form');
+Route::post('/backup', [BackupController::class, 'createBackup'])->name('backup');
 
 Route::get('/controle',function(){
 return view('controle');
 });
+Route::get('/permission_user',[UserPermissionController::class,'index'])->name('permission_user');
+Route::post('/update-permission', [UserPermissionController::class, 'updatePermission'])->name('update.permission');
 Route::get('/chart',[ChartController::class,'index'])->name('chart.index');
 Route::get('bar-chart-data',[ChartController::class, 'getBarChartDate']);
 

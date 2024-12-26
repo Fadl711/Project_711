@@ -88,6 +88,15 @@
                 </span>
                 <span> لوحة التحكم </span>
             </a>
+            <a href="{{route('permission_user')}}" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+                <span class="mr-3">
+                    <!-- Embed Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9.5L12 3l9 6.5v9.5a2 2 0 01-2 2h-4a2 2 0 01-2-2v-4H9v4a2 2 0 01-2 2H3a2 2 0 01-2-2V9.5z" />
+                    </svg>
+                </span>
+                <span>  التحكم بالصلاحيات </span>
+            </a>
 {{--             <a href="#" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
                 <span class="mr-3">
                     <!-- Add-ons Icon -->
