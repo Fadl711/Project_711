@@ -340,6 +340,7 @@ public function search(Request $request)
     $id = $request->query('id');
    
         $warehouse_to_id = $request->account_debitid;
+        // return response()->json();
 
     // التحقق من وجود المنتج
     $productData = Product::where('product_id', $id)->first();

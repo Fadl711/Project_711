@@ -293,8 +293,9 @@
                 const code = data.codeResult.code;
                 $('#product_id').val(code).trigger('change');   
                 $.ajax({
-        url: `/api/products/search?id=${code}`, // استدعاء API بناءً على product_id
-        method: 'GET',
+
+                    url: "{{ url('/api/products/') }}/"+ code +"/search",
+                    method: 'GET',
         data:account_debitid,
         success: function(product) {
             displayProductDetails(product); // استعراض تفاصيل المنتج إذا تمت الاستجابة بنجاح

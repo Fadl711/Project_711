@@ -343,6 +343,7 @@ $('#errorMessage').addClass('hidden');
     if (mainAccountId) {
         // طلب AJAX لجلب الحسابات الفرعية بناءً على الحساب الرئيسي
         $.ajax({
+
             url: "{{ url('/main-accounts/') }}/" + mainAccountId + "/sub-accounts", // استخدام القيم الديناميكية
             type: 'GET',
             dataType: 'json',
@@ -375,6 +376,7 @@ $('#errorMessage').addClass('hidden');
 
     // التحقق من وجود قيمة في الحساب الرئيسي
     if (mainAccountId) {
+     
         // طلب AJAX لجلب الحسابات الفرعية بناءً على الحساب الرئيسي
         $.ajax({
             url: "{{ url('/main-accounts/') }}/" + mainAccountId + "/sub-accounts", // استخدام القيم الديناميكية

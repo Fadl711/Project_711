@@ -171,7 +171,9 @@ window.open(url, '_blank', 'width=600,height=800');// فتح الرابط في �
             displayContainer2.removeClass("hidden");
             debounceTimeout = setTimeout(() => {
                 const searchType = searchTypeSelect.val();
-                const url = `/api/purchase-invoices?searchType=${searchType}&searchQuery=${searchQuery}`;
+                const baseUrl = "{{ url('/api/purchase-invoices') }}"; 
+              const url = `${baseUrl}?searchType=${searchType}&searchQuery=${searchQuery}`;
+ 
                 fetchInvoices(url, displayContainer2);
             }, 500);
         } else {
@@ -184,7 +186,8 @@ window.open(url, '_blank', 'width=600,height=800');// فتح الرابط في �
     // البحث بالاختيار
     radioInput.on('click', function () {
         const value = $(this).val();
-        const url = `/api/purchase-invoices/${value}`;
+        const url ="{{ url('/api/purchase-invoices/') }}/"+value;
+        
         displayContainer.removeClass("hidden");
 
         fetchInvoices(url, displayContainer);

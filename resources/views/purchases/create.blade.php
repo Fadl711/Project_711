@@ -382,6 +382,40 @@ else{
     </script>
  
 <script type="text/javascript">
+$(document).on('keydown', function(event) {
+    if (event.ctrlKey && event.key === 'ArrowLeft') {
+        // الحصول على قيمة purchase_invoice_id من حقل الإدخال
+        let currentInvoiceId = $('#purchase_invoice_id').val();
+        
+        console.log('Current Invoice ID:', currentInvoiceId); // تحقق من القيمة
+        const baseUrl = "{{ url('/get-purchases-by-invoice') }}"; // تعريف URL الأساسي
+
+        $.ajax({
+            url: `${baseUrl}?purchase_invoice_id=${currentInvoiceId}`,
+            type: 'GET',
+           
+            success: function(data) {
+     
+                
+                console.log('Purchases Data:', data); // تحقق من البيانات المستلمة
+                if (data && data.length > 0) {
+                    $('#mainAccountsTable tbody').empty(); // مسح البيانات القديمة
+
+                    displayPurchases(data); // دالة لعرض المشتريات في الجدول
+                } else {
+                    console.log("No purchases found for this invoice.");
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching purchases:', xhr.responseText);
+            }
+        });
+
+        event.preventDefault();
+    }
+});   
+
+
 $(document).on('click', '.delete-payment', function (e) {
     e.preventDefault();
     var successMessage = $('#successMessage'); // الرسالة الناجحة
@@ -389,11 +423,11 @@ $(document).on('click', '.delete-payment', function (e) {
     const Total_invoice = $('#Total_invoice'); // إجمالي الفاتورة
 
     let paymentId = $(this).data('id');
-    let url = `/purchases/${paymentId}`; // تصحيح مسار الحذف
+    // let url = `/purchases/${paymentId}`; // تصحيح مسار الحذف
 
     if (confirm('هل أنت متأكد أنك تريد حذف هذا الصنف؟')) {
         $.ajax({
-            url: url,
+            url:"{{url('/purchases/')}}/"+paymentId, // استدعاء API بناءً على product_id
             method: 'DELETE',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
@@ -471,9 +505,8 @@ const Product_name = $('#product_name');
 
 // إخفاء التنبيه بعد 3 ثوانٍ
 setTimeout(function() {
-    $('#successAlert').addClass('hidden');
-}, 3000);
-location.r
+    $('#successMessage').addClass('hidden');
+}, 1000);
 
                       addToTable(data.purchase);
                       $('#Total_invoice').val(data.Purchasesum);
@@ -497,6 +530,56 @@ location.r
         }
           });
       };
+      
+
+function editData(id) {
+
+$.ajax({
+    url:"{{url('/purchases/')}}/"+id,
+    type: 'GET',
+    headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+     // استدعاء API بناءً على product_id
+    success: function(data) {
+        $('#product_id').val(data.product_id);
+        $('#Barcode').val(data.Barcode);
+        $('#Quantity').val(data.quantity);
+        $('#Purchase_price').val(data.Purchase_price);
+        $('#Selling_price').val(data.Selling_price);
+        $('#Total').val(data.Total);
+        $('#Cost').val(data.Cost);
+        $('#Discount_earned').val(data.Discount_earned);
+        $('#Profit').val(data.Profit);
+        $('#Exchange_rate').val(data.Exchange_rate);
+        $('#product_id').val(data.product_id);
+        $('#Total_cost').val(data.Total_cost);
+        $('#note').val(data.note);
+        $('#purchase_invoice_id').val(data.Purchase_invoice_id);
+        $('#supplier_name').val(data.Supplier_id);
+        $('#purchase_id').val(data.purchase_id);
+        $('#Categorie_name').val(data.categorie_id);
+
+        categorie_name.empty();
+        const  subAccountOptions = 
+              `
+              <option value="${data.categorie_id}">${data.categorie_id}</option>`
+         ;
+
+      // إضافة الخيارات الجديدة إلى القائمة الفرعية
+      categorie_name.append(subAccountOptions);
+ 
+        
+},
+    error: function(xhr, status, error) {
+        // console.error("خطأ في جلب بيانات التعديل:", error);
+        errorMessage.show().text(data.message);
+        setTimeout(() => {
+          errorMessage.hide();
+        }, 5000);
+    }
+});
+}
       function displayPurchases(purchases) {
     let uniqueInvoices = new Set(); // Set لتخزين الفواتير الفريدة
     let rows = ''; // متغير لتخزين الصفوف
@@ -530,6 +613,53 @@ location.r
     });
     $('#mainAccountsTable tbody').append(rows);
 }
+function addToTable(account) {
+    const rowId = `#row-${account.purchase_id}`;
+    const tableBody = $('#mainAccountsTable tbody');
+
+    // التحقق مما إذا كان الصف موجودًا بالفعل
+    if ($(rowId).length) {
+        // تحديث الصف في الجدول بناءً على القيم الجديدة
+        $(`${rowId} td:nth-child(1)`).text(account.Barcode);
+        $(`${rowId} td:nth-child(2)`).text(account.Product_name);
+        $(`${rowId} td:nth-child(3)`).text(account.categorie_id);
+        $(`${rowId} td:nth-child(4)`).text(account.quantity ? Number(account.quantity).toLocaleString() : '0');
+        $(`${rowId} td:nth-child(5)`).text(account.Purchase_price ? Number(account.Purchase_price).toLocaleString() : '0');
+        $(`${rowId} td:nth-child(6)`).text(account.Cost ? Number(account.Cost).toLocaleString() : '0');
+        $(`${rowId} td:nth-child(7)`).text(account.warehouse_to_id ? 
+            Number(account.warehouse_to_id).toLocaleString() : 
+            (account.warehouse_from_id ? Number(account.warehouse_from_id).toLocaleString() : '0'));
+        $(`${rowId} td:nth-child(8)`).text(account.Total ? Number(account.Total).toLocaleString() : '0');
+    } else {
+        // إنشاء صف جديد إذا لم يكن موجودًا
+        const newRow = `
+            <tr id="row-${account.purchase_id}">
+                <td class="text-right tagTd">${account.Barcode}</td>
+                <td class="text-right tagTd">${account.Product_name}</td>
+                <td class="text-right tagTd">${account.categorie_id}</td>
+                <td class="text-right tagTd">${account.quantity ? Number(account.quantity).toLocaleString() : '0'}</td>
+                <td class="text-right tagTd">${account.Purchase_price ? Number(account.Purchase_price).toLocaleString() : '0'}</td>
+                <td class="text-right tagTd">${account.Cost ? Number(account.Cost).toLocaleString() : '0'}</td>
+                <td class="text-right tagTd">${account.warehouse_to_id ? 
+                    Number(account.warehouse_to_id).toLocaleString() : 
+                    (account.warehouse_from_id ? Number(account.warehouse_from_id).toLocaleString() : '0')}</td>
+                <td class="text-right tagTd">${account.Total ? Number(account.Total).toLocaleString() : '0'}</td>
+                <td class="flex">
+                    <button class="edit-btn" onclick="editData(${account.purchase_id})">
+                        <svg class="w-6 h-6 text-gray-800 dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
+                        </svg>
+                    </button>
+                    <a href="#" class="text-red-600 hover:underline delete-payment" data-id="${account.purchase_id}" >حذف</a>
+
+                    
+                </td>
+            </tr>
+        `;
+        tableBody.append(newRow); // إضافة الصف الجديد
+    }
+}
+
 function CsrfToken() {
     $.ajaxSetup({
         headers: {
@@ -554,7 +684,7 @@ $(document).on('click', '#delete_invoice', function (e) {
     }
     // إرسال طلب الحذف باستخدام Ajax
     $.ajax({
-        url: `/purchase-invoices/${invoiceId}`, // مسار الحذف
+        url:"{{url('/purchase-invoices/')}}/"+invoiceId, // مسار الحذف
         type: 'DELETE',
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -582,9 +712,206 @@ $(document).on('click', '#delete_invoice', function (e) {
     });
 });
 });
+$(document).ready(function() {
+
+$('#Categorie_name').on('change', function() {
+const Categoriename = $(this).val();
+var  mainAccountId= $('#product_id').val();
+$('#TotalPurchase,#Profit').val('');
+getUnitPriceCategorie(mainAccountId,Categoriename);
+$(this).select2('close');
+setTimeout(function() {
+$('#Quantity').focus();
+console.log('Focused on Quantity'); // للتأكد من التركيز
+}, 10);
+
+});
+
+function getUnitPriceCategorie(mainAccountId,categoryName)
+{
+
+if (mainAccountId!==null) {
+const baseUrl = "{{ url('/GetProduct') }}";
+$.ajax({
+    url: `${baseUrl}/${mainAccountId}/price?mainAccountId=${mainAccountId}&Categoriename=${categoryName}`,
+    type: 'GET',
+    dataType: 'json',
+    success: function(response) {
+        if (response.product) {
+
+        //    displayProductDetails(response.product);
+            $('#Purchase_price').val(response.product.Purchase_price).trigger('change');
+            $('#QuantityCategorie').val(response.product.Quantityprice).trigger('change');
+            $('#Selling_price').val(response.product.Selling_price).trigger('change');
+        } else {
+            console.error('لم يتم العثور على المنتج أو السعر غير متوفر.');
+        }
+    },
+    error: function(xhr) {
+        console.error('حدث خطأ في الحصول على المنتج.', xhr.responseText);
+    }
+});
+};
+}
+
+$('#product_id').on('change', function() { // عند تغيير المنتج المختار في القائمة
+var productId = $(this).val(); // الحصول على قيمة المنتج المختار
+var account_debitid = $('#account_debitid').val(); // الحصول على قيمة المنتج المختار
+
+if (productId) { // تحقق من وجود منتج محدد
+    
+    $.ajax({
+        url: "{{ url('/api/products/search/') }}/?id=" + productId+ "/&account_debitid="+account_debitid, // استدعاء API بناءً على product_id
+
+        method: 'GET',
+        success: function(product) {
+
+            displayProductDetails(product);
+            setTimeout(() => {}, 100);
+            $('#Categorie_name').select2('open'); // فتح قائمة الفئات
+        },
+        error: function(xhr) {
+            console.error('Error:', xhr.responseText); // عرض الخطأ إذا حدث خطأ في الاستدعاء
+        }
+    });
+} else {
+    $('#productDetails').hide(); // إخفاء التفاصيل إذا لم يتم اختيار منتج
+}
+});
+});
+$('#account_debitid').on('change', function() {
+$(this).select2('close');
+$('#product_id').select2('open');
+});
+
+$('#main_account_debit_id').on('change', function() {
+    const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي
+    showAccounts(mainAccountId);
+    setTimeout(() => {
+        $('#main_account_debit_id').select2('close'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
+        $('#sub_account_debit_id').select2('open');
+    }, 1000);
+
+});
+
+function showAccounts(mainAccountId)
+{
+    if(mainAccountId)
+    {
+     var  sub_account_debit_id= $('#sub_account_debit_id');
+    }
+   
+    if (mainAccountId!==null) {
+
+        $.ajax({
+            url: "{{ url('/main-accounts/') }}/" + mainAccountId + "/sub-accounts", // استخدام القيم الديناميكية
+
+            type: 'GET',
+            dataType: 'json',
+
+    success: function(data) {
+        sub_account_debit_id.empty();
+  const  subAccountOptions = data.map(subAccount =>
+        `<option value="${subAccount.sub_account_id}">${subAccount.sub_name}</option>`
+    ).join('');
+
+// إضافة الخيارات الجديدة إلى القائمة الفرعية
+sub_account_debit_id.append(subAccountOptions);
+sub_account_debit_id.select2('destroy').select2();
+
+// إعادة تهيئة Select2 بعد إضافة الخيارات
+},
+error: function(xhr) {
+    console.error('حدث خطأ في الحصول على الحسابات الفرعية.', xhr.responseText);
+}
+});
+};
+}
+
+function displayProductDetails(product) {
+const invoiceInput = $('#sales_invoice_id');
+var   Categorie_name=$('#Categorie_name');
+if (invoiceInput.length) {
+// التأكد من أن العناصر موجودة قبل تحديثها
+if ($('#Barcode').length) {
+    $('#Barcode').val(product.Barcode).trigger('change');
+}
+
+if ($('#product_name').length) {
+    $('#product_name').val(product.product_name).trigger('change');
+}
+if ($('#Selling_price').length) {
+    $('#Selling_price').val(product.Selling_price).trigger('change');
+}
+if ($('#Purchase_price').length) {
+    $('#Purchase_price').val(product.Purchase_price).trigger('change');
+}
+if ($('#QuantityPurchase').length) 
+    {
+    $('#QuantityPurchase').val(product.QuantityPurchase).trigger('change');
+}
+if ($('#discount_rate').length) {
+    const discountSelect = $('#discount_rate');
+    discountSelect.empty();
+    if (product.Regular_discount && product.Special_discount) {
+        const discountOptions = `
+        <option value="">لم يتم التحديد  </option>
+            <option value="${product.Regular_discount}">الخصم العادي: ${product.Regular_discount}%</option>
+            <option value="${product.Special_discount}">الخصم الخاص: ${product.Special_discount}%</option>
+        `;
+        discountSelect.append(discountOptions);
+    } else {
+        discountSelect.append('<option value="">لا توجد خصومات متاحة</option>');
+    }
+}
+
+if ($('#created_at').length) {
+    $('#created_at').val(product.created_at).trigger('change');
+}
+// تعبئة قائمة الفئات (الوحدات)
+const categorieSelect = $('#Categorie_name');
+categorieSelect.empty();
+// تفريغ القائمة السابقة
+console.time('Select2 Initialization');
+product.Categorie_names.forEach(categorie => {
+$('#Categorie_name').append(new Option(categorie.Categorie_name, categorie.categorie_id));
+});
+
+categorieSelect.append( `<option selected  value=""></option>`);
+$('#Categorie_name').select2(); // إعادة التهيئة بعد الإضافة
+
+console.timeEnd('Select2 Initialization'); // عرض الوقت المستغرق
+
+// حساب التمويز بين البيع والشراء
+var profit = 0;
+if (product.Selling_price > 0 && product.Purchase_price > 0) {
+    profit = product.Selling_price - product.Purchase_price; // حساب التمويز بين البيع والشراء
+    profit = profit; // تقريب النتيجة إلى خانتين عشريتين
+}
+// إضافة التمويز إلى حقل الربح
+if ($('#Profit').length) {
+    $('#Profit').val(profit).trigger('change');
+}
+
+// حساب التكلفة
+var Yr_cost = parseFloat($('#Yr_cost').val()) || 0; 
+// $Yr_cost=  $('#Yr_cost').val(); // عرض النتيجة
+// جلب القيمة من الحقل كرقم عشري
+if (!isNaN(Yr_cost) && Yr_cost > 0 && product.Purchase_price > 0) {
+    var cost = Yr_cost * product.Purchase_price; 
+    
+    // حساب التكلفة
+    cost = cost.toFixed(2); // تقريب النتيجة لخانتين عشريتين
+    $('#Cost').val(cost).trigger('change'); // إضافة النتيجة
+} else {
+    $('#Cost').val(''); // في حال وجود خطأ أو قيم غير صالحة، يتم تفريغ الحقل
+}
+}
+}
     </script>
-<script src="{{url('purchases/purchases.js')}}"></script>
+{{-- <script src="{{url('purchases/purchases.js')}}"></script> --}}
 <script src="{{ url('purchases.js') }}"></script>
+
 <style>
     .alert-success {
         color: green;

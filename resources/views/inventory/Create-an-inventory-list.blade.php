@@ -115,7 +115,8 @@ var  productname= $('#product_name');
 
 if (mainAccountId!==null) {
 $.ajax({
-  url: `/all-products/${mainAccountId}/show`, // استخدام القيم الديناميكية
+    url: "{{url('/all-products/')}}/"+mainAccountId+"/show", // استخدام القيم الديناميكية
+
   type: 'GET',
   dataType: 'json',
   success: function(data) {
