@@ -193,8 +193,8 @@ else
         }
     }
     public function allShow(){
-        $SubAccounts[]=null;
-        $subAccounts=SubAccount::all();
+        // $SubAccounts[]=null;
+        $SubAccounts=SubAccount::all();
         // foreach($subAccounts as $SubAccount)
         // {
         //     $SubAccount = SubAccount::where('sub_account_id', $SubAccount->sub_account_id)->first();
