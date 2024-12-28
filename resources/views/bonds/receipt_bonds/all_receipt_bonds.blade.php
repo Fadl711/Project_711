@@ -219,9 +219,9 @@ $(document).on('click', '.delete-payment', function (e) {
             debounceTimeout = setTimeout(() => {
               const searchType = searchTypeSelect.val();
               const transactionType = transactiontypeeSelect.val();
-
-            const url = `/api/Receip-invoices?searchType=${searchType}&searchQuery=${searchQuery}&transactionType=${transactionType}`;
-// console.log(url); // تحقق من الـ URL
+              const baseUrl = "{{ url('/api/Receip-invoices') }}"; 
+              const url = `${baseUrl}?searchType=${searchType}&searchQuery=${searchQuery}&transactionType=${transactionType}`;
+ 
 fetchInvoices(url, displayContainer2);
 }, 500);
     } else {
@@ -236,11 +236,15 @@ fetchInvoices(url, displayContainer2);
     radioInput.on('click', function () {
         const filterType = $(this).val();
         const transactionType = transactiontypeeSelect.val();
+        const baseUrl = "{{ url('/api/Receip-invoices')}}";  
+              const url = `${baseUrl}/${filterType}?transactionType=${transactionType}`;
 
-
-
-        const url = `/api/Receip-invoices/${filterType}?transactionType=${transactionType}`;
-        displayContainer.removeClass("hidden");
+// استخدام url في طلب AJAX
+$.ajax({
+    url: url,
+    method: 'GET',
+    // المعاملات الأخرى...
+});        displayContainer.removeClass("hidden");
 
         fetchInvoices(url, displayContainer);
     });

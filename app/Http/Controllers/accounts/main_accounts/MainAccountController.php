@@ -166,10 +166,7 @@ if ($DataSubAccount->debtor_amount!=0 || $DataSubAccount->creditor_amount!=0) {
     $DSubAccount = SubAccount::where('sub_account_id', $DataSubAccount->sub_account_id)->first();
         $today = Carbon::now()->toDateString();
         $dailyPage = GeneralJournal::whereDate('created_at', $today)->latest()->first();
-
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
-
-
         if (!$dailyPage) {
             $dailyPage = GeneralJournal::create([
                 'accounting_period_id'=>$accountingPeriod->accounting_period_id,

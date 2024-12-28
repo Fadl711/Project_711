@@ -16,7 +16,6 @@
         @csrf
 
         <input type="hidden" value="{{$SubAccount->sub_account_id}}" name="sub_id" class="inputSale input-field" id="sub_name" type="text" placeholder="اسم الحساب الجديد"/>
-
         <div class="grid gap-4 mb-4 grid-cols-2">
             <div class="mb-2">
                 <label class="labelSale" for="sub_name">اسم الحساب</label>

@@ -96,6 +96,12 @@
 <script>
     
 $(document).ready(function() {
+    const form = $('#LocksFinancialPeriod');
+form.on('keydown', function (event) {
+    if (event.key === 'Enter') {
+        event.preventDefault(); // منع الحفظ عند الضغط على زر Enter
+    }
+});
     const successMessage = $('#successMessage');
     const form = $('#LocksFinancialPeriod');
 
@@ -109,6 +115,7 @@ $(document).ready(function() {
     }
 
         $.ajax({
+            
             url: `/Locks_financial_period/${mainAccountId}/getProfitAndLossData`, // استخدام القيم الديناميكية
         type: 'GET',
         dataType: 'json',

@@ -276,10 +276,11 @@ $('#StoreId').select2('close'); // إغلاق حقل الحساب الرئيسي
 function showProductName(mainAccountId)
 {
 var  productname= $('#product_id');
-
+const baseUrl = "{{ url('/all-products') }}"; // تعريف URL الأساسي
 if (mainAccountId!==null) {
+    const url = `${baseUrl}/${mainAccountId}/show`;
 $.ajax({
-  url: `/all-products/${mainAccountId}/show`, // استخدام القيم الديناميكية
+  url:url , // استخدام القيم الديناميكية
   type: 'GET',
   dataType: 'json',
   success: function(data) {

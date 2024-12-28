@@ -287,14 +287,15 @@ function addToTable(account) {
 
 
 $(document).on('keydown', function(event) {
-    if (event.ctrlKey && event.key === 'ArrowLeft') {
+    if (event.ctrlKey && event.key == 'ArrowLeft') {
         // الحصول على قيمة purchase_invoice_id من حقل الإدخال
         let currentInvoiceId = $('#purchase_invoice_id').val();
         
         console.log('Current Invoice ID:', currentInvoiceId); // تحقق من القيمة
+        const baseUrl = "{{ url('/get-purchases-by-invoice') }}"; // تعريف URL الأساسي
 
         $.ajax({
-            url: '/get-purchases-by-invoice',
+            url: `${baseUrl}?purchase_invoice_id=${currentInvoiceId}`,
             type: 'GET',
             data: {
                 purchase_invoice_id: currentInvoiceId
@@ -437,14 +438,16 @@ Quantity       = $('#Quantity'),
 Categorie_name       = $('#Categorie_name'),
 Total_cost     = $('#Total_cost').val(),
 Cost           = $('#Cost').val(),
-    $('#product_id').on('change', function() {    // عند تغيير المنتج المختار في القائمة
-        var productId = $(this).val(); // الحصول على قيمة المنتج المختار
-
+$('#product_id').on('change', function() { // عند تغيير المنتج المختار في القائمة
+    var productId = $(this).val(); // الحصول على قيمة المنتج المختار
+    var account_debitid = $('#account_debitid').val(); // الحصول على قيمة المنتج المختار
+    
     if (productId) { // تحقق من وجود منتج محدد
+        
         $.ajax({
-            url: `/api/products/search?id=${productId}`, // استدعاء API بناءً على product_id
+            url: "{{ url('/api/products/search/') }}/?id=" + productId+ "/&account_debitid="+account_debitid, // استدعاء API بناءً على product_id
+
             method: 'GET',
-            data:account_debitid,
             success: function(product) {
 
                 displayProductDetails(product);
@@ -469,7 +472,7 @@ function editData(id) {
 
     $.ajax({
         type: 'GET',
-        url: `/purchases/${id}`, // استدعاء API بناءً على product_id
+        url:"{{url('/purchases/')}}/"+id, // استدعاء API بناءً على product_id
         success: function(data) {
             $('#product_name').val(data.Product_name);
             $('#Barcode').val(data.Barcode);

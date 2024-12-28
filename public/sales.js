@@ -252,6 +252,7 @@ function CsrfToken() {
         }
     });
 }
+
 $('#warehouse_id').on('change', function() {
     const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي
     showProductName(mainAccountId);
@@ -260,6 +261,7 @@ $('#warehouse_id').on('change', function() {
     }, 1000);
     
 });
+
 
 function showProductName(mainAccountId)
 {

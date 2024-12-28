@@ -4,8 +4,9 @@
 <x-navbar_accounts/>
 
 
-<div  class="w-[100%]" >
-    <table class="w-[100%]" id="mainAccountsTable" >
+<div class="w-full overflow-y-auto max-h-[80vh]  bg-white">
+  <table class="w-full mb-4 text-sm bg-white border border-gray-200 rounded-lg shadow-lg">
+     
       <thead>
           <tr class="">
               <th class="text-right tagHt">رقم الحساب</th>
@@ -13,10 +14,8 @@
               <th class="text-right tagHt">  رصيد مدين</th>
               <th class="text-right tagHt"> رصيد دائن</th>
               <th class="text-right tagHt"> المستخدم </th>
+              <th class="text-right tagHt"> تاريخ الإضافة</th>
               <th class="text-right tagHt"> تاريخ التحديث</th>
-
-
-
               <th class="text-right tagHt"> خيارات</th>
 
           </tr>
@@ -38,6 +37,7 @@
 
             <td class="text-right tagTd">{{$SubAccount->User_id}}</td>
             <td class="text-right tagTd">{{$SubAccount->created_at}}</td>
+            <td class="text-right tagTd">{{$SubAccount->updated_at}}</td>
 
 
 
