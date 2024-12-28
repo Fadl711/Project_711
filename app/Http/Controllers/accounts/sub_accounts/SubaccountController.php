@@ -100,10 +100,13 @@ class SubaccountController extends Controller
     }
     public function update(Request $request)
     {
-        $transaction_type="رصيد افتتاحي";
+        $TypeSubAccount = MainAccount::where('main_account_id',$request->Main_id)->first();
+
         SubAccount::where('sub_account_id',$request->sub_id)->update([
             'sub_name'=>$request->sub_name,
             'Main_id'=>$request->Main_id,
+            'AccountClass' => $TypeSubAccount->AccountClass,
+            'typeAccount' => $TypeSubAccount->typeAccount,
             'User_id'=>$request->User_id,
             'debtor_amount'=>$request->debtor_amount,
             'creditor_amount'=>$request->creditor_amount,
@@ -113,27 +116,24 @@ class SubaccountController extends Controller
         ]);
         $SubAccount = SubAccount::where('sub_account_id', $request->sub_id)->first();
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
-            if($SubAccount->debtor_amount!=0  || $SubAccount->creditor_amount!=0  )
-            {
-                
+          
 // تحقق مما إذا تم حفظ الكائن بنجاح
-        $today = Carbon::now()->toDateString();
-        $dailyPage = GeneralJournal::whereDate('created_at', $today)->latest()->first();
-        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
-        if (!$dailyPage)
-        {
-           $dailyPage = GeneralJournal::create([
-               'accounting_period_id'=>$accountingPeriod->accounting_period_id,
-           ]);
-       }
+$transaction_type="رصيد افتتاحي";
+
         $Getentrie_id = DailyEntrie::where('Invoice_id',$SubAccount->sub_account_id)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->where('daily_entries_type',$transaction_type)->first();
-    if($request->entrie_id )
+        $today = Carbon::now()->toDateString();
+        $dailyPage = GeneralJournal::whereDate('created_at', $today)->latest()->first();
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+        
+    if($Getentrie_id->entrie_id )
     {
         $Getentrie = DailyEntrie::where('Invoice_id',$SubAccount->sub_account_id)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->where('daily_entries_type',$transaction_type)
+        ->where('entrie_id',$Getentrie_id->entrie_id)
+
         ->update([
         'Amount_debit' => $SubAccount->debtor_amount,
         'Amount_Credit' => $SubAccount->creditor_amount,
@@ -143,6 +143,12 @@ class SubaccountController extends Controller
    }
 else
 {
+    if (!$dailyPage)
+        {
+           $dailyPage = GeneralJournal::create([
+               'accounting_period_id'=>$accountingPeriod->accounting_period_id,
+           ]);
+       }
     $dailyEntry = DailyEntrie::create([
         'Amount_debit' => $SubAccount->debtor_amount  ?: 0,
         'account_debit_id' => $SubAccount->sub_account_id ,
@@ -162,7 +168,7 @@ else
     return redirect()->route('subAccounts.allShow');
 
 }
-}
+
 
         return redirect()->route('subAccounts.allShow');
     }
@@ -187,7 +193,18 @@ else
         }
     }
     public function allShow(){
-        $SubAccounts=SubAccount::all();
+        $SubAccounts[]=null;
+        $subAccounts=SubAccount::all();
+        // foreach($subAccounts as $SubAccount)
+        // {
+        //     $SubAccount = SubAccount::where('sub_account_id', $SubAccount->sub_account_id)->first();
+        //     $TypeSubAccount = MainAccount::where('main_account_id',$request->Main_id)->first();
+
+        //     if( $SubAccount->sub_account_id==) 
+
+
+        // }
+
         return view('accounts.Sub_Accounts.all_show_subAccount',compact('SubAccounts'));
     }
 }
