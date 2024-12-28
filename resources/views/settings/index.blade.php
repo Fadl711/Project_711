@@ -97,6 +97,15 @@
                 </span>
                 <span>  التحكم بالصلاحيات </span>
             </a>
+            <a href="{{route('backup.form')}}" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+                <span class="mr-3">
+                    <!-- Embed Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 1v3M8.5 2.5l2 2M1 12h3m16 0h3m-9 7l2 2M6.5 21.5l2-2M21 12l2-2M6 9h12v6H6V9z" />
+                    </svg>
+                </span>
+                <span>نسخ احتياطي للبيانات</span>
+            </a>
 {{--             <a href="#" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
                 <span class="mr-3">
                     <!-- Add-ons Icon -->
@@ -116,10 +125,7 @@
                 </span>
                 <span>Settings</span>
             </a> --}}
-                <button  class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded" id="executeBtn">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 1v3M8.5 2.5l2 2M1 12h3m16 0h3m-9 7l2 2M6.5 21.5l2-2M21 12l2-2M6 9h12v6H6V9z" />
-                    </svg>نسخ احتياطي للبيانات</button>
+
 
 
         </nav>
