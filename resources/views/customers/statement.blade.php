@@ -7,6 +7,12 @@
     <title> كشف حساب {{$Myanalysis}}</title>
     <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
     <style>
+          body {
+        font-family: Arial, sans-serif; /* الخط الافتراضي */
+    }
+    .english {
+        font-family: 'Times New Roman', serif; /* الخط الإنجليزي */
+    }
         /* تخصيص للطباعة */
         @media print {
             body {
@@ -15,7 +21,7 @@
                 padding: 0;
             }
             .print-container {
-                @apply w-full max-w-full mx-auto p-4;
+                @apply w-full max-w-full mx-auto p-2;
             }
 
             .no-print {
@@ -23,70 +29,56 @@
             }
         }
 
-        /* تحسين مظهر الجدول */
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #000;
-        }
+    table {
+        table-layout: ; /* استخدم تخطيط ثابت */
+        width: 100%;
+    }
 
-        .header-section, .totals-section {
-            margin-top: 16px;
-            border: 2px solid #000;
-            border-radius: 8px;
-        }
+    th, td {
+        border: 1px solid #000;
+        /* padding: 8px; */
+    }
+
+   
+
+    /* تحسين مظهر الجدول */
+    .header-section, .totals-section {
+        margin-top: 10px;
+        border: 2px solid #000;
+        border-radius: 8px;
+    }
+        
     </style>
 </head>
 <body class="bg-white">
-    <div class="container mx-auto print-container">
+    <div class=" print-container  ">
         <!-- العنوان -->
         @isset($buss)
-        <div class="header-section border-2 border-black bg-[#1749fd15]  rounded-lg my-4">
-            <div class="rounded-lg grid grid-cols-3 gap-6 p-2 w-full">
-                <!-- القسم الأيمن - Arabic content -->
-                <div class="text-right space-y-2">
-                    <h2 class="font-extrabold  ">{{ $buss->Company_Name }}</h2>
-                    <p class="text-sm text-gray-700">{{ $buss->Services }}</p>
-                    <p class="text-sm text-gray-700">العنوان: {{ $buss->Company_Address }}</p>
-                    <p class="text-sm text-gray-700">التلفون: {{ $buss->Phone_Number }}</p>
-                </div>
+        <div class="header bg-[#1749fd15]  rounded-lg">
+            @include('includes.header2')
 
-                <!-- القسم الأوسط - تحليل الحسابات -->
-                <div class="flex items-center justify-center px-2">
-                    <div class="w-24 h-20   flex items-center justify-center translate-x-10">
-                        <img class=" bg-[#1749fd15] rounded-3xl" src="{{ url($buss->Company_Logo ? 'images/' . $buss->Company_Logo : '') }}" alt="">
-                    </div>
-                </div>
-
-                <!-- القسم الأيسر - English content -->
-                <div class="text-left space-y-2">
-                    <h2 class="font-extrabold  ">{{ $buss->Company_NameE }}</h2>
-                    <p class="text-sm text-gray-700">{{ $buss->ServicesE }}</p>
-                    <p class="text-sm text-gray-700">Address: {{ $buss->Company_AddressE }}</p>
-                    <p class="text-sm text-gray-700">Phone: {{ $buss->Phone_Number }}</p>
-                </div>
-            </div>
-            <div class="text-center space-y-4">
-                <p class="font-extrabold text-lg">
-                    كشف حساب {{ $Myanalysis }} - رصيد نهاية التقرير
-                </p>
-
-                <div class="grid grid-cols-2 w-full gap-2 text-sm text-gray-700">
-                    <div> تاريخ:
-                        {{ $startDate }}
-                    </div>
-                    <div>{{ __('الى التاريخ  ') }}:
-                        {{ $endDate }}
-                    </div>
-                </div>
-            </div>
+            
 
         </div>
     @endisset
+    <div class="grid grid-cols-3 w-full text-center gap-2 text-sm font-semibold">
+        <div></div>
+        <div>
+            <p class="font-semibold">
+                كشف حساب {{ $Myanalysis }} - رصيد نهاية التقرير
+            </p>
 
+        </div>
+
+        <div class="flex  w-full  text-sm font-bold text-gray-700">
+            <div> من  :
+                {{ $startDate }}
+            </div>
+            <div>{{ __('الى   ') }}:
+                {{ $endDate }}
+            </div>
+        </div>
+    </div>
         <header class="flex justify-between items-center border-b-2 border-gray-800 pb-1 mb-1">
             <div>
                 <div class="flex">
@@ -98,7 +90,7 @@
                 </div>
             </div>
             <div>
-                <div class="flex mt-2">
+                <div class="flex mt-2 ">
                     <div class="font-extrabold">{{ __('العملة') }} :</div>
                     <div>{{ $currencysettings ?? __('YR') }}</div>
                 </div>
@@ -106,18 +98,18 @@
 
         </header>
         <!-- جدول المنتجات -->
-        <table class="w-full text-sm">
+        <table class=" text-sm font-semibold  w-full overflow-y-auto max-h-[80vh] ">
             <thead>
                 @isset($entries)
 
                 <tr class="bg-[#1749fd15]">
-                    <th class=" text-right">التاريخ</th>
-                    <th class=" text-right">نوع المستند</th>
+                    <th class=" text-center">التاريخ </th>
+                    <th class=" text-center">نوع المستند</th>
                     <th class=" text-center">رقم المستند</th>
-                    <th class=" text-right">البيان</th>
+                    <th class=" text-center">البيان</th>
                     <th class=" text-center">رقم المرجع</th>
-                    <th class=" text-center">مبلغ المدين</th>
-                    <th class=" text-center">مبلغ الدائن</th>
+                    <th class=" text-right"> المدين</th>
+                    <th class=" text-right"> الدائن</th>
                 </tr>
                 @endisset
                 @isset($entriesTotally)
@@ -158,16 +150,24 @@
                             $Invoice_type  = "شيك"   ;
 
                                          }
+                                         if ($entrie->daily_entries_type == "رصيد افتتاحي") {
+        $Invoice_type = "";
+        $cellColor = ($entrie->total_debit > 0) ? 'color: red;' : ''; // إذا كانت القيمة أكبر من 0 اجعل اللون أحمر
+    } else {
+        $cellColor = ''; // استخدم اللون الافتراضي إذا لم يكن "رصيد افتتاحي"
+    }
+
                         @endphp
-                            <td class=" text-right ">
+                            <td class=" text-right font-sans "style="width: 120px; " >
                                 {{ $entrie->created_at ? $entrie->created_at->format('Y-m-d') : __('غير متوفر') }}
                             </td>
-                            <td class=" text-right ">{{ $entrie->daily_entries_type }} {{ $Invoice_type ?? ""}}</td>
-                            <td class=" text-center">{{ $entrie->Invoice_id ?? ''}}</td>
-                            <td class=" text-right ">{{ $entrie->Statement }}</td>
-                            <td class=" text-center">{{ $entrie->entrie_id }}</td>
-                            <td class=" text-center">{{ number_format($entrie->total_debit ?? 0) }}</td>
-                            <td class="text-center">{{ number_format( $entrie->total_credit ?? 0) }}</td>
+                            <td class=" text-right " style="width: 130px; {{ $cellColor }} " >{{ $entrie->daily_entries_type }} {{ $Invoice_type  ?? ""}}</td>
+                            <td class=" text-center " style="width: 100px; ">{{ $entrie->Invoice_id ?? ''}}</td>
+                            <td class=" text-right "    style="width: 300px; {{ $cellColor }}">{{ $entrie->Statement }}</td>
+                            <td class=" text-center " style="width: 90px; ">{{ $entrie->entrie_id }}</td>
+                            <td class="text-right px-1" style="width: 120px; {{ $cellColor }}">
+                                {{ number_format($entrie->total_debit ?? 0) }}
+                            </td>                            <td class="text-right px-1"  style="width: 120px; " >{{ number_format( $entrie->total_credit ?? 0) }}</td>
                         </tr>
                     @endforeach
                 @endisset
@@ -196,7 +196,7 @@
         <table class="w-[60%] text-sm ">
             <thead>
                 <tr class="bg-blue-100">
-                    <th class="px-2 text-right w-">
+                    <th class="px-2 text-right ">
                         @php
                         $sum=$SumDebtor_amount-$SumCredit_amount;
                         if ($sum>=0) {

@@ -15,7 +15,7 @@
                 padding: 0;
             }
             .print-container {
-                @apply w-full max-w-full mx-auto p-4;
+                @apply w-full max-w-full mx-auto p-2;
             }
 
             .no-print {
@@ -23,58 +23,62 @@
             }
         }
 
-        /* تحسين مظهر الجدول */
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #000;
-        }
+    table {
+        table-layout: ; /* استخدم تخطيط ثابت */
+        width: 100%;
+    }
 
-        .header-section, .totals-section {
-            margin-top: 16px;
-            border: 2px solid #000;
-            border-radius: 8px;
-        }
+    th, td {
+        border: 1px solid #000;
+        /* padding: 8px; */
+    }
+
+   
+
+    /* تحسين مظهر الجدول */
+    .header-section, .totals-section {
+        margin-top: 10px;
+        border: 2px solid #000;
+        border-radius: 8px;
+    }
+        
     </style>
 </head>
 <body class="bg-white">
-    <div class="container mx-auto print-container">
+    <div class=" print-container  ">
         <!-- العنوان -->
         @isset($buss)
-        <div class="header-section border-2 border-black bg-[#1749fd15]  rounded-lg my-2">
-            <div class="rounded-lg grid grid-cols-3 gap-6 px-2 w-full">
+        <div class="header border-2 border-black bg-[#1749fd15]  rounded-lg">
+            <div class="rounded-lg flex  p-2 w-full">
                 <!-- القسم الأيمن - Arabic content -->
-                <div class="text-right space-y-2">
+                <div class="text-right font-bold">
                     <h2 class="font-extrabold  ">{{ $buss->Company_Name }}</h2>
-                    <div class="text-sm text-gray-700">{{ $buss->Services }}</div>
-                    <div class="text-sm text-gray-700">العنوان: {{ $buss->Company_Address }}</div>
-                    <div class="text-sm text-gray-700">التلفون: {{ $buss->Phone_Number }}</div>
+                    <p class="text-sm text-gray-700">{{ $buss->Services }}</p>
+                    <p class="text-sm text-gray-700">العنوان: {{ $buss->Company_Address }}</p>
+                    <p class="text-sm text-gray-700">التلفون: {{ $buss->Phone_Number }}</p>
                 </div>
 
                 <!-- القسم الأوسط - تحليل الحسابات -->
-                <div class="flex items-center justify-center px-2">
-                    <div class="w-24 h-20   flex items-center justify-center translate-x-10">
+                <div class="flex">
+                    <div class="w-20 h-20   flex  ">
                         <img class=" bg-[#1749fd15] rounded-3xl" src="{{ url($buss->Company_Logo ? 'images/' . $buss->Company_Logo : '') }}" alt="">
                     </div>
                 </div>
 
                 <!-- القسم الأيسر - English content -->
-                <div class="text-left space-y-2">
+                <div class="text-left font-bold ">
                     <h2 class="font-extrabold  ">{{ $buss->Company_NameE }}</h2>
-                    <div class="text-sm text-gray-700">{{ $buss->ServicesE }}</div>
+                    <div class=" text-sm  text-gray-700">{{ $buss->ServicesE }}</div>
                     <div class="text-sm text-gray-700">Address: {{ $buss->Company_AddressE }}</div>
                     <div class="text-sm text-gray-700">Phone: {{ $buss->Phone_Number }}</div>
                 </div>
             </div>
-            <div class="text-center space-y-4">
-                <p class="font-extrabold ">
-                    كشف حساب {{ $Myanalysis ??' '}}
+            <div class="text-center ">
+                <p class="font-extrabold">
+                    كشف حساب {{ $Myanalysis }} - رصيد نهاية التقرير
                 </p>
 
-                <div class="grid grid-cols-2 w-full gap-2 text-sm text-gray-700">
+                <div class="grid grid-cols-2 w-full gap-2 text-sm font-bold text-gray-700">
                     <div> تاريخ:
                         {{ $startDate }}
                     </div>
@@ -86,9 +90,8 @@
 
         </div>
     @endisset
-
-        <header class="flex justify-between items-center border-b-2 border-gray-800 pb-1 mb-1">
-            <div>
+    <header class="flex justify-between items-center border-b-2 border-gray-800 pb-1 mb-1">
+        <div>
                 <div class="flex">
                     <div class="flex mt-2 gap-5">
                         <div class="font-extrabold">{{ __('رقم ') }}  {{ $AccountClassName  ?? __(' ') }}:</div>
@@ -106,10 +109,10 @@
 
         </header>
         <!-- جدول المنتجات -->
-            <div class="w-full overflow-y-auto max-h-[80vh] container mx-auto print-container  bg-white">
 
-                <table class="w-full text-sm overflow-y-auto max-h-[80vh]">
-                    <tr class="bg-blue-100">
+        <table class=" text-sm font-semibold  w-full overflow-y-auto max-h-[80vh] ">
+            <thead>           
+                         <tr class="bg-blue-100">
                         <th class="px-4 text-center">#</th>
                     <th class="px-4 text-right">اسم العميل</th>
                     <th class="px-4 text-center">رقم العميل</th>
@@ -197,7 +200,6 @@
                     </div>
                 </div>
             </div>
-        </div>
 
         <!-- زر الطباعة -->
         <div class="mt-4 no-print">

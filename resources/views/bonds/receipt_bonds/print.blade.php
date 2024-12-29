@@ -31,6 +31,10 @@
         .no-print {
             display: none;
         }
+        
+    }
+    body {
+        font-family: Arial, sans-serif; /* الخط الافتراضي */
     }
     </style>
 </head>
@@ -39,7 +43,7 @@
     @include('includes.header2')
 
 
-    <div class="bg-white border border-gray-300 rounded-lg shadow-md p-4 mb-4">
+    <div class="bg-white border border-gray-300 rounded-lg shadow-md p-4 mb-">
         <div class="grid grid-cols-3 gap-4">
             <div class="text-right">
                 <p>رقم السند: <span class="font-bold text-gray-800">{{$PaymentBond->payment_bond_id}}</span></p>
@@ -61,7 +65,7 @@
         </div>
     </div>
 
-    <div class="bg-white border border-gray-300 rounded-lg shadow-md p-4">
+    <div class="bg-white border border-gray-300 rounded-lg shadow-md p-">
         <p>  اسم المستلم: <span class="font-bold text-gray-800">
             @if ($PaymentBond->transaction_type==="سند صرف")
 
