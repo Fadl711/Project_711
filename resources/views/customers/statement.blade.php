@@ -51,7 +51,7 @@
     </style>
 </head>
 <body class="bg-white">
-    <div class=" print-container  ">
+    <div class=" print-container px-1 ">
         <!-- العنوان -->
         @isset($buss)
         <div class="header bg-[#1749fd15]  rounded-lg">
