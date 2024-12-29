@@ -214,8 +214,8 @@ Route::get('/fixedAssets', [FixedAssetsController::class, 'index'])->name('fixed
 Route::get('/usersControl', [UsersController::class, 'index'])->name('users.index');
 Route::get('/usersShow', [UsersController::class, 'show'])->name('users.details');
 
-Route::get('/backup', [BackupController::class, 'showForm'])->name('backup.form');
-Route::post('/backup', [BackupController::class, 'createBackup'])->name('backup');
+Route::get('/backup1', [BackupController::class, 'showForm'])->name('backup.form');
+Route::post('/backup1', [BackupController::class, 'createBackup'])->name('backup');
 
 Route::get('/controle',function(){
 return view('controle');

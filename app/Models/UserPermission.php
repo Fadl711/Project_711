@@ -10,7 +10,10 @@ class UserPermission extends Model
 {
     use HasFactory;
     protected $table = 'user_permissions';
+    protected $primaryKey = 'permission_id'; // Use the actual primary key column
+
     protected $fillable  = [
+        'Authority_Name',
         'Readability',
         'Writing_ability',
         'Ability_modify',
