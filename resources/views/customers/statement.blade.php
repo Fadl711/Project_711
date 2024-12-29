@@ -135,7 +135,7 @@
                         <tr class="bg-white">
                             @php
                         if ($entrie->Invoice_type==2) {
-                            $Invoice_type  = "آجلة"   ;
+                            $Invoice_type  = "آجل"   ;
 
                                          }
                                          if ($entrie->Invoice_type==1) {
