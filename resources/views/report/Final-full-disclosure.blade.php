@@ -45,10 +45,10 @@
     </style>
 </head>
 <body class="bg-white">
-    <div class=" print-container  ">
+    <div class=" print-container  px-1">
         <!-- العنوان -->
         @isset($buss)
-        <div class="header border-2 border-black bg-[#1749fd15]  rounded-lg">
+        <div class="header border-2 border-black bg-[#1749fd15]  rounded-lg ">
             <div class="rounded-lg flex  p-2 w-full">
                 <!-- القسم الأيمن - Arabic content -->
                 <div class="text-right font-bold">
