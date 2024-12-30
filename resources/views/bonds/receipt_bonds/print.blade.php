@@ -39,23 +39,21 @@
     </style>
 </head>
 <body>
-<div class="container mx-auto px-4 py-6">
+<div class="container mx-auto px-2 py-2">
     @include('includes.header2')
-
-
-    <div class="bg-white border border-gray-300 rounded-lg shadow-md p-4 mb-">
+    <div class="bg-white border border-gray-300 rounded-lg shadow-md px-2">
         <div class="grid grid-cols-3 gap-4">
             <div class="text-right">
                 <p>رقم السند: <span class="font-bold text-gray-800">{{$PaymentBond->payment_bond_id}}</span></p>
                 <p>تاريخ السند: <span class="font-bold text-gray-800">{{ \Carbon\Carbon::parse($PaymentBond->created_at)->format('Y/m/d') }}</span></p>
                 <p>رقم المرجع: <span class="font-bold text-gray-800"></span></p>
-            </div>
+            </div> 
             <div class="text-center">
                 <p class="text-2xl font-bold text-blue-700">{{$PaymentBond->transaction_type}} ({{$payment_type}})</p>
             </div>
             <div class="text-right">
-                <p  class="text-center">المبلغ:</p>
-                <p class="text-lg font-bold bg-gray-100 p-2 rounded-md">{{number_format($PaymentBond->Amount_debit)}}
+              
+                <p class="text-lg font-bold bg-gray-100 p-2 rounded-md">المبلغ:{{number_format($PaymentBond->Amount_debit)}}
                     <span class="text-sm font-normal">{{ $Currencies->where('currency_id', $PaymentBond->Currency_id)->first()->currency_name }}</span>
                 </p>
                 <p>إيداع في حساب: <span class="font-bold text-gray-800">
@@ -65,7 +63,7 @@
         </div>
     </div>
 
-    <div class="bg-white border border-gray-300 rounded-lg shadow-md p-">
+    <div class="bg-white border border-gray-300 rounded-lg shadow-md px-2">
         <p>  اسم المستلم: <span class="font-bold text-gray-800">
             @if ($PaymentBond->transaction_type==="سند صرف")
 
@@ -82,20 +80,20 @@
         <table class="w-full text-sm bg-gray-100 border border-gray-300 rounded-lg">
             <thead class="bg-gray-300">
                 <tr>
-                    <th class="px-4 py-2 border">م</th>
-                    <th class="px-4 py-2 border">اسم الحساب</th>
-                    <th class="px-4 py-2 border">البيان</th>
-                    <th class="px-4 py-2 border">المبلغ</th>
-                    <th class="px-4 py-2 border">العملة</th>
+                    <th class="px-4  border">م</th>
+                    <th class="px-4  border">اسم الحساب</th>
+                    <th class="px-4  border">البيان</th>
+                    <th class="px-4  border">المبلغ</th>
+                    <th class="px-4  border">العملة</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td class="px-4 py-2 border">1</td>
-                    <td class="px-4 py-2 border">{{ $SubAccounts->where('sub_account_id', $PaymentBond->Credit_sub_account_id)->first()->sub_name }}</td>
-                    <td class="px-4 py-2 border">{{$PaymentBond->Statement}}</td>
-                    <td class="px-4 py-2 border">{{number_format($PaymentBond->Amount_debit)}}</td>
-                    <td class="px-4 py-2 border">{{ $Currencies->where('currency_id', $PaymentBond->Currency_id)->first()->currency_name }}</td>
+                    <td class="px-4  border">1</td>
+                    <td class="px-4  border">{{ $SubAccounts->where('sub_account_id', $PaymentBond->Credit_sub_account_id)->first()->sub_name }}</td>
+                    <td class="px-4  border">{{$PaymentBond->Statement}}</td>
+                    <td class="px-4  border">{{number_format($PaymentBond->Amount_debit)}}</td>
+                    <td class="px-4  border">{{ $Currencies->where('currency_id', $PaymentBond->Currency_id)->first()->currency_name }}</td>
                 </tr>
             </tbody>
         </table>

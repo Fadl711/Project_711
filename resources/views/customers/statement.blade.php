@@ -158,7 +158,7 @@
     }
 
                         @endphp
-                            <td class=" text-right font-sans "style="width: 120px; " >
+                            <td class=" text-right  "style="width: 120px; " >
                                 {{ $entrie->created_at ? $entrie->created_at->format('Y-m-d') : __('غير متوفر') }}
                             </td>
                             <td class=" text-right " style="width: 130px; {{ $cellColor }} " >{{ $entrie->daily_entries_type }} {{ $Invoice_type  ?? ""}}</td>
