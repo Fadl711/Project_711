@@ -53,7 +53,7 @@ use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
-
+Route::middleware(['auth'])->group(function () {
 
 Route::get('/all-products/{id}/show', [ProductCoctroller::class, 'allProducts'])->name('all-products');
 Route::get('/all-products/{id}/print', [ProductCoctroller::class, 'print'])->name('report.print');
@@ -222,6 +222,11 @@ return view('controle');
 });
 Route::get('/permission_user',[UserPermissionController::class,'index'])->name('permission_user');
 Route::post('/update-permission', [UserPermissionController::class, 'updatePermission'])->name('update.permission');
+Route::post('/getPermissions', [UserPermissionController::class, 'getPermissions'])->name('get.permissions');
+Route::post('/get-user-permissions', [UserPermissionController::class, 'getUserPermissions'])->name('get.user.permissions');
+
+
+
 Route::get('/chart',[ChartController::class,'index'])->name('chart.index');
 Route::get('bar-chart-data',[ChartController::class, 'getBarChartDate']);
 
@@ -283,12 +288,12 @@ Route::get('/home', [HomeCoctroller::class, 'indxe'])->name('home.index');
 Route::get('/get-options', [AccountCoctroller::class, 'show_all_accounts']);
 
 
-Route::middleware(['auth'])->group(function () {
+
     Route::get('/home', function () {
         return redirect()->route('home.index');
     });
 
-    Route::get('/home', [HomeCoctroller::class, 'index'])->name('home.index');
+    Route::get('/', [HomeCoctroller::class, 'index'])->name('home.index');
 
 });
 
