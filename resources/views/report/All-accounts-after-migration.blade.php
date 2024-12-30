@@ -95,8 +95,8 @@
                 <div class="flex">
                     <div class="flex mt-2 gap-5">
                         <div class="font-extrabold">{{ __('رقم ') }}  {{ $AccountClassName  ?? __(' ') }}:</div>
-                        <div>{{ $customerMain->sub_account_id ?? $customerMain->main_account_id ?? __(' ') }}</div>
-                        <div>{{ $customerMain->sub_name ??$customerMain->account_name?? __(' ') }}/{{ $customer->name_The_known ?? __(' ') }}</div>
+                        <div>{{ $customerMainAccount->sub_account_id ?? $customerMainAccount->main_account_id ?? __(' ') }}</div>
+                        <div>{{ $customerMainAccount->sub_name ??$customerMainAccount->account_name?? __(' ') }}/{{ $customer->name_The_known ?? __(' ') }}</div>
                     </div>
                 </div>
             </div>
@@ -183,11 +183,12 @@
 
 
                     <div>
-                        <p class="text-sm" dir="ltr">المستخدم : {{ $UserName ?? 0 }}</p>
+                            <p class="text-sm" dir="ltr">المحاسب : {{ $UserName ?? 0 }}</p>
                     </div>
                 </div>
             </div>
-
+         
+            </div>
         <!-- زر الطباعة -->
         <div class="mt-4 no-print">
             <button onclick="printAndClose()" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">طباعة</button>
