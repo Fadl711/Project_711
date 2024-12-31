@@ -47,6 +47,7 @@
                     name="date"
                     type="date"
                     class="inputSale"
+                    value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}"
                     @isset($ExchangeBond->created_at)
                         value="{{ \Carbon\Carbon::parse($ExchangeBond->created_at)->format('Y-m-d') }}"
                     @endisset
