@@ -8,6 +8,7 @@ use App\Models\AccountingPeriod;
 use App\Models\Currency;
 use App\Models\DailyEntrie;
 use App\Models\ExchangeBond;
+use App\Models\GeneralEntrie;
 use App\Models\GeneralJournal;
 use App\Models\MainAccount;
 use App\Models\PaymentBond;
@@ -273,7 +274,21 @@ $ct=$DailyEntrie->Daily_page_id;
         $DailyEntrie=DailyEntrie::where('entrie_id',$id)->first();
         ExchangeBond::where('created_at',$DailyEntrie->created_at)->delete();
         PaymentBond::where('created_at',$DailyEntrie->created_at)->delete();
+        $generalEntrieaccount_debit_id = GeneralEntrie::where([
+            'Daily_entry_id' => $DailyEntrie->entrie_id,
+            'Daily_Page_id' => $DailyEntrie->Daily_page_id,
+            'accounting_period_id' => $DailyEntrie->accounting_period_id,
+            'sub_id' => $DailyEntrie->account_debit_id,
+        ])->delete();
+
+        $generalEntrieaccount_debit_id = GeneralEntrie::where([
+            'Daily_entry_id' => $DailyEntrie->entrie_id,
+            'Daily_Page_id' => $DailyEntrie->Daily_page_id,
+            'accounting_period_id' => $DailyEntrie->accounting_period_id,
+            'sub_id' => $DailyEntrie->account_Credit_id,
+        ])->delete();
         $DailyEntrie->delete();
+
 
         return back();
     }

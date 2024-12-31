@@ -225,16 +225,16 @@
 $(document).ready(function () {
   $('.select2').select2();
 
-  const form = $('#ajaxForm');
   const successMessage = $('#successMessage');
   const errorMessage = $('#errorMessage');
   const inputs = $('.input-field'); // تحديد جميع الحقول
   const account_name = $('#account_name');
-
+  
   // تركيز على حقل الاسم عند بدء التشغيل
   account_name.focus();
-
+  
   // منع السلوك الافتراضي لزر Enter
+  const form = $('#ajaxForm');
   form.on('keydown', function (event) {
       if (event.key === 'Enter') {
           event.preventDefault(); // منع الحفظ عند الضغط على زر Enter

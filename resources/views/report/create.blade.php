@@ -73,8 +73,8 @@
             @foreach([
               'summary' => ' كشف كلي',
               'detail' => ' كشف تحليلي',
-              'FullDisclosureOfSubAccounts' => 'كشف  للحسابات الفرعية ',
-              'FullDisclosureOfAccounts' => ' كشف كلي للحسابات ',
+              'FullDisclosureOfSubAccounts' => 'كشف كلي الحسابات الفرعية قبل الترحيل',
+              'FullDisclosureOfAccounts' => 'كشف  كلي للحسابات  قبل الترحيل',
               'Disclosure_of_all_sub_accounts_after_migration' => 'كشف كلي الحسابات الفرعية بعد الترحيل',
               'Full_disclosure_of_accounts_after_migration' => 'كشف  كلي للحسابات  بعد الترحيل',
 
@@ -105,31 +105,41 @@ const viewType = $('#list').val(); // كشف كلي أو تحليلي
 if (viewType === "") {
     invoiceField = -1;
     displayMessage('يرجى تحديد نوع التقرير', 'error'); // عرض رسالة خطأ
+    return;
 }
 
+if(viewType==="FullDisclosureOfSubAccounts" || viewType==="Disclosure_of_all_sub_accounts_after_migration"  || viewType==="detail"  || viewType==="summary")
+{
 // التحقق من الحسابات
 if (accountListRadio === "mainAccount") {
     if (invoiceField2) {
         invoiceField = invoiceField2;
-    } else {
-        displayMessage('يرجى تحديد الحساب الرئيسي', 'error'); // عرض رسالة خطأ
     }
-} else if (accountListRadio === "subAccount") {
+    else {
+        displayMessage('يرجى تحديد الحساب الفرعي', 'error'); // عرض رسالة خطأ
+        return;
+    }
+} 
+ if (accountListRadio === "subAccount") {
     if (invoiceField1) {
         invoiceField = invoiceField1;
-    } else {
+    } 
+    else {
         displayMessage('يرجى تحديد الحساب الفرعي', 'error'); // عرض رسالة خطأ
+        return;
     }
+}
 }
 
 // معالجة الحالة الخاصة لتقرير الكشف الكلي بعد الترحيل
-if (viewType === "Full_disclosure_of_accounts_after_migration") {
+if (viewType === "Full_disclosure_of_accounts_after_migration" ) {
     invoiceField = 0;
 }
 
 // عرض رسالة خطأ إذا لم يتم تحديد أي خيار
 if (invoiceField === -1) {
-    displayMessage('يرجى تحديد  نوع التقرير أو الحساب', 'error'); // عرض رسالة خطأ
+    displayMessage('يرجى تحديد  نوع التقرير أو الحساب', 'error'); // عرض رسالة خطأ\\
+    return;
 }
 
     if (invoiceField>=0) {

@@ -127,7 +127,7 @@ $transaction_type="رصيد افتتاحي";
         $dailyPage = GeneralJournal::whereDate('created_at', $today)->latest()->first();
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
         
-    if($Getentrie_id->entrie_id )
+    if($Getentrie_id )
     {
         $Getentrie = DailyEntrie::where('Invoice_id',$SubAccount->sub_account_id)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
@@ -141,8 +141,7 @@ $transaction_type="رصيد افتتاحي";
     return redirect()->route('subAccounts.allShow');
 
    }
-else
-{
+   if(!$Getentrie_id ){
     if (!$dailyPage)
         {
            $dailyPage = GeneralJournal::create([

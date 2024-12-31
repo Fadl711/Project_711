@@ -3,7 +3,9 @@
 @section('conm')
 <x-nav-transfer-restriction/>
 
-<div id="successMessage" class="bg-green-500 text-white p-4 rounded opacity-0" style="display: none;"></div>
+<div id="successMessage" class="bg-green-500  p-4 rounded" style="display: none;">
+    <p>تم الحفظ بنجاح!</p>
+</div>
 
 <!-- عرض الرسائل إذا كانت موجودة -->
 @if(session('error'))
@@ -68,7 +70,8 @@
             </div>
             <div>
                 <button id="submitShow" type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">عرض</button>
-                <button id="saveButton" name="saveButton" type="button" class="bg-yellow-500 text-white px-4 py-1 rounded">ترحيل الكل</button>
+                <input type="button" id="saveButton" name="saveButton" value="ترحيل الكل" class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500" >
+                {{-- <button id="saveButton" name="saveButton" type="button" class="bg-yellow-500 text-white px-4 py-1 rounded">ترحيل الكل</button> --}}
 
             </div>
             {{-- <div>
@@ -166,7 +169,7 @@
                             <input type="hidden" name="entrie_id" id="entrie_id" value="{{ $entry->entrie_id }}">
                             <input type="hidden" name="account_debit_id" id="account_debit_id" value="{{ $entry->account_debit_id }}">
                             <input type="hidden" name="status_debit" id="status_debit" value="{{ $entry->status_debit }}">
-
+                         
                             <button id="saveButton" name="saveButton" type="button" class="bg-yellow-500 text-white px-4 py-1 rounded" value="{{ $entry->entrie_id }}">{{ $entry->status_debit }}</button>
                         </form>
                     </td>
@@ -216,9 +219,7 @@
         });
     </script>
 
-    <div id="successMessage" style="display: none;">
-    <p>تم الحفظ بنجاح!</p>
-  </div>
+    
   <div id="errorMessage" style="display: none; color: red;">
     <p>حدث خطأ أثناء الحفظ.</p>
   </div>
@@ -232,99 +233,100 @@
         color: green;
         font-weight: bold;
     }
-  </style><script type="text/javascript">
-$(document).ready(function () {
-    const successMessage = $('#successMessage');
-    const errorMessage = $('#errorMessage');
-
-    // التعامل مع إرسال النموذج وحفظ البيانات باستخدام AJAX
-    function saveData(event) {
-        event.preventDefault(); // منع تحديث الصفحة
-        const form = $(event.target).closest('form'); // جلب النموذج من الزر الذي تم النقر عليه
-        const form1 = $('#dailyRestrictionsForm').closest('form'); // جلب النموذج من الزر الذي تم النقر عليه
-        const formData = new FormData(form[0]);
-        const formData2 = new FormData(form1[0]);
-         // تجميع بيانات النموذج
-
-        // إرسال الطلب باستخدام AJAX
-        $.ajax({
-            url: '{{ route("transfer_restrictions.store") }}',
-            type: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (data) {
-                if (data.success) {
-                    successMessage.show().text(data.success);
+  </style>
+ <script>
+    $(document).ready(function () {
+        const successMessage = $('#successMessage');
+        const errorMessage = $('#errorMessage');
+    
+        // التعامل مع إرسال النموذج وحفظ البيانات باستخدام AJAX
+        function saveData(event) {
+            event.preventDefault(); // منع تحديث الصفحة
+            const form = $(event.target).closest('form'); // جلب النموذج من الزر الذي تم النقر عليه
+            const formData = new FormData(form[0]); // إنشاء FormData من النموذج
+    
+            // إرسال الطلب باستخدام AJAX
+            $.ajax({
+                url: '{{ route("transfer_restrictions.store") }}',
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    if (data.success) {
+                        successMessage.show().text('تم الترحيل');
+                        setTimeout(() => {
+                            successMessage.hide();
+                        }, 3000);
+                        // form[0].reset(); // تفريغ النموذج
+                    }
+                },
+                error: function (xhr) {
+                    let message = 'حدث خطأ أثناء الترحيل.';
+                    if (xhr.responseJSON && xhr.responseJSON.error) {
+                        message += `<br>${xhr.responseJSON.error}`;
+                    } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                        message += `<br>${xhr.responseJSON.message}`; // إضافة المزيد من التفاصيل في حال وجودها
+                    }
+                    errorMessage.show().html(message);
                     setTimeout(() => {
-                        successMessage.hide();
+                        errorMessage.hide();
                     }, 8000);
-                    form[0].reset(); // تفريغ النموذج
+                },
+                complete: function () {
+                    // إعادة تفعيل الزر بعد انتهاء الطلب
+                    $('#saveButton').prop('disabled', false).val('ترحيل الكل'); // إعادة النص إلى "حفظ"
                 }
-            },
-            error: function (xhr) {
-    let message = 'حدث خطأ أثناء الحفظ.';
-    if (xhr.responseJSON && xhr.responseJSON.error) {
-        message += `<br>${xhr.responseJSON.error}`;
-    } else if (xhr.responseJSON && xhr.responseJSON.message) {
-        message += `<br>${xhr.responseJSON.message}`; // إضافة المزيد من التفاصيل في حال وجودها
-    }
-    errorMessage.show().html(message);
-    setTimeout(() => {
-        errorMessage.hide();
-    }, 8000);
-}
+            });
+        }
+    
+        // التعامل مع النقر على زر الحفظ
+        $(document).on('click', '#saveButton', function(event) {
+            const saveButton = $(this);
+            saveButton.val('جاري الترحيل');
+            saveButton.prop('disabled', true);
+            saveData(event); // استدعاء دالة الحفظ
         });
-    }
-
-    // التعامل مع النقر على زر الحفظ
-    $(document).on('click', '#saveButton', function(event) {
-        saveData(event); // استدعاء دالة الحفظ
-    });
-});
-
-// عند اختيار الحساب الرئيسي (المدين)
-$('#main_account_id').on('change', function() {
-    const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي (المدين)
-
-    if (mainAccountId !== null && mainAccountId !== '') {
-        // طلب AJAX لجلب الحسابات الفرعية بناءً على الحساب الرئيسي
-        SubAccount(mainAccountId);
-    }
-});
-
-// دالة لجلب الحسابات الفرعية
-function SubAccount(mainAccountId) {
-    const subAccountDiv = $('#subAccountDiv'); // الحصول على الحقل المخفي
-    const the_way_of_deportation1 = $('#the_way_of_deportation1');
-    // تفريغ القائمة الفرعية
-    $('#sub_account_id').empty();
-
-    $.ajax({
-        url: "{{ url('/main-accounts/') }}/" + mainAccountId + "/sub-accounts", // استخدام القيم الديناميكية
-        type: 'GET',
-        dataType: 'json',
-        success: function(data) {
-            // تعبئة الحسابات الفرعية الجديدة
-            const subAccountOptions = data.map(subAccount =>
-                `<option value="${subAccount.sub_account_id}">${subAccount.sub_name}</option>`
-            ).join('');
-            const subAccountOption = '<option selected value="all">الكل</option>';
-            // إضافة الخيارات الجديدة إلى القائمة الفرعية
-            $('#sub_account_id').append(subAccountOption);
-            $('#sub_account_id').append(subAccountOptions);
-            // إعادة تهيئة Select2 بعد إضافة الخيارات
-            $('#sub_account_id').select2('destroy').select2();
-        },
-        error: function() {
-            console.error('Error fetching sub-accounts.');
+    
+        // عند اختيار الحساب الرئيسي (المدين)
+        $('#main_account_id').on('change', function() {
+            const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي (المدين)
+    
+            if (mainAccountId) {
+                // طلب AJAX لجلب الحسابات الفرعية بناءً على الحساب الرئيسي
+                SubAccount(mainAccountId);
+            }
+        });
+    
+        // دالة لجلب الحسابات الفرعية
+        function SubAccount(mainAccountId) {
+            const subAccountDiv = $('#subAccountDiv'); // الحصول على الحقل المخفي
+            $('#sub_account_id').empty(); // تفريغ القائمة الفرعية
+    
+            $.ajax({
+                url: "{{ url('/main-accounts/') }}/" + mainAccountId + "/sub-accounts", // استخدام القيم الديناميكية
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    // تعبئة الحسابات الفرعية الجديدة
+                    const subAccountOptions = data.map(subAccount =>
+                        `<option value="${subAccount.sub_account_id}">${subAccount.sub_name}</option>`
+                    ).join('');
+                    const subAccountOption = '<option selected value="all">الكل</option>';
+                    // إضافة الخيارات الجديدة إلى القائمة الفرعية
+                    $('#sub_account_id').append(subAccountOption).append(subAccountOptions);
+                    // إعادة تهيئة Select2 بعد إضافة الخيارات
+                    $('#sub_account_id').select2('destroy').select2();
+                },
+                error: function() {
+                    console.error('Error fetching sub-accounts.');
+                }
+            });
         }
     });
-}
-
-</script>
+    </script>
 
 @endsection

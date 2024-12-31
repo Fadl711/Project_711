@@ -212,36 +212,63 @@ return response()->json( $data);
                 'User_id' => auth()->id(),
             ]
         );
-        // إنشاء أو استرجاع السجل من GeneralLedge
         $generalLedge = GeneralLedge::where([
             'Account_id' => $accountId,
             'accounting_id' => $accountingPeriod->accounting_period_id,
             'Main_id' => $mainAccount->main_account_id,
         ])->first();
-        $id = $generalLedge ? $generalLedge->general_ledge_id : GeneralLedge::firstOrCreate(
-            [
-                'Account_id' => $accountId,
-                'accounting_id' => $accountingPeriod->accounting_period_id,
-            ],
-            [
-                'Main_id' => $mainAccount->main_account_id,
-                'User_id' => auth()->id(),
-            ]
-        )->id;
-      
-        if($amount!=0)
-        {
+        
+        // تحقق مما إذا كان السجل موجودًا
+        if ($generalLedge === null) {
+            // إذا لم يتم العثور على السجل، يمكن إنشاء سجل جديد
+            $generalLedge = GeneralLedge::firstOrCreate(
+                [
+                    'Account_id' => $accountId,
+                    'accounting_id' => $accountingPeriod->accounting_period_id,
+                ],
+                [
+                    'Main_id' => $mainAccount->main_account_id,
+                    'User_id' => auth()->id(),
+                ]
+            );
+        }
+        
+        // الآن يمكنك استخدام $generalLedge بأمان
+        $id = $generalLedge->general_ledge_id;
 
-        // إنشاء السجل في GeneralEntrie باستخدام المعرف الصحيح
-        $generalEntry = GeneralEntrie::firstOrCreate([
+        $generalEntrie = GeneralEntrie::where([
             'Daily_entry_id' => $entry->entrie_id,
             'Daily_Page_id' => $entry->Daily_page_id,
             'accounting_period_id' => $accountingPeriod->accounting_period_id,
             'sub_id' => $subAccount->sub_account_id,
+            'entry_type' => $entryType,
+            'amount' => $amount,
+            'typeAccount' => $subAccount->typeAccount,
+            'Main_id' => $mainAccount->main_account_id,
+
+
+
+        ])->first();
+
+        if(!$generalEntrie)
+        {
+
+
+
+        if($amount!=0)
+        {
+
+        // إنشاء السجل في GeneralEntrie باستخدام المعرف الصحيح
+        $generalEntry = GeneralEntrie::updateOrCreate([
+            'Daily_entry_id' => $entry->entrie_id,
+            'Daily_Page_id' => $entry->Daily_page_id,
+            'accounting_period_id' => $accountingPeriod->accounting_period_id,
+            'sub_id' => $subAccount->sub_account_id,
+            'entry_type' => $entryType,
+            'General_ledger_page_number_id' =>  $generalLedge->general_ledge_id,
+        ], [
             'Main_id' => $mainAccount->main_account_id,
             'typeAccount' => $subAccount->typeAccount,
-            'entry_type' => $entryType,
-        ], [
             'amount' => $amount,
             'description' => $descriptionCommint . $descriptionText . " " . $subAccount->sub_name,
             'entry_date' => $entry->created_at,
@@ -249,7 +276,6 @@ return response()->json( $data);
             'Invoice_type' => $entry->Invoice_type,
             'Invoice_id' => $entry->Invoice_id,
             'Currency_name' => $entry->Currency_name,
-            'General_ledger_page_number_id' => $id,
             'User_id' => auth()->id(),
         ]);
 
@@ -263,6 +289,8 @@ return response()->json( $data);
         if ($accountCreditId) {
             $entry->update(['status' => 'مرحل']);
         }
+    }
+
     }
     }
     

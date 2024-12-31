@@ -480,9 +480,15 @@ const Product_name = $('#product_name');
         $('#saveButton').click(function() {
             saveData(event); // استدعاء دالة الحفظ
         });
+    
       function saveData(event) {
         event.preventDefault(); // منع تحديث الصفحة
             const formData = new FormData($('#ajaxForm')[0]);
+            formData.on('keydown', function (event) {
+      if (event.key === 'Enter') {
+          event.preventDefault(); // منع الحفظ عند الضغط على زر Enter
+      }
+  });
             const selectedPaymentType = $('input[name="Payment_type"]:checked').val();
     formData.append('Payment_type', selectedPaymentType || ''); // إضافة القيمة المختارة أو قيمة فارغة إذا لم يتم اختيار شيء
 
