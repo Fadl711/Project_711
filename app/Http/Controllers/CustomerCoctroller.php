@@ -1025,7 +1025,6 @@ $endDate = null;
         $DataSubAccount->save();
         $DSubAccount = SubAccount::where('sub_account_id', $DataSubAccount->sub_account_id)->first();
 
-      
         $account_debit_id=null;
         $account_Credit_id=null;
         if ($DSubAccount->debtor_amount > 0 || $DSubAccount->creditor_amount > 0) {

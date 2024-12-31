@@ -2,6 +2,12 @@
 <div class="">
 <div class="">
     <div class=" divNav">
+        @php
+        use App\Models\UserPermission; // استيراد الكلاس
+    
+        $resultDebit1 = UserPermission::where('User_id', auth()->id())
+            ->first();
+    @endphp
         <ul class="list-none ">
             <li class="">
                 <a class="NavTagA" href="{{route('home.index')}}">
@@ -13,6 +19,8 @@
                 <span class="textNav"> الرئسية</span>
                     </a>
                 </li>
+                @if($resultDebit1->Authority_Name=="الحسابات")
+
                     <li class="">
                     <a class=" NavTagA"  href="{{route('accounts.index')}}">
                     <svg class="w-6 h-6 stroke-current " xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"stroke="currentColor">
@@ -21,14 +29,22 @@
                     <span class="textNav"> الحسابات</span>
                     </a>
                 </li>
-                <li class="">
-                    <a class="NavTagA" href="{{route('restrictions.index')}}">
-                        <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 20V10m0 10-3-3m3 3 3-3m5-13v10m0-10 3 3m-3-3-3 3"/>
-                          </svg>
-                           <span class="textNav mr-1"> القيود</span>
-                    </a></li>
+                @endif
 
+                  
+                    @if($resultDebit1->Authority_Name=="القيود")
+                <li class="">
+                
+                        <a class="NavTagA" href="{{ route('restrictions.index') }}">
+                            <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 20V10m0 10-3-3m3 3 3-3m5-13v10m0-10 3 3m-3-3-3 3"/>
+                            </svg>
+                            <span class="textNav mr-1"> القيود</span>
+                        </a>
+                    </li>
+                    @endif
+
+                    @if($resultDebit1->Authority_Name=="السندات")
                 <li class="">
                     <a class="NavTagA" href="{{route('bonds.index')}}">
                         <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -37,6 +53,9 @@
                                               <span class="textNav mr-1"> السندات</span>
                     </a>
                 </li>
+                @endif
+                    @if($resultDebit1->Authority_Name=="المبيعات")
+
             <li class="">
 
                 <a class="NavTagA" href="{{route('sales.create')}}">
@@ -44,25 +63,41 @@
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 17.345a4.76 4.76 0 0 0 2.558 1.618c2.274.589 4.512-.446 4.999-2.31.487-1.866-1.273-3.9-3.546-4.49-2.273-.59-4.034-2.623-3.547-4.488.486-1.865 2.724-2.899 4.998-2.31.982.236 1.87.793 2.538 1.592m-3.879 12.171V21m0-18v2.2"/>
                 </svg>
                 <span class="textNav">المبيعات</span>
-                </a></li>
+                </a>
+            </li>    
+            @endif
+      
+                          @if($resultDebit1->Authority_Name=="الفواتير المبيعات")
                 <li class=""><a class="NavTagA" href="{{route('invoice_sales.all_invoices_sale')}}">
                     <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3v4a1 1 0 0 1-1 1H5m8-2h3m-3 3h3m-4 3v6m4-3H8M19 4v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1ZM8 12v6h8v-6H8Z"/>
                       </svg>
                     <span class="textNav">الفواتير المبيعات</span>
-                    </a></li>
-                <li class=""><a class="NavTagA" href="{{route('Purchases.create')}}">
+                    </a>
+                </li>
+                    @endif
+                    @if($resultDebit1->Authority_Name=="المشتريات")
+
+                <li class="">
+                    <a class="NavTagA" href="{{route('Purchases.create')}}">
                     <svg class="w-6 h-6  text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 4h1.5L9 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm-8.5-3h9.25L19 7h-1M8 7h-.688M13 5v4m-2-2h4"/>
                         </svg>
                     <span class="textNav">المشتريات</span>
                     </a></li>
+                    @endif
+
+                    @if($resultDebit1->Authority_Name=="الفواتير المشتريات")
+
                     <li class=""><a class="NavTagA" href="{{route('invoice_purchase.index')}}">
                         <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3v4a1 1 0 0 1-1 1H5m8-2h3m-3 3h3m-4 3v6m4-3H8M19 4v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1ZM8 12v6h8v-6H8Z"/>
                           </svg>
                         <span class="textNav">الفواتير المشتريات</span>
                         </a></li>
+                        @endif
+                        @if($resultDebit1->Authority_Name=="المنتجات")
+
                 <li class=""><a class="NavTagA" href="{{route('products.index')}}">
                     <svg class="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -71,6 +106,9 @@
                     </svg>
                     <span class="textNav">المنتجات</span>
                     </a></li>
+                    @endif
+                    @if($resultDebit1->Authority_Name=="سجلات الترحيل")
+
                     <li class="">
                     <a class="NavTagA" href="{{route('transfer_restrictions.index')}}">
                         <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -78,16 +116,22 @@
                           </svg>
                            <span class="textNav mr-1"> سجلات الترحيل</span>
                     </a></li>
+                    @endif
+
+                    @if($resultDebit1->Authority_Name=="المردودات")
 
                     <li class="">
                     <a class="NavTagA" href="{{route('refunds.index')}}">
                         <svg class="w-6 h-6" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"></path><path d="M5.671 4.257c3.928-3.219 9.733-2.995 13.4.672 3.905 3.905 3.905 10.237 0 14.142-3.905 3.905-10.237 3.905-14.142 0A9.993 9.993 0 0 1 2.25 9.767l.077-.313 1.934.51a8 8 0 1 0 3.053-4.45l-.221.166L8.11 6.697l-4.596 1.06 1.06-4.596L5.67 4.257zM13 6v2h2.5v2H10a.5.5 0 0 0-.09.992L10 11h4a2.5 2.5 0 1 1 0 5h-1v2h-2v-2H8.5v-2H14a.5.5 0 0 0 .09-.992L14 13h-4a2.5 2.5 0 1 1 0-5h1V6h2z" fill="#ffffff" class="fill-000000"></path></svg>
                             <span class="textNav"> المردودات</span>
                     </a></li>
+                    @endif
+
                     <li class="">
                         {{--  --}}
 
 
+                        @if($resultDebit1->Authority_Name=="قائمة التحليلات ")
                         <div class="dropdown inline-block relative z-10 ">
                             <button class=" text-white font-semibold py-2 px-2 rounded inline-flex items-center hover:bg-gray-400 ">
                                 <span class="textNav ml text-white">قائمة التحليلات </span>
@@ -112,6 +156,9 @@
 
                                 {{--  --}}
                     </li>
+                    @endif
+                    @if($resultDebit1->Authority_Name=="قائمة العملاء")
+
                     <li class="  ">
                         {{--  --}}
 
@@ -142,6 +189,9 @@
 
                     {{--  --}}
                 </li>
+                @endif
+                @if($resultDebit1->Authority_Name=="الرسائل")
+
                 <li class="">
                     <a class="NavTagA" href="">
                     <svg class="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -153,6 +203,9 @@
                     <span class="absolute top-0 left-0 w-2 h-2 mt-2 ml-2 bg-indigo-500 rounded-full"></span>
                 </a>
                 </li>
+                @endif
+                @if($resultDebit1->Authority_Name=="التقارير")
+
                 <li class="">
                     <a class="NavTagA" href="{{route('report.summary')}}">
                         <svg class="w-6 h-6 text-white" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><svg class="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -169,6 +222,8 @@
                     </svg>
                     <span class="textNav">الإعدادات</span>
                     </a></li>
+                    @endif
+
         </ul>
     </div>
 </div>
