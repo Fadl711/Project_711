@@ -573,43 +573,33 @@ if($Quantit=="QuantityCosts")
 
     public function store(Request $request)
     {
+
+        if (!$request->product_name) {
+            return response()->json([
+                'success' => false,
+                'message' => 'يجب عليك تحديد اسم المنتج .'
+            ]);
+        }
+       
         // تحويل الأرقام العربية إلى الإنجليزية
         $Quantity = $this->convertArabicNumbersToEnglish($request->input('Quantity'));
         $Selling_price = $this->convertArabicNumbersToEnglish($request->input('Selling_price'));
         $Purchase_price = $this->convertArabicNumbersToEnglish($request->input('Purchase_price'));
         $Regular_discount = $this->convertArabicNumbersToEnglish($request->input('Regular_discount'));
         $Special_discount = $this->convertArabicNumbersToEnglish($request->input('Special_discount'));
-    
-        // الحصول على الفترة المحاسبية المفتوحة
-        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
-        if (!$accountingPeriod) {
-            return response()->json([
-                'success' => false,
-                'message' => 'لا توجد فترة محاسبية مفتوحة.'
-            ]);
+        $Quantityprice = $this->convertArabicNumbersToEnglish($request->input('Quantityprice'));
+        $product_idUpdate = $this->convertArabicNumbersToEnglish($request->input('producid'));
+              
+        if(!$product_idUpdate)
+        {
+            if (Product::where('product_name', $request->product_name)->exists()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'يوجد نفس هذا الاسم من قبل.'
+                ]);
+            }
         }
-    
-        // إنشاء منتج جديد
-        $ProductNew = Product::create([
-            'Barcode' => $request->Barcode,
-            'product_name' => $request->product_name,
-            'Quantity' => $Quantity,
-            'supplier_id' =>$request->Supplier_id,
-            'Purchase_price' => $Purchase_price,
-            'Selling_price' => $Selling_price,
-            'Categorie_id' => $request->Categorie_id,
-            'Regular_discount' => $Regular_discount,
-            'Special_discount' => $Special_discount,
-            'User_id' => auth()->id(),
-            'currency_id' => $request->currency_id,
-            'Total' => $request->Total,
-            'Cost' => $request->Cost,
-            'Profit' => $request->Profit,
-            'note' => $request->note,
-            'warehouse_id' => $request->account_debitid ,
-        ]);
-    
-        // التحقق من كمية المنتج وإنشاء سجل في جدول المشتريات
+        // الحصول على الفترة المحاسبية المفتوحة
         if ($Quantity > 0) {
             if (!$request->account_debitid) {
                 return response()->json([
@@ -617,26 +607,97 @@ if($Quantit=="QuantityCosts")
                     'message' => 'يجب عليك تحديد مخزن.'
                 ]);
             }
-            $productName = Product::where('product_id', $ProductNew->product_id)->value('Product_name');
+            if (!$Purchase_price) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'يجب عليك تحديد سعر الشراء.'
+                ]);
+            }
+            if (!$Selling_price) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'يجب عليك تحديد سعر البيع .'
+                ]);
+            }
+           
+
+            if ($request->cate)
+             {
+                if (!$Quantityprice) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'يجب عليك تحديد سعر البيع .'
+                    ]);
+                }
+
+            }
+
+// إنشاء منتج جديد أو تحديثه
+$ProductNew = Product::updateOrCreate(
+    [
+        'product_id' => $product_idUpdate, // شرط التحديث أو الإنشاء
+    ],
+    [
+        'Barcode' => $request->Barcode,
+        'product_name' => $request->product_name,
+        'Quantity' => $Quantity,
+        'supplier_id' => $request->Supplier_id,
+        'Purchase_price' => $Purchase_price,
+        'Selling_price' => $Selling_price,
+        'Categorie_id' => $request->Categorie_id,
+        'Regular_discount' => $Regular_discount,
+        'Special_discount' => $Special_discount,
+        'User_id' => auth()->id(),
+        'currency_id' => $request->currency_id,
+        'Total' => $request->Total,
+        'Cost' => $request->Cost,
+        'Profit' => $request->Profit,
+        'note' => $request->note,
+        'warehouse_id' => $request->account_debitid,
+    ]
+);
+
+        $Post = new Category;
+        $product_name = Product::where('product_id', $ProductNew->product_id)->value('product_name');
+        $produc = Product::where('product_id', $ProductNew->product_id)->first();
+        // التحقق من كمية المنتج وإنشاء سجل في جدول المشتريات
+          if ($request->cate) {
+            $Post->Categorie_name=$request->cate;
+            $Post->product_id=$produc->product_id;
+            $Post->Purchase_price=$produc->Purchase_price;
+            $Post->Selling_price=$produc->Selling_price ;
+            $Post->Quantityprice=$request->Quantityprice ??1 ;
+            $Post->user_id=$request->user_id;
+            $Post->save();
+          
+            }
+       
+            $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+            if (!$accountingPeriod) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'لا توجد فترة محاسبية مفتوحة.'
+                ]);
+            }
             $purchase = Purchase::updateOrCreate(
                 [
-
                     'accounting_period_id' => $accountingPeriod->accounting_period_id,
-
+                    'purchase_id' => $request->purchase_id,
+                    'product_id' => $ProductNew->product_id,
                 ],
                 [
-                    'Purchase_invoice_id' =>$request->Purchase_invoice_id ??null,
-                    'Product_name' => $productName,
-                    'Barcode' => $ProductNew->Barcode ?? 0,
+                    'Purchase_invoice_id' =>null,
+                    'Product_name' => $product_name,
+                    'Barcode' => $produc->Barcode ?? 0,
                     'quantity' => $Quantity,
-                    'Quantityprice' => $Quantity,
+                    'Quantityprice' => $Quantity ??0,
 
                     'Purchase_price' => $Purchase_price,
                     'Selling_price' => $Selling_price,
                     'Total' => $Purchase_price* $Quantity,
                     'Cost' => 0,
                     'Currency_id' => null,
-                    'Supplier_id' => $ProductNew->supplier_id,
+                    'Supplier_id' => $produc->supplier_id,
                     'User_id' => auth()->id(),
                     'warehouse_to_id' => $request->account_debitid,
                     'warehouse_from_id' => null,
@@ -644,18 +705,33 @@ if($Quantit=="QuantityCosts")
                     'Profit' => $request->Profit ?? 0,
                     'Exchange_rate' => 1.0,
                     'note' => $request->note ?? '',
-                    'product_id' => $ProductNew->product_id,
-                    'account_id' => $ProductNew->supplier_id,
+                    'account_id' => $produc->supplier_id,
                     'transaction_type' => 6,
                     'categorie_id' =>null,
                 ]
             );
-    
+        if($product_idUpdate)
+        {
+                return response()->json([
+                    'success' => true,
+                    'message' => ' تم تعديل الصنف بنجاح  .',
+                ]);
+            }
+            if($Post->save())
+            {
+                return response()->json([
+                    'success' => true,
+                    'message' => ' تم الحفظ بنجاح-تم تحديث مخزن-تم حفظ الوحدة .',
+                ]);
+            }
+
             return response()->json([
                 'success' => true,
                 'message' => 'تم الحفظ بنجاح وتحديث مخزن.',
             ]);
         }
+        
+       
     
         return response()->json([
             'success' => true,
@@ -664,14 +740,21 @@ if($Quantit=="QuantityCosts")
     }
     
     public function edit($id){
-       $prod= Product::where('product_id',$id)->first();
-
-       $curr=Currency::all();
-       $Warehouses=Warehouse::all();
-
-
-        return view('products.store',['prod'=>$prod,'curr'=>$curr,'Warehouses'=>$Warehouses]);
-    }
+        $prod= Product::where('product_id',$id)->first();
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+ 
+        $purchase_id= Purchase::where('product_id', $id)
+        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        ->where('transaction_type', 6)
+        ->first();
+ $purchaseid=$purchase_id->purchase_id;
+        $curr=Currency::all();
+        $editProduct="تعديل الصنف";
+         return view('products.create',
+         ['prod'=>$prod,
+         'editProduct'=>$editProduct,
+         'purchaseid'=>$purchaseid ]);
+     }
     public function update(Request $request,$id){
         Product::where('product_id',$id)->update([
             'Barcode'=>$request->Barcode,
@@ -679,11 +762,9 @@ if($Quantit=="QuantityCosts")
             'Quantity'=>$request->Quantity,
             'Purchase_price'=>$request->Purchase_price,
             'Selling_price'=>$request->Selling_price,
-            'Categorie_id'=>$request->Categorie_id,
             'Regular_discount'=>$request->Regular_discount,
             'Special_discount'=>$request->Special_discount,
-            'User_id'=>$request->User_id,
-            'currency_id'=>$request->currency_id,
+            'User_id' => auth()->id(),
             'Total'=>$request->Total,
             'Cost'=>$request->Cost,
             'Profit'=>$request->Profit,

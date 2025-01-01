@@ -21,21 +21,36 @@ class CategoryController extends Controller
             // Record already exists
             return response()->json(['error' => 'الاسم موجود مسبقاً'], 422);
         }
-    $Post = new Category;
-    $Post->Categorie_name=$request->cate;
-    $Post->product_id=$request->product_id;
-    $Post->Purchase_price=$request->Purchase_price;
-    $Post->Selling_price=$request->Selling_price ;
-    $Post->Quantityprice=$request->Quantityprice ??1 ;
-    $Post->user_id=$request->user_id;
-    $Post->save();
+        Category::updateOrCreate(
+            [
+                'product_id' => $request->product_id,
+                'categorie_id' => $request->Categorie_id,
+            ],
+            [
+            'Categorie_name' => $request->cate,
+            'Purchase_price' => $request->Purchase_price,
+            'Selling_price' => $request->Selling_price,
+            'User_id' => auth()->id(),
+           
+        ]);
+        if($request->Categorie_id)
+        {
+                return response()->json([
+                    'success' => true,
+                    'message' => ' تم تعديل الوحدة بنجاح  .',
+                ]);
+            }
 /*         Category::createOrFirst([
             'Categorie_name' => ,
             'created_at' => now(),
             'updated_at' => now(),
         ]);*/
 
-        return back();
+        return response()->json([
+            'success' => true,
+            'message' => ' تم تعديل الصنف بنجاح  .',
+        ]);
+        // return back();
     }
     public function edit($id){
         $prod=Category::where('categorie_id',$id)->first();

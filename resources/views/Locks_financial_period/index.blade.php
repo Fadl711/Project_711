@@ -21,24 +21,19 @@
             @csrf
             <div>
                 <label for="accountingPeriod" class="labelSale"> السنة</label>
-                
                 <select name="accountingPeriod" id="accountingPeriod" class="input-field select2 inputSale" required>
                     @isset($accountingPeriodOpen)
                     <option  @isset($accountingPeriodOpen)
                     value="{{$accountingPeriodOpen['accounting_period_id']}}" 
                     @endisset > {{$accountingPeriodOpen['created_at']->format('Y-m-d') }}</option>
                     @endisset 
-                   
                 </select>
             </div>
         </form>
-       
     </div>
 <div class="container mx-auto my-8">
     <h1 class="text-2xl font-bold mb-4">تقرير الأرباح والخسائر</h1>
-
-    <button id="loadReport" type="button" class="bg-blue-500 text-white py-2 px-4 rounded">تحميل التقرير</button>
-
+    <button id="loadReport" type="button" class="bg-blue-500 text-white py-2 px-4 rounded"> إقفال السنة</button>
     <div id="reportContainer" class="mt-6 ">
         <div class="mb-6">
             <h2 class="text-lg font-semibold">الإيرادات والمصروفات</h2>
@@ -106,6 +101,9 @@ form.on('keydown', function (event) {
     const form = $('#LocksFinancialPeriod');
 
     $('#loadReport').on('click', function() {
+        const submitButton = $('#loadReport');
+        submitButton.val('جاري الحفظ');
+        submitButton.prop('disabled', true);
 
         let mainAccountId = $('#accountingPeriod').val();
         if(!mainAccountId)
@@ -123,6 +121,8 @@ form.on('keydown', function (event) {
         contentType: false,
 
             success: function(data) {
+                submitButton.prop('disabled', false);
+
                 alert(data.id);
 
                 // عرض الإيرادات والمصروفات
@@ -171,7 +171,12 @@ form.on('keydown', function (event) {
             error: function(xhr, status, error) {
                 console.error('Error fetching data:', error);
             }
+            complete: function () {
+                    // إعادة تفعيل الزر بعد انتهاء الطلب
+                    $('#loadReport').prop('disabled', false).val('إقفال السنة'); // إعادة النص إلى "حفظ"
+                }
         });
+
     });
 });
 </script>

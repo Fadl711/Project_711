@@ -30,7 +30,7 @@
                       <input type="number" name="Selling_price" id="Selling_price" placeholder="0" class="inputSale" required/>
                     </div>
                     <div>
-                      <label for="Quantityprice" class="labelSale">الكمية الوحدة</label>
+                      <label for="Quantityprice" class="labelSale"> العبوة</label>
                       <input type="number" name="Quantityprice" id="Quantityprice" placeholder="0" class="inputSale  english-numbers" required />
                  
                   </div>

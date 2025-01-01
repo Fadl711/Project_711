@@ -52,7 +52,6 @@
                 <th scope="col" class="leading-2 tagHt ">سعر الشراء</th>
                 <th scope="col" class="leading-2 tagHt ">سعر البيع</th>
                 <th scope="col" class="leading-2 tagHt ">الاجمالي</th>
-                <th scope="col" class="leading-2 tagHt ">التكلفة</th>
                 <th scope="col" class="leading-2 tagHt ">الربح</th>
                 <th scope="col" class="leading-2 tagHt ">خصم عادي</th>
                 <th scope="col" class="leading-2 tagHt">خصم خاص</th>
@@ -73,7 +72,6 @@
                 @foreach ($cate as $cat)
                 @if ($cat->categorie_id==$pro->Categorie_id)
                 <td class="tagTd ">{{$cat->Categorie_name}}</td>
-
                 @endif
                 @endforeach
                 @else
@@ -83,8 +81,7 @@
                 <td class="tagTd ">{{$pro->Purchase_price}}</td>
                 <td class="tagTd ">{{$pro->Selling_price}}</td>
                 <td class="tagTd ">{{$pro->Total}}</td>
-                <td class="tagTd ">{{$pro->Cost}}</td>
-                <td class="tagTd ">{{$pro->Profit}}</td>
+                <td class="tagTd ">{{$pro->Selling_price-$pro->Purchase_price}}</td>
                 <td class="tagTd">{{$pro->Regular_discount}}</td>
                 <td class="tagTd">{{$pro->Special_discount}}</td>
 
@@ -164,6 +161,7 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+        
         $('#search').on('keyup', function() {
             var searchValue = $(this).val();
             if (searchValue !== '') {

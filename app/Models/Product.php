@@ -10,13 +10,6 @@ class Product extends Model
     use HasFactory;
     protected $table = 'products';
     protected $primaryKey = 'product_id';
-protected static function boot()
-{
-    parent::boot();
-    static::deleting(function($product){
-        $product->categories()->delete();
-    });
-}
 
     protected $fillable =[
             'Barcode',

@@ -54,7 +54,7 @@
                     </a>
                 </li>
                 @endif
-                    @if($resultDebit1->Authority_Name=="المبيعات")
+                    {{-- @if($resultDebit1->Authority_Name=="المبيعات") --}}
 
             <li class="">
 
@@ -65,7 +65,7 @@
                 <span class="textNav">المبيعات</span>
                 </a>
             </li>    
-            @endif
+            {{-- @endif --}}
       
                           @if($resultDebit1->Authority_Name=="الفواتير المبيعات")
                 <li class=""><a class="NavTagA" href="{{route('invoice_sales.all_invoices_sale')}}">
@@ -96,7 +96,7 @@
                         <span class="textNav">الفواتير المشتريات</span>
                         </a></li>
                         @endif
-                        @if($resultDebit1->Authority_Name=="المنتجات")
+                        {{-- @if($resultDebit1->Authority_Name=="المنتجات") --}}
 
                 <li class=""><a class="NavTagA" href="{{route('products.index')}}">
                     <svg class="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -106,7 +106,7 @@
                     </svg>
                     <span class="textNav">المنتجات</span>
                     </a></li>
-                    @endif
+                    {{-- @endif --}}
                     @if($resultDebit1->Authority_Name=="سجلات الترحيل")
 
                     <li class="">

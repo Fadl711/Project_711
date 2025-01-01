@@ -288,12 +288,12 @@ Route::get('/home', [HomeCoctroller::class, 'indxe'])->name('home.index');
 Route::get('/get-options', [AccountCoctroller::class, 'show_all_accounts']);
 
 
+Route::get('/', [HomeCoctroller::class, 'index'])->name('home.index');
 
     Route::get('/home', function () {
         return redirect()->route('home.index');
     });
 
-    Route::get('/', [HomeCoctroller::class, 'index'])->name('home.index');
 
 });
 

@@ -678,7 +678,6 @@ function fetchSalesByInvoice(url, currentInvoiceId) {
         alert('يرجى إدخال رقم الفاتورة.');
         return;
     }
-
     $.ajax({
         url: url,
         type: 'GET',
@@ -699,8 +698,6 @@ function fetchSalesByInvoice(url, currentInvoiceId) {
         }
     });
 }
-
-
 function displayProductDetails(product) {
     const invoiceInput = $('#sales_invoice_id');
     var   Categorie_name=$('#Categorie_name');
