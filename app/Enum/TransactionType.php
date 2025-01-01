@@ -14,10 +14,10 @@ enum TransactionType: int
     {
         return match($this) {
             self::PURCHASE => 'شراء',
-            self::RETURN => 'مردود المشتريات',
+            self::RETURN => 'مردود مشتريات',
             self::INVENTORY_TRANSFER => 'تحويل مخزني',
-            self::SALE => 'المبيعات',
-            self::RETURN_SALE => 'مردود المبيعات',
+            self::SALE => 'مبيعات',
+            self::RETURN_SALE => 'مردود مبيعات',
 
         };
     }
