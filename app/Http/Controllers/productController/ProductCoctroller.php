@@ -747,7 +747,7 @@ $ProductNew = Product::updateOrCreate(
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->where('transaction_type', 6)
         ->first();
- $purchaseid=$purchase_id->purchase_id;
+ $purchaseid=$purchase_id->purchase_id ??null;
         $curr=Currency::all();
         $editProduct="تعديل الصنف";
          return view('products.create',
