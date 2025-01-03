@@ -160,8 +160,11 @@ return response()->json( $data);
     
     private function processEntry($accountDebitId, $accountCreditId, $entryId)
     {
-        $entry = DailyEntrie::findOrFail($entryId);
-        $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+        // $entry = DailyEntrie::findOrFail($entryId);
+        $entry = DailyEntrie::where('accounting_period_id',$accountingPeriod->accounting_period_id)
+        ->where('entrie_id', $entryId)
+        ->first();
         $descriptionText = '';
         $descriptionCommint = '';
         $accountCreditId ?? null;
@@ -206,9 +209,9 @@ return response()->json( $data);
         $generalLedgeMain = GeneralLedgeMain::firstOrCreate(
             [
                 'Main_id' => $mainAccount->main_account_id,
-                'accounting_id' => $accountingPeriod->accounting_period_id,
             ],
             [
+                'accounting_id' => $accountingPeriod->accounting_period_id,
                 'User_id' => auth()->id(),
             ]
         );
@@ -224,9 +227,9 @@ return response()->json( $data);
             $generalLedge = GeneralLedge::firstOrCreate(
                 [
                     'Account_id' => $accountId,
-                    'accounting_id' => $accountingPeriod->accounting_period_id,
                 ],
                 [
+                    'accounting_id' => $accountingPeriod->accounting_period_id,
                     'Main_id' => $mainAccount->main_account_id,
                     'User_id' => auth()->id(),
                 ]
@@ -238,17 +241,15 @@ return response()->json( $data);
 
         $generalEntrie = GeneralEntrie::where([
             'Daily_entry_id' => $entry->entrie_id,
-            'Daily_Page_id' => $entry->Daily_page_id,
             'accounting_period_id' => $accountingPeriod->accounting_period_id,
             'sub_id' => $subAccount->sub_account_id,
             'entry_type' => $entryType,
             'amount' => $amount,
-            'typeAccount' => $subAccount->typeAccount,
-            'Main_id' => $mainAccount->main_account_id,
 
 
 
         ])->first();
+
 
         if(!$generalEntrie)
         {
@@ -257,25 +258,25 @@ return response()->json( $data);
 
         if($amount!=0)
         {
-
         // إنشاء السجل في GeneralEntrie باستخدام المعرف الصحيح
         $generalEntry = GeneralEntrie::updateOrCreate([
+
             'Daily_entry_id' => $entry->entrie_id,
-            'Daily_Page_id' => $entry->Daily_page_id,
-            'accounting_period_id' => $accountingPeriod->accounting_period_id,
             'sub_id' => $subAccount->sub_account_id,
-            'entry_type' => $entryType,
-            'General_ledger_page_number_id' =>  $generalLedge->general_ledge_id,
+            'accounting_period_id' => $accountingPeriod->accounting_period_id,
         ], [
+            'entry_type' => $entryType ,
+            'General_ledger_page_number_id' =>  $generalLedge->general_ledge_id ?? null,
+            'Daily_Page_id' => $entry->Daily_page_id,
             'Main_id' => $mainAccount->main_account_id,
             'typeAccount' => $subAccount->typeAccount,
             'amount' => $amount,
-            'description' => $descriptionCommint . $descriptionText . " " . $subAccount->sub_name,
+            'description' => $descriptionCommint . $descriptionText . " " . $subAccount->sub_name ,
             'entry_date' => $entry->created_at,
             'status' =>'غير مرحل',
             'Invoice_type' => $entry->Invoice_type,
-            'Invoice_id' => $entry->Invoice_id,
-            'Currency_name' => $entry->Currency_name,
+            'Invoice_id' => $entry->Invoice_id ??null,
+            'Currency_name' => $entry->Currency_name ??'',
             'User_id' => auth()->id(),
         ]);
 

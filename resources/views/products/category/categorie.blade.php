@@ -87,6 +87,7 @@
                 <tr class="bg-white transition-all duration-500 hover:bg-gray-50 border-b-2">
                     <td>{{$loop->iteration}}</td>
                     <td class="text-center">{{$cat->Categorie_name}}</td>
+                    
                     <td class="text-center">{{$cat->Purchase_price}}</td>
                     <td class="text-center">{{$cat->Selling_price}}</td>
                     <td class="">

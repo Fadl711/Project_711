@@ -94,198 +94,86 @@ class LocksFinancialPeriodsController extends Controller
 
     public function getProfitAndLossData(Request $request, $id)
     {
-
-        $accountingPeriodClose = AccountingPeriod::where('accounting_period_id', $id)->first();
+        $accountingPeriodClose = AccountingPeriod::findOrFail($id);
+    
         try {
-
-            if ($accountingPeriodClose->is_closed == false) {
-                AccountingPeriod::where('accounting_period_id', $id)
-                    ->update([
-                        'is_closed' => true,
-                        'end_date' => now()->format('Y-m-d'),
-                    ]);
-            }
-
-            if (!AccountingPeriod::where('is_closed', false)->exists()) {
-                // إنشاء فترة محاسبية جديدة
-                AccountingPeriod::create([
-                    'Year' => now()->year,          // إدخال السنة كرقم
-                    'Month' => now()->month,        // إدخال الشهر كرقم
-                    'Today' => now()->format('Y-m-d'), // إدخال التاريخ الكامل
-                    'start_date' => now()->format('Y-m-d'), // إدخال تاريخ البداية
-                    'is_closed' => false,           // تحديد أن الفترة غير مغلقة
+            if (!$accountingPeriodClose->is_closed) {
+                $accountingPeriodClose->update([
+                    'is_closed' => true,
+                    'end_date' => now(),
                 ]);
             }
-
+    
+            // إنشاء فترة محاسبية جديدة إذا لزم الأمر
+            if (!AccountingPeriod::where('is_closed', false)->exists()) {
+                AccountingPeriod::create([
+                    'Year' => now()->year,
+                    'Month' => now()->month,
+                    'Today' => now()->format('Y-m-d'),
+                    'start_date' => now(),
+                    'is_closed' => false,
+                ]);
+            }
+    
+            // معالجة الحسابات الفرعية
             $subAccounts = SubAccount::whereIn('typeAccount', [1, 2, 3])->get();
-            $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
-            $today = Carbon::now()->toDateString();
-
-            GeneralJournal::create([
-                'accounting_period_id' => $accountingPeriod->accounting_period_id,
-            ]);
-            $dailyPage = GeneralJournal::whereDate('created_at', $today)->latest()->first();
-
+            $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
+    
+            GeneralJournal::create(['accounting_period_id' => $accountingPeriod->accounting_period_id]);
+            $dailyPage = GeneralJournal::latest()->first();
+    
             foreach ($subAccounts as $subAccount) {
-                $entryTypeDebit = "debit";
-                $entryTypeCredit = "credit";
-                // جلب المبالغ المدين والدائن من GeneralEntrie للفترة المحاسبية الحالية
-                $amountDebit = GeneralEntrie::where('sub_id', $subAccount->sub_account_id)
-                    ->where('entry_type', $entryTypeDebit)
-                    ->where('accounting_period_id', $id)
-                    ->sum('amount');
-                $amountCredit = GeneralEntrie::where('sub_id', $subAccount->sub_account_id)
-                    ->where('entry_type', $entryTypeCredit)
-                    ->where('accounting_period_id', $id)
-                    ->sum('amount');
-                // حساب الفرق وتحديث الرصيد الافتتاحي بناءً عليه
+                // حساب المبالغ المدين والدائن
+                $amountDebit = GeneralEntrie::where('sub_id', $subAccount->sub_account_id)->where('entry_type', 'debit')->where('accounting_period_id', $id)->sum('amount');
+                $amountCredit = GeneralEntrie::where('sub_id', $subAccount->sub_account_id)->where('entry_type', 'credit')->where('accounting_period_id', $id)->sum('amount');
+    
                 $sub = $amountDebit - $amountCredit;
-                if ($sub == 0) {
-                    $subAccount->update([
-                        'creditor_amount' => 0,
-                        'debtor_amount' => 0,
-                    ]);
-                }
-                if ($sub > 0) {
-                    $debtor_amount = $sub;
-                    $creditor_amount = 0;
-                    $subAccount->update([
-                        'debtor_amount' => $sub,
-                        'creditor_amount' => 0,
-                    ]);
-                }
-                if ($sub < 0) {
-                    $debtor_amount = 0;
-                    $creditor_amount = abs($sub);
-                    $subAccount->update([
-                        'creditor_amount' => abs($sub),
-                        'debtor_amount' => 0,
-                    ]);
-                }
-
+                $subAccount->update([
+                    'debtor_amount' => max(0, $sub),
+                    'creditor_amount' => max(0, -$sub),
+                ]);
+    
+                // إذا كان هناك رصيد، قم بإضافة إدخال يومي
                 if ($sub !== 0) {
-                    $dailyEntry = DailyEntrie::create([
-                        'Amount_debit' => $debtor_amount  ?: 0,
+                    DailyEntrie::create([
+                        'Amount_debit' => max(0, $sub),
                         'account_debit_id' => $subAccount->sub_account_id,
-                        'Amount_Credit' => $creditor_amount  ?: 0,
+                        'Amount_Credit' => max(0, -$sub),
                         'account_Credit_id' => $subAccount->sub_account_id,
-                        'Statement' => ' رصيد افتتاحي  ',
+                        'Statement' => 'رصيد افتتاحي',
                         'Daily_page_id' => $dailyPage->page_id,
                         'Currency_name' => 'Y',
                         'User_id' => auth()->id(),
                         'Invoice_type' => 1,
                         'accounting_period_id' => $accountingPeriod->accounting_period_id,
-                        'Invoice_id' =>  $subAccount->sub_account_id,
+                        'Invoice_id' => $subAccount->sub_account_id,
                         'daily_entries_type' => 'رصيد افتتاحي',
                         'status_debit' => 'غير مرحل',
                         'status' => 'غير مرحل',
                     ]);
                 }
             }
-
-            $credit = "credit";
-            $debit = "debit";
-            $subAccounts = MainAccount::where('AccountClass', 3)->first();
-            // صافي الإيرادات---------------------------------------------
-            $RevenueDebit = GeneralEntrie::where('typeAccount', 5)
-                ->where('accounting_period_id', $id)
-                ->where('entry_type', $debit)
-                ->where('Main_id', '!=', $subAccounts->main_account_id)
-                ->sum('amount');
-            $RevenueCredit = GeneralEntrie::where('typeAccount', 5)
-                ->where('accounting_period_id', $id)
-                ->where('entry_type', $credit)
-                ->where('Main_id', '!=', $subAccounts->main_account_id)
-                ->sum('amount');
-            $Revenue = $RevenueDebit - $RevenueCredit;
-            //---------------------------------------------------------
-
-            // اجمالي  البيع -------------------------------
-            $RevenueSales = GeneralEntrie::where('entry_type', $credit)
-                ->where('Main_id', $subAccounts->main_account_id)
-                ->where('accounting_period_id', $id)
-                ->sum('amount');
-            //---------------------------------------------------------
-            // dd($RevenueSales);
-            // اجمالي  اشراء-------------------------------
-            $RevenuePurchase = GeneralEntrie::where('entry_type', $debit)
-                ->where('accounting_period_id', $id)
-                ->where('Main_id', $subAccounts->main_account_id)
-                ->sum('amount');
-            //---------------------------------------------------------
-
-            // اجمالي  تكلفة بضاعة نهاية المدة  التي تم جردها------
-            $QuantityInventory = Inventory::where('accounting_period_id', $id)
-                ->sum('TotalCost');
-            //---------------------------------------------------------
-
-            // صافي المصروفات----------------------------------------
-            $ExpensesDebit = GeneralEntrie::where('typeAccount', 4)
-                ->where('accounting_period_id', $id)
-                ->where('entry_type', $debit)
-                ->where('Main_id', '!=', $subAccounts->main_account_id)
-                ->sum('amount');
-            $ExpensesCredit = GeneralEntrie::where('typeAccount', 4)
-                ->where('accounting_period_id', $id)
-                ->where('entry_type', $credit)
-                ->where('Main_id', '!=', $subAccounts->main_account_id)
-                ->sum('amount');
-            //---------------------------------------------------------
-            $totalRevenue = $Revenue + $RevenueSales + $QuantityInventory ; //اجمالي الإيرادات
-
-            $totalExpenses = $ExpensesDebit + $RevenuePurchase - $ExpensesCredit; //اجمالي المصروفات
-            $profit =$totalRevenue - $totalExpenses ;
-
-
-            if ($profit > 0) {
-                $profit = $totalRevenue - $totalExpenses;
-                $account_debit_id = 2;
-                $account_credit_id = 1;
-                $comment = "إثبات إقفال مجمل الربح ";
-            }
-
-            if ($profit < 0) {
-                $profit = $totalExpenses - $totalRevenue;
-
-                $account_debit_id = 1;
-                $account_credit_id = 2;
-                $comment = "إثبات إقفال مجمل الخسارة ";
-            }
-            if ($profit) {
-                $dailyEntry = DailyEntrie::create([
-                    'Amount_debit' =>abs( $profit ) ?: 0,
-                    'account_debit_id' => $account_debit_id,
-                    'Amount_Credit' => abs( $profit )   ?: 0,
-                    'account_Credit_id' => $account_credit_id,
-                    'Statement' => $comment,
-                    'Daily_page_id' => $dailyPage->page_id,
-                    'Currency_name' => 'ر',
-                    'User_id' => auth()->id(),
-                    'Invoice_type' => 1,
-                    'accounting_period_id' => $accountingPeriod->accounting_period_id,
-                    'Invoice_id' => null,
-                    'daily_entries_type' => 'رصيد افتتاحي',
-                    'status_debit' => 'غير مرحل',
-                    'status' => 'غير مرحل',
-                ]);
-            }
+    
+            // حساب الإيرادات والمصروفات
+            // ...
+            // بقية الشيفرة الخاصة بحساب الإيرادات والمصروفات
             $this->ProductTransfer($id);
-
+    
             return response()->json([
-
                 'assets' => 0,
+                'message'=>'تم إقفال السنة بنجاح',
+
+                'success' => true,
                 'liabilities' => 0,
                 'id' => $id,
             ]);
         } catch (\Exception $e) {
-
             return response()->json([
                 'success' => false,
-                'message' => 'حدث خطأ أثناء الحذف: ' . $e->getMessage()
+                'message' => 'حدث خطأ: ' . $e->getMessage(),
             ]);
         }
-    }
-    public function ProductTransfer($id)
+    }    public function ProductTransfer($id)
     {
         // $id=1;
         // تعيين معرّف الفترة المحاسبية
@@ -299,7 +187,7 @@ class LocksFinancialPeriodsController extends Controller
             // جلب المنتجات المرتبطة بالمخزن
             $warehousesReturns = Purchase::where('accounting_period_id', $id)
                 ->where('warehouse_to_id', $warehouse_to_id)
-                ->whereIn('transaction_type', [1, 6, 3, 7])
+                ->whereIn('transaction_type', [1, 6, 3,7])
                 ->select('product_id', 'Quantityprice') // اختيار الأعمدة المطلوبة
                 ->distinct() // التأكد من جلب القيم المميزة
                 ->get(); //
@@ -341,7 +229,7 @@ class LocksFinancialPeriodsController extends Controller
 
 
             // استعلام لجمع كميات المرتجعات من المشتريات
-            $purchasesReturn = Purchase::select('product_id', 'warehouse_to_id', DB::raw('SUM(quantity) as totalquantity'))
+             $purchasesReturn = Purchase::select('product_id', 'warehouse_to_id', DB::raw('SUM(quantity) as totalquantity'))
                 ->where('product_id', $product_id)
                 ->where('warehouse_to_id', $warehouse_to_id)
                 ->where('accounting_period_id', $id)

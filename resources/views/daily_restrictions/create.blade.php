@@ -303,16 +303,11 @@ required>
                     }else
                      {
 
-                        // $('#errorMessage').removeClass('hidden').text(data.success);
-
 // إخفاء التنبيه بعد 3 ثوانٍ
 $('#errorMessage').show().text(data.errorMessage).fadeOut(3000);
 setTimeout(function() {
 $('#errorMessage').addClass('hidden');
 }, 6000);
-                        // setTimeout(function() {
-                        //     $('#successMessage').hide();
-                        // }, 3000);
 
                     }
                 },

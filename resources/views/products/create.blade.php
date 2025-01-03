@@ -252,7 +252,8 @@
                     setTimeout(function() {
                         $('#successAlert').addClass('hidden');
                     }, 8000);
-                    
+                    window.location.href = '{{ route("products.create") }}';
+
                   
                 } else {
                     $('#successAlert1').text(data.message).removeClass('hidden');
@@ -262,7 +263,7 @@
                         $('#successAlert1').addClass('hidden');
                     }, 8000);
                 }
-                if (data.success && product_idUpdate) {
+                if ( product_idUpdate) {
                     // إعادة توجيه المستخدم إذا كان التحديث ناجحًا
                     window.location.href = '{{ route("products.create") }}';
                 }  
@@ -307,7 +308,7 @@ $(document).ready(function() {
                         $('#successAlert1').addClass('hidden');
                     }, 8000);
                 }
-                if (data.success && product_idUpdate) {
+                if (product_idUpdate) {
                     // إعادة توجيه المستخدم إذا كان التحديث ناجحًا
                     window.location.href = '{{ route("products.create") }}';
                 }  
