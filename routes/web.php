@@ -265,6 +265,7 @@ Route::get('/main-accounts/{id}/sub-accounts', [MainAccountController::class, 'g
 Route::get('/accounts', [AccountCoctroller::class, 'index'])->name('accounts.index');
 Route::get('/accounts/Main_Account/create-sub-account', [SubaccountController::class, 'create'])->name('Main_Account.create-sub-account');
 Route::get('/accounts/subAccount/allShow', [SubaccountController::class, 'allShow'])->name('subAccounts.allShow');
+Route::get('/accounts/subAccount/search', [SubaccountController::class, 'search'])->name('subAccounts.search');
 Route::get('/accounts/subAccount/{id}/edit', [SubaccountController::class, 'edit'])->name('subAccounts.edit');
 Route::post('/accounts/subAccount', [SubaccountController::class, 'update'])->name('subAccounts.update');
 Route::delete('/accounts/subAccount/{id}', [SubaccountController::class, 'destroy'])->name('subAccounts.destroy');
