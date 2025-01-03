@@ -390,7 +390,7 @@ if($Quantit=="Incomplete")
                       ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
                       ->where('warehouse_to_id', $warehouse_to_id)
                       ->where('Supplier_id', $Supplier->sub_account_id)
-                      ->whereIn('transaction_type', [1, 6])
+                      ->whereIn('transaction_type', [1, 6,7])
                       ->sum('quantity');
                    
                       $lastPurchase = Purchase::where('product_id', $product_id)

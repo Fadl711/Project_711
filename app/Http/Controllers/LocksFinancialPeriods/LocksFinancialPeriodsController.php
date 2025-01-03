@@ -157,6 +157,7 @@ class LocksFinancialPeriodsController extends Controller
             // حساب الإيرادات والمصروفات
             // ...
             // بقية الشيفرة الخاصة بحساب الإيرادات والمصروفات
+            $this->ProductTransfer($id);
     
             return response()->json([
                 'assets' => 0,
@@ -186,7 +187,7 @@ class LocksFinancialPeriodsController extends Controller
             // جلب المنتجات المرتبطة بالمخزن
             $warehousesReturns = Purchase::where('accounting_period_id', $id)
                 ->where('warehouse_to_id', $warehouse_to_id)
-                ->whereIn('transaction_type', [1, 6, 3, 7])
+                ->whereIn('transaction_type', [1, 6, 3,7])
                 ->select('product_id', 'Quantityprice') // اختيار الأعمدة المطلوبة
                 ->distinct() // التأكد من جلب القيم المميزة
                 ->get(); //
