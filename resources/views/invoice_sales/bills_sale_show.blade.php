@@ -33,22 +33,20 @@
             border: 1px solid #000;
         }
 
-
         .header-section, .totals-section {
             margin-top: 16px;
-            padding: 12px;
             border: 2px solid #000;
             border-radius: 8px;
         }
     </style>
 </head>
 <body class="bg-white">
-    <div class="container mx-auto print-container">
+    <div class=" mx-auto print-container">
         <!-- العنوان -->
         @include('includes.header2')
 
 
-        <header class="flex justify-between items-center border-b-2 border-gray-800 pb-4 mb-4">
+        <header class="flex justify-between items-center border-b-2 border-gray-800 ">
             <div>
                 <div>
                     <div class="flex">
@@ -117,7 +115,7 @@
                     <th class="px-2 text-right"> الوحده</th>
 
                     <th class="px-2 text-center">الكمية</th>
-                    <th class="px-2 text-right">سعر الشراء</th>
+                    <th class="px-2 text-right">سعر الوحده</th>
                     <th class="px-2 text-right">المخزن</th>
                     <th class="px-2 text-right">الإجمالي</th>
                 </tr>
@@ -147,7 +145,7 @@
                             @endisset
 
                         </td>
-                        <td class="p-2 text-right">{{ number_format($Sale->total_amount )}}</td>
+                        <td class=" text-right">{{ number_format($Sale->total_amount )}}</td>
                     </tr>
                 @endforeach
 
@@ -204,9 +202,7 @@
                             <th class="px-2 text-right">
                                 @if(isset($Sum_amount) && $Sum_amount > 0)
                                     {{ number_format($Sum_amount) ?? 0 }}
-                                @endif
-                            </th>
-                        </tr>
+                                @endif                        </tr>
                         @endif
 
                     </thead>
@@ -221,7 +217,7 @@
                     <p class=" text-sm" dir="ltr">................ توقيع المستلم</p>
                 </div>
                 <div>
-                    <p class=" text-sm" dir="ltr">  المسؤول : {{($UserName) ?? 0}}</p>
+                    <p class=" text-sm" dir="ltr">  0 : {{($UserName) ?? 0}}</p>
                 </div>
 
             </div>

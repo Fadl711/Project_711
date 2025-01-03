@@ -44,9 +44,9 @@
             @foreach ($PaymentType as $index => $item)
 <div class="flex">
 <label for="" class="labelSale">{{$item->label()}}</label>
-<input type="radio" name="payment_type"
-value="{{$item->value}}"
-{{ isset($DailyEntrie->Invoice_type) && $DailyEntrie->Invoice_type == $item->value ? 'checked' : ($index === 0 ? 'checked' : '') }}
+<input type="radio" name="payment_type" 
+value="{{$item->value}}" 
+{{ isset($DailyEntrie->Invoice_type) && $DailyEntrie->Invoice_type == $item->value ? 'checked' : ($index === 0 ? 'checked' : '') }} 
 required>
 </div>
 @endforeach
@@ -61,7 +61,7 @@ required>
                         @foreach ($transactionTypes as $transactionType)
                             <option value="{{ $transactionType->value }}"
                                 @isset($DailyEntrie->daily_entries_type)
-                                    @if ($DailyEntrie->daily_entries_type == $transactionType->label()) selected
+                                    @if ($DailyEntrie->daily_entries_type == $transactionType->label()) selected 
                                     @endif
                                 @endisset>
                                 {{ $transactionType->label() }}
@@ -89,7 +89,7 @@ required>
                        <!-- إضافة خيارات الحسابات -->
                        @isset($mainAccounts)
                      <option value="" selected>اختر الحساب</option>
-
+                   
                       @foreach ($mainAccounts as $mainAccount)
                            <option value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
                       @endforeach
@@ -139,9 +139,9 @@ required>
           <div>
             <label for="Amount_debit" class="block font-medium mb-2">المبلغ المدين</label>
             <input name="Amount_debit" id="Amount_debit" type="text"  class=" inputSale input-field" placeholder="أدخل المبلغ"
-               value="{{ $DailyEntrie->Amount_debit ?? $DailyEntrie->Amount_Credit ??null  }}"
+               value="{{ $DailyEntrie->Amount_debit ?? $DailyEntrie->Amount_Credit ??null  }}" 
 
-
+           
              required>
         </div>
         <div class="">
@@ -150,7 +150,7 @@ required>
                 @isset($currs)
                     <option selected value="{{ $currs->currency_name }}">{{ $currs->currency_name }}</option>
                 @endisset
-
+        
                 @isset($curr)
                     @foreach ($curr as $cur)
                         <option value="{{ $cur->currency_name }}"
@@ -169,7 +169,7 @@ required>
                 <textarea name="Statement" id="Statement" class="block w-full p-2 border rounded-md inputSale" placeholder="أدخل البيان" rows="4" >
                     @isset($DailyEntrie->Statement)
                     {{$DailyEntrie->Statement}}
-
+                        
                     @endisset
                 </textarea>
             </div>
@@ -177,16 +177,16 @@ required>
 
             <div class=" justify-">
               <button type="submit" id="submitButton" class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-
+                 
                   {{$submitButton ?? ' حفظ القيد'}}
               </button>
           </div>
             <div>
                 <label for="entrie_id" class="block font-medium mb-2">رقم القيد</label>
-                <input name="entrie_id" id="entrie_id" type="number"
+                <input name="entrie_id" id="entrie_id" type="number"  
                 class=" inputSale input-field"
-                @isset($DailyEntrie->entrie_id)
-                value="{{$DailyEntrie->entrie_id}}"
+                @isset($DailyEntrie->entrie_id)    
+                value="{{$DailyEntrie->entrie_id}}"                
                 @endisset >
             </div>
             </div>
@@ -215,7 +215,7 @@ required>
         if (parts.length > 2) {
             value = parts[0] + '.' + parts.slice(1).join('');
         }
-        // إضافة الفاصلة بعد كل ثلاثة أرقام (فصل الآلاف)
+        // إضافة الفاصلة بعد كل ثلاثة أرقام (فصل الآلاف) 
         if (value) {
             let [integer, decimal] = value.split('.');
             integer = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ",");  // إضافة الفواصل بين الآلاف
@@ -343,10 +343,12 @@ $('#errorMessage').addClass('hidden');
     if (mainAccountId) {
         // طلب AJAX لجلب الحسابات الفرعية بناءً على الحساب الرئيسي
         $.ajax({
-
-            url: "{{ url('/main-accounts/') }}/" + mainAccountId + "/sub-accounts", // استخدام القيم الديناميكية
-            type: 'GET',
-            dataType: 'json',
+        url: '{{ route("sub-accounts", ":mainAccountId") }}'.replace(':mainAccountId', mainAccountId), // استخدام القيم الديناميكية
+        type: 'GET',
+        dataType: 'json',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
             success: function(data) {
                 // تعبئة الحسابات الفرعية الجديدة
                 const subAccountOptions = data.map(subAccount =>
@@ -376,12 +378,14 @@ $('#errorMessage').addClass('hidden');
 
     // التحقق من وجود قيمة في الحساب الرئيسي
     if (mainAccountId) {
-     
         // طلب AJAX لجلب الحسابات الفرعية بناءً على الحساب الرئيسي
         $.ajax({
-            url: "{{ url('/main-accounts/') }}/" + mainAccountId + "/sub-accounts", // استخدام القيم الديناميكية
-            type: 'GET',
-            dataType: 'json',
+        url: '{{ route("sub-accounts", ":mainAccountId") }}'.replace(':mainAccountId', mainAccountId), // استخدام القيم الديناميكية
+        type: 'GET',
+        dataType: 'json',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
             success: function(data) {
                 // تعبئة الحسابات الفرعية الجديدة
                 const subAccountOptions = data.map(subAccount =>

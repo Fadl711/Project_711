@@ -2,12 +2,7 @@
 <div class="">
 <div class="">
     <div class=" divNav">
-        @php
-        use App\Models\UserPermission; // استيراد الكلاس
-    
-        $resultDebit1 = UserPermission::where('User_id', auth()->id())
-            ->first();
-    @endphp
+       
         <ul class="list-none ">
             <li class="">
                 <a class="NavTagA" href="{{route('home.index')}}">
@@ -19,9 +14,7 @@
                 <span class="textNav"> الرئسية</span>
                     </a>
                 </li>
-                @isset($resultDebit1->Authority_Name)
                     
-                @if($resultDebit1->Authority_Name=="الحسابات")
 
                     <li class="">
                     <a class=" NavTagA"  href="{{route('accounts.index')}}">
@@ -31,13 +24,9 @@
                     <span class="textNav"> الحسابات</span>
                     </a>
                 </li>
-                @endif
-                @endisset
 
 
-                @isset($resultDebit1->Authority_Name)
 
-                    @if($resultDebit1->Authority_Name=="القيود")
                 <li class="">
                 
                         <a class="NavTagA" href="{{ route('restrictions.index') }}">
@@ -47,12 +36,8 @@
                             <span class="textNav mr-1"> القيود</span>
                         </a>
                     </li>
-                    @endif
-                    @endisset
 
-                    @isset($resultDebit1->Authority_Name)
 
-                    @if($resultDebit1->Authority_Name=="السندات")
                 <li class="">
                     <a class="NavTagA" href="{{route('bonds.index')}}">
                         <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -61,10 +46,9 @@
                                               <span class="textNav mr-1"> السندات</span>
                     </a>
                 </li>
-                @endif
-                @endisset
+               
 
-                    {{-- @if($resultDebit1->Authority_Name=="المبيعات") --}}
+                    {{-- @if($->Authority_Name=="المبيعات") --}}
 
             <li class="">
 
@@ -232,7 +216,6 @@
                     </svg>
                     <span class="textNav">الإعدادات</span>
                     </a></li>
-                    {{-- @endif/ --}}
 
         </ul>
     </div>
