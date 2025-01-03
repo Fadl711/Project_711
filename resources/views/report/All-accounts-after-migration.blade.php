@@ -7,6 +7,13 @@
     <title>كشف حساب {{$Myanalysis}}</title>
     <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
     <style>
+          body {
+        font-family: Arial, sans-serif; /* الخط الافتراضي */
+    }
+    .english {
+        font-family: 'Times New Roman', serif; /* الخط الإنجليزي */
+    }
+        /* تخصيص للطباعة */
         @media print {
             body {
                 width: 100%;
@@ -16,22 +23,31 @@
             .print-container {
                 @apply w-full max-w-full mx-auto p-2;
             }
+
             .no-print {
                 display: none;
             }
         }
-        table {
-            width: 100%;
-            table-layout: fixed;
-        }
-        th, td {
-            border: 1px solid #000;
-        }
-        .header-section, .totals-section {
-            margin-top: 10px;
-            border: 2px solid #000;
-            border-radius: 8px;
-        }
+
+    table {
+        table-layout: ; /* استخدم تخطيط ثابت */
+        width: 100%;
+    }
+
+    th, td {
+        border: 1px solid #000;
+        /* padding: 8px; */
+    }
+
+   
+
+    /* تحسين مظهر الجدول */
+    .header-section, .totals-section {
+        margin-top: 10px;
+        border: 2px solid #000;
+        border-radius: 8px;
+    }
+        
     </style>
 </head>
 <body class="bg-white">

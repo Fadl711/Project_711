@@ -56,7 +56,6 @@
           <select name="Quantit" id="Quantit" class="input-field select2 inputSale" required>
               <option value="" selected>اختر المخزن</option>
               @foreach([
-                'inventoryList' => 'امر جرد',
                 'AllAbstractQuantities' => 'كل الكميات المجرودة',
                 'AllAbstractQuantitiesWithCosts' => 'كل الكميات المجرودة مع التكاليف',
                 'MissingQuantitiesInventoryTeams' => 'فارق الجرد للكميات الناقصة',

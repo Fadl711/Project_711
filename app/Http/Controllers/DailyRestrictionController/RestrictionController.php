@@ -166,7 +166,6 @@ public function stor(Request $request){
                 // إذا تم العثور على الصفحة، عرض رقم الصفحة
                 $generalJournal1=GeneralJournal::where('accounting_period_id',$accountingPeriod->accounting_period_id)->get();
                 $mainAccount=MainAccount::all();
-            // dd($generalJournal1);
             $curr=Currency::all();
             return view('daily_restrictions.create',compact('curr','dailyPage'),['mainAccounts'=> $mainAccount]);
             }
@@ -202,6 +201,8 @@ public function stor(Request $request){
         $eail=DailyEntrie::where('Daily_page_id',$id)->get();
         $mainc=MainAccount::all();
         $suba=SubAccount::all();
+
+
         return view('daily_restrictions.all_restrictions_show',['eail'=>$eail,'mainc'=>$mainc,'suba'=>$suba,"id"=>$id]);
     }
 
@@ -232,65 +233,64 @@ public function stor(Request $request){
         ]);  
          }
 
-    public function update(Request $request,$id){
-        $today = Carbon::now()->toDateString();
-        $dailyPage = GeneralJournal::whereDate('created_at', $today)->first();
-        $Currency=Currency::where('currency_name',$request->Currency_name)->value('currency_id');
+//     public function update(Request $request,$id){
+//         $today = Carbon::now()->toDateString();
+//         $dailyPage = GeneralJournal::whereDate('created_at', $today)->first();
+//         $Currency=Currency::where('currency_name',$request->Currency_name)->value('currency_id');
 
 
-        $DailyEntrie =DailyEntrie::where('entrie_id',$id)->first();
-$ct=$DailyEntrie->Daily_page_id;
-        ExchangeBond::where('created_at',$DailyEntrie->created_at)->update([
-            'Debit_sub_account_id'=>$request['sub_account_debit_id'],
-            'Amount_debit'=>$request['Amount_debit'],
-            'Credit_sub_account_id'=>$request['sub_account_Credit_id'],
-            'Statement'=> $request['Statement'],
-            'Currency_id'=>$Currency,
+//         $DailyEntrie =DailyEntrie::where('entrie_id',$id)->first();
+// $ct=$DailyEntrie->Daily_page_id;
+//         ExchangeBond::where('created_at',$DailyEntrie->created_at)->update([
+//             'Debit_sub_account_id'=>$request['sub_account_debit_id'],
+//             'Amount_debit'=>$request['Amount_debit'],
+//             'Credit_sub_account_id'=>$request['sub_account_Credit_id'],
+//             'Statement'=> $request['Statement'],
+//             'Currency_id'=>$Currency,
 
-            'User_id'=>$request['User_id'],
-        ]);
-        PaymentBond::where('created_at',$DailyEntrie->created_at)->update([
-            'Debit_sub_account_id'=>$request['sub_account_debit_id'],
-            'Amount_debit'=>$request['Amount_debit'],
-            'Credit_sub_account_id'=>$request['sub_account_Credit_id'],
-            'Statement'=> $request['Statement'],
-            'Currency_id'=>$Currency,
-            'User_id'=>$request['User_id'],
-        ]);
-        $DailyEntrie->update([
-            'account_debit_id'=>$request['sub_account_debit_id'],
-            'Amount_debit'=>$request['Amount_debit'],
-            'account_Credit_id'=>$request['sub_account_Credit_id'],
-            'Amount_Credit'=>$request['Amount_debit'],
-            'Statement'=> $request['Statement'],
-            'Currency_name'=>$request['Currency_name'],
-            'Daily_page_id'=>$dailyPage->page_id,
-            'User_id'=>$request['User_id'],
-        ]);
+//             'User_id'=>$request['User_id'],
+//         ]);
+//         PaymentBond::where('created_at',$DailyEntrie->created_at)->update([
+//             'Debit_sub_account_id'=>$request['sub_account_debit_id'],
+//             'Amount_debit'=>$request['Amount_debit'],
+//             'Credit_sub_account_id'=>$request['sub_account_Credit_id'],
+//             'Statement'=> $request['Statement'],
+//             'Currency_id'=>$Currency,
+//             'User_id'=>$request['User_id'],
+//         ]);
+//         $DailyEntrie->update([
+//             'account_debit_id'=>$request['sub_account_debit_id'],
+//             'Amount_debit'=>$request['Amount_debit'],
+//             'account_Credit_id'=>$request['sub_account_Credit_id'],
+//             'Amount_Credit'=>$request['Amount_debit'],
+//             'Statement'=> $request['Statement'],
+//             'Currency_name'=>$request['Currency_name'],
+//             'Daily_page_id'=>$dailyPage->page_id,
+//             'User_id'=>$request['User_id'],
+//         ]);
 
-        return redirect()->route('all_restrictions_show',$ct);
-    }
+//         return redirect()->route('all_restrictions_show',$ct);
+//     }
     public function  destroy($id){
         $DailyEntrie=DailyEntrie::where('entrie_id',$id)->first();
         ExchangeBond::where('created_at',$DailyEntrie->created_at)->delete();
         PaymentBond::where('created_at',$DailyEntrie->created_at)->delete();
         $generalEntrieaccount_debit_id = GeneralEntrie::where([
             'Daily_entry_id' => $DailyEntrie->entrie_id,
-            'Daily_Page_id' => $DailyEntrie->Daily_page_id,
             'accounting_period_id' => $DailyEntrie->accounting_period_id,
             'sub_id' => $DailyEntrie->account_debit_id,
         ])->delete();
 
         $generalEntrieaccount_debit_id = GeneralEntrie::where([
             'Daily_entry_id' => $DailyEntrie->entrie_id,
-            'Daily_Page_id' => $DailyEntrie->Daily_page_id,
             'accounting_period_id' => $DailyEntrie->accounting_period_id,
             'sub_id' => $DailyEntrie->account_Credit_id,
         ])->delete();
         $DailyEntrie->delete();
 
+        return response()->json(['success' =>true,'message'=> 'تم   حذف المنتج بنجاح!']);
 
-        return back();
+        // return back();
     }
     public function show($id)
     {

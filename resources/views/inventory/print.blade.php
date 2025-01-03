@@ -41,35 +41,21 @@
     </style>
 </head>
 <body class="bg-white">
-    <div class="container mx-auto print-container">
-  <!-- العنوان -->
+    <div class=" print-container px-1 ">
+        <!-- العنوان -->
   @isset($buss)
-  <div class="header-section border-2 border-black bg-[#1749fd15]  rounded-lg my-4">
-      <div class="rounded-lg grid grid-cols-3 gap-6 p-2 w-full">
-          <!-- القسم الأيمن - Arabic content -->
-          <div class="text-right space-y-2">
-              <h2 class="font-extrabold  ">{{ $buss->Company_Name }}</h2>
-              <p class="text-sm text-gray-700">{{ $buss->Services }}</p>
-              <p class="text-sm text-gray-700">العنوان: {{ $buss->Company_Address }}</p>
-              <p class="text-sm text-gray-700">التلفون: {{ $buss->Phone_Number }}</p>
-          </div>
+    @isset($buss)
+    <div class="header bg-[#1749fd15]  rounded-lg">
+        @include('includes.header2')
 
-          <!-- القسم الأوسط - تحليل الحسابات -->
-          <div class="flex items-center justify-center px-2">
-              <div class="w-24 h-20   flex items-center justify-center translate-x-10">
-                  <img class=" bg-[#1749fd15] rounded-3xl" src="{{ url($buss->Company_Logo ? 'images/' . $buss->Company_Logo : '') }}" alt="">
-              </div>
-          </div>
-          <!-- القسم الأيسر - English content -->
-          <div class="text-left space-y-2">
-              <h2 class="font-extrabold  ">{{ $buss->Company_NameE }}</h2>
-              <p class="text-sm text-gray-700">{{ $buss->ServicesE }}</p>
-              <p class="text-sm text-gray-700">Address: {{ $buss->Company_AddressE }}</p>
-              <p class="text-sm text-gray-700">Phone: {{ $buss->Phone_Number }}</p>
-          </div>
-      </div>
-      تقرير  المخزني {{$Myanalysis}}
-  </div>
+
+        
+
+    </div>
+@endisset
+
+
+
 
 
   <div class="grid grid-cols-2 w-full gap-2  text-gray-700">

@@ -9,11 +9,11 @@
                 <th class="text-right">المخزن</th>
                 <th class="text-center">الكمية الشراء</th>
                 <th class="text-right"> التكلفة عند الشراء</th>
-                <th class="text-right"> الجالي التكلفة عند الشراء</th>
+                <th class="text-right"> اجمالي التكلفة عند الشراء</th>
                 <th class="text-center">مردود المبيعات</th>
                 <th class="text-center">مردود المشتريات</th>
                 <th class="text-right"> الكمية الحاليه</th>
-                <th class="text-right"> الجالي التكلفة الحاليه</th>
+                <th class="text-right"> اجمالي التكلفة الحاليه</th>
                 <th class="text-right"> التكلفة الحاليه</th>
             </tr>
         </thead>

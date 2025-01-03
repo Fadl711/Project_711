@@ -776,6 +776,8 @@ $ProductNew = Product::updateOrCreate(
 
     public function destroy($id){
         Product::where('product_id',$id)->delete();
+        return response()->json(['success' => 'success','message'=> 'تم   حذف القيد بنجاح!']);
+
         return back();
     }
     public function price($id)

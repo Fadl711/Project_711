@@ -16,6 +16,12 @@
             </tbody>
         </table>
     </div> --}}
+    <div id="successAlert" class="hidden fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
+        {{-- <p class="font-bold">تم بنجاح!</p>
+        <p>تمت إضافة المنتج بنجاح.</p> --}}
+      </div>
+      <div id="successAlert1"  class="hidden fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
+      </div>
     <div class="gap-2 grid grid-cols-4 bg-white p-1 rounded-lg shadow-md mb-2">
         <form id="LocksFinancialPeriod" >
             @csrf
@@ -33,7 +39,7 @@
     </div>
 <div class="container mx-auto my-8">
     <h1 class="text-2xl font-bold mb-4">تقرير الأرباح والخسائر</h1>
-    <button id="loadReport" type="button" class="bg-blue-500 text-white py-2 px-4 rounded"> إقفال السنة</button>
+    <button id="loadReport" type="button" name="loadReport" class="bg-blue-500 text-white py-2 px-4 rounded"> إقفال السنة</button>
     <div id="reportContainer" class="mt-6 ">
         <div class="mb-6">
             <h2 class="text-lg font-semibold">الإيرادات والمصروفات</h2>
@@ -89,95 +95,96 @@
     <div id="successMessage" style="display: none;" class="alert alert-success"></div>
 </div>
 <script>
+    $(document).ready(function() {
+        const form = $('#LocksFinancialPeriod');
     
-$(document).ready(function() {
-    const form = $('#LocksFinancialPeriod');
-form.on('keydown', function (event) {
-    if (event.key === 'Enter') {
-        event.preventDefault(); // منع الحفظ عند الضغط على زر Enter
-    }
-});
-    const successMessage = $('#successMessage');
-    const form = $('#LocksFinancialPeriod');
-
-    $('#loadReport').on('click', function() {
-        const submitButton = $('#loadReport');
-        submitButton.val('جاري الحفظ');
-        submitButton.prop('disabled', true);
-
-        let mainAccountId = $('#accountingPeriod').val();
-        if(!mainAccountId)
-    {
-        alert('تم إلغاء العملية. لم يتم حفظ التعديلات.');
-   
-    }
-
-        $.ajax({
-            
-            url: `/Locks_financial_period/${mainAccountId}/getProfitAndLossData`, // استخدام القيم الديناميكية
-        type: 'GET',
-        dataType: 'json',
-        processData: false,
-        contentType: false,
-
-            success: function(data) {
-                submitButton.prop('disabled', false);
-
-                alert(data.id);
-
-                // عرض الإيرادات والمصروفات
-                $('#revenueExpenses').html(`
-                    <tr class="border-b">
-                        <td class="py-3 px-6">إجمالي الإيرادات</td>
-                        <td class="py-3 px-6 text-right">${data.totalRevenue} ريال</td>
-                    </tr>
-                    <tr class="border-b">
-                        <td class="py-3 px-6">إجمالي المصروفات</td>
-                        <td class="py-3 px-6 text-right">${data.totalExpenses} ريال</td>
-                    </tr>
-                    <tr class="font-bold">
-                        <td class="py-3 px-6">صافي الربح/الخسارة</td>
-                        <td class="py-3 px-6 text-right">${data.netProfitOrLoss} ريال</td>
-                    </tr>
-                `);
-
-                // عرض الأصول
-                let assetsHTML = '';
-                $.each(data.assets, function(index, asset) {
-                    assetsHTML += `
-                       <tr class="border-b border-gray-200 hover:bg-gray-100">
-                    <td class="py-3 px-6 text-left">${account.name}</td>
-                    <td class="py-3 px-6 text-center">${account.type}</td>
-                    <td class="py-3 px-6 text-right">${account.balance}</td>
-                </tr>`;
-                });
-                $('#assetsTable').html(assetsHTML);
-
-                // عرض الالتزامات
-                let liabilitiesHTML = '';
-                $.each(data.liabilities, function(index, liability) {
-                    liabilitiesHTML += `
-                         <tr class="border-b border-gray-200 hover:bg-gray-100">
-                    <td class="py-3 px-6 text-left">${account.name}</td>
-                    <td class="py-3 px-6 text-center">${account.type}</td>
-                    <td class="py-3 px-6 text-right">${account.balance}</td>
-                </tr>`
-                });
-                $('#liabilitiesTable').html(liabilitiesHTML);
-
-                // إظهار التقرير
-                $('#reportContainer').removeClass('hidden');
-            },
-            error: function(xhr, status, error) {
-                console.error('Error fetching data:', error);
+        // منع الحفظ عند الضغط على زر Enter
+        form.on('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
             }
-            complete: function () {
-                    // إعادة تفعيل الزر بعد انتهاء الطلب
-                    $('#loadReport').prop('disabled', false).val('إقفال السنة'); // إعادة النص إلى "حفظ"
-                }
         });
+    
+        $('#loadReport').on('click', function() {
+            const submitButton = $(this);
+            // $('#loadReport').val('جاري الحفظ').prop('disabled', true);
+            submitButton.prop('disabled', true).text('جاري الإرسال...');
 
+    
+            let mainAccountId = $('#accountingPeriod').val();
+    
+            // تحقق من وجود معرف الحساب
+            if (!mainAccountId) {
+                alert('تم إلغاء العملية. لم يتم حفظ التعديلات.');
+                submitButton.prop('disabled', false);
+                return; // إنهاء العملية إذا لم يكن هناك معرف
+            }
+    
+            $.ajax({
+                url: `{{ url('Locks_financial_period/') }}/${mainAccountId}/getProfitAndLossData`,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    // التعامل مع الرسائل الناجحة أو الفاشلة
+                    const alertMessage = data.success ? '#successAlert' : '#successAlert1';
+                    $(alertMessage).text(data.message).removeClass('hidden');
+                    
+                    // إخفاء التنبيه بعد 8 ثوانٍ
+                    setTimeout(function() {
+                        $(alertMessage).addClass('hidden');
+                    }, 8000);
+    
+                    // إعادة تفعيل الزر بعد الانتهاء من الطلب
+                    submitButton.prop('disabled', false).text('إقفال السنة');
+    
+                    if (data.success) {
+                        // عرض الإيرادات والمصروفات
+                        $('#revenueExpenses').html(`
+                            <tr class="border-b">
+                                <td class="py-3 px-6">إجمالي الإيرادات</td>
+                                <td class="py-3 px-6 text-right">${data.totalRevenue} ريال</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-3 px-6">إجمالي المصروفات</td>
+                                <td class="py-3 px-6 text-right">${data.totalExpenses} ريال</td>
+                            </tr>
+                            <tr class="font-bold">
+                                <td class="py-3 px-6">صافي الربح/الخسارة</td>
+                                <td class="py-3 px-6 text-right">${data.netProfitOrLoss} ريال</td>
+                            </tr>
+                        `);
+    
+                        // عرض الأصول
+                        let assetsHTML = data.assets.map(asset => `
+                            <tr class="border-b border-gray-200 hover:bg-gray-100">
+                                <td class="py-3 px-6 text-left">${asset.name}</td>
+                                <td class="py-3 px-6 text-center">${asset.type}</td>
+                                <td class="py-3 px-6 text-right">${asset.balance}</td>
+                            </tr>
+                        `).join('');
+                        $('#assetsTable').html(assetsHTML);
+    
+                        // عرض الالتزامات
+                        let liabilitiesHTML = data.liabilities.map(liability => `
+                            <tr class="border-b border-gray-200 hover:bg-gray-100">
+                                <td class="py-3 px-6 text-left">${liability.name}</td>
+                                <td class="py-3 px-6 text-center">${liability.type}</td>
+                                <td class="py-3 px-6 text-right">${liability.balance}</td>
+                            </tr>
+                        `).join('');
+                        $('#liabilitiesTable').html(liabilitiesHTML);
+    
+                        // إظهار التقرير
+                        $('#reportContainer').removeClass('hidden');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching data:', error);
+                    alert('حدث خطأ أثناء تحميل البيانات.');
+                    submitButton.prop('disabled', false).text('إقفال السنة'); // إعادة النص إلى "إقفال السنة" عند الخطأ
+                }
+            });
+        });
     });
-});
-</script>
+    </script>
 @endsection

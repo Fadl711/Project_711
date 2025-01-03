@@ -133,11 +133,11 @@ $transaction_type="رصيد افتتاحي";
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->where('daily_entries_type',$transaction_type)
         ->where('entrie_id',$Getentrie_id->entrie_id)
-
         ->update([
         'Amount_debit' => $SubAccount->debtor_amount,
         'Amount_Credit' => $SubAccount->creditor_amount,
     ]);
+    
     return redirect()->route('subAccounts.allShow');
 
    }
@@ -164,6 +164,7 @@ $transaction_type="رصيد افتتاحي";
         'status_debit' => 'غير مرحل',
         'status' => 'غير مرحل',
     ]);
+
     return redirect()->route('subAccounts.allShow');
 
 }

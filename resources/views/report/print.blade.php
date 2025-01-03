@@ -8,75 +8,65 @@
     </title>
     <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
     <style>
-        /* تخصيص للطباعة */
-        @media print {
-            body {
-                width: 100%;
-                margin: 0;
-                padding: 0;
-            }
-            .print-container {
-                @apply w-full max-w-full mx-auto p-4;
-            }
+        body {
+      font-family: Arial, sans-serif; /* الخط الافتراضي */
+  }
+  .english {
+      font-family: 'Times New Roman', serif; /* الخط الإنجليزي */
+  }
+      /* تخصيص للطباعة */
+      @media print {
+          body {
+              width: 100%;
+              margin: 0;
+              padding: 0;
+          }
+          .print-container {
+              @apply w-full max-w-full mx-auto p-2;
+          }
 
-            .no-print {
-                display: none;
-            }
-        }
+          .no-print {
+              display: none;
+          }
+      }
 
-        /* تحسين مظهر الجدول */
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #000;
-        }
+  table {
+      table-layout: ; /* استخدم تخطيط ثابت */
+      width: 100%;
+  }
 
-        .header-section, .totals-section {
-            margin-top: 16px;
-            border: 2px solid #000;
-            border-radius: 8px;
-        }
-    </style>
+  th, td {
+      border: 1px solid #000;
+      /* padding: 8px; */
+  }
+
+ 
+
+  /* تحسين مظهر الجدول */
+  .header-section, .totals-section {
+      margin-top: 10px;
+      border: 2px solid #000;
+      border-radius: 8px;
+  }
+      
+  </style>
 </head>
 <body class="bg-white">
-    <div class="container mx-auto print-container">
-  <!-- العنوان -->
-  @isset($buss)
-  <div class="header-section border-2 border-black bg-[#1749fd15]  rounded-lg my-4">
-      <div class="rounded-lg grid grid-cols-3 gap-6 p-2 w-full">
-          <!-- القسم الأيمن - Arabic content -->
-          <div class="text-right space-y-2">
-              <h2 class="font-extrabold  ">{{ $buss->Company_Name }}</h2>
-              <p class="text-sm text-gray-700">{{ $buss->Services }}</p>
-              <p class="text-sm text-gray-700">العنوان: {{ $buss->Company_Address }}</p>
-              <p class="text-sm text-gray-700">التلفون: {{ $buss->Phone_Number }}</p>
-          </div>
-          <!-- القسم الأوسط - تحليل الحسابات -->
-          <div class="flex items-center justify-center px-2">
-              <div class="w-24 h-20   flex items-center justify-center translate-x-10">
-                  <img class=" bg-[#1749fd15] rounded-3xl" src="{{ url($buss->Company_Logo ? 'images/' . $buss->Company_Logo : '') }}" alt="">
-              </div>
-          </div>
-          <!-- القسم الأيسر - English content -->
-          <div class="text-left space-y-2">
-              <h2 class="font-extrabold  ">{{ $buss->Company_NameE }}</h2>
-              <p class="text-sm text-gray-700">{{ $buss->ServicesE }}</p>
-              <p class="text-sm text-gray-700">Address: {{ $buss->Company_AddressE }}</p>
-              <p class="text-sm text-gray-700">Phone: {{ $buss->Phone_Number }}</p>
-          </div>
-      </div>
-      <div class="text-center space-y-4">
-          <p class="font-extrabold text-lg">
-            التقرير المخزن -  {{ $Myanalysis }}
-             :
-                {{ $accountingPeriod ?? ''}}
-          </p>
-      </div>
-  </div>
+    <div class=" print-container px-1 ">
+        <!-- العنوان -->
+        @isset($buss)
+        <div class="header bg-[#1749fd15]  rounded-lg">
+               @include('includes.header2')
 
+      
+  </div>
+  <div class="text-center space-y-4">
+    <p class="font-extrabold text-lg">
+      التقرير المخزن -  {{ $Myanalysis }}
+       :
+          {{ $accountingPeriod ?? ''}}
+    </p>
+</div>
   {{-- <div class="grid grid-cols-2 w-full gap-2  text-gray-700">
           {{$productname }}
 </div> --}}
