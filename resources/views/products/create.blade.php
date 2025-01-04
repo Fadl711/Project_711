@@ -176,7 +176,7 @@
       <div>
         <label for="product_idUpdate" class="labelSale"> رقم المنتج</label>
      <input type="number" name="producid" 
-        id="producid"  class="inputSale  english-numbers"
+        id="producid" disabled class="inputSale  english-numbers"
          @isset($prod->product_id)
          value="{{  $prod->product_id}}"
              
@@ -187,9 +187,10 @@
       <div>
         <label for="purchase_id" class="labelSale"> رقم القيد الافتتاحي للكمية</label>
         <input type="number" name="purchase_id" 
-         disabled id="purchase_id"  class="inputSale  english-numbers"
+         disabled 
+         id="purchase_id"  class="inputSale  english-numbers"
          @isset($purchaseid)
-         value="{{  $purchaseid}}"
+         value="{{$purchaseid}}"
              
          @endisset
          />

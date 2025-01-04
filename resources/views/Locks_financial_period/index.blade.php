@@ -51,42 +51,24 @@
                     </tr>
                 </thead>
                 <tbody id="revenueExpenses">
-                    <!-- البيانات سيتم تحميلها عبر AJAX -->
-                </tbody>
+                    <tr class="border-b">
+                        <td class="py-3 px-6">إجمالي الإيرادات</td>
+                        <td class="py-3 px-6 text-right">{{$totalRevenue}} ريال</td>
+                    </tr>
+                    <tr class="border-b">
+                        <td class="py-3 px-6">إجمالي المصروفات</td>
+                        <td class="py-3 px-6 text-right">{{$totalExpenses}} ريال</td>
+                    </tr>
+                    <tr class="font-bold">
+                        <td class="py-3 px-6">صافي الربح/الخسارة</td>
+                        <td class="py-3 px-6 text-right">{{$profit}} ريال</td>
+                    </tr>                </tbody>
             </table>
         </div>
 
-        <div class="mb-6">
-            <h2 class="text-lg font-semibold">الأصول</h2>
-            <table class="min-w-full border bg-white shadow-md rounded">
-                <thead>
-                    <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
-                        <th class="py-3 px-6 text-left">الحساب</th>
-                        <th class="py-3 px-6 text-center">نوع الحساب</th>
-                        <th class="py-3 px-6 text-right">الرصيد</th>
-                    </tr>
-                </thead>
-                <tbody id="assetsTable">
-                    <!-- البيانات سيتم تحميلها عبر AJAX -->
-                </tbody>
-            </table>
-        </div>
+      
         
-        <div class="mb-6">
-            <h2 class="text-lg font-semibold">الالتزامات</h2>
-            <table class="min-w-full border bg-white shadow-md rounded">
-                <thead>
-                    <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
-                        <th class="py-3 px-6 text-left">الحساب</th>
-                        <th class="py-3 px-6 text-center">نوع الحساب</th>
-                        <th class="py-3 px-6 text-right">الرصيد</th>
-                    </tr>
-                </thead>
-                <tbody id="liabilitiesTable">
-                    <!-- البيانات سيتم تحميلها عبر AJAX -->
-                </tbody>
-            </table>
-        </div>
+       
     </div>
     <div id="successMessage" class="hidden fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
         <p class="font-bold">تم بنجاح!</p>
@@ -126,61 +108,30 @@
                 dataType: 'json',
                 success: function(data) {
                     // التعامل مع الرسائل الناجحة أو الفاشلة
-                    const alertMessage = data.success ? '#successAlert' : '#successAlert1';
-                    $(alertMessage).text(data.message).removeClass('hidden');
-                    
-                    // إخفاء التنبيه بعد 8 ثوانٍ
-                    setTimeout(function() {
-                        $(alertMessage).addClass('hidden');
-                    }, 8000);
+                
+                   
     
                     // إعادة تفعيل الزر بعد الانتهاء من الطلب
                     submitButton.prop('disabled', false).text('إقفال السنة');
     
-                    if (data.success) {
-                        // عرض الإيرادات والمصروفات
-                        $('#revenueExpenses').html(`
-                            <tr class="border-b">
-                                <td class="py-3 px-6">إجمالي الإيرادات</td>
-                                <td class="py-3 px-6 text-right">${data.totalRevenue} ريال</td>
-                            </tr>
-                            <tr class="border-b">
-                                <td class="py-3 px-6">إجمالي المصروفات</td>
-                                <td class="py-3 px-6 text-right">${data.totalExpenses} ريال</td>
-                            </tr>
-                            <tr class="font-bold">
-                                <td class="py-3 px-6">صافي الربح/الخسارة</td>
-                                <td class="py-3 px-6 text-right">${data.netProfitOrLoss} ريال</td>
-                            </tr>
-                        `);
-    
-                        // عرض الأصول
-                        let assetsHTML = data.assets.map(asset => `
-                            <tr class="border-b border-gray-200 hover:bg-gray-100">
-                                <td class="py-3 px-6 text-left">${asset.name}</td>
-                                <td class="py-3 px-6 text-center">${asset.type}</td>
-                                <td class="py-3 px-6 text-right">${asset.balance}</td>
-                            </tr>
-                        `).join('');
-                        $('#assetsTable').html(assetsHTML);
-    
-                        // عرض الالتزامات
-                        let liabilitiesHTML = data.liabilities.map(liability => `
-                            <tr class="border-b border-gray-200 hover:bg-gray-100">
-                                <td class="py-3 px-6 text-left">${liability.name}</td>
-                                <td class="py-3 px-6 text-center">${liability.type}</td>
-                                <td class="py-3 px-6 text-right">${liability.balance}</td>
-                            </tr>
-                        `).join('');
-                        $('#liabilitiesTable').html(liabilitiesHTML);
-    
-                        // إظهار التقرير
-                        $('#reportContainer').removeClass('hidden');
-                    }
+                        
+                        $('#successAlert').text(data.message).removeClass('hidden');
+                    
+                    // إخفاء التنبيه بعد 8 ثوانٍ
+                    setTimeout(function() {
+                        $('#successAlert').addClass('hidden');
+                    }, 8000);
+                   
+                    
                 },
                 error: function(xhr, status, error) {
+                    
+                    $('#successAlert1').text(data.message).removeClass('hidden');
+                        $('#successAlert1').addClass('hidden');
+                        setTimeout(function() {
+                        $('#successAlert').addClass('hidden');
+                    }, 8000);
                     console.error('Error fetching data:', error);
-                    alert('حدث خطأ أثناء تحميل البيانات.');
                     submitButton.prop('disabled', false).text('إقفال السنة'); // إعادة النص إلى "إقفال السنة" عند الخطأ
                 }
             });

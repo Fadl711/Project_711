@@ -59,6 +59,7 @@ class LocksFinancialPeriodsController extends Controller
             ->where('accounting_period_id', $id)
             ->where('Main_id', $subAccounts->main_account_id)
             ->sum('amount');
+
         //---------------------------------------------------------
 
         // اجمالي  تكلفة بضاعة نهاية المدة  التي تم جردها------
@@ -81,7 +82,7 @@ class LocksFinancialPeriodsController extends Controller
         $totalRevenue = $Revenue + $RevenueSales + ($QuantityInventory ?? 0); //اجمالي الإيرادات
 
         $totalExpenses = $ExpensesDebit + $RevenuePurchase - $ExpensesCredit; //اجمالي المصروفات
-        $profit = $totalExpenses - $totalRevenue;
+        $profit = $totalRevenue-$totalExpenses  ;
 
 
 
@@ -89,7 +90,12 @@ class LocksFinancialPeriodsController extends Controller
 
 
 
-        return view('locks_financial_period.index', ['profit' => $profit, 'accountingPeriodOpen' => $accountingPeriodOpen]);
+        return view('locks_financial_period.index', [
+            'profit' => $profit, 
+            'totalRevenue' => $totalRevenue, 
+            'totalExpenses' => $totalExpenses, 
+
+        'accountingPeriodOpen' => $accountingPeriodOpen]);
     }
 
     public function getProfitAndLossData(Request $request, $id)
@@ -134,7 +140,7 @@ class LocksFinancialPeriodsController extends Controller
                 ]);
     
                 // إذا كان هناك رصيد، قم بإضافة إدخال يومي
-                if ($sub !== 0) {
+                if ($sub != 0) {
                     DailyEntrie::create([
                         'Amount_debit' => max(0, $sub),
                         'account_debit_id' => $subAccount->sub_account_id,
@@ -159,14 +165,6 @@ class LocksFinancialPeriodsController extends Controller
             // بقية الشيفرة الخاصة بحساب الإيرادات والمصروفات
             $this->ProductTransfer($id);
     
-            return response()->json([
-                'assets' => 0,
-                'message'=>'تم إقفال السنة بنجاح',
-
-                'success' => true,
-                'liabilities' => 0,
-                'id' => $id,
-            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -184,22 +182,26 @@ class LocksFinancialPeriodsController extends Controller
         foreach ($warehouses as $warehouse) {
             $warehouse_to_id = $warehouse->sub_account_id;
 
-            // جلب المنتجات المرتبطة بالمخزن
-            $warehousesReturns = Purchase::where('accounting_period_id', $id)
-                ->where('warehouse_to_id', $warehouse_to_id)
-                ->whereIn('transaction_type', [1, 6, 3,7])
-                ->select('product_id', 'Quantityprice') // اختيار الأعمدة المطلوبة
-                ->distinct() // التأكد من جلب القيم المميزة
-                ->get(); //
+            // // جلب المنتجات المرتبطة بالمخزن
+            // $warehousesReturns = Purchase::where('accounting_period_id', $id)
+            //     ->where('warehouse_to_id', $warehouse_to_id)
+            //     ->whereIn('transaction_type', [1, 6, 3,7])
+            //     ->select('product_id') // اختيار الأعمدة المطلوبة
+            //     ->distinct() // التأكد من جلب القيم المميزة
+            //     ->get(); //
+
+                    $warehousesReturns = Product::all();
 
             // جلب الكمية من المخزن
 
 
             if ($warehousesReturns) {
                 foreach ($warehousesReturns as $product) {
+                    $productName = Product::where('product_id',$product->product_id)->first();
+
                     $QuantityInventory = Inventory::where('StoreId', $warehouse_to_id)
                         ->where('accounting_period_id', $id)
-                        ->where('product_id', $product->product_id)
+                        ->where('product_id', $productName->product_id)
                         ->sum('Quantityprice');
                     // حساب كميات المشتريات والمرتجعات
 
@@ -207,82 +209,76 @@ class LocksFinancialPeriodsController extends Controller
                     // تحديد الكمية المستخدمة
                     // $Quantity = $QuantityInventory >0 ? $QuantityInventory : ($productPurchase ?? 0);
                     if ($QuantityInventory) {
-                        $this->updateOrCreatePurchase($warehouse_to_id, $QuantityInventory, $accountingPeriodOprn->accounting_period_id, $product->product_id);
-                    } elseif ($product->product_id) {
-                        $this->calculateTotalQuantities($product->product_id, $warehouse_to_id, $id);
+                        $this->updateOrCreatePurchase($warehouse_to_id, $QuantityInventory, $accountingPeriodOprn->accounting_period_id, $productName->product_id);
+                    } elseif ($productName->product_id) 
+                    {
+                        $this->calculateTotalQuantities($productName->product_id, $warehouse_to_id, $id);
                     }
                 }
             }
         }
+        return response()->json([
+            'success' => true,
+            'message'=>'تم إقفال السنة بنجاح',
+
+        ]);
     }
 
     private function calculateTotalQuantities($product_id, $warehouse_to_id, $id)
     {
         // استعلام لجمع كميات المشتريات
-        if ($product_id) {
-            $purchases = Purchase::select('product_id', 'warehouse_to_id', DB::raw('SUM(quantity) as total_quantity'))
-                ->where('product_id', $product_id)
-                ->where('warehouse_to_id', $warehouse_to_id)
-                ->where('accounting_period_id', $id)
-                ->whereIn('transaction_type', [1, 6, 3, 7])
-                ->groupBy('product_id', 'warehouse_to_id');
+        // $productName = Product::where('product_id',$productid)->first();
+        $productid = Product::where('product_id', $product_id)->value('product_id');
 
+        if ($productid) {
+         // حساب الكميات بناءً على نوع المعاملة والمخزن
+  $purchaseToQuantity = Purchase::where('product_id', $productid)
+  ->where('accounting_period_id', $id)
+  ->where('warehouse_to_id', $warehouse_to_id)
+  ->whereIn('transaction_type', [1, 6, 3,7])
+  ->sum('quantity');
 
-            // استعلام لجمع كميات المرتجعات من المشتريات
-             $purchasesReturn = Purchase::select('product_id', 'warehouse_to_id', DB::raw('SUM(quantity) as totalquantity'))
-                ->where('product_id', $product_id)
-                ->where('warehouse_to_id', $warehouse_to_id)
-                ->where('accounting_period_id', $id)
-                ->where('transaction_type', 2)
-                ->groupBy('product_id', 'warehouse_to_id');
+  $warehouseFromQuantity = Purchase::where('product_id', $productid)
+      ->where('warehouse_from_id', $warehouse_to_id)
+      ->where('accounting_period_id', $id)
+      ->where('transaction_type', 2)
+      ->sum('quantity');
+     
+  $warehouseFromQuantity3 = Purchase::where('product_id', $productid)
+      ->where('warehouse_from_id', $warehouse_to_id)
+      ->where('accounting_period_id', $id)
+      ->where('transaction_type', 3)
+      ->sum('quantity');
 
-            // جمع الكمية من المخزن المحدد
-            $warehouseFromQuantity3 = Purchase::where('product_id', $product_id)
-                ->where('warehouse_from_id', $warehouse_to_id)
-                ->where('accounting_period_id', $id)
-                ->where('transaction_type', 3)
-                ->sum('quantity');
-            // استعلام لجمع كميات المرتجعات من المبيعات
-            $saleReturn = Sale::select('product_id', 'warehouse_to_id', DB::raw('SUM(quantity) as total_quantity'))
-                ->where('product_id', $product_id)
-                ->where('warehouse_to_id', $warehouse_to_id)
-                ->where('accounting_period_id', $id)
-                ->where('transaction_type', 5)
-                ->groupBy('product_id', 'warehouse_to_id');
+  $saleQuantity5 = Sale::where('product_id', $productid)
+      ->where('warehouse_to_id', $warehouse_to_id)
+      ->where('accounting_period_id', $id)
+      ->where('transaction_type', 5)
+      ->sum('quantity');
 
-            // استعلام لجمع كميات المبيعات
-            $sales = Sale::select('product_id', 'warehouse_to_id', DB::raw('SUM(quantity) as totalquantity'))
-                ->where('product_id', $product_id)
-                ->where('warehouse_to_id', $warehouse_to_id)
-                ->where('accounting_period_id', $id)
-                ->where('transaction_type', 4)
-                ->groupBy('product_id', 'warehouse_to_id');
+  $saleQuantity4 = Sale::where('product_id', $productid)
+      ->where('warehouse_to_id', $warehouse_to_id)
+      ->where('accounting_period_id', $id)
+      ->where('transaction_type', 4)
+      ->sum('quantity');
+     
 
-            // دمج كميات المشتريات مع كميات المرتجعات من المبيعات
-            $purchasesSummary = $purchases->union($saleReturn)->get();
-            // حساب إجمالي الكميات
-            $totalQuantity = $purchasesSummary->sum('total_quantity');
-
-            // دمج كميات المبيعات مع كميات المرتجعات من المشتريات
-            $purchasesReturnEndSalesSummary = $sales->union($purchasesReturn)->get();
-            $purchasesReturnEndSales = $purchasesReturnEndSalesSummary->sum('totalquantity');
-            // حساب الكمية النهائية للمنتج
-            $productPurchase = $totalQuantity - $warehouseFromQuantity3 - $purchasesReturnEndSales;
+  $productPurchase =( $purchaseToQuantity+$saleQuantity5 )- $warehouseFromQuantity - $warehouseFromQuantity3- $saleQuantity4 ;
             $accountingPeriodOprn = AccountingPeriod::where('is_closed', false)->firstOrFail();
 
-            $this->updateOrCreatePurchase($warehouse_to_id, $productPurchase, $accountingPeriodOprn->accounting_period_id, $product_id);
+            $this->updateOrCreatePurchase($warehouse_to_id, $productPurchase, $accountingPeriodOprn->accounting_period_id, $productid);
         }
     }
 
-    private function updateOrCreatePurchase($warehouse_to_id, $Quantity, $accountingPeriodId, $product_id)
+    private function updateOrCreatePurchase($warehouse_to_id, $Quantity, $accountingPeriodId, $productid)
     {
-        $productName = Product::where('product_id', $product_id)->first();
+        $productName = Product::where('product_id', $productid)->first();
+        $accountingPeriodOprn = AccountingPeriod::where('is_closed', false)->firstOrFail();
 
         Purchase::create(
             [
-                'accounting_period_id' => $accountingPeriodId,
+                'accounting_period_id' => $accountingPeriodOprn->accounting_period_id,
                 'Purchase_invoice_id' => null,
-
                 'Product_name' => $productName->product_name,
                 'Barcode' => $productName->Barcode ?? 0,
                 'quantity' => $Quantity,
@@ -300,14 +296,14 @@ class LocksFinancialPeriodsController extends Controller
                 'Profit' => 0,
                 'Exchange_rate' => 1.0,
                 'note' => 'hhj',
-                'product_id' => $productName->product_id,
+                'product_id' => $productid,
                 'account_id' => $warehouse_to_id,
                 'transaction_type' => 7,
                 'categorie_id' => null,
             ]
         );
-        $productName->update([
-            'Quantity' => $Quantity,
-        ]);
+        // $productName->update([
+        //     'Quantity' => $Quantity,
+        // ]);
     }
 }

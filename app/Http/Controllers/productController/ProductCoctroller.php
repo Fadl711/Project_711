@@ -138,15 +138,17 @@ class ProductCoctroller extends Controller
             }
             if($DisplayMethod =="ShowAllProducts")
             {
-            $uniqueProducts = Purchase::where('warehouse_to_id', $warehouse_to_id)
-            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-            ->where(function ($query) {
-                $query->whereIn('transaction_type', [1, 6, 3,7]);
+            // $uniqueProducts = Purchase::where('warehouse_to_id', $warehouse_to_id)
+            // ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+            // ->where(function ($query) {
+            //     $query->whereIn('transaction_type', [1, 6, 3,7]);
 
-            })
-            ->select('product_id', 'Product_name') // اختيار الأعمدة المطلوبة
-            ->distinct() // التأكد من جلب القيم المميزة
-            ->get();// جلب النتائج كمجموعة بيانات
+            // })
+            // ->select('product_id', 'Product_name') // اختيار الأعمدة المطلوبة
+            // ->distinct() // التأكد من جلب القيم المميزة
+            // ->get();// جلب النتائج كمجموعة بيانات
+            $uniqueProducts = Product::all();
+
         }
         if( $DisplayMethod=="SelectedProduct")
         {
@@ -155,12 +157,13 @@ class ProductCoctroller extends Controller
             //    dd($productname);
                 foreach ($productname as $produ) 
                 {
-            $uniqueProduc = Purchase::where('warehouse_to_id', $warehouse_to_id)
-            ->where('product_id', $produ)
-            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-            ->select('product_id', 'Product_name','Quantityprice') // اختيار الأعمدة المطلوبة
-            ->distinct() 
-            ->get();
+            // $uniqueProduc = Purchase::where('warehouse_to_id', $warehouse_to_id)
+            // ->where('product_id', $produ)
+            // ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+            // ->select('product_id', 'Product_name','Quantityprice') // اختيار الأعمدة المطلوبة
+            // ->distinct() 
+            // ->get();
+            $uniqueProduc = Product::where('product_id',  $produ)->get();
             $product = Product::where('product_id',  $produ)->first();
              $uniqueProducts[] = [
                         'product_id' => $product->product_id,
@@ -173,7 +176,9 @@ class ProductCoctroller extends Controller
         $allQuantityonly = []; 
         // تخزين المنتجات
         $allQuantityCosts = []; // تخزين المنتجات
+        $QuantityCosts1 = []; // تخزين المنتجات
         $inventoryList = []; // تخزين المنتجات
+        $inventoryList1=[] ;
 
         foreach ($uniqueProducts as $products) {
             if( $DisplayMethod=="SelectedProduct")
@@ -232,6 +237,11 @@ class ProductCoctroller extends Controller
        
             if($Quantit=="QuantityCosts")
            {
+            if (!in_array($product_id, $QuantityCosts1))
+            {
+
+            
+                $QuantityCosts1[] = $product_id;
         $allQuantityCosts[] = [
             '$accountingPeriod' => $accountingPeriod->created_at,
             'product_id' => $product_id,
@@ -244,8 +254,14 @@ class ProductCoctroller extends Controller
             'Myanalysis' => $Myanalysis,
         ];
         }
+        }
         if($Quantit=="inventoryList")
         {
+            if (!in_array($product_id, $inventoryList1))
+            {
+
+            
+                $inventoryList1[] = $product_id;
          $accountingPerio = Carbon::today()->format('Y-m-d');
 
          $inventoryList[] = [
@@ -257,6 +273,8 @@ class ProductCoctroller extends Controller
              'SumQuantity' => $productPurchase,
              '$accountingPeriod' => $accountingPerio,
          ];
+        }
+
      }  
           
              $allQuantityonly[] = [
@@ -333,31 +351,32 @@ if($Quantit=="Incomplete")
         if($Quantit=="QuantityCostsSupplier")
         {
             $Myanalysis="الكمية والتكاليف حسب حركة الموردين من تاريخ ";
-    
         }
         if($Quantit=="QuantitySupplier")
         {
             $Myanalysis="للكمية  حسب حركة الموردين من تاريخ "; 
         }
-      
         if( $DisplayMethod=="ShowAllProducts")
         {
             if($DisplayMethod =="ShowAllProducts")
             {
                 $productname=null;
             }
-            $uniqueProducts = Purchase::where('warehouse_to_id', $warehouse_to_id)
-            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-            ->where(function ($query) {
-                $query->where('transaction_type', 1)
-                      ->orWhere('transaction_type', 6)
-                      ->orWhere('transaction_type', 7)
-                      ;
-            })
-            ->select('product_id', 'Product_name') // اختيار الأعمدة المطلوبة
-            ->distinct() // التأكد من جلب القيم المميزة
-            ->get(); // جلب النتائج كمجموعة بيانات
+            $uniqueProducts = Product::all();
+
+            // $uniqueProducts = Purchase::where('warehouse_to_id', $warehouse_to_id)
+            // ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+            // ->where(function ($query) {
+            //     $query->where('transaction_type', 1)
+            //           ->orWhere('transaction_type', 6)
+            //           ->orWhere('transaction_type', 7)
+            //           ;
+            // })
+            // ->select('product_id', 'Product_name') // اختيار الأعمدة المطلوبة
+            // ->distinct() // التأكد من جلب القيم المميزة
+            // ->get(); // جلب النتائج كمجموعة بيانات
         }
+
         if( $DisplayMethod=="SelectedProduct")
         {
             $uniqueProducts = Purchase::where('warehouse_to_id', $warehouse_to_id)
@@ -683,9 +702,9 @@ $ProductNew = Product::updateOrCreate(
                 [
                     'accounting_period_id' => $accountingPeriod->accounting_period_id,
                     'purchase_id' => $request->purchase_id,
-                    'product_id' => $ProductNew->product_id,
                 ],
                 [
+                    'product_id' => $ProductNew->product_id,
                     'Purchase_invoice_id' =>null,
                     'Product_name' => $product_name,
                     'Barcode' => $produc->Barcode ?? 0,
@@ -743,17 +762,17 @@ $ProductNew = Product::updateOrCreate(
         $prod= Product::where('product_id',$id)->first();
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
  
-        $purchase_id= Purchase::where('product_id', $id)
+        $purchaseid= Purchase::where('product_id', $id)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->where('transaction_type', 6)
         ->first();
- $purchaseid=$purchase_id->purchase_id ??null;
+ $purchaseid=$purchaseid->purchase_id;
         $curr=Currency::all();
         $editProduct="تعديل الصنف";
          return view('products.create',
          ['prod'=>$prod,
          'editProduct'=>$editProduct,
-         'purchaseid'=>$purchaseid ]);
+         'purchaseid'=>$purchaseid, ]);
      }
     public function update(Request $request,$id){
         Product::where('product_id',$id)->update([

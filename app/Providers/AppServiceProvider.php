@@ -107,11 +107,13 @@ class AppServiceProvider extends ServiceProvider
             'users'=>$users,
         ]);
         $Default_customers=Default_customer::first();
+        
         $cate=Category::all();
         $buss=BusinessData::first();
         $cu=CurrencySetting::first();
 $transaction_typeExchangeBond="سند صرف";
 $transaction_typePaymentBonds="سند قبض";
+if(isset($buss))
         View::share([
             'cate'=>$cate,
             'cu'=>$cu,

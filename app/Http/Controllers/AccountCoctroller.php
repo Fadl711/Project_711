@@ -99,21 +99,15 @@ return response()->json( $data);
             'entrie_id' => 'nullable|integer',
             'account_debit_id' => 'nullable|integer',
             'account_Credit_id' => 'nullable|integer',
-            'allDailyEntrie' => 'nullable|integer',
-         
-
-        ]);
-        
-        
+            'allDailyEntrie' => 'nullable|integer',        
+        ]);      
         try {
             $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
-            
             // تحقق من وجود entrie_id
             if ($request->entrie_id) {
                 $entry = DailyEntrie::where('entrie_id', $request->entrie_id)
                     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
                     ->first();
-    
                 // تحقق مما إذا كان القيد موجودًا
                 if (!$entry) {
                     return response()->json(['error' => 'لم يتم العثور على القيد.'], 404);

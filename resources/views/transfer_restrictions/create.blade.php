@@ -6,7 +6,12 @@
 <div id="successMessage" class="bg-green-500  p-4 rounded" style="display: none;">
     <p>تم الحفظ بنجاح!</p>
 </div>
-
+  
+<div id="errorMessage" style="display: none; color: red;">
+    <p>حدث خطأ أثناء الحفظ.</p>
+  </div>
+  <!-- منطقة طباعة البيانات المحفوظة -->
+  <div id="results" class="results"></div>
 <!-- عرض الرسائل إذا كانت موجودة -->
 @if(session('error'))
     <div class="bg-red-500 text-white p-4 rounded">
@@ -219,12 +224,7 @@
         });
     </script>
 
-    
-  <div id="errorMessage" style="display: none; color: red;">
-    <p>حدث خطأ أثناء الحفظ.</p>
-  </div>
-  <!-- منطقة طباعة البيانات المحفوظة -->
-  <div id="results" class="results"></div>
+  
 
   <script src="{{url('payments.js')}}">   </script>
   

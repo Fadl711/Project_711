@@ -32,7 +32,7 @@
 </div>
 <div id="successAlert1"  class="hidden fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
 </div>
-<div class="overflow-y-auto max-h-screen " >
+<div class=" w-full overflow-y-auto max-h-[80vh] " >
     <div class="flex flex-col gap-4 justify-center items-center p-2">
         <div class="relative  border border-gray-200 rounded-lg w-full max-w-lg">
             <input id="search"  type="text" class="rounded-md w-full text-right placeholder:text-right " placeholder="اسم المنتاج او الباركود">
@@ -46,7 +46,7 @@
         </div>
     </div>
     <br>
-    <table class=" min-w-full rounded-xl">
+    <table class=" text-sm font-semibold  w-full overflow-y-auto max-h-[80vh] ">
         <thead>
             <tr class=" bgcolor ">
                 <th scope="col" class="leading-2 tagHt ">رقم المنتج</th>
@@ -103,7 +103,6 @@
                     <td class="tagTd"></td>
                 @endif
                 {{-- اظهار المخازن يا جمال البطل  --}}
-
                     @if(isset($pro->warehouse_id) && !empty($pro->warehouse_id))
                         @foreach ($Warehouses as $Warehouse)
                             @if ($Warehouse->warehouse_id==$pro->warehouse_id)

@@ -471,16 +471,16 @@ const Product_name = $('#product_name');
           }
       });
           // استدعاء وظيفة الحفظ عند الضغط على زر +
-             $(document).on('keydown', function (event) {
+         
+        $('#saveButton').click(function() {
+            saveData(event); // استدعاء دالة الحفظ
+        });
+        $(document).on('keydown', function (event) {
             if (event.key === '+') {
                 event.preventDefault();
                 saveData(event); // استدعاء دالة الحفظ
             }
         });
-        $('#saveButton').click(function() {
-            saveData(event); // استدعاء دالة الحفظ
-        });
-    
       function saveData(event) {
         event.preventDefault(); // منع تحديث الصفحة
             const formData = new FormData($('#ajaxForm')[0]);
