@@ -26,6 +26,8 @@
                 @php
                     $displayedProducts[] = $item['product_id'];
                 @endphp
+                @if ($item['SumQuantity'])
+                    
                 <tr class="border-b border-gray-200 hover:bg-gray-100" >
                     <td class="px-4 text-center">{{ $index + 1 }}</td>
 
@@ -41,6 +43,8 @@
                     @endphp
                     <td class="text-center">{{ number_format($PurchaseTotal, 2) }}</td>
                 </tr>
+                @endif
+
             @endif
              @endforeach
             <tr class="bg-blue-100">

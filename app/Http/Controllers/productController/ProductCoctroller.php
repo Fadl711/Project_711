@@ -592,14 +592,12 @@ if($Quantit=="QuantityCosts")
 
     public function store(Request $request)
     {
-
         if (!$request->product_name) {
             return response()->json([
                 'success' => false,
                 'message' => 'يجب عليك تحديد اسم المنتج .'
             ]);
         }
-       
         // تحويل الأرقام العربية إلى الإنجليزية
         $Quantity = $this->convertArabicNumbersToEnglish($request->input('Quantity'));
         $Selling_price = $this->convertArabicNumbersToEnglish($request->input('Selling_price'));
@@ -608,10 +606,11 @@ if($Quantit=="QuantityCosts")
         $Special_discount = $this->convertArabicNumbersToEnglish($request->input('Special_discount'));
         $Quantityprice = $this->convertArabicNumbersToEnglish($request->input('Quantityprice'));
         $product_idUpdate = $this->convertArabicNumbersToEnglish($request->input('producid'));
-              
+// dd($product_idUpdate);
         if(!$product_idUpdate)
         {
-            if (Product::where('product_name', $request->product_name)->exists()) {
+            $productname=Product::where('product_name', $request->product_name)->first();
+            if ($productname) {
                 return response()->json([
                     'success' => false,
                     'message' => 'يوجد نفس هذا الاسم من قبل.'
@@ -761,12 +760,11 @@ $ProductNew = Product::updateOrCreate(
     public function edit($id){
         $prod= Product::where('product_id',$id)->first();
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
- 
         $purchaseid= Purchase::where('product_id', $id)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->where('transaction_type', 6)
         ->first();
- $purchaseid=$purchaseid->purchase_id;
+ $purchaseid=$purchaseid->purchase_id?? null;
         $curr=Currency::all();
         $editProduct="تعديل الصنف";
          return view('products.create',

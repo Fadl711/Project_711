@@ -10,6 +10,7 @@
   </div>
 <form id="" action="{{route('products.store')}}" method="POST" class="border-b text-sm" >
     @csrf
+    
     <div class="grid grid-cols-2 gap-1 md:grid-cols-8 lg:grid-cols-8">
         <div class="flex flex-col">
           <label for="Barcode" class="labelSale">الباركود</label>
@@ -174,12 +175,11 @@
           </button>
       </div>
       <div>
-        <label for="product_idUpdate" class="labelSale"> رقم المنتج</label>
+        <label for="producid" class="labelSale"> رقم المنتج</label>
      <input type="number" name="producid" 
-        id="producid" disabled class="inputSale  english-numbers"
+        id="producid"  class="inputSale  english-numbers"
          @isset($prod->product_id)
          value="{{  $prod->product_id}}"
-             
          @endisset
          
          />
@@ -187,7 +187,7 @@
       <div>
         <label for="purchase_id" class="labelSale"> رقم القيد الافتتاحي للكمية</label>
         <input type="number" name="purchase_id" 
-         disabled 
+          
          id="purchase_id"  class="inputSale  english-numbers"
          @isset($purchaseid)
          value="{{$purchaseid}}"
@@ -197,7 +197,7 @@
     </div>
       <div>
         <label for="Categorieid" class="labelSale"> رقم الوحدة</label>
-        <input type="number" name="Categorieid" disabled id="Categorieid"  class="inputSale  english-numbers" required />
+        <input type="number" name="Categorieid"  id="Categorieid"  class="inputSale  english-numbers" required />
     </div>
               </div>  
                
