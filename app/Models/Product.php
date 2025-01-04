@@ -29,5 +29,9 @@ class Product extends Model
             'User_id',
             'supplier_id',
     ];
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
      // تحويل Purchase_price إلى أرقام إنجليزية
 }
