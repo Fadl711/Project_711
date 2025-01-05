@@ -327,11 +327,13 @@ else{
         $.ajax({
             url: '{{ route("invoicePurchases.store") }}',
             method: 'POST',
-            headers: { 'X-CSRF-TOKEN': csrfToken },
-            data: formData,
+            headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    },            data: formData,
             processData: false,
             contentType: false,
         })
+
         .done(function(response) {
             if (response.success) {
                 // تحديث الحقول وإظهار رسالة النجاح
@@ -481,62 +483,64 @@ const Product_name = $('#product_name');
                 saveData(event); // استدعاء دالة الحفظ
             }
         });
-      function saveData(event) {
-        event.preventDefault(); // منع تحديث الصفحة
-            const formData = new FormData($('#ajaxForm')[0]);
-            formData.on('keydown', function (event) {
-      if (event.key === 'Enter') {
-          event.preventDefault(); // منع الحفظ عند الضغط على زر Enter
-      }
-  });
-            const selectedPaymentType = $('input[name="Payment_type"]:checked').val();
+        function saveData(event) {
+    event.preventDefault(); // منع تحديث الصفحة
+
+    const form = $('#ajaxForm'); // تخزين العنصر في متغير
+    const formData = new FormData(form[0]);
+
+    const selectedPaymentType = $('input[name="Payment_type"]:checked').val();
     formData.append('Payment_type', selectedPaymentType || ''); // إضافة القيمة المختارة أو قيمة فارغة إذا لم يتم اختيار شيء
+    formData.append('Receipt_number', $('#Receipt_number').val() || ''); // إضافة رقم الإيصال
 
-    // إذا كان هناك حقل Receipt_number، أضفه أيضًا
-    formData.append('Receipt_number', $('#Receipt_number').val() || '');
-            $.ajax({
-                url: '{{ route("Purchases.storc") }}', // استبدل هذا بالمسار الخاص بك
-                type: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}' // إرسال التوكن الخاص بـ Laravel
-                },
-                data: formData,
-                processData: false, // ضروري مع FormData
-                contentType: false, // ضروري مع FormData
-              success: function (data) {
-                  if (data.success) {
-                      errorMessage.hide();
-                      
-                      successMessage.removeClass('hidden').text(data.message);
+    $.ajax({
+        url: '{{ route("Purchases.storc") }}', // المسار الخاص بك
+        type: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: formData,
+        processData: false, // ضروري مع FormData
+        contentType: false, // ضروري مع FormData
+        success: function(data) {
+            if (data.success) {
+                $('#errorMessage').hide(); // تأكد من وجود عنصر بهذا المعرف
+                $('#successMessage').removeClass('hidden').text(data.message);
 
-// إخفاء التنبيه بعد 3 ثوانٍ
-setTimeout(function() {
-    $('#successMessage').addClass('hidden');
-}, 1000);
+                // إخفاء التنبيه بعد 3 ثوانٍ
+                setTimeout(() => {
+                    $('#successMessage').addClass('hidden');
+                }, 3000);
 
-                      addToTable(data.purchase);
-                      $('#Total_invoice').val(data.Purchasesum);
-                      emptyData();
-                  } else {
-                      // إظهار رسالة عند وجود نفس الاسم
-                      errorMessage.show().text(data.message);
-                      setTimeout(() => {
-                        errorMessage.hide();
-                      }, 5000);
-                      
-                      Product_name.focus();
-                  }
-              },
-              error: function () {
-                errorMessage.show().text(data.message);
-                      setTimeout(() => {
-                        errorMessage.hide();
-                      }, 8000);
-                      Product_name.focus();
+                addToTable(data.purchase);
+                $('#Total_invoice').val(data.Purchasesum);
+                emptyData();
+            } else {
+                // إظهار رسالة عند وجود نفس الاسم
+                $('#errorMessage').show().text(data.message);
+                setTimeout(() => {
+                    $('#errorMessage').hide();
+                }, 5000);
+                $('#Product_name').focus(); // تأكد من وجود عنصر بهذا المعرف
+            }
+        },
+        error: function(xhr) {
+            const errorMsg = xhr.responseJSON ? xhr.responseJSON.message : 'حدث خطأ أثناء الإرسال.';
+            $('#errorMessage').show().text(errorMsg);
+            setTimeout(() => {
+                $('#errorMessage').hide();
+            }, 8000);
+            $('#Product_name').focus(); // تأكد من وجود عنصر بهذا المعرف
         }
-          });
-      };
-      
+    });
+}
+
+// تأكد من إضافة حدث `keydown` على النموذج
+$('#ajaxForm').on('keydown', function(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault(); // منع الحفظ عند الضغط على زر Enter
+    }
+});
 
 function editData(id) {
 

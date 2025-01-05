@@ -197,7 +197,7 @@
     </div>
       <div>
         <label for="Categorieid" class="labelSale"> رقم الوحدة</label>
-        <input type="number" name="Categorieid"  id="Categorieid"  class="inputSale  english-numbers" required />
+        <input type="number" name="Categorieid"  id="Categorieid"  class="inputSale  english-numbers"  />
     </div>
               </div>  
                
