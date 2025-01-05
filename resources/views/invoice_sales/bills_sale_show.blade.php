@@ -212,13 +212,16 @@
 
         <!-- الإجماليات -->
         <div class="totals- bg-gray-100 p-4">
-            <div class="flex justify-between">
+            <div class="flex justify-between ">
                 <div>
                     <p class=" text-sm" dir="ltr">................ توقيع المستلم</p>
                 </div>
+                <span class="-translate-y-40">{{$thanks}}</span>
                 <div>
-                    <p class=" text-sm" dir="ltr">  0 : {{($UserName) ?? 0}}</p>
+                    <p class=" text-sm" dir="ltr">  المستخدم: {{($UserName) }}</p>
                 </div>
+            </div>
+            <div>
 
             </div>
         </div>
