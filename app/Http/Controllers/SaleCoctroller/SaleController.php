@@ -17,6 +17,7 @@ use App\Models\Sale;
 use App\Models\SaleInvoice;
 use App\Models\SubAccount;
 use App\Models\User;
+use App\Models\UserPermission;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -29,16 +30,28 @@ class SaleController extends Controller
         $financialt=SubAccount::where('AccountClass',5)->get();
         $DefaultCustomer  = Default_customer::where('id',1)->first();
         $financial_account = Default_customer::where('id',1)->pluck('financial_account_id')->first();
-
+        $user=auth()->id();
+        $AuthorityName="المبيعات";
+        $us=UserPermission::where('User_id', $user)
+        ->where('Authority_Name',$AuthorityName)
+        ->first();
         $Currency_name=Currency::all();
         $MainAccounts= MainAccount::all();
-        return view('sales.create',['customers'=>$customers,
-        'DefaultCustomer'=>$DefaultCustomer
-        ,'Currency_name'=>$Currency_name,
-        'MainAccounts'=>$MainAccounts,
-        'financial_account'=>$financial_account,
-        'financialts'=>$financialt,
-    ]);
+        if($us->Writing_ability==1)
+        {
+            return view('sales.create',['customers'=>$customers,
+            'DefaultCustomer'=>$DefaultCustomer
+            ,'Currency_name'=>$Currency_name,
+            'MainAccounts'=>$MainAccounts,
+            'financial_account'=>$financial_account,
+            'financialts'=>$financialt,
+        ]);
+        }
+        else
+        {
+            return view('auth.login');
+        }
+       
     }
     private function removeCommas($value)
     {

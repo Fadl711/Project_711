@@ -44,11 +44,9 @@
                 {{ $index === 0 ? 'checked' : '' }} required>
         </div>
     @endforeach
-    
-                        
                     </div>
                 </div>
-                <div class="md:justify- text-right grid md:grid-cols-9 gap-2">
+                <div class="md:justify- text-right grid md:grid-cols-8 gap-2">
                     <div>
                         <label for="transaction_type" class="labelSale">نوع العملية</label>
                         <select dir="ltr" id="transaction_type" class="inputSale input-field" name="transaction_type">

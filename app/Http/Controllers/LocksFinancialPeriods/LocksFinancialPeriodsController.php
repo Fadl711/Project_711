@@ -127,18 +127,15 @@ class LocksFinancialPeriodsController extends Controller
     
             GeneralJournal::create(['accounting_period_id' => $accountingPeriod->accounting_period_id]);
             $dailyPage = GeneralJournal::latest()->first();
-    
             foreach ($subAccounts as $subAccount) {
                 // حساب المبالغ المدين والدائن
                 $amountDebit = GeneralEntrie::where('sub_id', $subAccount->sub_account_id)->where('entry_type', 'debit')->where('accounting_period_id', $id)->sum('amount');
                 $amountCredit = GeneralEntrie::where('sub_id', $subAccount->sub_account_id)->where('entry_type', 'credit')->where('accounting_period_id', $id)->sum('amount');
-    
                 $sub = $amountDebit - $amountCredit;
                 $subAccount->update([
                     'debtor_amount' => max(0, $sub),
                     'creditor_amount' => max(0, -$sub),
                 ]);
-    
                 // إذا كان هناك رصيد، قم بإضافة إدخال يومي
                 if ($sub != 0) {
                     DailyEntrie::create([

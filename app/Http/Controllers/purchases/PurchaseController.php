@@ -388,8 +388,6 @@ $productPurchase =( $purchaseToQuantity+$saleQuantity5 )- $warehouseFromQuantity
  $categories = Category::where('product_id', $id)
  ->select('categorie_id', 'Categorie_name')
  ->get();        // حساب الكمية النهائية المتاحة في المخزن
-    
-
     if ($productData) {
         $product = [
             'product_name' => $productData->product_name,
@@ -437,7 +435,6 @@ public function destroy($id)
         $purchase->delete();
         // تحديث الإجمالي
         $Purchasesum = Purchase::where('Purchase_invoice_id', $purchase->Purchase_invoice_id)->sum('Total');
-
         return response()->json([
             'status' => 'success',
             'message' => 'تم حذف البيانات بنجاح.',
@@ -453,8 +450,6 @@ public function destroy($id)
         ], 500);
     }
 }
-
-
 
 public function print($id)
 {

@@ -18,6 +18,7 @@ use App\Models\Default_customer;
 use App\Models\PaymentBond;
 use App\Models\Product;
 use App\Models\User;
+use App\Models\UserPermission;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
@@ -107,7 +108,18 @@ class AppServiceProvider extends ServiceProvider
             'users'=>$users,
         ]);
         $Default_customers=Default_customer::first();
-        
+        $us= auth()->id();
+        $use=UserPermission::where('User_id',$us)->get();
+        if(isset($use))
+        {
+            View::share([
+                'use'=>$use,
+                'user'=>$us,
+
+            ]);
+
+        }
+
         $cate=Category::all();
         $buss=BusinessData::first();
         $cu=CurrencySetting::first();
