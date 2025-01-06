@@ -60,7 +60,8 @@
                 @endisset
                 
                 {{-- @dd($ff); --}}
-
+@isset($ff)
+    
                  @if($ff=="المبيعات")
             <li class="">
                 <a class="NavTagA" href="{{route('sales.create')}}">
@@ -72,6 +73,8 @@
             </li>   
 
             @endif
+            @endisset
+
         
           
                           {{-- @if($resultDebit1->Authority_Name=="الفواتير المبيعات") --}}

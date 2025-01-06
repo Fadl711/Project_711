@@ -204,10 +204,10 @@ public function print($id)
         $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')
              ->orOn('daily_entries.account_Credit_id', '=', 'sub_accounts.sub_account_id');
     })
-    ->where('sub_accounts.sub_account_id', $SubAccount->sub_account_id); // إضافة الشرط للحساب الفرعي
+    ->where('sub_accounts.sub_account_id', $SubAccount->sub_account_id); 
+    // إضافة الشرط للحساب الفرعي
     $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
     $entriesTotally = $query->get();
-
     $SumDebtor_amount = $entriesTotally->sum('total_debit');
     $SumCredit_amount = $entriesTotally->sum('total_credit');  
 
