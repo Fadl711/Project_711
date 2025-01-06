@@ -32,6 +32,8 @@ class InvoiceSaleController extends Controller
  ->first();
  if (optional($us)->Writing_ability == 1) {
     
+
+
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
         if (!$accountingPeriod) {
             return response()->json([
@@ -235,12 +237,12 @@ public function print($id)
         $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')
              ->orOn('daily_entries.account_Credit_id', '=', 'sub_accounts.sub_account_id');
     })
-    ->where('sub_accounts.sub_account_id', $SubAccount->sub_account_id); 
+    ->where('sub_accounts.sub_account_id', $SubAccount->sub_account_id);
     // إضافة الشرط للحساب الفرعي
     $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
     $entriesTotally = $query->get();
     $SumDebtor_amount = $entriesTotally->sum('total_debit');
-    $SumCredit_amount = $entriesTotally->sum('total_credit');  
+    $SumCredit_amount = $entriesTotally->sum('total_credit');
 
     $Sum_amount=$SumDebtor_amount-$SumCredit_amount;
     // تحويل القيمة إلى نص مكتوب
@@ -277,6 +279,27 @@ public function print($id)
         return view('auth.login');
     }
    
+    $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
+
+    return view('invoice_sales.bills_sale_show', [
+        'DataPurchaseInvoice' => $DataPurchaseInvoice,
+        'DataSale' => $DataSale,
+        'SubAccounts' => $SubAccount,
+        'Sale_priceSum' => $Sale_priceSum,
+        'Sale_CostSum' => $Sale_CostSum,
+        'priceInWords' => is_numeric($Sale_priceSum)
+        ? $numberTransformer->toWords($Sale_priceSum) . ' ' . $curre->currency_name
+        : 'القيمة غير صالحة', // القيمة النصية
+        'Categorys' => $Categorys,
+        'currency' => $curre->currency_name,
+        'payment_type' => PaymentType::tryFrom($DataPurchaseInvoice->payment_type)?->label() ?? 'غير معروف',
+        'transaction_type' => TransactionType::fromValue($DataPurchaseInvoice->transaction_type)?->label() ?? 'غير معروف',
+        'warehouses' => $SubName,
+        'UserName' => $UserName,
+        'accountCla' => $AccountClassName,
+        'Sum_amount' => $Sum_amount,
+        "thanks"=>'شكراً لتعاملك معنا'
+    ]);
 
 }
 
@@ -299,11 +322,11 @@ public function searchInvoices(Request $request)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id);
         if ($validated['searchQuery'] ?? false) {
             $searchQuery = $validated['searchQuery'];
-        
+
             $query->where(function ($query) use ($searchQuery) {
                 // البحث باستخدام رقم الفاتورة
                 $query->where('sales_invoice_id','like', $searchQuery . '%')
-                
+
                 // البحث باستخدام اسم المورد
                 ->orWhereHas('customer', function ($query) use ($searchQuery) {
                     $query->where('sub_name', 'like', $searchQuery . '%'); // البحث عن الأسماء التي تبدأ بالقيمة المدخلة
@@ -356,5 +379,5 @@ public function searchInvoices(Request $request)
 
 
 
-        
+
     }

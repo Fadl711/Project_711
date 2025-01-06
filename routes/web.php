@@ -54,7 +54,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 
-
+Route::middleware(['auth'])->group(function () {
 Route::get('/all-products/{id}/show', [ProductCoctroller::class, 'allProducts'])->name('all-products');
 Route::get('/all-products/{id}/print', [ProductCoctroller::class, 'print'])->name('report.print');
 
@@ -291,11 +291,9 @@ Route::get('/get-options', [AccountCoctroller::class, 'show_all_accounts']);
 
 Route::get('/', [HomeCoctroller::class, 'index'])->name('home.index');
 
-    Route::get('/', function () {
-        return redirect()->route('home.index');
-    });
 
-    Route::middleware(['auth'])->group(function () {
+
+
     Route::get('/home', [HomeCoctroller::class, 'index'])->name('home.index');
 
 
