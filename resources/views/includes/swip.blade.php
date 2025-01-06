@@ -60,8 +60,7 @@
                 @endisset
                 
                 {{-- @dd($ff); --}}
-@isset($ff)
-    
+                @isset($ff)
                  @if($ff=="المبيعات")
             <li class="">
                 <a class="NavTagA" href="{{route('sales.create')}}">

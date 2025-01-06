@@ -37,18 +37,17 @@ class SaleController extends Controller
         ->first();
         $Currency_name=Currency::all();
         $MainAccounts= MainAccount::all();
-        if($us->Writing_ability==1)
-        {
-            return view('sales.create',['customers'=>$customers,
-            'DefaultCustomer'=>$DefaultCustomer
-            ,'Currency_name'=>$Currency_name,
-            'MainAccounts'=>$MainAccounts,
-            'financial_account'=>$financial_account,
-            'financialts'=>$financialt,
-        ]);
-        }
-        else
-        {
+       
+        if (isset($us) && $us->Writing_ability == 1) {
+            return view('sales.create', [
+                'customers' => $customers,
+                'DefaultCustomer' => $DefaultCustomer,
+                'Currency_name' => $Currency_name,
+                'MainAccounts' => $MainAccounts,
+                'financial_account' => $financial_account,
+                'financialts' => $financialt,
+            ]);
+        } else {
             return view('auth.login');
         }
        

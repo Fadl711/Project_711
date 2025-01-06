@@ -124,7 +124,7 @@ class LocksFinancialPeriodsController extends Controller
             // معالجة الحسابات الفرعية
             $subAccounts = SubAccount::whereIn('typeAccount', [1, 2, 3])->get();
             $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
-    
+
             GeneralJournal::create(['accounting_period_id' => $accountingPeriod->accounting_period_id]);
             $dailyPage = GeneralJournal::latest()->first();
             foreach ($subAccounts as $subAccount) {
