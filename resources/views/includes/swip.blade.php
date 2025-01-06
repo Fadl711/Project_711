@@ -45,7 +45,6 @@
                             $use=UserPermission::where('User_id',Auth::user()->id)->get();
 
                 @endphp
-                                {{-- @dd($use); --}}
 
                 @isset($use)
                 @foreach ($use as $item)
@@ -59,9 +58,8 @@
                 @endforeach
                 @endisset
                 
-                {{-- @dd($ff); --}}
-                @isset($ff)
-                 @if($ff=="المبيعات")
+                @foreach (Auth::user()->permissions as $permission)
+                @if ($permission->Authority_Name === "المبيعات")    
             <li class="">
                 <a class="NavTagA" href="{{route('sales.create')}}">
                 <svg class="w-6 h-6  text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -72,37 +70,43 @@
             </li>   
 
             @endif
-            @endisset
+            @endforeach
 
-        
-          
-                          {{-- @if($resultDebit1->Authority_Name=="الفواتير المبيعات") --}}
+        	
+
+            @foreach (Auth::user()->permissions as $permission)
+            @if ($permission->Authority_Name === "الفواتير المبيعات")    
                 <li class=""><a class="NavTagA" href="{{route('invoice_sales.all_invoices_sale')}}">
                     <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3v4a1 1 0 0 1-1 1H5m8-2h3m-3 3h3m-4 3v6m4-3H8M19 4v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1ZM8 12v6h8v-6H8Z"/>
                       </svg>
-                    <span class="textNav">الفواتير المبيعات</span>
+                    <span class="textNav">فواتير المبيعات</span>
                     </a>
                 </li>
-                    {{-- @endif --}}
-                    {{-- @if($resultDebit1->Authority_Name=="المشتريات") --}}
-                <li class="">
+                @endif
+            @endforeach
+            @foreach (Auth::user()->permissions as $permission)
+            @if ($permission->Authority_Name === "المشتريات")  
+                                <li class="">
                     <a class="NavTagA" href="{{route('Purchases.create')}}">
                     <svg class="w-6 h-6  text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 4h1.5L9 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm-8.5-3h9.25L19 7h-1M8 7h-.688M13 5v4m-2-2h4"/>
                         </svg>
                     <span class="textNav">المشتريات</span>
                     </a></li>
-                    {{-- @endif --}}
-                    {{-- @if($resultDebit1->Authority_Name=="الفواتير المشتريات") --}}
+                    @endif
+            @endforeach
+            @foreach (Auth::user()->permissions as $permission)
+            @if ($permission->Authority_Name === "الفواتير المشتريات")  
                     <li class=""><a class="NavTagA" href="{{route('invoice_purchase.index')}}">
                         <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3v4a1 1 0 0 1-1 1H5m8-2h3m-3 3h3m-4 3v6m4-3H8M19 4v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1ZM8 12v6h8v-6H8Z"/>
                           </svg>
-                        <span class="textNav">الفواتير المشتريات</span>
+                        <span class="textNav">فواتير المشتريات</span>
                         </a></li>
-                        {{-- @endif --}}
-                        {{-- @if($resultDebit1->Authority_Name=="المنتجات") --}}
+                        @endif
+                        @endforeach
+                                                {{-- @if($resultDebit1->Authority_Name=="المنتجات") --}}
                 <li class=""><a class="NavTagA" href="{{route('products.index')}}">
                     <svg class="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">

@@ -170,7 +170,6 @@ class LocksFinancialPeriodsController extends Controller
         }
     }    public function ProductTransfer($id)
     {
-        // $id=1;
         // تعيين معرّف الفترة المحاسبية
         $accountingPeriod = AccountingPeriod::where('accounting_period_id', $id)->firstOrFail();
         $accountingPeriodOprn = AccountingPeriod::where('is_closed', false)->firstOrFail();

@@ -30,15 +30,15 @@ class SaleController extends Controller
         $financialt=SubAccount::where('AccountClass',5)->get();
         $DefaultCustomer  = Default_customer::where('id',1)->first();
         $financial_account = Default_customer::where('id',1)->pluck('financial_account_id')->first();
+       
+        $Currency_name=Currency::all();
+        $MainAccounts= MainAccount::all();
         $user=auth()->id();
         $AuthorityName="المبيعات";
         $us=UserPermission::where('User_id', $user)
         ->where('Authority_Name',$AuthorityName)
         ->first();
-        $Currency_name=Currency::all();
-        $MainAccounts= MainAccount::all();
-       
-        if (isset($us) && $us->Writing_ability == 1) {
+        if ( $us) {
             return view('sales.create', [
                 'customers' => $customers,
                 'DefaultCustomer' => $DefaultCustomer,
@@ -58,6 +58,16 @@ class SaleController extends Controller
     }
     public function store(Request $request)
     {
+        
+ $user=auth()->id();
+ $AuthorityName="المبيعات";
+ $us=UserPermission::where('User_id', $user)
+ ->where('Authority_Name',$AuthorityName)
+ ->first();
+ if (optional($us)->Readability == 1) {
+   
+ 
+
         $purchasePrice = $this->removeCommas($request->Purchase_price);
         $Selling_price = $this->removeCommas($request->Selling_price);
         $Selling_price = $this->removeCommas($request->Selling_price);
@@ -224,6 +234,13 @@ class SaleController extends Controller
                 'error' => $e->getMessage(),
             ]);      
           }
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'لا يوجد لديك صلاحية ',
+            ]); 
+            return view('auth.login');
+        }
     }
     private function createOrUpdateDailyEntry($saleInvoice, $accountingPeriod,$account_Credit, $account_debit, $net_total_after_discount,$Getentrie_id,$payment_type,$daily_page_id)
     {
@@ -262,10 +279,10 @@ class SaleController extends Controller
                     'daily_entries_type' =>$transactiontype,
                 ],
                 [
+                    'account_Credit_id' => $account_Credit,
                     'account_debit_id' => $account_debit,
                     'Amount_Credit' => $net_total_after_discount ?: 0,
                     'Amount_debit' => $net_total_after_discount ?: 0,
-                    'account_Credit_id' => $account_Credit,
                     'Statement' => $commint." ".$transactiontype." ".PaymentType::tryFrom($saleInvoice->payment_type)?->label() ,
                     'Daily_page_id' => $daily_page_id,
                     'Invoice_type' => $saleInvoice->payment_type,

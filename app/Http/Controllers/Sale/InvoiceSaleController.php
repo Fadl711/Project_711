@@ -13,6 +13,7 @@ use App\Models\Sale;
 use App\Models\SaleInvoice;
 use App\Models\SubAccount;
 use App\Models\User;
+use App\Models\UserPermission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
@@ -24,6 +25,12 @@ class InvoiceSaleController extends Controller
     public function store(Request $request)
     {
       
+ $user=auth()->id();
+ $AuthorityName="الفواتير المبيعات";
+ $us=UserPermission::where('User_id', $user)
+ ->where('Authority_Name',$AuthorityName)
+ ->first();
+ if (optional($us)->Writing_ability == 1) {
     
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
         if (!$accountingPeriod) {
@@ -79,12 +86,22 @@ class InvoiceSaleController extends Controller
             'customer_number' => $salesInvoice->Customer_id,
 
         ], 201);
+      
+       
     } catch (\Exception $e) {
         return response()->json([
             'message' => 'Failed to save the invoice.',
             'error' => $e->getMessage(),
         ], 500);
     }
+     
+ } else {
+    return response()->json([
+        'success' => false,
+        'message' => 'لا يوجد لديك صلاحية لإضافة فاتورة',
+    ], 500);
+    return view('auth.login');
+}
 }
 
 
@@ -124,6 +141,13 @@ public function getSaleInvoice(Request $request, $filterType)
             break;
     }
 
+    
+ $user=auth()->id();
+ $AuthorityName="الفواتير المبيعات";
+ $us=UserPermission::where('User_id', $user)
+ ->where('Authority_Name',$AuthorityName)
+ ->first();
+ if (optional($us)->Readability ==1) {
     $SaleInvoice = $query->get()->transform(function ($invoice) {
         return [
             'formatted_date' => $invoice->formatted_date ?? 'غير متاح',
@@ -145,7 +169,14 @@ public function getSaleInvoice(Request $request, $filterType)
             'edit_url' => route('receip.edit', $invoice->sales_invoice_id),
             'destroy_url' => route('sales-invoice.delete', $invoice->sales_invoice_id),
         ];
+
     });
+ } else {
+
+     return view('auth.login');
+ }
+
+   
 
     return response()->json(['saleInvoice' => $SaleInvoice]);
 }
@@ -214,26 +245,38 @@ public function print($id)
     $Sum_amount=$SumDebtor_amount-$SumCredit_amount;
     // تحويل القيمة إلى نص مكتوب
     $numberToWords = new NumberToWords();
-    $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
-    
-    return view('invoice_sales.bills_sale_show', [
-        'DataPurchaseInvoice' => $DataPurchaseInvoice,
-        'DataSale' => $DataSale,
-        'SubAccounts' => $SubAccount,
-        'Sale_priceSum' => $Sale_priceSum,
-        'Sale_CostSum' => $Sale_CostSum,
-        'priceInWords' => is_numeric($Sale_priceSum) 
-        ? $numberTransformer->toWords($Sale_priceSum) . ' ' . $curre->currency_name
-        : 'القيمة غير صالحة', // القيمة النصية
-        'Categorys' => $Categorys,
-        'currency' => $curre->currency_name,
-        'payment_type' => PaymentType::tryFrom($DataPurchaseInvoice->payment_type)?->label() ?? 'غير معروف',
-        'transaction_type' => TransactionType::fromValue($DataPurchaseInvoice->transaction_type)?->label() ?? 'غير معروف',
-        'warehouses' => $SubName,
-        'UserName' => $UserName,
-        'accountCla' => $AccountClassName,
-        'Sum_amount' => $Sum_amount,
-    ]);
+    $numberTransformer = $numberToWords->getNumberTransformer('ar');
+  $numeric=is_numeric($Sale_priceSum) 
+    ? $numberTransformer->toWords($Sale_priceSum) . ' ' . $curre->currency_name
+    : 'القيمة غير صالحة';
+ // اللغة العربية
+    // dd($numeric);
+    $user=auth()->id();
+    $AuthorityName="الفواتير المبيعات";
+    $us=UserPermission::where('User_id', $user)
+    ->where('Authority_Name',$AuthorityName)
+    ->first();
+    if (optional($us)->Readability == 1) {
+        return view('invoice_sales.bills_sale_show', [
+            'DataPurchaseInvoice' => $DataPurchaseInvoice,
+            'DataSale' => $DataSale,
+            'SubAccounts' => $SubAccount,
+            'Sale_priceSum' => $Sale_priceSum,
+            'Sale_CostSum' => $Sale_CostSum,
+            'priceInWords' => $numeric,
+            'Categorys' => $Categorys,
+            'currency' => $curre->currency_name,
+            'payment_type' => PaymentType::tryFrom($DataPurchaseInvoice->payment_type)?->label() ?? 'غير معروف',
+            'transaction_type' => TransactionType::fromValue($DataPurchaseInvoice->transaction_type)?->label() ?? 'غير معروف',
+            'warehouses' => $SubName,
+            'UserName' => $UserName,
+            'accountCla' => $AccountClassName,
+            'Sum_amount' => $Sum_amount,
+        ]);
+    } else {
+        return view('auth.login');
+    }
+   
 
 }
 
@@ -273,8 +316,14 @@ public function searchInvoices(Request $request)
         $orderDirection = ($validated['searchType'] === 'أول فاتورة') ? 'asc' : 'desc';
         $query->orderBy('created_at', $orderDirection);
     }
+ // dd($numeric);
 
-    // الحصول على النتائج
+ $user=auth()->id();
+ $AuthorityName="الفواتير المبيعات";
+ $us=UserPermission::where('User_id', $user)
+ ->where('Authority_Name',$AuthorityName)
+ ->first();
+ if (optional($us)->Readability == 1) {
     $SaleInvoice = $query->get()->transform(function ($invoice) {
         return [
             'formatted_date' => $invoice->formatted_date ?? 'غير متاح',
@@ -295,6 +344,11 @@ public function searchInvoices(Request $request)
             'updated_at' => optional($invoice->updated_at)->format('Y-m-d') ?? 'غير متاح',
         ];
     });
+ } else {
+     return view('auth.login');
+ }
+    // الحصول على النتائج
+   
 
     return response()->json(['saleInvoice' => $SaleInvoice]);
 }
