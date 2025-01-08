@@ -88,7 +88,7 @@
                             {{ __('التاريخ') }} :
                         </div>
                         <div class="">
-                            {{ $DataPurchaseInvoice->created_at ?? __('غير متوفر') }}
+                            {{ \Carbon\Carbon::parse($DataPurchaseInvoice->created_at)->format('Y-m-d') ?? __('غير متوفر') }} / {{ str_replace(['AM', 'PM'], ['ص', 'م'], \Carbon\Carbon::parse($DataPurchaseInvoice->created_at)->format('h:i A')) }}
                         </div>
                     </div>
                 </div>

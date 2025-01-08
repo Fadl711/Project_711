@@ -8,13 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class SubAccount extends Model
 {
     use HasFactory;
-    
+
 protected $table = 'sub_accounts';
 protected $primaryKey = 'sub_account_id';
     protected $fillable = [
-        'sub_name', 
+        'sub_name',
         'Main_id',
-        'debtor_amount' , 
+        'debtor_amount' ,
         'creditor_amount',
         'name_The_known' ,
         'Known_phone' ,
@@ -22,15 +22,15 @@ protected $primaryKey = 'sub_account_id';
         'Phone',
         'typeAccount',
         'AccountClass',
-     
+
     ];
- 
+
     public function mainAccount()
     {
         return $this->belongsTo(MainAccount::class, 'Main_id', 'main_account_id');
     }
-    
-  
+
+
     public function daily_entries()
 {
     return $this->hasMany(DailyEntrie::class, 'sub_account_id');
@@ -79,5 +79,5 @@ public function debitEntries()
     {
         return $this->hasMany(DailyEntrie::class, 'account_Credit_id', 'sub_account_id');
     }
-    
+
 }

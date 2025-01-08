@@ -198,7 +198,7 @@ public function stor(Request $request){
 
     public function   all_restrictions_show($id)
     {
-        $eail=DailyEntrie::where('Daily_page_id',$id)->get();
+        $eail=DailyEntrie::where('Daily_page_id',$id)->paginate(20);
         $mainc=MainAccount::all();
         $suba=SubAccount::all();
 
@@ -318,12 +318,12 @@ public function stor(Request $request){
             if ($query != '') {
                 $products = DailyEntrie::where('daily_page_id', $Daily_page_id) // شرط رقم الصفحة
                 ->where(function($q) use ($query) {
-                    $q->where('entrie_id', 'LIKE', '%'.$query.'%')
+                    $q->where('entrie_id', 'LIKE'.$query.'%')
                       ->orWhereHas('debitAccount', function ($q) use ($query) {
-                          $q->where('sub_name', 'LIKE', "%$query%");
+                          $q->where('sub_name', 'LIKE', "$query%");
                       });
                 })
-                ->get();
+                ->paginate(20);
                 if ($products)
                  {
                     foreach ($products as $product) {
@@ -393,7 +393,7 @@ public function stor(Request $request){
                 }
             }else {
 
-                $products= DailyEntrie::where('Daily_page_id',$Daily_page_id)->get();
+                $products= DailyEntrie::where('Daily_page_id',$Daily_page_id)->paginate(20);
                 // إذا كان الحقل فارغًا، أرجع جميع المنتجات
                 foreach ($products as $product) {
 
@@ -456,6 +456,7 @@ public function stor(Request $request){
 
                     '</td>'.
                             '</tr>';
+
                 }
                 return Response($output);
             }
