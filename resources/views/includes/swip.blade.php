@@ -36,7 +36,7 @@
                           </svg>
                                               <span class="textNav mr-1"> السندات</span>
                     </a>
-                </li> 
+                </li>
                 @php
                 use App\Models\UserPermission;
                 $us=Auth::user()->id
@@ -57,9 +57,9 @@
 
                 @endforeach
                 @endisset
-                
+
                 @foreach (Auth::user()->permissions as $permission)
-                @if ($permission->Authority_Name === "المبيعات")    
+                @if ($permission->Authority_Name === "المبيعات")
             <li class="">
                 <a class="NavTagA" href="{{route('sales.create')}}">
                 <svg class="w-6 h-6  text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -67,15 +67,15 @@
                 </svg>
                 <span class="textNav">المبيعات</span>
                 </a>
-            </li>   
+            </li>
 
             @endif
             @endforeach
 
-        	
+
 
             @foreach (Auth::user()->permissions as $permission)
-            @if ($permission->Authority_Name === "الفواتير المبيعات")    
+            @if ($permission->Authority_Name === "الفواتير المبيعات")
                 <li class=""><a class="NavTagA" href="{{route('invoice_sales.all_invoices_sale')}}">
                     <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3v4a1 1 0 0 1-1 1H5m8-2h3m-3 3h3m-4 3v6m4-3H8M19 4v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1ZM8 12v6h8v-6H8Z"/>
@@ -86,7 +86,7 @@
                 @endif
             @endforeach
             @foreach (Auth::user()->permissions as $permission)
-            @if ($permission->Authority_Name === "المشتريات")  
+            @if ($permission->Authority_Name === "المشتريات")
                                 <li class="">
                     <a class="NavTagA" href="{{route('Purchases.create')}}">
                     <svg class="w-6 h-6  text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -97,7 +97,7 @@
                     @endif
             @endforeach
             @foreach (Auth::user()->permissions as $permission)
-            @if ($permission->Authority_Name === "الفواتير المشتريات")  
+            @if ($permission->Authority_Name === "الفواتير المشتريات")
                     <li class=""><a class="NavTagA" href="{{route('invoice_purchase.index')}}">
                         <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3v4a1 1 0 0 1-1 1H5m8-2h3m-3 3h3m-4 3v6m4-3H8M19 4v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1ZM8 12v6h8v-6H8Z"/>
@@ -127,11 +127,11 @@
                     {{-- @endif --}}
                     {{-- @if($resultDebit1->Authority_Name=="المردودات") --}}
 
-                    <li class="">
+{{--                     <li class="">
                     <a class="NavTagA" href="{{route('refunds.index')}}">
                         <svg class="w-6 h-6" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"></path><path d="M5.671 4.257c3.928-3.219 9.733-2.995 13.4.672 3.905 3.905 3.905 10.237 0 14.142-3.905 3.905-10.237 3.905-14.142 0A9.993 9.993 0 0 1 2.25 9.767l.077-.313 1.934.51a8 8 0 1 0 3.053-4.45l-.221.166L8.11 6.697l-4.596 1.06 1.06-4.596L5.67 4.257zM13 6v2h2.5v2H10a.5.5 0 0 0-.09.992L10 11h4a2.5 2.5 0 1 1 0 5h-1v2h-2v-2H8.5v-2H14a.5.5 0 0 0 .09-.992L14 13h-4a2.5 2.5 0 1 1 0-5h1V6h2z" fill="#ffffff" class="fill-000000"></path></svg>
                             <span class="textNav"> المردودات</span>
-                    </a></li>
+                    </a></li> --}}
                     {{-- @endif --}}
 
                     <li class="">
@@ -139,7 +139,7 @@
 
 
                         {{-- @if($resultDebit1->Authority_Name=="قائمة التحليلات ") --}}
-                        <div class="dropdown inline-block relative z-10 ">
+              {{--           <div class="dropdown inline-block relative z-10 ">
                             <button class=" text-white font-semibold py-2 px-2 rounded inline-flex items-center hover:bg-gray-400 ">
                                 <span class="textNav ml text-white">قائمة التحليلات </span>
                             <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -157,17 +157,18 @@
                                     <li><a class=" rounded-t  border border-white hover:bg-indigo-400  py-2 px-4 flex whitespace-no-wrap none " href="{{route('fixed.index')}}">                            <svg class="w-6 h-6" viewBox="0 0 48 48" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M46 44.438H2a1 1 0 1 1 0-2h44a1 1 0 1 1 0 2zm-30-10a1 1 0 1 1 0 2H8a1 1 0 1 1 0-2h1v-13H8a1 1 0 1 1 0-2h8a1 1 0 1 1 0 2h-1v13h1zm-3-13h-2v13h2v-13zm15 13a1 1 0 1 1 0 2h-8a1 1 0 1 1 0-2h1v-13h-1a1 1 0 1 1 0-2h8a1 1 0 1 1 0 2h-1v13h1zm-3-13h-2v13h2v-13zm19 18a1 1 0 0 1-1 1H5a1 1 0 1 1 0-2h38a1 1 0 0 1 1 1zm-4-5a1 1 0 1 1 0 2h-8a1 1 0 1 1 0-2h1v-13h-1a1 1 0 1 1 0-2h8a1 1 0 1 1 0 2h-1v13h1zm-3-13h-2v13h2v-13zm-34-6L24 4l21 11.438v2H3v-2zm37.541 0L24 6.886 7.396 15.438h33.145z" fill-rule="evenodd" fill="#ffffff" class="fill-000000"></path></svg>
                                         <span class="textNav mr-1 text-white ">الأصول الثابتة  </span></a></li>
                                     </ul>
-                                </div>
+                                </div> --}}
 
-
+                                <a class="NavTagA" href="{{route('inventory.index')}}"><svg class="w-6 h-6" fill="#ffffff" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M3,21V11a1,1,0,0,1,1-1h8a1,1,0,0,1,1,1V21a1,1,0,0,1-1,1H4A1,1,0,0,1,3,21ZM20,2H10A1,1,0,0,0,9,3V4h9.5a.5.5,0,0,1,.5.5V15h1a1,1,0,0,0,1-1V3A1,1,0,0,0,20,2ZM16,19a1,1,0,0,0,1-1V7a1,1,0,0,0-1-1H6A1,1,0,0,0,5,7V8h9.5a.5.5,0,0,1,.5.5V19Z"></path></g></svg>
+                                    <span class="textNav mr-1 text-white ">قائمة الجرد </span></a>
 
                                 {{--  --}}
                     </li>
                     {{-- @endif --}}
                     {{-- @if($resultDebit1->Authority_Name=="قائمة العملاء") --}}
 
-                    <li class="  ">
-                        {{--  --}}
+                   {{--  <li class="  ">
+
 
 
                     <div class="dropdown inline-block relative z-0">
@@ -194,12 +195,12 @@
 
 
 
-                    {{--  --}}
-                </li>
+
+                </li> --}}
                 {{-- @endif --}}
                 {{-- @if($resultDebit1->Authority_Name=="الرسائل") --}}
 
-                <li class="">
+{{--                 <li class="">
                     <a class="NavTagA" href="">
                     <svg class="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -209,7 +210,7 @@
                     <span class="textNav">الرسائل</span>
                     <span class="absolute top-0 left-0 w-2 h-2 mt-2 ml-2 bg-indigo-500 rounded-full"></span>
                 </a>
-                </li>
+                </li> --}}
                 {{-- @endif --}}
                 {{-- @if($resultDebit1->Authority_Name=="التقارير") --}}
 

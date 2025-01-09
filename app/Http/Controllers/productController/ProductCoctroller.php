@@ -20,15 +20,14 @@ use Illuminate\Http\Request;
 class ProductCoctroller extends Controller
 {
     public function index(){
-        $Warehouses=Warehouse::all();
         $curr=Currency::all();
-        $prod=Product::all();
-        return view('products.index',['prod'=>$prod,'curr'=>$curr,'Warehouses'=>$Warehouses]);
+        $prod=Product::paginate(50);
+        return view('products.index',['prod'=>$prod,'curr'=>$curr,]);
     }
     public function create(){
         $curr=Currency::all();
-        $Warehouses=Warehouse::all();
-        return view('products.create',['curr'=>$curr,'Warehouses'=>$Warehouses]);
+
+        return view('products.create',['curr'=>$curr]);
     }
     private function convertArabicNumbersToEnglish($value)
     {
@@ -165,7 +164,7 @@ class ProductCoctroller extends Controller
             // ->get();
             $uniqueProduc = Product::where('product_id',  $produ)->get();
             $product = Product::where('product_id',  $produ)->first();
-             $uniqueProducts[] = [
+             $uniqueProducts = [
                         'product_id' => $product->product_id,
                     ];
         }
@@ -857,8 +856,9 @@ $ProductNew = Product::updateOrCreate(
             $output = '';
             $query = $request->get('search');
             if ($query != '') {
-                $products = Product::where('product_name', 'LIKE', '%'.$query.'%')
-                    ->get();
+                $products = Product::where('product_name', 'LIKE', $query . '%')
+                    ->paginate(50);
+
 
                 if ($products) {
                     foreach ($products as $product) {
@@ -904,8 +904,7 @@ $ProductNew = Product::updateOrCreate(
                 }
             } else {
                 // إذا كان الحقل فارغًا، أرجع جميع المنتجات
-                $products = Product::all();
-                $Warehouses=Warehouse::all();
+                $products = Product::paginate(50);
 
                 foreach ($products as $product) {
                     $categoryName = '';

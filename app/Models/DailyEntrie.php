@@ -56,7 +56,7 @@ class DailyEntrie extends Model
   {
       return $this->belongsTo(SubAccount::class, 'account_Credit_id', 'sub_account_id');
   }
-  
+
 
   // علاقة مع جدول users
   public function user()
@@ -69,5 +69,5 @@ class DailyEntrie extends Model
   {
       return $this->belongsTo(GeneralJournal::class, 'Daily_page_id', 'page_id');
   }
-  
+
 }

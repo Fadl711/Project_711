@@ -35,7 +35,7 @@
 <div class=" w-full overflow-y-auto max-h-[80vh] " >
     <div class="flex flex-col gap-4 justify-center items-center p-2">
         <div class="relative  border border-gray-200 rounded-lg w-full max-w-lg">
-            <input id="search"  type="text" class="rounded-md w-full text-right placeholder:text-right " placeholder="اسم المنتاج او الباركود">
+            <input id="search"  type="text" class="rounded-md w-full text-right placeholder:text-right " placeholder=" ابحث عن اسم الصنف ">
             <span class="absolute left-6 top-2">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="w-6 h-6">
@@ -122,6 +122,7 @@
     </table>
 
 </div>
+{{$prod->links()}}
 
 <script type="text/javascript">
 $(document).ready(function() {
