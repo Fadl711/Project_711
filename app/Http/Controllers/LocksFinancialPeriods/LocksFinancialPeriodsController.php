@@ -154,6 +154,21 @@ class LocksFinancialPeriodsController extends Controller
                         'status_debit' => 'غير مرحل',
                         'status' => 'غير مرحل',
                     ]);
+                    DailyEntrie::create([
+                        'Amount_debit' =>max(0, -$sub) ,
+                        'account_debit_id' => $subAccount->sub_account_id,
+                        'Amount_Credit' =>max(0, $sub) ,
+                        'account_Credit_id' => $subAccount->sub_account_id,
+                        'Statement' => 'رصيد باقي/ يتم اقفال الحساب  وترحيل المبلغ المتبقي لسنة الجديدة ',
+                        'Daily_page_id' => $dailyPage->page_id,
+                        'Currency_name' => 'Y',
+                        'User_id' => auth()->id(),
+                        'Invoice_type' => 1,
+                        'accounting_period_id' => $id,
+                        'Invoice_id' => $subAccount->sub_account_id,
+                        'daily_entries_type' => 'رصيد مرحل',
+                    
+                    ]);
                 }
             }
     

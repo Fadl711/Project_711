@@ -186,7 +186,8 @@ public function stor(Request $request){
     }
 
     public function   all_restrictions_show_1()
-    {    $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+    {    
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
 
         // $pageNums=GeneralJournal::all();
         $pageNums=GeneralJournal::where('accounting_period_id',$accountingPeriod->accounting_period_id)->get();
@@ -196,7 +197,10 @@ public function stor(Request $request){
 
     public function   all_restrictions_show($id)
     {
-        $eail=DailyEntrie::where('Daily_page_id',$id)->paginate(20);
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+        $eail=DailyEntrie::where('Daily_page_id',$id)
+        ->where('accounting_period_id',$accountingPeriod->accounting_period_id)
+        ->paginate(20);
         $mainc=MainAccount::all();
         $suba=SubAccount::all();
 
