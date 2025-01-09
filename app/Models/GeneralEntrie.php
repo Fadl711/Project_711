@@ -45,6 +45,14 @@ class GeneralEntrie extends Model
     {
         return $this->belongsTo(SubAccount::class, 'sub_id', 'sub_account_id');
     }
+    public function Daily_entryId()
+    {
+        return $this->belongsTo(DailyEntrie::class, 'Daily_entry_id', 'entry_id');
+    }
+    public function DailyEntry()
+    {
+        return $this->belongsTo(DailyEntrie::class, 'Daily_entry_id');
+    }
   
 
 }

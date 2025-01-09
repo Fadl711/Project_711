@@ -39,7 +39,7 @@
           value="{{  $prod->Regular_discount }}"
               
           @endisset
-          required/>
+          />
         </div>
         
         <div class="flex flex-col">
@@ -49,7 +49,7 @@
           value="{{  $prod->Special_discount }}"
               
           @endisset
-          required/>
+          />
         </div>
         <div class="flex flex-col">
           <label for="Quantity" class="labelSale">الكمية</label>
@@ -58,13 +58,13 @@
           value="{{  $prod->Quantity }}"
               
           @endisset
-          required />
+           />
         </div>
         
         <div>
           <label for="account_debitid" class="labelSale">    المخزن</label>
           {{-- warehouse_to_id --}}
-          <select name="account_debitid" id="account_debitid"  dir="ltr" class="input-field select2 inputSale" required>
+          <select name="account_debitid" id="account_debitid"  dir="ltr" class="input-field select2 inputSale" >
             <option selected value=""></option>
         
            
@@ -102,7 +102,7 @@
           value="{{  $prod->note }}"
               
           @endisset
-          required/>
+          />
         </div>
           
     </div>

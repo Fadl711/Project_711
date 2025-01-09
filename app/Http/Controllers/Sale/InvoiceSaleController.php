@@ -251,7 +251,8 @@ public function print($id)
   $numeric=is_numeric($Sale_priceSum) 
     ? $numberTransformer->toWords($Sale_priceSum) . ' ' . $curre->currency_name
     : 'القيمة غير صالحة';
- // اللغة العربية
+    // اللغة العربية
+    $thanks="شكراً لتعاملك معنا";
     // dd($numeric);
     $user=auth()->id();
     $AuthorityName="الفواتير المبيعات";
@@ -274,32 +275,14 @@ public function print($id)
             'UserName' => $UserName,
             'accountCla' => $AccountClassName,
             'Sum_amount' => $Sum_amount,
+            'thanks'=>$thanks,
+
         ]);
     } else {
         return view('auth.login');
     }
    
-    $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
-
-    return view('invoice_sales.bills_sale_show', [
-        'DataPurchaseInvoice' => $DataPurchaseInvoice,
-        'DataSale' => $DataSale,
-        'SubAccounts' => $SubAccount,
-        'Sale_priceSum' => $Sale_priceSum,
-        'Sale_CostSum' => $Sale_CostSum,
-        'priceInWords' => is_numeric($Sale_priceSum)
-        ? $numberTransformer->toWords($Sale_priceSum) . ' ' . $curre->currency_name
-        : 'القيمة غير صالحة', // القيمة النصية
-        'Categorys' => $Categorys,
-        'currency' => $curre->currency_name,
-        'payment_type' => PaymentType::tryFrom($DataPurchaseInvoice->payment_type)?->label() ?? 'غير معروف',
-        'transaction_type' => TransactionType::fromValue($DataPurchaseInvoice->transaction_type)?->label() ?? 'غير معروف',
-        'warehouses' => $SubName,
-        'UserName' => $UserName,
-        'accountCla' => $AccountClassName,
-        'Sum_amount' => $Sum_amount,
-        "thanks"=>'شكراً لتعاملك معنا'
-    ]);
+   
 
 }
 

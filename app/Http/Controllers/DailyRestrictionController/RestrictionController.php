@@ -45,7 +45,6 @@ class RestrictionController extends Controller
         $validated = $request->validate([
             'sub_account_debit_id' => 'required|integer',
             'Amount_debit' => 'required',
-            // 'entrie_id' => 'nullable|integer',
             'sub_account_Credit_id' => 'required|integer',
             'Statement' => 'nullable|string',
             'Currency_name' =>  'nullable|string', // تأكد من استخدام الاسم الصحيح هنا
@@ -133,7 +132,6 @@ $dailyEntrie = DailyEntrie::updateOrCreate(
         'status' => 'غير مرحل',
     ]
 );
-// return view('daily_restrictions.show',['daily'=>$dailyEntrie,'mainc'=>$mainc,'suba'=>$suba]);
 
         return response()->json(['success' => 'تم حفظ القيد بنجاح','entrie_id'=>$dailyEntrie->entrie_id]);
     }
@@ -274,8 +272,9 @@ public function stor(Request $request){
 //     }
     public function  destroy($id){
         $DailyEntrie=DailyEntrie::where('entrie_id',$id)->first();
-        ExchangeBond::where('created_at',$DailyEntrie->created_at)->delete();
-        PaymentBond::where('created_at',$DailyEntrie->created_at)->delete();
+// dd($id);
+        PaymentBond::where(['transaction_type'=>$DailyEntrie->daily_entries_type,
+        ])->delete();
         $generalEntrieaccount_debit_id = GeneralEntrie::where([
             'Daily_entry_id' => $DailyEntrie->entrie_id,
             'accounting_period_id' => $DailyEntrie->accounting_period_id,

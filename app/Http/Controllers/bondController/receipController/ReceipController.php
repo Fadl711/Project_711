@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AccountingPeriod;
 use App\Models\Currency;
 use App\Models\DailyEntrie;
+use App\Models\GeneralEntrie;
 use App\Models\GeneralJournal;
 use App\Models\MainAccount;
 use App\Models\PaymentBond;
@@ -164,17 +165,26 @@ $paymentBond = PaymentBond::updateOrCreate(
         
             try {
                 // حذف سند الدفع
-                $paymentBond->delete();
-        
                 // التحقق من وجود قيود يومية مرتبطة
-                $dailyEntry = DailyEntrie::where('Invoice_id', $paymentBond->payment_bond_id)
+                $DailyEntrie = DailyEntrie::where('Invoice_id', $paymentBond->payment_bond_id)
                     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
                     ->where('daily_entries_type', $paymentBond->transaction_type)
                     ->first();
-        
-                if ($dailyEntry) {
-                    $dailyEntry->delete();
-                }
+
+                  
+                    $generalEntrieaccount_debit_id = GeneralEntrie::where([
+                        'Daily_entry_id' => $DailyEntrie->entrie_id,
+                        'accounting_period_id' => $DailyEntrie->accounting_period_id,
+                        'sub_id' => $DailyEntrie->account_debit_id,
+                    ])->delete();
+                    $generalEntrieaccount_debit_id = GeneralEntrie::where([
+                        'Daily_entry_id' => $DailyEntrie->entrie_id,
+                        'accounting_period_id' => $DailyEntrie->accounting_period_id,
+                        'sub_id' => $DailyEntrie->account_Credit_id,
+                    ])->delete();
+                    $DailyEntrie->delete();
+                    $paymentBond->delete();
+
         
                 return response()->json([
                     'status' => 'success',

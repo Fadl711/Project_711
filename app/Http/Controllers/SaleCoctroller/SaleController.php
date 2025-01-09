@@ -265,9 +265,9 @@ class SaleController extends Controller
                  {
 
 
-            } elseif ($saleInvoice->payment_type ===2) {
+            } elseif
+             ($saleInvoice->payment_type ===2) {
                 $commint="عليكم فاتورة";
-
             }
          $transactiontype=   TransactionType::fromValue($saleInvoice->transaction_type)?->label();
                          // إنشاء أو تحديث الإدخالات اليومية

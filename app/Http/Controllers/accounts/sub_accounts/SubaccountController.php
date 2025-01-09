@@ -101,7 +101,6 @@ class SubaccountController extends Controller
     public function update(Request $request)
     {
         $TypeSubAccount = MainAccount::where('main_account_id',$request->Main_id)->first();
-
         SubAccount::where('sub_account_id',$request->sub_id)->update([
             'sub_name'=>$request->sub_name,
             'Main_id'=>$request->Main_id,
@@ -118,6 +117,7 @@ class SubaccountController extends Controller
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
 
 // تحقق مما إذا تم حفظ الكائن بنجاح
+
 $transaction_type="رصيد افتتاحي";
 
         $Getentrie_id = DailyEntrie::where('Invoice_id',$SubAccount->sub_account_id)

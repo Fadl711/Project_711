@@ -216,7 +216,7 @@
                 <div>
                     <p class=" text-sm" dir="ltr">................ توقيع المستلم</p>
                 </div>
-                <span class="-translate-y-40">{{$thanks}}</span>
+                <span class="-translate-y-40">{{$thanks ?? ''}}</span>
                 <div>
                     <p class=" text-sm" dir="ltr">  المستخدم: {{($UserName) }}</p>
                 </div>
