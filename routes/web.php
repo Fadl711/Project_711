@@ -67,7 +67,7 @@ Route::delete('/products/{product}',[ProductCoctroller::class,'destroy'])->name(
 Route::get('/search', [ProductCoctroller::class,'search'])->name('search.products');
 Route::get('/GetProduct/{categoryId}/price', [CategoryController::class, 'getUnitPrice'])->name('price.getUnitPrice');
 
-Route::get('/products/Category', [CategoryController::class, 'create'])->name('Category.create');
+Route::get('/products/{id}/Category', [CategoryController::class, 'create'])->name('Category.create');
 Route::post('/Category/store',[CategoryController::class,'store'])->name('Category.store');
 Route::get('/Category/{Category}/edit', [CategoryController::class, 'edit'])->name('Category.edit');
 Route::put('/Category/{Category}', [CategoryController::class, 'update'])->name('Category.update');

@@ -72,7 +72,7 @@ $(document).ready(function() {
 
         // إرسال طلب AJAX إذا كان التصنيف صالحًا
         $.ajax({
-            url: `/invoice_purchases/${Invoice_typeId}/GetInvoiceNumber`, // رابط API ديناميكي
+            url:"{{url('/invoice_purchases/')}}/"+Invoice_typeId+"/GetInvoiceNumber",
             type: 'GET',
             dataType: 'json',
             success: function (data) {

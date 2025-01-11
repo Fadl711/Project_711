@@ -243,8 +243,11 @@ public function print($id)
     $Categorys = Category::all();
    $curre=Currency::where('currency_id', $DataPurchaseInvoice->currency_id)->first();
     // حساب مجموع السعر والتكلفة
+
     $Sale_priceSum = Sale::where('Invoice_id', $id)->sum('total_price');
     $Sale_CostSum = Sale::where('Invoice_id', $id)->sum('total_amount');
+    // $Sale_CostSum = Sale::where('Invoice_id', $id)->sum('total_amount');
+    $discount=   $Sale_CostSum-$Sale_priceSum;
     $SumDebtor_amount=DailyEntrie::where('account_debit_id',$SubAccount->sub_account_id)->sum('Amount_debit');
     $SumCredit_amount=DailyEntrie::where('account_Credit_id',$SubAccount->sub_account_id)->sum('Amount_Credit');
     $query = DailyEntrie::with(['debitAccount', 'debitAccount.mainAccount', 'creditAccount', 'creditAccount.mainAccount'])
@@ -259,7 +262,7 @@ public function print($id)
     })
     ->where('sub_accounts.sub_account_id', $SubAccount->sub_account_id);
     // إضافة الشرط للحساب الفرعي
-    $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
+    // $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
     $entriesTotally = $query->get();
     $SumDebtor_amount = $entriesTotally->sum('total_debit');
     $SumCredit_amount = $entriesTotally->sum('total_credit');
@@ -296,6 +299,7 @@ public function print($id)
             'accountCla' => $AccountClassName,
             'Sum_amount' => $Sum_amount,
             'thanks'=>$thanks,
+            'discount'=>$discount,
 
         ]);
     } else {

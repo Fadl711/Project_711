@@ -13,39 +13,54 @@
     <p id="re"></p>
   </div>
 <div class=" ">
-    <form action="{{route('Category.store')}}" method="POST">
-        @csrf
+  <h1></h1>
+  <form @isset($category)
+       action="{{route('Category.update',$category->categorie_id)}}"
+  @endisset method="POST">
+    @csrf
+    @method('PUT')
+
             <div class="border-b flex justify-between text-sm">
               <div class="grid grid-cols-2 gap-1 md:grid-cols-5 lg:grid-cols-5">
                 <div class="px-1">
-                    <label for="barcod" class="btn">اسم الوحدة</label>
-                    <input name="cate" type="text" placeholder="" class="inputSale" />
+                    <label for="barcod" class="labelSale">اسم الوحدة</label>
+                    <input name="cate" type="text" @isset($category)
+                        value="{{$category->Categorie_name}}"
+                    @endisset placeholder="" class="inputSale" />
                     </div>
                     <div class="flex flex-col">
-                      <label for="Purchase_price" class="btn">سعر الشراء</label>
-                      <input type="number" name="Purchase_price" id="Purchase_price" placeholder="0" class="inputSale"required />
+                      <label for="Purchase_price" class="labelSale">سعر الشراء</label>
+                      <input type="number"  name="Purchase_price" id="Purchase_price" 
+                      @isset($category)
+                      value="{{$category->Purchase_price}}"
+                      @endisset
+             placeholder="0" class="inputSale"required />
                     </div>
                     <div class="flex flex-col">
-                      <label for="Selling_price" class="btn"> سعر البيع</label>
-                      <input type="number" name="Selling_price" id="Selling_price" placeholder="0" class="inputSale" required/>
+                      <label for="Selling_price" class="labelSale"> سعر البيع</label>
+                      <input type="number" name="Selling_price" id="Selling_price"
+                      @isset($category)
+                      value="{{$category->Selling_price}}"
+
+                      @endisset
+                       placeholder="0" class="inputSale" required/>
                     </div>
                     <div>
                       <label for="Quantityprice" class="labelSale"> العبوة</label>
-                      <input type="number" name="Quantityprice" id="Quantityprice" placeholder="0" class="inputSale  english-numbers" required />
-                 
+                      <input type="number" name="Quantityprice" id="Quantityprice" 
+                      @isset($category)
+                      value="{{$category->Quantityprice}}"
+                      @endisset
+                      placeholder="0" class="inputSale  english-numbers" required /> 
                   </div>
-            
-                    <div class="px-1">
-                        <label for="product_id" class="block font-medium "> اسم الصنف</label>
-                        <select name="product_id" id="product_id" class=" select2 inputSale" required>
-                            <option value="" selected>اختر الصنف</option>
-    
-                            @isset($products)
-                           @foreach ($products as $product)
-                                 <option value="{{$product->product_id}}">{{$product->product_name}}</option>
-                            @endforeach
-                            @endisset                                             </select>
-                    </div>
+                    <div>
+                      <label for="categorie_id" class="labelSale"> id</label>
+                      <input type="number" name="categorie_id" id="categorie_id" class="inputSale  english-numbers"
+                      @isset($category)
+                      value="{{$category->categorie_id}}"
+                      @endisset
+                       placeholder="0"  required /> 
+                  </div>
                 <div id="newProduc" class="py-2 mr-1 flex justify-between ml-1">
                     <button class="flex bg-green-500 hover:bg-green-700 text-white font-bold  py-2 px-4 rounded">
                         <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -72,24 +87,25 @@
             <thead>
                 <tr class=" ">
                     <th scope="col" class="leading-2   ">#</th>
-                    <th scope="col" class="leading-2  text-center ">اسم الفئة</th>
-                    <th scope="col" class="leading-2  text-center ">سعر الشراء </th>
-                    <th scope="col" class="leading-2  text-center ">سعر البيع </th>
-                    <th scope="col" class="leading-2   text-right">تعديل الفئة</th>
+                    <th scope="col" class="leading-2  text-center ">اسم الوحدة</th>
+                    <th scope="col" class="leading-2  text-center ">رقم الوحدة</th>
+                    <th scope="col" class="leading-2  text-center ">سعر الوحدة الشراء </th>
+                    <th scope="col" class="leading-2  text-center ">سعر  الوحدة البيع </th>
+                    <th scope="col" class="leading-2  text-center ">  العبوة </th>
+                    <th scope="col" class="leading-2   text-right">تعديل الوحدة</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-300 ">
 
-@auth
-
-
-                @foreach ($cate as $cat)
+@isset($cates)
+                @foreach ($cates as $cat)
                 <tr class="bg-white transition-all duration-500 hover:bg-gray-50 border-b-2">
                     <td>{{$loop->iteration}}</td>
                     <td class="text-center">{{$cat->Categorie_name}}</td>
-                    
+                    <td class="text-center">{{$cat->categorie_id}}</td>
                     <td class="text-center">{{$cat->Purchase_price}}</td>
                     <td class="text-center">{{$cat->Selling_price}}</td>
+                    <td class="text-center">{{$cat->Quantityprice}}</td>
                     <td class="">
                       <div class="flex items-center gap-1">
                         <a href="{{route('Category.edit',$cat->categorie_id)}}"  class="p-1  rounded-full  group transition-all duration-500  flex item-center">
@@ -133,7 +149,8 @@
                   </tr>
 
                     @endforeach
-                    @endauth
+                    @endisset
+
             </tbody>
         </table>
     </div>
@@ -141,49 +158,54 @@
 
 
 <script>
-  
-$(document).ready(function() {
-    $('.select2').select2();
-});
-     $(document).ready(function() {
-    $('#newProduc button').click(function(e) {
-        e.preventDefault();
-        var formData = new FormData($('form')[0]);
-        $.ajax({
-            type: 'POST',
-            url: "{{ route('Category.store') }}",
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(data) {
-                // إعادة تعيين الحقول
-                $('input').val('');
-                $('select').val('');
+    $(document).ready(function() {
+        $('#newProduc button').click(function(e) {
+            e.preventDefault();
+            const categorie_id=$('#categorie_id').val();
+            if(categorie_id){         
+                 var  url= "{{ url('/Category/')}}/"+categorie_id ;
+                }
+            var formData = new FormData($('form')[0]);
+          
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(data) {
+                    // إعادة تعيين الحقول
+                    $('input').val('');
+                    $('select').val('');
 
-                // إظهار التنبيه
-                $('#successAlert').removeClass('hidden');
+                    // إظهار التنبيه
+                    $('#successAlert').removeClass('hidden');
 
-                // إخفاء التنبيه بعد 3 ثوانٍ
-                setTimeout(function() {
-                    $('#successAlert').addClass('hidden');
-                }, 3000);
+                    // إخفاء التنبيه بعد 3 ثوانٍ
+                    setTimeout(function() {
+                        $('#successAlert').addClass('hidden');
+                      }, 3000);
+                      console.log('تمت الإضافة بنجاح');
+                    window.location.href ="{{ url('/products/' ) }}/"+data.product_id+"/Category";
 
+                },
+                error: function(xhr, status, error) {
+                    $('#successAlert1').removeClass('hidden');
+                    var errorMessage = JSON.parse(xhr.responseText).error;
+                    $('#re').text(errorMessage);
+                    if(xhr.status === 422){
 
-                location.reload ();
-                console.log('تمت الإضافة بنجاح');
-            },
-            error: function(xhr, status, error) {
-                                $('#successAlert1').removeClass('hidden');
-                                var errorMessage = JSON.parse(xhr.responseText).error;
-                                $('#re').text(errorMessage)
+                        console.log(errorMessage)
+                    }
 
-                // إخفاء التنبيه بعد 3 ثوانٍ
-                setTimeout(function() {
-                    $('#successAlert1').addClass('hidden');
-                }, 3000);
-             }
+                    // إخفاء التنبيه بعد 3 ثوانٍ
+                    setTimeout(function() {
+                        $('#successAlert1').addClass('hidden');
+                    }, 3000);
+                }
+            });
+          
         });
     });
-});
 </script>
 @endsection

@@ -166,7 +166,8 @@ class SaleController extends Controller
                 $account_debit = $saleInvoice->account_id;
                 $paid_amount = $net_total_after_discount;
 
-            } elseif ($saleInvoice->payment_type === 2) {
+            } elseif ($saleInvoice->payment_type === 2)
+             {
                 $payment_type="اجل";
 
                 $account_Credit= $request->account_debitid;

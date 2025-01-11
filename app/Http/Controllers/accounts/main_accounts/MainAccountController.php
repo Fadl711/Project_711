@@ -100,10 +100,7 @@ return view('accounts.Main_Account.create',
         SubAccount::where('Main_id', $id)
     ->update([
         'typeAccount' => $request->typeAccount,
-        'debtor_amount'=>$request->debtor_amount,
-        'creditor_amount'=>$request->creditor_amount,
-        // أي حقول أخرى يجب تحديثها في الحسابات الفرعية
-    ]);
+     ]);
 
             return redirect()->route('Main_Account.create');
         }

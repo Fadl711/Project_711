@@ -9,16 +9,17 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function create(){
+    public function create($id){
         $product=Product::all();
+        // $productName=Product::where('product_id',$id)->pluok('product_name');
+        $cate=Category::where('product_id',$id)->get();
 
-        return view('products.category.categorie',['products'=>$product]);
+        return view('products.category.categorie',['products'=>$product,'cates'=>$cate]);
     }
     public function store(Request $request){
         if (Category::where('Categorie_name', $request->input('cate'))
         ->where('Categorie_name', $request->input('product_id'))
     ->exists()) {
-            // Record already exists
             return response()->json(['error' => 'الاسم موجود مسبقاً'], 422);
         }
         Category::updateOrCreate(
@@ -30,8 +31,8 @@ class CategoryController extends Controller
             'Categorie_name' => $request->cate,
             'Purchase_price' => $request->Purchase_price,
             'Selling_price' => $request->Selling_price,
+            'Quantityprice' => $request->Quantityprice,
             'User_id' => auth()->id(),
-           
         ]);
         if($request->Categorie_id)
         {
@@ -52,25 +53,41 @@ class CategoryController extends Controller
         ]);
         // return back();
     }
-    public function edit($id){
+    public function edit($id)
+    {
+        $product=Product::all();
         $prod=Category::where('categorie_id',$id)->first();
+        $cate=Category::where('product_id',$prod->product_id)->get();
 
-
-        return view('products.category.edit',['prod'=>$prod]);
+        // $productName=Product::where('product_id',$prod->product_id)->plouk('product_name');
+        return view('products.category.categorie',['category'=>$prod,'products'=>$product,'cates'=>$cate]);
     }
     public function update(Request $request,$id){
-        if (Category::where('Categorie_name', $request->input('cate'))->exists()) {
-            // Record already exists
-            return response()->json(['error' => 'الاسم موجود مسبقاً'], 422);
-        }
 
+        $product=Product::all();
+        $prod=Category::where('categorie_id',$id)->first();
+        $cate=Category::where('product_id',$prod->product_id)->get();
+        // $productName=Product::where('product_id',$prod->product_id)->plouk('product_name');
+$product_id=$prod->product_id;
         Category::where('categorie_id',$id)
         ->update([
             'Categorie_name'=>$request->cate,
+            'Purchase_price' => $request->Purchase_price,
+            'Selling_price' => $request->Selling_price,
+            'Quantityprice' => $request->Quantityprice,
         ]);
+        return response()->json([
+
+            'category'=>$prod,
+            'product_id'=>$product_id,
+            'products'=>$product,'cates'=>$cate
+        ]);
+        return redirect('products.category.categorie',['category'=>$prod,'products'=>$product,'cates'=>$cate]);
+
+        return back();
 
 
-        return redirect()->route('Category.create');
+        return redirect()->route('products.category.categorie');
     }
     public function destroy($id){
         Category::where('categorie_id',$id)->delete();
@@ -80,11 +97,9 @@ class CategoryController extends Controller
 {
     $categoryId = $request->Categoriename;
     $productId = $request->mainAccountId;
-
     $product = Category::where('categorie_id', $categoryId)
         ->where('product_id', $productId)
         ->first();
-
     if ($product) {
         return response()->json(['product'=>$product]);
     }

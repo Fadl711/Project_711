@@ -53,11 +53,12 @@
         </div>
         <div class="flex flex-col">
           <label for="Quantity" class="labelSale">الكمية</label>
-          <input type="number" name="Quantity" id="Quantity" placeholder="0" class="inputSale" 
+          <input type="number"  name="Quantity" id="Quantity"  placeholder="0" class="inputSale" 
           @isset($prod->Quantity)
           value="{{  $prod->Quantity }}"
               
           @endisset
+          
            />
         </div>
         

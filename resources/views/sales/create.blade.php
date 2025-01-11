@@ -231,6 +231,8 @@
                 <div>
                     <label for="total_discount_rate " class="labelSale">الخصم</label>
                     <input type="text" name="total_discount_rate" id="total_discount_rate" placeholder="0" class="inputSale" />
+
+                    {{-- <input type="text" name="total_discount_rate" id="total_discount_rate" placeholder="0" class="inputSale" /> --}}
                 </div>
             </div>
             <div class="grid grid-cols-3 gap-1 px-1">
@@ -272,7 +274,7 @@
             <div class="flex px-1 gap-1">
                 <div>
                     <label for="sales_invoice_id" class="labelSale">رقم الفاتورة</label>
-                    <input type="text" name="sales_invoice_id" id="sales_invoice_id" placeholder="0" class="inputSale" required />
+                    <input type="number" name="sales_invoice_id" id="sales_invoice_id" placeholder="0" class="inputSale" required />
                 </div>
                 <div class="" >
                     <button class="flex inputSale mt-2 " type="button" id="delete_invoiceSales">
@@ -317,6 +319,7 @@
 
 <!-- إطار الطباعة -->
 <script>
+   
     $(document).ready(function () {
      
         function CsrfToken() {

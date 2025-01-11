@@ -178,15 +178,14 @@ required>
             </select>
         </div>
         </div>
-            <div class="">
-                <label for="Statement" class="block font-medium mb-2">البيان</label>
-                <textarea name="Statement" id="Statement" class="block w-full p-2 border rounded-md inputSale" placeholder="أدخل البيان" rows="4" >
-                    @isset($DailyEntrie->Statement)
-                    {{$DailyEntrie->Statement}}
-
-                    @endisset
-                </textarea>
-            </div>
+        <div class="">
+            <label for="Statement" class="block font-medium mb-2">البيان</label>
+            <textarea name="Statement" id="Statement" class="block w-full border rounded-md p-2" rows="4" placeholder="أدخل البيان هنا..." onblur="this.value = this.value.trim();">
+                @isset($DailyEntrie->Statement)
+                    {{ $DailyEntrie->Statement }}
+                @endisset
+            </textarea>
+        </div>
             <div class="grid grid-cols-2 md:grid-cols-2 gap-4">
 
             <div class=" justify-">
@@ -243,45 +242,7 @@ required>
       // إضافة مؤشر تحميل
      // إرسال النموذج باستخدام AJAX بدون تحديث الصفحة
       $(document).ready(function() {
-            $('#savaAndPrint').click(function(event) {
-                event.preventDefault();
-                // جمع بيانات النموذج
-                var formData = $('#dailyRestrictionsForm').serialize();
-            // إرسال الطلب باستخدام AJAX
-            $.ajax({
-                url: '{{ route("daily_restrictions.saveAndPrint") }}',
-                method: 'POST',
-                data: formData,
-                success: function(data) {
-                    if (data.success) {
-        // إظهار رسالة النجاح
-        $('#successMessage').show().text(data.success);
-
-        // فتح صفحة الطباعة مع البيانات
-        const printUrl = '{{ route("restrictions.print", ":id") }}'.replace(':id', data.dailyEntrie.entrie_id);
-        window.open(printUrl , "_blank", "width=600,height=800,left=700,top=100");
-        location.reload ();
-        // إخفاء الرسالة بعد 3 ثوانٍ
-        setTimeout(function() {
-            $('#successMessage').hide();
-        }, 1000);
-    }
-                },
-                error: function(xhr) {
-                    if (xhr.status === 422) {
-                        // إظهار الأخطاء عند وجود أخطاء في التحقق
-                        var errors = xhr.responseJSON.errors;
-                        var errorMessage = '';
-                        $.each(errors, function(key, value) {
-                            errorMessage += value[0] + '<br>'; // إضافة الأخطاء
-                        });
-                        $('#errorMessage').show().html(errorMessage);
-                    } else {
-                        $('#errorMessage').show().text('حدث خطأ أثناء الحفظ.');
-                    }
-                }
-            });
-        });
+         
     });
       $(document).ready(function() {
             $('#submitButton').click(function(event) {
@@ -311,17 +272,17 @@ required>
                         $('#Amount_debit').val(""); // إعادة تعيين النموذج
                         // إخفاء الرسالة بعد 3 ثوانٍ
                         setTimeout(function() {
+                            
 
                             $('#successMessage').hide();
                         }, 3000);
                     }else
-                     {
+
+                    {
 
 // إخفاء التنبيه بعد 3 ثوانٍ
 $('#errorMessage').show().text(data.errorMessage).fadeOut(3000);
-setTimeout(function() {
-$('#errorMessage').addClass('hidden');
-}, 6000);
+
 
                     }
                 },
@@ -377,14 +338,11 @@ $('#errorMessage').addClass('hidden');
         });
     }
 });
-
       // عند اختيار الحساب الرئيسي (الدائن)
       $('#account_Credit_id').on('change', function() {
     const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي (الدائن)
-
     // تفريغ القائمة الفرعية وإضافة الخيار الافتراضي
     $('#sub_account_Credit_id').empty();
-
     // التحقق من وجود قيمة في الحساب الرئيسي
     if (mainAccountId) {
         // طلب AJAX لجلب الحسابات الفرعية بناءً على الحساب الرئيسي
@@ -400,10 +358,8 @@ $('#errorMessage').addClass('hidden');
                 const subAccountOptions = data.map(subAccount =>
                     `<option value="${subAccount.sub_account_id}">${subAccount.sub_name}</option>`
                 ).join('');
-
                 // إضافة الخيارات الجديدة إلى القائمة الفرعية
                 $('#sub_account_Credit_id').append(subAccountOptions);
-
                 // إعادة تهيئة Select2 بعد إضافة الخيارات
                 $('#sub_account_Credit_id').select2('destroy').select2();
             },
@@ -415,6 +371,70 @@ $('#errorMessage').addClass('hidden');
 });
   });
 
+
+  function toggleLoading(state) {
+  if (state) {
+      $('#submitButton').prop('disabled', true).text('جارٍ الحفظ...');
+  } else {
+      $('#submitButton').prop('disabled', false).text('حفظ القيد');
+  }
+}
+$(document).ready(function() {
+    // تفعيل Select2
+    $('.select2').select2();
+    });
+    $('#Invoice_type').on('change', function () {
+        const Invoice_typeId = $(this).val(); // الحصول على معرف التصنيف المحدد
+        $(this).select2('close');
+        if (!Invoice_typeId) {
+            console.warn('لم يتم اختيار تصنيف.');
+            return; // إنهاء التنفيذ إذا لم يتم اختيار تصنيف
+        }
+        // استدعاء الدالة لجلب المنتج بناءً على التصنيف
+        GetInvoiceNumber(Invoice_typeId);
+        // إغلاق القائمة المنسدلة بعد التأخير
+        setTimeout(() => {
+            $('#Invoice_type').select2('close');
+            
+        }, 1000);
+        setTimeout(function() {
+            console.log('Focused on Quantity'); // للتأكد من التركيز
+        }, 100); // تأخير 100 مللي ثانية
+    });
+    function GetInvoiceNumber(Invoice_typeId) {
+        const Invoice_number = $('#Invoice_id'); // حقل سعر البيع
+    
+        if (!Invoice_typeId) {
+            alert('يرجى اختيار التصنيف.');
+            return;
+        }
+
+        // إرسال طلب AJAX إذا كان التصنيف صالحًا
+        $.ajax({
+            url:"{{url('/invoice_purchases/')}}/"+Invoice_typeId+"/GetInvoiceNumber",
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                // التحقق إذا كانت البيانات تحتوي على سعر البيع
+                Invoice_number.empty();
+                const  purchase_invoice = data.map(invoice =>
+                      `<option value="${invoice.purchase_invoice_id ??invoice.sales_invoice_id}">${invoice.purchase_invoice_id??invoice.sales_invoice_id}</option>`
+                  ).join('');
+      
+              // إضافة الخيارات الجديدة إلى القائمة الفرعية
+              Invoice_number.append(purchase_invoice);
+            //   Invoice_number.select2('destroy').select2();
+    
+            },
+            error: function (xhr) {
+                // التعامل مع الأخطاء
+                console.error('حدث خطأ أثناء جلب بيانات المنتج:', xhr.responseText);
+    
+                // تنبيه المستخدم بخطأ واضح
+                alert('حدث خطأ أثناء جلب سعر المنتج. يرجى المحاولة لاحقًا.');
+            }
+        });
+    }
 </script>
 
 

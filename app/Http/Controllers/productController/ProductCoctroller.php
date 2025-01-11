@@ -605,7 +605,6 @@ if($Quantit=="QuantityCosts")
         $Special_discount = $this->convertArabicNumbersToEnglish($request->input('Special_discount'));
         $Quantityprice = $this->convertArabicNumbersToEnglish($request->input('Quantityprice'));
         $product_idUpdate = $this->convertArabicNumbersToEnglish($request->input('producid'));
-// dd($product_idUpdate);
         if(!$product_idUpdate)
         {
             $productname=Product::where('product_name', $request->product_name)->first();
@@ -644,8 +643,6 @@ if($Quantit=="QuantityCosts")
                     'message' => 'يجب عليك تحديد سعر البيع .'
                 ]);
             }
-
-
             if ($request->cate)
              {
                 if (!$Quantityprice) {
@@ -654,7 +651,6 @@ if($Quantit=="QuantityCosts")
                         'message' => 'يجب عليك تحديد سعر البيع .'
                     ]);
                 }
-
             }
 
 // إنشاء منتج جديد أو تحديثه
@@ -681,14 +677,7 @@ $ProductNew = Product::updateOrCreate(
         'warehouse_id' => $request->account_debitid ?? null,
     ]
 );
-// if(!$ProductNew->product_id)
-// {
-//     return response()->json([
-//         'success' => false,
-//         'message' => 'لم يتم الحفظ .',
-//     ]);
 
-// }
 
                   if($ProductNew)
                   {
@@ -792,7 +781,6 @@ $ProductNew = Product::updateOrCreate(
         ->where('transaction_type', 6)
         ->first();
  $purchaseid=$purchaseid->purchase_id?? null;
-        $curr=Currency::all();
         $editProduct="تعديل الصنف";
          return view('products.create',
          ['prod'=>$prod,

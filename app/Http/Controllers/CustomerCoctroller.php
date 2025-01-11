@@ -104,9 +104,12 @@ return view('customers.show', compact('balances'));
             {
                 return $this->showStatementMainAccountTotally($validated, $id);
             }
-            elseif ($validated['list'] === "detail")
+         if ($validated['list'] === "detail")
+
             {
                 return $this->getDailyEntriesMainAccountMyanalysis($validated, $id);
+
+                // return $this->getDailyEntriesMainAccountMyanalysis($validated, $id);
             }
         }
 
@@ -963,7 +966,8 @@ $endDate = null;
                                     'daily_entries.Invoice_id',
                                     'daily_entries.created_at'
                                 );
-
+                                $startDate = null;
+                                $endDate = null;
                                 // dd($validated );
                                 switch ($validated['listradio'] ?? '') {
                                     case '1': // اليوم
@@ -972,7 +976,6 @@ $endDate = null;
                                         break;
                                     case '2': // اليوم
                                         $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
-
                                         $startDate = now()->toDateString();
                                         $endDate = now()->toDateString();
                                         $query->whereDate('daily_entries.created_at', $startDate);
@@ -1037,6 +1040,7 @@ $endDate = null;
                                     ];
                                     $AccountClassName ='الحساب';
                                     $UserName = User::where('id',auth()->user()->id,)->pluck('name')->first();
+                                    // return view('customers.statement', compact('customer','startDate', 'endDate','Myanalysis', 'entries','AccountClassName','currencysettings','UserName','accountingPeriod','SumCredit_amount','SumDebtor_amount','priceInWords','Sale_priceSum'))->render(); // إرجاع المحتوى كـ HTML
 
                                  
                                 // إرجاع العرض

@@ -3,6 +3,9 @@
 <div id="successAlert" style="display: none" class=" fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
     <p></p>
   </div>
+<div id="errorMessage" style="display: none" class=" fixed top-4 right-4 bg-red-600 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
+    <p></p>
+  </div>
 
 
   <form method="POST" id="Receip">
@@ -82,8 +85,14 @@
 
                 <div class="">
                 <label for="Amount_debit" class=" text-center " >المبلغ </label>
-                <input name="Amount_debit" id="Amount_debit" type="text" @isset($ExchangeBond->Amount_debit)
-                    value="{{$ExchangeBond->Amount_debit}}"  @endisset class="inputSale px-1" placeholder="0" required>
+                <input name="Amount_debit" id="Amount_debit"   required                       
+                type="text" placeholder="0"
+                @isset($ExchangeBond->Amount_debit)
+                    value="{{$ExchangeBond->Amount_debit}}"
+                      @endisset class="inputSale px-1"
+                      required 
+                      onblur="formatCurrency(this)">
+                       
                 </div>
 
                 </div>
@@ -139,7 +148,7 @@
                     </select>
                     </li>
                 <li class=" text-center px-1">
-                    <select name="CreditAmount"  step="0.01" id="CreditAmount" class="block w-full select2 p-2 border rounded-md inputSale">
+                    <select name="CreditAmount"  id="CreditAmount" class="block w-full select2 p-2 border rounded-md inputSale">
                          @isset($Creditsub_account_id)
                     <option  value="{{$Creditsub_account_id->sub_account_id}}">{{$Creditsub_account_id->sub_name}}</option>
                    @endisset
@@ -150,7 +159,6 @@
                         class="inputSale"
                         name="Statement"
                         id="Statement"
-                        cols="30"
                         rows="3"
                     >@isset($ExchangeBond->Statement){{ $ExchangeBond->Statement }}@endisset</textarea>
                 </li>
@@ -165,18 +173,17 @@
         <input type="submit" id="submitButton"  @isset($submitButton) value="{{ $submitButton }}" @endisset class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"  value="حفظ" >
 
         </div>
-{{--         <div class="mx-10" id="newInvoice" >
-            <button type="button"  class="text-purple-700 hover:text-white border border-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-purple-400 dark:text-purple-400 dark:hover:text-white dark:hover:bg-purple-500 dark:focus:ring-purple-900">
-                             الغاء الحساب
+        <div class="mx-10" id="newInvoice" >
+            <button type="reset"  class="text-purple-700 hover:text-white border border-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-purple-400 dark:text-purple-400 dark:hover:text-white dark:hover:bg-purple-500 dark:focus:ring-purple-900">
+                             الغاء السند
                   </button>
-            </div> --}}
+            </div>
             <div class="mx-10" id="" >
                 <label for="payment_bond_id" class="text-center ">  رقم السند</label>
                 <input type="text" id="payment_bond_id" name="payment_bond_id" @isset($ExchangeBond->payment_bond_id)value="{{$ExchangeBond->payment_bond_id}}"
                 @endisset>
                 </div>
     </div>
-    <input type="hidden" name="daily_entries_type" value="سند قبض">
 
 
 
@@ -193,7 +200,7 @@
 
   $(document).ready(function() {
 
-    $('#Amount_debit').on('input', function() {
+    $('#Amount_debit ,#payment_bond_id').on('input', function() {
         let value = $(this).val();
         // إزالة أي شيء ليس رقماً أو فاصلة عشرية
         value = value.replace(/[^0-9.]/g, '');
@@ -203,7 +210,8 @@
             value = parts[0] + '.' + parts.slice(1).join('');
         }
         // إضافة الفاصلة بعد كل ثلاثة أرقام (فصل الآلاف)
-        if (value) {
+        if (value) 
+        {
             let [integer, decimal] = value.split('.');
             integer = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ",");  // إضافة الفواصل بين الآلاف
             value = decimal ? integer + '.' + decimal : integer;  // إعادة تركيب الرقم
@@ -211,11 +219,8 @@
         // تعيين القيمة المعدلة للحقل
         $(this).val(value);
     });
-
-
     $('#PaymentParty').on('change', function() {
     const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي (الدائن)
-
     // تفريغ القائمة الفرعية وإضافة الخيار الافتراضي
     $('#CreditAmount').empty();
 
@@ -287,18 +292,42 @@ $(document).ready(function() {
 
     $('#submitButton').click(function(event) {
         event.preventDefault();
+      const Amount_debit=  $('#Amount_debit').val(); 
+      const CreditAmount=  $('#CreditAmount').val(); 
+      const DepositAccount=  $('#DepositAccount').val(); 
         var buttonValue = $(this).val(); // الحصول على قيمة الزر الذي تم الضغط عليه
+          if(Amount_debit<0)
+          {
+            $('#errorMessage').show().text('يجب ان يكون المبلغ موجب').fadeOut(3000);
+          }
+          if(Amount_debit==0)
+          {
+            $('#errorMessage').show().text('يجب ان يكون المبلغ اكبر من الصفر').fadeOut(5000);
 
+          }
+          if(!DepositAccount)
+          {
+            $('#errorMessage').show().text(' الدخل حساب  ').fadeOut(3000);
+            $('#DepositAccount').select2('open');
+          }
+          else{
+          if(!CreditAmount)
+          {
+            $('#errorMessage').show().text(' الدخل حساب الدائن الفرعي').fadeOut(3000);
+            $('#CreditAmount').select2('open');
+          }
+        }
+          
+         
         // جمع بيانات النموذج
         var formData = $('#Receip').serialize();
-
+        if(Amount_debit>0 && CreditAmount && DepositAccount)
+        {
         // إرسال الطلب باستخدام AJAX
         $.ajax({
             url: '{{ route("Receip.store") }}',
             method: 'POST',
-
             data: formData,
-
             success: function(response) {
                 if (response.error) {
                     // عرض رسالة الخطأ
@@ -339,6 +368,7 @@ $(document).ready(function() {
                 }
             }
         });
+    }
     });
 });
 

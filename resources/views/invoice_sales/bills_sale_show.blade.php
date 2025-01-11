@@ -122,18 +122,17 @@
             </thead>
             <tbody>
                 @isset($DataSale)
-
-
-
+                @php
+                     $sumAmount=0;
+                @endphp
                 @foreach ($DataSale as $Sale)
                     <tr class="bg-white">
                         <td class="px-2 ">{{$loop->iteration}}</td>
                         <td class="px-2 text-right">{{ $Sale->Product_name }}</td>
                         <td class="px-2 text-right">
-
-                            {{ $Sale->Category_name }}
+                            {{ $Sale->Category_name ??'' }}
                             </td>
-                        <td class="px-2 text-right">{{ $Sale->Quantityprice }}</td>
+                        <td class="px-2 text-center">{{ $Sale->Quantityprice }}</td>
                         <td class="px-2 text-right">{{number_format( $Sale->Selling_price) }}</td>
                         <td class="px-2 text-right">
                             @isset($warehouses)
@@ -145,9 +144,39 @@
                             @endisset
 
                         </td>
+                       
                         <td class=" text-right">{{ number_format($Sale->total_amount )}}</td>
+
                     </tr>
                 @endforeach
+                @php
+                    if ($discount<=0)
+                    {
+                        $x=6;
+                    }
+                    else
+                    {
+                        $x=5;
+
+                    }
+                @endphp
+                <tr class="bg-[#1749fd15] ">
+                  
+                    
+                    <th colspan="{{$x}}" class="font-bold text-right px-2 "> </th>
+                    @if ($discount>0)
+                        
+                    <th class="font-bold text-red-500 px-2 ">الخصم</th>
+                    @endif
+                    <th class="font-bold text- px-2 ">الإجمالي</th>
+                </tr>
+                <tr>
+                    <td  colspan="{{$x}}" class="font-bold text-right px-2 "></td>
+                    @if ($discount>0)
+                    <th class="font-bold text-red-500 px-2 " >{{ number_format($discount )}}</th>
+                    @endif
+                    <th>{{ number_format($Sale_CostSum )}}</th>
+                </tr>
 
                 @endisset
             </tbody>
@@ -162,7 +191,7 @@
                                 <p class="font-">المبلغ المستحق</p>
                             </th>
                             <th class="px-2 text-right">
-                                {{ number_format($Sale_CostSum) ?? 0 }}
+                                {{ number_format($Sale_priceSum) ?? 0 }}
                                 <p class="text-sm">{{ $priceInWords }}</p>
                             </th>
 

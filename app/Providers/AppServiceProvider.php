@@ -120,14 +120,13 @@ class AppServiceProvider extends ServiceProvider
 
         }
 
-        $cate=Category::all();
+        // $cate=Category::all();
         $buss=BusinessData::first();
         $cu=CurrencySetting::first();
 $transaction_typeExchangeBond="سند صرف";
 $transaction_typePaymentBonds="سند قبض";
 if(isset($buss))
         View::share([
-            'cate'=>$cate,
             'cu'=>$cu,
             'buss'=>$buss,
             'Default_customers'=>$Default_customers,
