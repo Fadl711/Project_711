@@ -3,7 +3,7 @@
 <div class="">
     <div class=" divNav">
         <ul class="list-none ">
-            <li class="">
+            <li class="hover:text-black">
                 <a class="NavTagA" href="{{route('home.index')}}">
                     <svg class="w-6 h-6 stroke-current " xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -13,7 +13,7 @@
                 <span class="textNav"> الرئسية</span>
                     </a>
                 </li>
-                    <li class="">
+                    <li class="hover:text-black">
                     <a class=" NavTagA"  href="{{route('accounts.index')}}">
                     <svg class="w-6 h-6 stroke-current " xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -21,17 +21,17 @@
                     <span class="textNav"> الحسابات</span>
                     </a>
                 </li>
-                <li class="">
+                <li class="hover:text-black">
                         <a class="NavTagA" href="{{ route('restrictions.index') }}">
-                            <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <svg class="w-6 h-6  dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 20V10m0 10-3-3m3 3 3-3m5-13v10m0-10 3 3m-3-3-3 3"/>
                             </svg>
                             <span class="textNav mr-1"> القيود</span>
                         </a>
                     </li>
-                <li class="">
-                    <a class="NavTagA" href="{{route('bonds.index')}}">
-                        <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <li class="hover:text-black">
+                    <a class="NavTagA " href="{{route('bonds.index')}}">
+                        <svg class="w-6 h-6  dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="square" stroke-linejoin="round" stroke-width="2" d="M16.5 15v1.5m0 0V18m0-1.5H15m1.5 0H18M3 9V6a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v3M3 9v6a1 1 0 0 0 1 1h5M3 9h16m0 0v1M6 12h3m12 4.5a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Z"/>
                           </svg>
                                               <span class="textNav mr-1"> السندات</span>
@@ -60,9 +60,9 @@
 
                 @foreach (Auth::user()->permissions as $permission)
                 @if ($permission->Authority_Name === "المبيعات")
-            <li class="">
+            <li class="hover:text-black">
                 <a class="NavTagA" href="{{route('sales.create')}}">
-                <svg class="w-6 h-6  text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <svg class="w-6 h-6   dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 17.345a4.76 4.76 0 0 0 2.558 1.618c2.274.589 4.512-.446 4.999-2.31.487-1.866-1.273-3.9-3.546-4.49-2.273-.59-4.034-2.623-3.547-4.488.486-1.865 2.724-2.899 4.998-2.31.982.236 1.87.793 2.538 1.592m-3.879 12.171V21m0-18v2.2"/>
                 </svg>
                 <span class="textNav">المبيعات</span>
@@ -76,8 +76,8 @@
 
             @foreach (Auth::user()->permissions as $permission)
             @if ($permission->Authority_Name === "الفواتير المبيعات")
-                <li class=""><a class="NavTagA" href="{{route('invoice_sales.all_invoices_sale')}}">
-                    <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <li class="hover:text-black"><a class="NavTagA" href="{{route('invoice_sales.all_invoices_sale')}}">
+                    <svg class="w-6 h-6  dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3v4a1 1 0 0 1-1 1H5m8-2h3m-3 3h3m-4 3v6m4-3H8M19 4v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1ZM8 12v6h8v-6H8Z"/>
                       </svg>
                     <span class="textNav">فواتير المبيعات</span>
@@ -87,9 +87,9 @@
             @endforeach
             @foreach (Auth::user()->permissions as $permission)
             @if ($permission->Authority_Name === "المشتريات")
-                                <li class="">
+                                <li class="hover:text-black">
                     <a class="NavTagA" href="{{route('Purchases.create')}}">
-                    <svg class="w-6 h-6  text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <svg class="w-6 h-6   dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 4h1.5L9 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm-8.5-3h9.25L19 7h-1M8 7h-.688M13 5v4m-2-2h4"/>
                         </svg>
                     <span class="textNav">المشتريات</span>
@@ -98,8 +98,8 @@
             @endforeach
             @foreach (Auth::user()->permissions as $permission)
             @if ($permission->Authority_Name === "الفواتير المشتريات")
-                    <li class=""><a class="NavTagA" href="{{route('invoice_purchase.index')}}">
-                        <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <li class="hover:text-black"><a class="NavTagA" href="{{route('invoice_purchase.index')}}">
+                        <svg class="w-6 h-6  dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3v4a1 1 0 0 1-1 1H5m8-2h3m-3 3h3m-4 3v6m4-3H8M19 4v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1ZM8 12v6h8v-6H8Z"/>
                           </svg>
                         <span class="textNav">فواتير المشتريات</span>
@@ -107,7 +107,7 @@
                         @endif
                         @endforeach
                                                 {{-- @if($resultDebit1->Authority_Name=="المنتجات") --}}
-                <li class=""><a class="NavTagA" href="{{route('products.index')}}">
+                <li class="hover:text-black"><a class="NavTagA" href="{{route('products.index')}}">
                     <svg class="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -117,9 +117,9 @@
                     </a></li>
                     {{-- @endif --}}
                     {{-- @if($resultDebit1->Authority_Name=="سجلات الترحيل") --}}
-                    <li class="">
+                    <li class="hover:text-black">
                     <a class="NavTagA" href="{{route('transfer_restrictions.index')}}">
-                        <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <svg class="w-6 h-6  dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 20V10m0 10-3-3m3 3 3-3m5-13v10m0-10 3 3m-3-3-3 3"/>
                           </svg>
                            <span class="textNav mr-1"> سجلات الترحيل</span>
@@ -134,7 +134,7 @@
                     </a></li> --}}
                     {{-- @endif --}}
 
-                    <li class="">
+                    <li class="hover:text-black">
                         {{--  --}}
 
 
@@ -159,8 +159,8 @@
                                     </ul>
                                 </div> --}}
 
-                                <a class="NavTagA" href="{{route('inventory.index')}}"><svg class="w-6 h-6" fill="#ffffff" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M3,21V11a1,1,0,0,1,1-1h8a1,1,0,0,1,1,1V21a1,1,0,0,1-1,1H4A1,1,0,0,1,3,21ZM20,2H10A1,1,0,0,0,9,3V4h9.5a.5.5,0,0,1,.5.5V15h1a1,1,0,0,0,1-1V3A1,1,0,0,0,20,2ZM16,19a1,1,0,0,0,1-1V7a1,1,0,0,0-1-1H6A1,1,0,0,0,5,7V8h9.5a.5.5,0,0,1,.5.5V19Z"></path></g></svg>
-                                    <span class="textNav mr-1 text-white ">قائمة الجرد </span></a>
+                                <a class="NavTagA" href="{{route('inventory.index')}}"><svg class="w-6 h-6 " fill="#ffffff" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M3,21V11a1,1,0,0,1,1-1h8a1,1,0,0,1,1,1V21a1,1,0,0,1-1,1H4A1,1,0,0,1,3,21ZM20,2H10A1,1,0,0,0,9,3V4h9.5a.5.5,0,0,1,.5.5V15h1a1,1,0,0,0,1-1V3A1,1,0,0,0,20,2ZM16,19a1,1,0,0,0,1-1V7a1,1,0,0,0-1-1H6A1,1,0,0,0,5,7V8h9.5a.5.5,0,0,1,.5.5V19Z"></path></g></svg>
+                                    <span class="textNav mr-1  ">قائمة الجرد </span></a>
 
                                 {{--  --}}
                     </li>
@@ -214,18 +214,18 @@
                 {{-- @endif --}}
                 {{-- @if($resultDebit1->Authority_Name=="التقارير") --}}
 
-                <li class="">
+                <li class="hover:text-black">
                     <a class="NavTagA" href="{{route('report.summary')}}">
-                        <svg class="w-6 h-6 text-white" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><svg class="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        <svg class="w-6 h-6 " viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><svg class="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
                         </svg>
                     <span class="textNav">التقارير</span>
                     </a></li>
-                <li class="">
+                <li class="hover:text-black">
                     <a class="NavTagA" href="{{route('settings.index')}}">
-                    <svg class="w-6 h-6  text-white stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"stroke="currentColor">
+                    <svg class="w-6 h-6   stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                     </svg>
                     <span class="textNav">الإعدادات</span>
