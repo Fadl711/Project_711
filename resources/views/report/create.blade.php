@@ -9,13 +9,12 @@
         <li class="w-full text-center">
             <label for="horizontal-list-radio-license" class="labelSale">إعدادات العرض</label>
         </li>
-        @foreach(['1' => 'تلقائي', '2' => 'اليوم', '3' => 'هذا الأسبوع', '4' => 'هذا الشهر'] as $key => $label)
+        @foreach(['1' => 'تلقائي', '2' => 'اليوم', '3' => 'هذا الأسبوع', '4' => 'هذا الشهر','5'=>'حسب التاريخ'] as $key => $label)
             <li class="w-full text-center">
                 <input type="radio" name="list-radio" value="{{ $key }}" {{ $key == 1 ? 'checked' : '' }} class="mr-2"> {{ $label }}
             </li>
         @endforeach
         <li class="w-full flex items-center justify-center">
-            <input type="checkbox" name="list-radio" value="5" class="mr-2">
             <label class="text-sm font-medium">من:</label>
             <input type="date" name="from-date" class="mx-2 p-2 border rounded-md focus:ring-2 focus:ring-indigo-500">
         </li>
@@ -71,6 +70,7 @@
         <select name="list" id="list" class="input-field select2 inputSale" required>
             <option value="" selected>اختر نوع التقرير</option>
             @foreach([
+
               'summary' => ' كشف كلي',
               'detail' => ' كشف تحليلي',
               'FullDisclosureOfSubAccounts' => 'كشف كلي الحسابات الفرعية قبل الترحيل',
@@ -100,7 +100,8 @@ const invoiceField2 = $('#main_account_debit_id').val();
 const listRadio = $('input[name="list-radio"]:checked').val(); // الخيار المحدد لعرض القائمة
 const accountListRadio = $('input[name="account-list-radio"]:checked').val(); // الحساب الرئيسي أو الفرعي
 const viewType = $('#list').val(); // كشف كلي أو تحليلي
-
+const fromDate = $('input[name="from-date"]');
+const toDate = $('input[name="to-date"]');
 // التحقق من نوع التقرير
 if (viewType === "") {
     invoiceField = -1;
@@ -143,9 +144,11 @@ if (invoiceField === -1) {
 }
 
     if (invoiceField>=0) {
+        const FromDate =fromDate.val() ;
+const ToDate=toDate.val();
         const url = `{{ route('customers.statement', ':invoiceField') }}`
             .replace(':invoiceField', invoiceField)
-            + `?list=${viewType}&listradio=${listRadio}&accountlistradio=${accountListRadio}`;
+            + `?list=${viewType}&listradio=${listRadio}&accountlistradio=${accountListRadio}&fromDate=${FromDate}&toDate=${ToDate}`;
 
         window.open(url, '_blank', 'width=800,height=800');
     } else {

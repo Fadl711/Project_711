@@ -70,7 +70,6 @@ class SaleController extends Controller
 
         $purchasePrice = $this->removeCommas($request->Purchase_price);
         $Selling_price = $this->removeCommas($request->Selling_price);
-        $Selling_price = $this->removeCommas($request->Selling_price);
         $total_price = $this->removeCommas($request->total_price);
         $total_price = $this->removeCommas($request->total_price);
         $Cost = $this->removeCommas($request->Cost);
@@ -83,7 +82,7 @@ class SaleController extends Controller
             'product_id' => 'required|integer|exists:products,product_id',
             'sales_invoice_id' => 'required|integer|exists:sales_invoices,sales_invoice_id',
             'Quantity' => 'required|numeric|min:0',
-            'Selling_price' => 'required|numeric|min:0',
+            'Selling_price' => 'required',
             'account_debitid' => 'required|integer|exists:sub_accounts,sub_account_id',
             'Barcode' => 'nullable|numeric',
             'total_price' => 'required|string|',

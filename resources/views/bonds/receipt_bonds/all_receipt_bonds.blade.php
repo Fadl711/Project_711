@@ -64,12 +64,17 @@
               <input type="radio" name="list-radio" value="4" class="mr-2"> هذا الشهر
           </li>
           <li class="w-full flex items-center justify-center">
+              <input type="radio" name="list-radio" value="5" class="mr-2"> حسب التاريخ
+            </li>
+
+          <li class="w-full flex items-center justify-center">
+
               <label class="text-sm font-medium">من:</label>
-              <input type="date" name="from-date" class="mx-2 p-2 border rounded-md focus:ring-2 focus:ring-indigo-500">
+              <input type="date" name="from-Date"  class="mx-2 p-2 border rounded-md focus:ring-2 focus:ring-indigo-500">
           </li>
           <li class="w-full flex items-center justify-center">
               <label class="text-sm font-medium">إلى:</label>
-              <input type="date" name="to-date" class="mx-2 p-2 border rounded-md focus:ring-2 focus:ring-indigo-500">
+              <input type="date" name="to-Date" class="mx-2 p-2 border rounded-md focus:ring-2 focus:ring-indigo-500">
           </li>
       </ul>
   </form>
@@ -92,6 +97,8 @@ $(document).ready(function () {
     const transactiontypeeSelect = $('select[name="transactionType"]');
     const searchInput = $('input[name="search"]');
     const radioInput = $('input[name="list-radio"]');
+    const toDate = $('input[name="to-Date"]');
+    const fromDate = $('input[name="from-Date"]');
     const displayContainer = $('#displayContainer');
     const displayContainer2 = $('#displayContainer2');
     let debounceTimeout;
@@ -218,9 +225,11 @@ $(document).on('click', '.delete-payment', function (e) {
  
             debounceTimeout = setTimeout(() => {
               const searchType = searchTypeSelect.val();
+              const From_Date = fromDate.val();
+              const To_Date = toDate.val();
               const transactionType = transactiontypeeSelect.val();
               const baseUrl = "{{ url('/api/Receip-invoices') }}"; 
-              const url = `${baseUrl}?searchType=${searchType}&searchQuery=${searchQuery}&transactionType=${transactionType}`;
+              const url = `${baseUrl}?searchType=${searchType}&transactionType=${transactionType}&searchQuery=${searchQuery}&fromDate=${From_Date}&toDate=${To_Date}`;
  
 fetchInvoices(url, displayContainer2);
 }, 500);
@@ -236,8 +245,10 @@ fetchInvoices(url, displayContainer2);
     radioInput.on('click', function () {
         const filterType = $(this).val();
         const transactionType = transactiontypeeSelect.val();
+        const FromDate = fromDate.val();
+        const ToDate = toDate.val();
         const baseUrl = "{{ url('/api/Receip-invoices')}}";  
-              const url = `${baseUrl}/${filterType}?transactionType=${transactionType}`;
+              const url = `${baseUrl}/${filterType}?transactionType=${transactionType}&fromDate=${FromDate}&toDate=${ToDate}`;
 
 // استخدام url في طلب AJAX
 $.ajax({

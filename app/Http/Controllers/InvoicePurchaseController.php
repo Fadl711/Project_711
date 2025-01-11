@@ -58,6 +58,11 @@ class InvoicePurchaseController extends Controller
     }
     public function getPurchaseInvoices(Request $request, $filterType)
     {
+        $validated = $request->validate([
+      
+            'fromDate' => 'nullable',
+            'toDate' => 'nullable',
+        ]);
         // الحصول على آخر فترة محاسبية نشطة
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
     
@@ -67,7 +72,6 @@ class InvoicePurchaseController extends Controller
     
         // إنشاء استعلام الفواتير
         $query = PurchaseInvoice::with(['supplier.mainAccount', 'user'])
-            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->whereIn('transaction_type', [
                 TransactionType::PURCHASE->value,
                 TransactionType::RETURN->value,
@@ -77,24 +81,30 @@ class InvoicePurchaseController extends Controller
         // تطبيق الفلترة بناءً على نوع الفلترة
         switch ($filterType) {
             case '1': // تلقائي (الفترة المحاسبية الحالية)
-                // لا حاجة لإجراء إضافي لأن الاستعلام يحتوي بالفعل على الفترة المحاسبية الحالية
+                $query->where('accounting_period_id', $accountingPeriod->accounting_period_id);
                 break;
             case '2': // اليوم
+                $query->where('accounting_period_id', $accountingPeriod->accounting_period_id);
+
                 $query->whereDate('created_at', now()->toDateString());
                 break;
             case '3': // هذا الأسبوع
+                $query->where('accounting_period_id', $accountingPeriod->accounting_period_id);
+
                 $query->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
                 break;
-            case '4': // هذا الشهر
+            case '4':// هذا الشهر
+
+                $query->where('accounting_period_id', $accountingPeriod->accounting_period_id);
                 $query->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year);
                 break;
-            default: // فترة مخصصة
-                $fromDate = $request->input('fromDate');
-                $toDate = $request->input('toDate');
-                if ($fromDate && $toDate) {
-                    $query->whereBetween('created_at', [$fromDate, $toDate]);
+            case '5':// ه
+                if ($request->filled(['fromDate', 'toDate'])) 
+                {
+                    $query->whereBetween('created_at', [$validated['fromDate'], $validated['toDate']]);
+                    break;
                 }
-                break;
+         
         }
         $purchaseInvoices = $query->get()->transform(function ($invoice) {
             return [
@@ -166,6 +176,7 @@ class InvoicePurchaseController extends Controller
 }
     public function searchInvoices(Request $request)
     {
+       
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
     
         if (!$accountingPeriod) {
@@ -175,10 +186,11 @@ class InvoicePurchaseController extends Controller
         $validated = $request->validate([
             'searchType' => 'nullable|string|in:كل الفواتير,أول فاتورة,آخر فاتورة',
             'searchQuery' => 'nullable|string|max:255',
+            'fromDate' => 'nullable',
+            'toDate' => 'nullable',
         ]);
         // بناء الاستعلام الأساسي
         $query = PurchaseInvoice::with(['supplier', 'user'])
-            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->whereIn('transaction_type', [
                 TransactionType::PURCHASE->value,
                 TransactionType::RETURN->value,
@@ -198,9 +210,19 @@ class InvoicePurchaseController extends Controller
             }
     
         // ترتيب الفواتير حسب نوع البحث
-        if ($validated['searchType'] && $validated['searchType'] !== 'كل الفواتير') {
-            $orderDirection = ($validated['searchType'] === 'أول فاتورة') ? 'asc' : 'desc';
-            $query->orderBy('created_at', $orderDirection);
+        if ($request->filled(['fromDate', 'toDate'])) {
+            // dd($validated['fromDate'], $validated['toDate']);
+
+            $query->whereBetween('created_at', [$validated['fromDate'], $validated['toDate']]);
+        }
+        else
+        {
+            $query->where('accounting_period_id', $accountingPeriod->accounting_period_id);
+            if ($validated['searchType'] && $validated['searchType'] !== 'كل الفواتير') {
+                $orderDirection = ($validated['searchType'] === 'أول فاتورة') ? 'asc' : 'desc';
+                $query->orderBy('created_at', $orderDirection);
+            }
+
         }
         // الحصول على النتائج
         $purchaseInvoices  = $query->get()->transform(function ($invoice) {

@@ -234,13 +234,15 @@ $result = is_numeric($PaymentBond->Amount_debit)
     return view('bonds.receipt_bonds.print', compact('payment_type','PaymentBond', 'result'));
 }
 
-public function getPaymentBond(Request $request, $filterType)
+public function getPaymentBond(Request $request, $filterType )
 {
       // التحقق من المدخلات
        $validated = $request->validate([
         'searchType' => 'nullable|string|in:كل السندات,أول سند,آخر سند',
         'transactionType' => 'nullable|string',
         'searchQuery' => 'nullable|string|max:255',
+        'fromDate' => 'nullable|date',
+        'toDate' => 'nullable|date',
     ]);
     
     // الحصول على آخر فترة محاسبية نشطة
@@ -252,7 +254,6 @@ public function getPaymentBond(Request $request, $filterType)
 
     // إنشاء استعلام السندات
     $query = PaymentBond::with(['creditSubAccount', 'debitSubAccount', 'user'])
-    ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
     ->where('transaction_type',  $validated['transactionType'])
 ;
 
@@ -260,21 +261,37 @@ public function getPaymentBond(Request $request, $filterType)
     switch ($filterType) {
        
        
+        case '1': // اليوم
+            $query->where('accounting_period_id', $accountingPeriod->accounting_period_id);
+            break;
         case '2': // اليوم
             $query->whereDate('created_at', now()->toDateString());
+            $query->where('accounting_period_id', $accountingPeriod->accounting_period_id);
+
             break;
         case '3': // هذا الأسبوع
+            $query->where('accounting_period_id', $accountingPeriod->accounting_period_id);
+
             $query->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
             break;
         case '4': // هذا الشهر
+            $query->where('accounting_period_id', $accountingPeriod->accounting_period_id);
+
             $query->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year);
             break;
             case '5':
+             
                 // الفترة المخصصة
-            if ($request->filled(['fromDate', 'toDate'])) {
-                $query->whereBetween('created_at', [$request->fromDate, $request->toDate]);
+                if ($request->filled(['fromDate', 'toDate'])) {
+
+                $query->whereBetween('created_at', [$validated['fromDate'], $validated['toDate']]);
             }
             break;
+        
+            //  if ($validated(['fromDate', 'toDate'])) {
+                // $query->whereBetween('created_at', [$validated['fromDate'], $validated['toDate']]);
+            // }
+            // break;
     }
 
    
@@ -314,6 +331,8 @@ public function searchInvoices(Request $request)
         'searchType' => 'nullable|string|in:كل السندات,أول سند,آخر سند',
         'transactionType' => 'nullable|string',
         'searchQuery' => 'nullable|string|max:255',
+        'fromDate' => 'nullable',
+        'toDate' => 'nullable',
     ]);
 
     // التحقق من وجود transactionType
@@ -324,35 +343,43 @@ public function searchInvoices(Request $request)
     // الحصول على آخر فترة محاسبية نشطة
     $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
 
-    if (!$accountingPeriod) {
+    if (!$accountingPeriod)
+     {
         return response()->json(['message' => 'لم يتم العثور على فترة محاسبية حالية.'], 404);
     }
 
     // إنشاء استعلام السندات
     $query = PaymentBond::with(['creditSubAccount', 'debitSubAccount', 'user'])
-        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->where('transaction_type', $validated['transactionType']);
 
     // التحقق من وجود searchQuery وتطبيقه
-    if (isset($validated['searchQuery']) && !empty($validated['searchQuery'])) {
-        $searchQuery = $validated['searchQuery'];
-
-        $query->where(function ($query) use ($searchQuery) {
-            // البحث باستخدام رقم الفاتورة
-            $query->where('payment_bond_id', 'like', $searchQuery . '%')
-                // البحث باستخدام اسم المورد
-                ->orWhereHas('debitSubAccount', function ($query) use ($searchQuery) {
-                    $query->where('sub_name', 'like', $searchQuery . '%');
-                });
-        });
-    }
+   
 
     // ترتيب الفواتير حسب نوع البحث
-    if (isset($validated['searchType']) && $validated['searchType'] !== 'كل السندات') {
-        $orderDirection = ($validated['searchType'] === 'أول سند') ? 'asc' : 'desc';
-        $query->orderBy('created_at', $orderDirection);
-    }
+  
+    if (isset($validated['fromDate']) && isset($validated['toDate'])) 
+    {
+        $query->whereBetween('created_at', [$validated['fromDate'], $validated['toDate']]);
 
+        // dd($validated['fromDate'],$validated['toDate']);
+    }
+    else
+    {
+        $query->where('accounting_period_id', $accountingPeriod->accounting_period_id);
+        if (isset($validated['searchQuery']) && !empty($validated['searchQuery'])) {
+            $searchQuery = $validated['searchQuery'];
+    
+            $query->where(function ($query) use ($searchQuery) {
+                // البحث باستخدام رقم الفاتورة
+                $query->where('payment_bond_id', 'like', $searchQuery . '%')
+                    // البحث باستخدام اسم المورد
+                    ->orWhereHas('debitSubAccount', function ($query) use ($searchQuery) {
+                        $query->where('sub_name', 'like', $searchQuery . '%');
+                    });
+            });
+        }
+    }
+   
     // جلب البيانات وتحويلها
     $numberToWords = new NumberToWords();
     $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية

@@ -62,6 +62,8 @@ return view('customers.show', compact('balances'));
             'list' => 'nullable|string',
             'listradio' => 'nullable|string',
             'accountlistradio' => 'nullable|string|max:255',
+            'fromDate' => 'nullable',
+            'toDate' => 'nullable',
         ]);
         if ($validated['list'] === "FullDisclosureOfAccounts") 
         {
@@ -87,12 +89,12 @@ return view('customers.show', compact('balances'));
         {
             if ($validated['list'] === "summary") 
             {
-                return $this->showStatementSubAccountTotally($validated['listradio'], $id);
+                return $this->showStatementSubAccountTotally($validated, $id);
 
             }
             elseif ($validated['list'] === "detail")
             {
-                return $this->showStatementSubAccountMyanalysis($validated['listradio'], $id);
+                return $this->showStatementSubAccountMyanalysis($validated, $id);
                 
             }
         } 
@@ -100,11 +102,11 @@ return view('customers.show', compact('balances'));
         {
             if ($validated['list'] === "summary") 
             {
-                return $this->showStatementMainAccountTotally($validated['listradio'], $id);
+                return $this->showStatementMainAccountTotally($validated, $id);
             }
             elseif ($validated['list'] === "detail")
             {
-                return $this->getDailyEntriesMainAccountMyanalysis($validated['listradio'], $id);
+                return $this->getDailyEntriesMainAccountMyanalysis($validated, $id);
             }
         }
 
@@ -549,7 +551,7 @@ return view('report.Final-full-disclosure', compact(
 ))->render(); 
     }
 
-    public function showStatementMainAccountTotally($validated, $id)
+    public function showStatementMainAccountTotally( $validated, $id)
     {
         $Myanalysis="كلي";
         try {
@@ -594,35 +596,54 @@ return view('report.Final-full-disclosure', compact(
                 'daily_entries.entrie_id',
                 'daily_entries.Invoice_id',
                 'daily_entries.created_at'
-            )
-            ->orderBy('created_at', 'asc'); // تصحيح ترتيب النتائج
-            $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
+            );
 
             $startDate = null;
             $endDate = null;
             
             // تخصيص الفترة الزمنية بناءً على المدخلات
-            switch ($validated ?? '') {
+            switch ($validated['listradio'] ?? '') {
+                case '1': // 
+                    $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
+                    break;
                 case '2': // اليوم
+                    $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
+
                     $startDate = now()->toDateString();
                     $endDate = now()->toDateString();
                     $query->whereDate('daily_entries.created_at', $startDate);
                     break;
                 case '3': // هذا الأسبوع
+                    $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
+
                     $startDate = now()->startOfWeek()->toDateString();
                     $endDate = now()->endOfWeek()->toDateString();
                     $query->whereBetween('daily_entries.created_at', [$startDate, $endDate]);
                     break;
                 case '4': // هذا الشهر
+                    $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
                     $startDate = now()->startOfMonth()->toDateString();
                     $endDate = now()->endOfMonth()->toDateString();
                     $query->whereMonth('daily_entries.created_at', now()->month)
                           ->whereYear('daily_entries.created_at', now()->year);
                     break;
-                default: // عرض كل القيود
+                case '5': // هذا الشهر
+                    if ($validated['fromDate'] && $validated['toDate']) 
+                {
+                    $query->whereBetween('daily_entries.created_at',[$validated['fromDate'],$validated['toDate']]);
+                    $startDate=$validated['fromDate'];
+                    $endDate=$validated['toDate'];
+                      break;
+
+                }
+                else
+                {
+                    $query->orderBy('daily_entries.created_at', 'asc'); // تصحيح ترتيب النتائج
                     $startDate = $accountingPeriod->created_at?->format('Y-m-d') ?? 'غير متوفر';
                     $endDate = now()->toDateString();
                     break;
+                }
+          
             }
     
             // جلب القيود اليومية مع الإجماليات
@@ -701,32 +722,52 @@ return view('report.Final-full-disclosure', compact(
                  ->orOn('daily_entries.account_Credit_id', '=', 'sub_accounts.sub_account_id');
         })
         ->where('sub_accounts.sub_account_id', $id); // إضافة الشرط للحساب الفرعي
-        $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
         $startDate = null;
 $endDate = null;
 
       // تخصيص الفترة الزمنية بناءً على المدخلات
-      switch ($validated) {
+      switch ($validated['listradio'] ?? '') {
+        case '1': // 
+            $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
+            break;
         case '2': // اليوم
+            $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
+
             $startDate = now()->toDateString();
             $endDate = now()->toDateString();
             $query->whereDate('daily_entries.created_at', $startDate);
             break;
         case '3': // هذا الأسبوع
+            $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
+
             $startDate = now()->startOfWeek()->toDateString();
             $endDate = now()->endOfWeek()->toDateString();
             $query->whereBetween('daily_entries.created_at', [$startDate, $endDate]);
             break;
         case '4': // هذا الشهر
+            $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
+
             $startDate = now()->startOfMonth()->toDateString();
             $endDate = now()->endOfMonth()->toDateString();
             $query->whereMonth('daily_entries.created_at', now()->month)
                   ->whereYear('daily_entries.created_at', now()->year);
             break;
-        default: // عرض كل القيود
-            $startDate = $accountingPeriod->created_at?->format('Y-m-d') ?? 'غير متوفر';
-            $endDate = now()->toDateString();
-            break;
+            case '5': // هذا الشهر
+                if ($validated['fromDate'] && $validated['toDate']) 
+            {
+                $query->whereBetween('daily_entries.created_at',[$validated['fromDate'],$validated['toDate']]);
+                $startDate=$validated['fromDate'];
+                $endDate=$validated['toDate'];
+                  break;
+
+            }
+            else
+            {
+                $query->orderBy('daily_entries.created_at', 'asc'); // تصحيح ترتيب النتائج
+                $startDate = $accountingPeriod->created_at?->format('Y-m-d') ?? 'غير متوفر';
+                $endDate = now()->toDateString();
+                break;
+            }
     }
                                     // جلب القيود اليومية مع الإجماليات
                                     $entriesTotally = $query->get();
@@ -761,6 +802,7 @@ $endDate = null;
     public function showStatementSubAccountMyanalysis($validated, $id)
 {
     $Myanalysis="تحليلي";
+                    // dd( $validated['toDate']);
 
     $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
     $customer = SubAccount::where('sub_account_id',$id)->first(); // استرجاع بيانات العميل
@@ -799,33 +841,52 @@ $endDate = null;
         'daily_entries.entrie_id',
         'daily_entries.Invoice_id',
         'daily_entries.created_at'
-    )
-    ->orderBy('daily_entries.created_at', 'asc'); // تصحيح ترتيب النتائج
-    $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
+    );
     $startDate = null;
     $endDate = null;
           // تخصيص الفترة الزمنية بناءً على المدخلات
-          switch ($validated ?? '') {
+          switch ($validated['listradio'] ?? '') {
+            case '1': // اليوم
+                $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
+
+                break;
             case '2': // اليوم
+                $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
                 $startDate = now()->toDateString();
                 $endDate = now()->toDateString();
                 $query->whereDate('daily_entries.created_at', $startDate);
                 break;
             case '3': // هذا الأسبوع
+                $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
+
                 $startDate = now()->startOfWeek()->toDateString();
                 $endDate = now()->endOfWeek()->toDateString();
                 $query->whereBetween('daily_entries.created_at', [$startDate, $endDate]);
                 break;
             case '4': // هذا الشهر
+                $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
                 $startDate = now()->startOfMonth()->toDateString();
                 $endDate = now()->endOfMonth()->toDateString();
                 $query->whereMonth('daily_entries.created_at', now()->month)
                       ->whereYear('daily_entries.created_at', now()->year);
                 break;
-            default: // عرض كل القيود
-                $startDate = $accountingPeriod->created_at?->format('Y-m-d') ?? 'غير متوفر';
-                $endDate = now()->toDateString();
-                break;
+            case '5': // هذا الشهر
+                if ($validated['fromDate'] && $validated['toDate']) 
+                {
+                    $query->whereBetween('daily_entries.created_at',[$validated['fromDate'],$validated['toDate']]);
+                    $startDate=$validated['fromDate'];
+                    $endDate=$validated['toDate'];
+                      break;
+
+                }
+                else
+                {
+                    $query->orderBy('daily_entries.created_at', 'asc'); // تصحيح ترتيب النتائج
+                    $startDate = $accountingPeriod->created_at?->format('Y-m-d') ?? 'غير متوفر';
+                    $endDate = now()->toDateString();
+                    break;
+                }
+          
         }
                                 // جلب القيود اليومية مع الإجماليات
                                 $entries = $query->get();
@@ -901,32 +962,51 @@ $endDate = null;
                                     'daily_entries.entrie_id',
                                     'daily_entries.Invoice_id',
                                     'daily_entries.created_at'
-                                )
-                                ->orderBy('created_at', 'asc'); // تصحيح ترتيب النتائج
-                                $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
+                                );
 
                                 // dd($validated );
-                                switch ($validated ?? '') {
+                                switch ($validated['listradio'] ?? '') {
+                                    case '1': // اليوم
+                                        $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
+
+                                        break;
                                     case '2': // اليوم
+                                        $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
+
                                         $startDate = now()->toDateString();
                                         $endDate = now()->toDateString();
                                         $query->whereDate('daily_entries.created_at', $startDate);
                                         break;
                                     case '3': // هذا الأسبوع
+                                        $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
+
                                         $startDate = now()->startOfWeek()->toDateString();
                                         $endDate = now()->endOfWeek()->toDateString();
                                         $query->whereBetween('daily_entries.created_at', [$startDate, $endDate]);
                                         break;
                                     case '4': // هذا الشهر
+                                        $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
                                         $startDate = now()->startOfMonth()->toDateString();
                                         $endDate = now()->endOfMonth()->toDateString();
                                         $query->whereMonth('daily_entries.created_at', now()->month)
                                               ->whereYear('daily_entries.created_at', now()->year);
                                         break;
-                                    default: // عرض كل القيود
-                                        $startDate = $accountingPeriod->created_at?->format('Y-m-d') ?? 'غير متوفر';
-                                        $endDate = now()->toDateString();
-                                        break;
+                                        case '5': // هذا الشهر
+                                            if ($validated['fromDate'] && $validated['toDate']) 
+                                            {
+                                                $query->whereBetween('daily_entries.created_at',[$validated['fromDate'],$validated['toDate']]);
+                                                $startDate=$validated['fromDate'];
+                                                $endDate=$validated['toDate'];
+                                                  break;
+                            
+                                            }
+                                            else
+                                            {
+                                                $query->orderBy('daily_entries.created_at', 'asc'); // تصحيح ترتيب النتائج
+                                                $startDate = $accountingPeriod->created_at?->format('Y-m-d') ?? 'غير متوفر';
+                                                $endDate = now()->toDateString();
+                                                break;
+                                            }
                                 }
                                 
                                 // جلب القيود اليومية مع الإجماليات

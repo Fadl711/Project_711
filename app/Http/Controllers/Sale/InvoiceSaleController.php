@@ -109,6 +109,11 @@ class InvoiceSaleController extends Controller
 
 public function getSaleInvoice(Request $request, $filterType)
 {
+    $validated = $request->validate([
+      
+        'fromDate' => 'nullable',
+        'toDate' => 'nullable',
+    ]);
     $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
 
     if (!$accountingPeriod) {
@@ -116,31 +121,46 @@ public function getSaleInvoice(Request $request, $filterType)
     }
 
     $query = SaleInvoice::with(['customer.mainAccount', 'user'])
-        ->where('accounting_period_id', $accountingPeriod->accounting_period_id);
-
+;
     switch ($filterType) {
+        case '1':
+            $query->where('accounting_period_id', $accountingPeriod->accounting_period_id);
+            break;
         case '2':
+            $query->where('accounting_period_id', $accountingPeriod->accounting_period_id);
+
             $query->whereDate('created_at', now()->toDateString());
             break;
         case '3':
+            $query->where('accounting_period_id', $accountingPeriod->accounting_period_id);
+
             $query->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
             break;
         case '4':
+            $query->where('accounting_period_id', $accountingPeriod->accounting_period_id);
+
             $query->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year);
             break;
-        default:
-            $fromDate = $request->input('fromDate');
-            $toDate = $request->input('toDate');
-            if ($fromDate && $toDate) {
-                try {
-                    $fromDate = Carbon::parse($fromDate);
-                    $toDate = Carbon::parse($toDate);
-                } catch (\Exception $e) {
-                    return response()->json(['message' => 'تنسيق التواريخ غير صحيح.'], 400);
-                }
-                $query->whereBetween('created_at', [$fromDate, $toDate]);
-            }
+        case '5':
+         
+     // الفترة المخصصة
+     if ($request->filled(['fromDate', 'toDate'])) {
+
+        $query->whereBetween('created_at', [$validated['fromDate'], $validated['toDate']]);
+    }
             break;
+        default:
+          
+            // if ($fromDate && $toDate) {
+            //     try {
+            //         $fromDate = Carbon::parse($fromDate);
+            //         $toDate = Carbon::parse($toDate);
+            //     } catch (\Exception $e) {
+            //         return response()->json(['message' => 'تنسيق التواريخ غير صحيح.'], 400);
+            //     }
+            //     $query->whereBetween('created_at', [$fromDate, $toDate]);
+            // }
+            // break;
     }
 
     
@@ -298,12 +318,13 @@ public function searchInvoices(Request $request)
     $validated = $request->validate([
         'searchType' => 'nullable|string|in:كل الفواتير,أول فاتورة,آخر فاتورة',
         'searchQuery' => 'nullable|string|max:255',
+        'fromDate' => 'nullable',
+        'toDate' => 'nullable',
     ]);
 
+    
     // بناء الاستعلام الأساسي
-    $query = SaleInvoice::with(['customer', 'user'])
-        ->where('accounting_period_id', $accountingPeriod->accounting_period_id);
-        if ($validated['searchQuery'] ?? false) {
+    $query = SaleInvoice::with(['customer', 'user']);        if ($validated['searchQuery'] ?? false) {
             $searchQuery = $validated['searchQuery'];
 
             $query->where(function ($query) use ($searchQuery) {
@@ -316,12 +337,21 @@ public function searchInvoices(Request $request)
                 });
             });
         }
+        if ($request->filled(['fromDate', 'toDate'])) {
 
+            $query->whereBetween('created_at', [$validated['fromDate'], $validated['toDate']]);
+        }
+        else
+        {
+            $query->where('accounting_period_id', $accountingPeriod->accounting_period_id);
+            if ($validated['searchType'] && $validated['searchType'] !== 'كل الفواتير') {
+                $orderDirection = ($validated['searchType'] === 'أول فاتورة') ? 'asc' : 'desc';
+                $query->orderBy('created_at', $orderDirection);
+            }
+
+        }
     // ترتيب الفواتير حسب نوع البحث
-    if ($validated['searchType'] && $validated['searchType'] !== 'كل الفواتير') {
-        $orderDirection = ($validated['searchType'] === 'أول فاتورة') ? 'asc' : 'desc';
-        $query->orderBy('created_at', $orderDirection);
-    }
+   
  // dd($numeric);
 
  $user=auth()->id();

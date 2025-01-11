@@ -32,6 +32,9 @@
                 <input type="radio" name="list-radio" value="4" class="mr-2"> هذا الشهر
             </li>
             <li class="w-full flex items-center justify-center">
+                <input type="radio" name="list-radio" value="5" class="mr-2"> حسب التاريخ
+              </li>
+            <li class="w-full flex items-center justify-center">
                 <label class="text-sm font-medium">من:</label>
                 <input type="date" name="from-date" class="mx-2 p-2 border rounded-md focus:ring-2 focus:ring-indigo-500">
             </li>
@@ -52,6 +55,8 @@
     const searchTypeSelect = $('select[name="searchType"]');
     const searchInput = $('input[name="search"]');
     const radioInput = $('input[name="list-radio"]');
+    const fromDate = $('input[name="from-date"]');
+    const toDate = $('input[name="to-date"]');
     const displayContainer = $('#displayContainer');
     const displayContainer2 = $('#displayContainer2');
     let debounceTimeout;
@@ -171,8 +176,10 @@ window.open(url, '_blank', 'width=600,height=800');// فتح الرابط في �
             displayContainer2.removeClass("hidden");
             debounceTimeout = setTimeout(() => {
                 const searchType = searchTypeSelect.val();
+                const FromDate = fromDate.val();
+                const ToDate = toDate.val();
                 const baseUrl = "{{ url('/api/purchase-invoices') }}"; 
-              const url = `${baseUrl}?searchType=${searchType}&searchQuery=${searchQuery}`;
+              const url = `${baseUrl}?searchType=${searchType}&searchQuery=${searchQuery}&fromDate=${FromDate}&toDate=${ToDate}`;
  
                 fetchInvoices(url, displayContainer2);
             }, 500);
@@ -186,9 +193,12 @@ window.open(url, '_blank', 'width=600,height=800');// فتح الرابط في �
     // البحث بالاختيار
     radioInput.on('click', function () {
         const value = $(this).val();
-        const url ="{{ url('/api/purchase-invoices/') }}/"+value;
-        
+        const From_Date = fromDate.val();
+        const To_Date = toDate.val();
+        const baseUrl ="{{ url('/api/purchase-invoices') }}";
+        const url = `${baseUrl}/${value}?fromDate=${From_Date}&toDate=${To_Date}`;
         displayContainer.removeClass("hidden");
+        displayContainer2.addClass("hidden");
 
         fetchInvoices(url, displayContainer);
     });
