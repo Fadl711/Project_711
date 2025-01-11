@@ -28,11 +28,13 @@ class ReceipController extends Controller
     }
     private function removeCommas($value)
     {
+                return floatval(str_replace(',', '', $value)); // إزالة الفواصل وتحويل إلى float
+
         return floatval(str_replace(',', '', $value)); // إزالة الفواصل وتحويل إلى float
     }
  
     public function store(Request $request){
-       
+      // تحويل إلى عدد عشري
             $Amount_debit = $this->removeCommas($request->Amount_debit);
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
 
@@ -95,8 +97,8 @@ $paymentBond = PaymentBond::updateOrCreate(
             'daily_entries_type' => $paymentBond->transaction_type,
             'Invoice_id' => $paymentBond->payment_bond_id,
             'account_debit_id' => $paymentBond->Debit_sub_account_id,
-            'Amount_Credit' => $paymentBond->Amount_debit ?: 0,
-            'Amount_debit' => $paymentBond->Amount_debit ?: 0,
+            'Amount_Credit' => $Amount_debit ?: 0,
+            'Amount_debit' => $Amount_debit ?: 0,
             'account_Credit_id' => $paymentBond->Credit_sub_account_id,
             'Statement' => $paymentBond->Statement,
             'Daily_page_id' => $daily_page_id,

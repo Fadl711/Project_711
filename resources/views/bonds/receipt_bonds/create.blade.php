@@ -83,18 +83,20 @@
                        </div>
 
 
-                <div class="">
-                <label for="Amount_debit" class=" text-center " >المبلغ </label>
-                <input name="Amount_debit" id="Amount_debit"   required                       
-                type="text" placeholder="0"
-                @isset($ExchangeBond->Amount_debit)
-                    value="{{$ExchangeBond->Amount_debit}}"
-                      @endisset class="inputSale px-1"
-                      required 
-                      onblur="formatCurrency(this)">
-                       
-                </div>
-
+                       <div class="">
+                        <label for="Amount_debit" class="text-center">المبلغ</label>
+                        <input 
+                            name="Amount_debit" 
+                            id="Amount_debit" 
+                            type="text" 
+                            @isset($ExchangeBond->Amount_debit)
+                                value="{{ number_format($ExchangeBond->Amount_debit, 2, '.', ',') }}"  
+                            @endisset 
+                            class="inputSale px-1" 
+                            placeholder="0" 
+                            required 
+                            onblur="formatCurrency(this)">
+                    </div>
                 </div>
             </div>
             <div class=" text-center ">
@@ -173,11 +175,11 @@
         <input type="submit" id="submitButton"  @isset($submitButton) value="{{ $submitButton }}" @endisset class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"  value="حفظ" >
 
         </div>
-        <div class="mx-10" id="newInvoice" >
+        {{-- <div class="mx-10" id="newInvoice" >
             <button type="reset"  class="text-purple-700 hover:text-white border border-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-purple-400 dark:text-purple-400 dark:hover:text-white dark:hover:bg-purple-500 dark:focus:ring-purple-900">
                              الغاء السند
                   </button>
-            </div>
+            </div> --}}
             <div class="mx-10" id="" >
                 <label for="payment_bond_id" class="text-center ">  رقم السند</label>
                 <input type="text" id="payment_bond_id" name="payment_bond_id" @isset($ExchangeBond->payment_bond_id)value="{{$ExchangeBond->payment_bond_id}}"
@@ -199,25 +201,28 @@
 <script>
 
   $(document).ready(function() {
-
-    $('#Amount_debit ,#payment_bond_id').on('input', function() {
+    $('#Amount_debit').on('input', function() {
         let value = $(this).val();
-        // إزالة أي شيء ليس رقماً أو فاصلة عشرية
-        value = value.replace(/[^0-9.]/g, '');
-        // التأكد من أن الفاصلة العشرية تظهر مرة واحدة فقط
-        const parts = value.split('.');
-        if (parts.length > 2) {
-            value = parts[0] + '.' + parts.slice(1).join('');
-        }
-        // إضافة الفاصلة بعد كل ثلاثة أرقام (فصل الآلاف)
-        if (value) 
-        {
-            let [integer, decimal] = value.split('.');
-            integer = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ",");  // إضافة الفواصل بين الآلاف
-            value = decimal ? integer + '.' + decimal : integer;  // إعادة تركيب الرقم
-        }
-        // تعيين القيمة المعدلة للحقل
-        $(this).val(value);
+    // إزالة أي شيء ليس رقمًا أو فاصلة عشرية
+    value = value.replace(/[^0-9.]/g, '');
+    let amountValue = $('#Amount_debit').val();
+    amountValue = amountValue.replace(/,/g, '');
+    // التأكد من أن الفاصلة العشرية تظهر مرة واحدة فقط
+    const parts = value.split('.');
+    if (parts.length > 2) {
+        value = parts[0] + '.' + parts.slice(1).join('');
+    }
+    
+    // إضافة الفاصلة بعد كل ثلاثة أرقام (فصل الآلاف)
+    if (value) {
+        let [integer, decimal] = value.split('.');
+        integer = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ","); // إضافة الفواصل بين الآلاف
+        value = decimal ? integer + '.' + decimal : integer; // إعادة تركيب الرقم
+      
+    }
+    
+    // تعيين القيمة المعدلة للحقل
+    $(this).val(value);
     });
     $('#PaymentParty').on('change', function() {
     const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي (الدائن)
@@ -226,6 +231,7 @@
 
     // التحقق من وجود قيمة في الحساب الرئيسي
     if (mainAccountId) {
+        
         // طلب AJAX لجلب الحسابات الفرعية بناءً على الحساب الرئيسي
         $.ajax({
             url: "{{ url('/main-accounts/') }}/" + mainAccountId + "/sub-accounts", // استخدام القيم الديناميكية
@@ -292,9 +298,13 @@ $(document).ready(function() {
 
     $('#submitButton').click(function(event) {
         event.preventDefault();
-      const Amount_debit=  $('#Amount_debit').val(); 
+    //   const Amount_debit=  $('#Amount_debit').val(); 
       const CreditAmount=  $('#CreditAmount').val(); 
       const DepositAccount=  $('#DepositAccount').val(); 
+      let Amount_debit = $('#Amount_debit').val();
+      Amount_debit = Amount_debit.replace(/,/g, ''); // إزالة جميع الفواصل
+        $('#Amount_debit').val(Amount_debit);
+      // تعيين القيمة المعدلة للحقل
         var buttonValue = $(this).val(); // الحصول على قيمة الزر الذي تم الضغط عليه
           if(Amount_debit<0)
           {
@@ -323,6 +333,7 @@ $(document).ready(function() {
         var formData = $('#Receip').serialize();
         if(Amount_debit>0 && CreditAmount && DepositAccount)
         {
+          
         // إرسال الطلب باستخدام AJAX
         $.ajax({
             url: '{{ route("Receip.store") }}',
