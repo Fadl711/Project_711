@@ -1,45 +1,47 @@
 @extends('layout')
 @section('conm')
-<div class="container mx-auto">
-    <h1 class="text-2xl font-bold mb-4">الموردين الافتراضيين</h1>
-    @if ($defaultSuppliers!=null)
+@if (session('success'))
+<div id="success-message" class="alert alert-success">
+    {{ session('success') }}
+</div>
+@endif
 
-    @if (isset($defaultSuppliers))
-                    
-    <a href="{{ route('default_suppliers.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded">إضافة مورد جديد</a>
-    @endif
-    @endif
-    <table class="min-w-full bg-white border border-gray-300 mt-4">
-        <thead>
-            <tr>
-                <th class="py-2 px-4 border-b">الاسم</th>
-                <th class="py-2 px-4 border-b">الهاتف</th>
-                <th class="py-2 px-4 border-b">الإجراءات</th>
-            </tr>
-        </thead>
-        <tbody>
-            @auth
-                @if (isset($defaultSuppliers))
-                    
-              
-            @foreach ($defaultSuppliers as $supplier)
-            <tr>
-                <td class="py-2 px-4 border-b">{{ $supplier->name }}</td>
-                <td class="py-2 px-4 border-b">{{ $supplier->Phone }}</td>
-                <td class="py-2 px-4 border-b">
-                    <a href="{{ route('default_suppliers.edit', $supplier->id) }}" class="text-blue-500">تعديل</a>
-                    <form action="{{ route('default_suppliers.destroy', $supplier->id) }}" method="POST" class="inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="text-red-500">حذف</button>
-                    </form>
-                </td>
-            </tr>
-            @endforeach
-            @endif
-            @endauth
 
-        </tbody>
-    </table>
+@if (session('error'))
+<div id="success-danger" class="alert alert-danger">
+{{ session('error') }}
+</div>
+@endif
+<script>
+// التأكد من وجود عنصر الرسالة
+window.onload = function() {
+    const message = document.getElementById('success-message');
+    const messagedanger = document.getElementById('success-danger');
+
+    if (message ) {
+        setTimeout(() => {
+            message.style.display = 'none'; // إخفاء الرسالة
+        }, 3000); // 3000 مللي ثانية = 3 ثواني
+    }
+    if (messagedanger ) {
+        setTimeout(() => {
+            messagedanger.style.display = 'none'; // إخفاء الرسالة
+        }, 3000); // 3000 مللي ثانية = 3 ثواني
+    }
+};
+</script>
+<div class="container mx-auto  shadow-sm bg-white flex">
+    <div class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+        <form action="{{ route('route.clear') }}" method="POST">
+            @csrf
+            <button type="submit" class="btn btn-danger">تحديث المسارات</button>
+        </form>
+    </div>
+    <div class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+        <form action="{{ route('git.pull') }}" method="POST">
+            @csrf
+            <button type="submit" class="btn btn-primary">تحديث المشروع</button>
+        </form>
+    </div>
 </div>
 @endsection

@@ -4,7 +4,7 @@
 <!-- component -->
 <aside class=" bg-white h-screen shadow-md flex flex-col justify-between">
     <div class="p-6">
-        <h1 class="text-xl font-bold mb-4">الإعدادات الإفتراضية</h1>
+   
         <nav class="space-y-2">
             <a href="{{route('company_data.settings.create')}}" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
                 <span class="mr-3">
@@ -24,7 +24,9 @@
                 </span>
                 <span>العملات</span>
             </a>
-            <a href="#" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+           
+           
+            {{-- <a href="#" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
                 <span class="mr-3">
                     <!-- Analytics Icon -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -32,7 +34,7 @@
                     </svg>
                 </span>
                 <span>اعدادات الجرد</span>
-            </a>
+            </a> --}}
             <a href="{{route('Locks_financial_period.index')}}" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
                 <span class="mr-3">
                     <!-- Messages Icon -->
@@ -42,15 +44,7 @@
                 </span>
                 <span>الإقفال السنوي</span>
             </a>
-            <a href="{{route('default_suppliers.index')}}" class="flex items-center p-2 text-gray-700 bg-gray-100 rounded">
-                <span class="mr-3">
-                    <!-- Leads Icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354c-4.418 0-8 1.79-8 4v7.99a3 3 0 003 3h2m3 0h6a3 3 0 003-3V8.354c0-2.21-3.582-4-8-4zM12 1v3M9.879 5.879l-2.121 2.122M4 9h3M20 9h-3M14.121 5.879l2.122 2.122" />
-                    </svg>
-                </span>
-                <span>المورد الافتراضي</span>
-            </a>
+           
             <hr class="my-2 border-gray-300">
             <a href="{{route('default_customers.index')}}" class="flex items-center p-2 text-gray-700 bg-gray-100 rounded">
                 <span class="mr-3">
@@ -59,7 +53,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20h10M12 4v16m0 0H8m4 0h4" />
                     </svg>
                 </span>
-                <span>العميل الافتراضي</span>
+                <span>الإعدادات الإفتراضية</span>
             </a>
 {{--             <a href="{{route('warehouse.index')}}" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
                 <span class="mr-3">
@@ -97,6 +91,7 @@
                 </span>
                 <span>  التحكم بالصلاحيات </span>
             </a>
+
             <a href="{{route('backup.form')}}" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
                 <span class="mr-3">
                     <!-- Embed Icon -->
@@ -105,6 +100,15 @@
                     </svg>
                 </span>
                 <span>نسخ احتياطي للبيانات</span>
+            </a>
+            <a href="{{route('default_suppliers.index')}}" class="flex items-center p-2 text-gray-700 bg-gray-100 rounded">
+                <span class="mr-3">
+                    <!-- Leads Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354c-4.418 0-8 1.79-8 4v7.99a3 3 0 003 3h2m3 0h6a3 3 0 003-3V8.354c0-2.21-3.582-4-8-4zM12 1v3M9.879 5.879l-2.121 2.122M4 9h3M20 9h-3M14.121 5.879l2.122 2.122" />
+                    </svg>
+                </span>
+                <span> اعدادات النظام</span>
             </a>
 {{--             <a href="#" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
                 <span class="mr-3">

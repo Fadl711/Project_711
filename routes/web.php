@@ -57,7 +57,6 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth'])->group(function () {
 Route::get('/all-products/{id}/show', [ProductCoctroller::class, 'allProducts'])->name('all-products');
 Route::get('/all-products/{id}/print', [ProductCoctroller::class, 'print'])->name('report.print');
-
 Route::get('/products', [ProductCoctroller::class, 'index'])->name('products.index');
 Route::get('/products/create', [ProductCoctroller::class, 'create'])->name('products.create');
 Route::post('/products/store', [ProductCoctroller::class, 'store'])->name('products.store');
@@ -74,6 +73,35 @@ Route::put('/Category/{Category}', [CategoryController::class, 'update'])->name(
 Route::delete('/Category/{Category}',[CategoryController::class,'destroy'])->name('Category.destroy');
 
 
+
+Route::post('/route-clear', function () {
+    $result = Artisan::call('route:clear');
+
+    if ($result === 0) {
+        // إذا نجح الأمر
+        return redirect()->back()->with('success', 'تم تحديث المسارات بنجاح');
+    } else {
+        // إذا فشل الأمر
+        return redirect()->back()->with('error', 'فشل في تحديث المسارات');
+    }
+})->name('route.clear');
+
+Route::post('/git-pull', function () {
+   // تنفيذ الأمر git pull
+   $output = [];
+   $resultCode = 0;
+
+   // استخدام shell_exec لالتقاط النتائج
+   $output = shell_exec('git pull 2>&1'); // جمع الأخطاء إلى الناتج
+   $resultCode = $output === null ? 1 : 0; // إذا كان الناتج null، يعني أن هناك خطأ
+
+   // التحقق من النتيجة
+   if ($resultCode === 0) {
+       return redirect()->back()->with('success', 'تم تحديث المشروع بنجاح');
+   } else {
+       return redirect()->back()->with('error', 'فشل في تحديث المشروع: ' . $output);
+   }
+})->name('git.pull');
 
 Route::get('/Default_Supplier', [default_supplierController::class, 'index'])->name('default_suppliers.index');
 Route::get('/Default_Supplier/create', [default_supplierController::class, 'create'])->name('default_suppliers.create');
@@ -118,7 +146,6 @@ Route::delete('/purchases/{id}',[PurchaseController::class,'destroy'])->name('pu
 Route::delete('/purchase-invoices/{id}', [InvoicePurchaseController::class, 'deleteInvoice'])->name('purchase-invoice.delete');
 
 Route::get('/balancing', [AccountCoctroller::class, 'balancing'])->name('accounts.balancing');
-
 Route::get('/sales', [SaleController::class, 'create'])->name('sales.create');
 Route::post('/invoiceSales/store', [InvoiceSaleController::class, 'store'])->name('invoiceSales.store');
 Route::get('/invoice_sales', [AllBillsController::class, 'all_invoices_sale'])->name('invoice_sales.all_invoices_sale');
@@ -282,7 +309,6 @@ Route::delete('/accounts/Main_Account/{id}', [MainaccountController::class, 'des
 Route::get('/accounts/main-accounts/{type}', [MainaccountController::class, 'getMainAccountsByType']);
 Route::put('/accounts/Main_Account/{id}', [MainaccountController::class, 'update'])->name('accounts.Main_Account.update');
 
-Route::get('/home', [HomeCoctroller::class, 'indxe'])->name('home.index');
 
 
 // Route::get('/search', [MainaccountController::class, 'search']);
@@ -294,7 +320,6 @@ Route::get('/', [HomeCoctroller::class, 'index'])->name('home.index');
 
 
 
-    Route::get('/home', [HomeCoctroller::class, 'index'])->name('home.index');
 
 
 });

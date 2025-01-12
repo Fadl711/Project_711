@@ -298,7 +298,6 @@ $(document).ready(function() {
 
     $('#submitButton').click(function(event) {
         event.preventDefault();
-    //   const Amount_debit=  $('#Amount_debit').val(); 
       const CreditAmount=  $('#CreditAmount').val(); 
       const DepositAccount=  $('#DepositAccount').val(); 
       let Amount_debit = $('#Amount_debit').val();
