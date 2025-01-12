@@ -83,7 +83,7 @@ $paymentBond = PaymentBond::updateOrCreate(
         }
         $Getentrie_id = DailyEntrie::where('Invoice_id', $paymentBond->payment_bond_id)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-        ->where('daily_entries_type', $paymentBond->transaction_type)
+        ->whereIn('daily_entries_type', ['سند صرف', 'سند قبض'])
         ->first();
     
     $entrie_id = $Getentrie_id->entrie_id ?? null;
