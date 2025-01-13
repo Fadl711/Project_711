@@ -144,7 +144,7 @@
                             @endisset
 
                         </td>
-                       
+
                         <td class=" text-right">{{ number_format($Sale->total_amount )}}</td>
 
                     </tr>
@@ -161,11 +161,11 @@
                     }
                 @endphp
                 <tr class="bg-[#1749fd15] ">
-                  
-                    
+
+
                     <th colspan="{{$x}}" class="font-bold text-right px-2 "> </th>
                     @if ($discount>0)
-                        
+
                     <th class="font-bold text-red-500 px-2 ">الخصم</th>
                     @endif
                     <th class="font-bold text- px-2 ">الإجمالي</th>
@@ -245,7 +245,7 @@
                 <div>
                     <p class=" text-sm" dir="ltr">................ توقيع المستلم</p>
                 </div>
-                <span class="-translate-y-40">{{$thanks ?? ''}}</span>
+                <span class="">{{$thanks ?? ''}}</span>
                 <div>
                     <p class=" text-sm" dir="ltr">  المستخدم: {{($UserName) }}</p>
                 </div>
