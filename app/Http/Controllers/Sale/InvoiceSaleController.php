@@ -262,7 +262,7 @@ public function print($id)
     })
     ->where('sub_accounts.sub_account_id', $SubAccount->sub_account_id);
     // إضافة الشرط للحساب الفرعي
-    // $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
+    $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
     $entriesTotally = $query->get();
     $SumDebtor_amount = $entriesTotally->sum('total_debit');
     $SumCredit_amount = $entriesTotally->sum('total_credit');

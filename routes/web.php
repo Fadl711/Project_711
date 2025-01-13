@@ -43,6 +43,7 @@ use App\Http\Controllers\settingController\default_customerController;
 use App\Http\Controllers\settingController\default_supplierController;
 
 use App\Http\Controllers\settingController\WarehouseController;
+use App\Http\Controllers\SmsController;
 use App\Http\Controllers\Transfers\TransferController;
 use App\Http\Controllers\UserPermissionController;
 use App\Http\Controllers\UsersController\UsersController;
@@ -122,7 +123,7 @@ Route::post('/git-pull', function () {
        return redirect()->back()->with('success', 'تم تحديث المشروع بنجاح.');
    }
 })->name('git.pull');
-
+Route::post('/send-sms', [SmsController::class, 'sendSms'])->name('send.sms');
 Route::get('/Default_Supplier', [default_supplierController::class, 'index'])->name('default_suppliers.index');
 Route::get('/Default_Supplier/create', [default_supplierController::class, 'create'])->name('default_suppliers.create');
 Route::post('Default_Supplier/store', [default_supplierController::class, 'store'])->name('default_suppliers.store');

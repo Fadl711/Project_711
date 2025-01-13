@@ -43,5 +43,23 @@ window.onload = function() {
             <button type="submit" class="btn btn-primary">تحديث المشروع</button>
         </form>
     </div>
+    @if (session('success'))
+        <p style="color: green;">{{ session('success') }}</p>
+    @endif
+    @if (session('error'))
+        <p style="color: red;">{{ session('error') }}</p>
+    @endif
+    <form action="{{route('send.sms')}}" method="POST">
+        @csrf
+        <label for="to">رقم الهاتف:</label>
+        <input type="text" id="to" name="to" required>
+        <br>
+        <label for="message">الرسالة:</label>
+        <textarea id="message" name="message" required></textarea>
+        <br>
+        <button type="submit" class="btn btn-primary">إرسال </button>
+
+        {{-- <button type="submit">إرسال</button> --}}
+    </form>
 </div>
 @endsection
