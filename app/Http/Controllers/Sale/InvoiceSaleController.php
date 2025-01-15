@@ -346,84 +346,7 @@ private function updateSales($updateSale, $validatedData, $DefaultCustomer)
     }
 }
 
-private function createOrUpdateDailyEntry($saleInvoice, $account_Credit, $account_debit, $net_total_after_discount, $Getentrie_id, $transactiontype, $daily_page_id, $payment_type)
-{
-    // التحقق من وجود الفترة المحاسبية
-    $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
-    if (!$accountingPeriod) {
-        return response()->json(['success' => false, 'message' => 'لا توجد فترة محاسبية مفتوحة.']);
-    }
 
-    // التحقق من وجود الصفحة اليومية
-    $today = Carbon::now()->toDateString();
-    $dailyPage = GeneralJournal::whereDate('created_at', $today)->latest()->first();
-
-    if (!$dailyPage) {
-        $dailyPage = GeneralJournal::create([
-            'accounting_period_id' => $accountingPeriod->accounting_period_id,
-        ]);
-    }
-
-    if (!$dailyPage || !$dailyPage->page_id) {
-        return response()->json(['success' => false, 'message' => 'فشل في إنشاء صفحة يومية']);
-    }
-// dd($saleInvoice->sales_invoice_id);
-    // الحصول على التعليق المناسب
-    $commint = $this->getComment($saleInvoice);
-    $payment_type = intval($payment_type);
-    // تحديث أو إنشاء القيد
-    // try {
-         if($payment_type==1)
-         {
-
-            $payment_typeText="نقدا";
-
-         }
-         if($payment_type==2)
-         {
-
-            $payment_typeText="اجل";
-
-         }
-         if($payment_type==3)
-         {
-
-            $payment_typeText="تحويل بنكي";
-
-         }
-         if($payment_type==4)
-         {
-
-            $payment_typeText="شيك";
-
-         }
-        $dailyEntrie = DailyEntrie::updateOrCreate(
-            [
-                'entrie_id' => $Getentrie_id,
-                'accounting_period_id' => $accountingPeriod->accounting_period_id,
-                'Invoice_id' => $saleInvoice->sales_invoice_id,
-                'daily_entries_type' => $transactiontype,
-            ],
-            [
-                'account_Credit_id' => $account_Credit,
-                'account_debit_id' => $account_debit,
-                'Amount_Credit' => $net_total_after_discount ?: 0,
-                'Amount_debit' => $net_total_after_discount ?: 0,
-                'Statement' => $commint . " " . $transactiontype . " " . $payment_typeText,
-                'Daily_page_id' => $daily_page_id ?? $dailyPage->page_id,
-                'Invoice_type' => $payment_type,
-                'Currency_name' => 'ر',
-                'User_id' => auth()->user()->id,
-                'status_debit' => 'غير مرحل',
-                'status' => 'غير مرحل',
-            ]
-        );
-
-        return response()->json(['success' => true, 'message' => 'تم تحديث القيد المحاسبي بنجاح.']);
-    // } catch (\Exception $e) {
-    //     return response()->json(['success' => false, 'message' => 'حدث خطأ أثناء تحديث القيد المحاسبي: ' . $e->getMessage()]);
-    // }
-}
 
 private function getComment($saleInvoice)
 {
@@ -615,8 +538,8 @@ public function print($id)
     // تحويل القيمة إلى نص مكتوب
     $numberToWords = new NumberToWords();
     $numberTransformer = $numberToWords->getNumberTransformer('ar');
-  $numeric=is_numeric($Sale_priceSum) 
-    ? $numberTransformer->toWords($Sale_priceSum) . ' ' . $curre->currency_name
+  $numeric=is_numeric($Sale_priceSum- $saleInvoice->discount) 
+    ? $numberTransformer->toWords($Sale_priceSum- $saleInvoice->discount) . ' ' . $curre->currency_name
     : 'القيمة غير صالحة';
     // اللغة العربية
     $thanks="شكراً لتعاملك معنا";
