@@ -267,7 +267,7 @@ private function handleTransactionType5($saleInvoice, $validatedData, $DefaultCu
    
 
     $this->updateSales($updateSale, $validatedData, $DefaultCustomer);
-    $this->saleInvoiceupdate($validatedData,$saleInvoice, $account_Credit, $account_debit, $net_total_after_discount, $Getentrie_id, $transactiontype, $daily_page_id, $payment_type);
+    $this->saleInvoiceupdate($validatedData,$saleInvoice, $account_Credit, $account_debit, $net_total_after_discount, $Getentrie_id, $transactiontype, $daily_page_id,  $validatedData['payment_type']);
   
 }
 
@@ -533,7 +533,6 @@ public function print($id)
     $entriesTotally = $query->get();
     $SumDebtor_amount = $entriesTotally->sum('total_debit');
     $SumCredit_amount = $entriesTotally->sum('total_credit');
-
     $Sum_amount=$SumDebtor_amount-$SumCredit_amount;
     // تحويل القيمة إلى نص مكتوب
     $numberToWords = new NumberToWords();

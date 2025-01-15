@@ -161,11 +161,8 @@
                     }
                 @endphp
                 <tr class="bg-[#1749fd15] ">
-
-
                     <th colspan="{{$x}}" class="font-bold text-right px-2 "> </th>
                     @if ($discount>0)
-
                     <th class="font-bold text-red-500 px-2 ">الخصم</th>
                     @endif
                     <th class="font-bold text- px-2 ">الإجمالي</th>

@@ -293,28 +293,41 @@ class SaleController extends Controller
             if (!$dailyPage || !$dailyPage->page_id) {
                 return response()->json(['success' => false, 'message' => 'فشل في إنشاء صفحة يومية']);
             }
-
-
-            if (in_array($saleInvoice->payment_type, [1, 3, 4]))
+            if($saleInvoice->transaction_type ===4)
+            {
+                 if (in_array($saleInvoice->payment_type, [1, 3, 4]))
             {
                      $commint="لكم";
 
 
-
-            } elseif
+            }
+            elseif
              ($saleInvoice->payment_type ===2)
               {
-                if($saleInvoice->transaction_type ===4)
-                {
-                    $commint="عليكم فاتورة";
-                }
-                if($saleInvoice->transaction_type ===5)
-                {
-                    $commint="لكم فاتورة";
-                }
-
+               
+                $commint="عليكم فاتورة";
 
             }
+            }
+
+            
+               
+                if($saleInvoice->transaction_type ===5)
+                {
+                    if (in_array($saleInvoice->payment_type, [1, 3, 4]))
+                      {
+                          $commint=" فاتورة";
+                      }
+                    if($saleInvoice->payment_type ===2)
+              {
+                  $commint="لكم فاتورة";
+
+              }
+
+                }
+
+
+            
          $transactiontype=   TransactionType::fromValue($saleInvoice->transaction_type)?->label();
                          // إنشاء أو تحديث الإدخالات اليومية
             $dailyEntrie = DailyEntrie::updateOrCreate(
