@@ -716,11 +716,17 @@ $ProductNew = Product::updateOrCreate(
             }
             if ($Quantity >0)
             {
+                $entrie_id = Purchase::where('purchase_id', $request->purchase_id)
+        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        ->whereIn('transaction_type', [6,7])
+        ->first();
+        $transaction_type= $entrie_id->transaction_type;
+
             $purchase = Purchase::updateOrCreate(
                 [
                     'accounting_period_id' => $accountingPeriod->accounting_period_id,
                     'purchase_id' => $request->purchase_id,
-                    'transaction_type' => 6,
+                    'transaction_type' =>  $transaction_type ?? 6,
 
                 ],
                 [
@@ -778,7 +784,7 @@ $ProductNew = Product::updateOrCreate(
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
         $purchaseid= Purchase::where('product_id', $id)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-        ->where('transaction_type', 6)
+        ->whereIn('transaction_type', [6,7])
         ->first();
  $purchaseid=$purchaseid->purchase_id?? null;
         $editProduct="تعديل الصنف";

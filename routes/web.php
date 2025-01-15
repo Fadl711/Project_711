@@ -167,9 +167,11 @@ Route::delete('/purchases/{id}',[PurchaseController::class,'destroy'])->name('pu
 Route::delete('/purchase-invoices/{id}', [InvoicePurchaseController::class, 'deleteInvoice'])->name('purchase-invoice.delete');
 
 Route::get('/balancing', [AccountCoctroller::class, 'balancing'])->name('accounts.balancing');
-Route::get('/sales', [SaleController::class, 'create'])->name('sales.create');
 Route::post('/invoiceSales/store', [InvoiceSaleController::class, 'store'])->name('invoiceSales.store');
+Route::post('/invoiceSales/update', [InvoiceSaleController::class, 'update'])->name('invoiceSales.update');
+
 Route::get('/invoice_sales', [AllBillsController::class, 'all_invoices_sale'])->name('invoice_sales.all_invoices_sale');
+Route::get('/sales', [SaleController::class, 'create'])->name('sales.create');
 Route::post('/sales/store', [SaleController::class, 'store'])->name('sales.store');
 Route::get('/sales/{id}',[SaleController::class,'edit'])->name('sales.edit');
 Route::delete('/sales/{id}',[SaleController::class,'destroy'])->name('sales.destroy');

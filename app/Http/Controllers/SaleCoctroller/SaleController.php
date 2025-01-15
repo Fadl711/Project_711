@@ -65,9 +65,6 @@ class SaleController extends Controller
  ->where('Authority_Name',$AuthorityName)
  ->first();
  if (optional($us)->Readability == 1) {
-   
- 
-
         $purchasePrice = $this->removeCommas($request->Purchase_price);
         $Selling_price = $this->removeCommas($request->Selling_price);
         $total_price = $this->removeCommas($request->total_price);
@@ -114,6 +111,7 @@ class SaleController extends Controller
          
            // حفظ أو تحديث عملية البيع
            $Transaction_type=  $saleInvoice->transaction_type;
+
             $sales = Sale::updateOrCreate(
                 [
                     'accounting_period_id' => $accountingPeriod->accounting_period_id,
@@ -147,6 +145,8 @@ class SaleController extends Controller
             $total_price_sale = Sale::where('Invoice_id', $saleInvoice->sales_invoice_id )
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->sum('total_amount');
+          
+
             $net_total_after_discount = Sale::where('Invoice_id', $saleInvoice->sales_invoice_id )
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->sum('total_price');
@@ -156,32 +156,70 @@ class SaleController extends Controller
             $paid_amount = 0;
             $account_debit = null;
             $account_Credit = null;
-            
+            if($saleInvoice->payment_type==1)
+            {
+   
+               $payment_type="نقدا";
+   
+            }
+            if($saleInvoice->payment_type==2)
+            {
+   
+               $payment_type="اجل";
+   
+            }
+            if($saleInvoice->payment_type==3)
+            {
+   
+               $payment_type="تحويل بنكي";
+   
+            }
+            if($saleInvoice->payment_type==4)
+            {
+   
+               $payment_type="شيك";
+   
+            }
+            $DefaultCustomer = Default_customer::where('id', 1)->first();
+            $warehouse_id = SubAccount::where('sub_account_id', $DefaultCustomer->warehouse_id)->value('sub_account_id'); 
             // تحديد الحساب المدين والمبلغ المدفوع بناءً على نوع الدفع
-            if ($saleInvoice->transaction_type ===4) {
-        }          
+            if ($saleInvoice->transaction_type ===4) 
+            {
+               
         if (in_array($saleInvoice->payment_type, [1, 3, 4])){
-        $payment_type="نقدا";
                 $account_Credit= $request->account_debitid;
                 $account_debit = $saleInvoice->account_id;
                 $paid_amount = $net_total_after_discount;
 
             } elseif ($saleInvoice->payment_type === 2)
              {
-                $payment_type="اجل";
-
-                $account_Credit= $request->account_debitid;
+                $account_Credit= $warehouse_id ;
                 $account_debit= $saleInvoice->Customer_id;
-                $paid_amount = $net_total_after_discount - $discount;
-                $paid_amount = 0;
+                $paid_amount = $net_total_after_discount;
             
             }
+        }  
+
+            if ($saleInvoice->transaction_type ===5) 
+            {
+              
+        if (in_array($saleInvoice->payment_type, [1, 3, 4])){
+                $account_Credit=$warehouse_id ;
+                $account_debit = $saleInvoice->account_id;
+                $paid_amount = $net_total_after_discount;
+
+            } elseif ($saleInvoice->payment_type === 2)
+             {
+                $account_Credit=$saleInvoice->Customer_id ;
+                $account_debit= $saleInvoice->account_id ;
+                $paid_amount = $net_total_after_discount;
+            }
+        } 
             
             // تحديث بيانات الفاتورة
             $saleInvoice->update([
                 'total_price_sale' => $total_price_sale,
                 'net_total_after_discount' => $net_total_after_discount,
-
                 'discount' => $discount,
                 'paid_amount' => $paid_amount,
                 'remaining_amount' => $net_total_after_discount - $paid_amount,
@@ -207,11 +245,8 @@ class SaleController extends Controller
              $Getentrie_id= $entrie_id->entrie_id ?? null;
                 $daily_page_id = $entrie_id->Daily_page_id ?? $dailyPage->page_id;
             
-                if ($saleInvoice->transaction_type ==4) {
-
                     $this->createOrUpdateDailyEntry($saleInvoice, $accountingPeriod,$account_Credit, $account_debit, $net_total_after_discount,$Getentrie_id,$payment_type,$daily_page_id);
-
-                }          
+                     
         
 
             // الاستجابة بنجاح
@@ -260,14 +295,25 @@ class SaleController extends Controller
             }
 
 
-            $commint="لكم";
-                if (in_array($saleInvoice->payment_type, [1, 3, 4]))
-                 {
+            if (in_array($saleInvoice->payment_type, [1, 3, 4]))
+            {
+                     $commint="لكم";
+
 
 
             } elseif
-             ($saleInvoice->payment_type ===2) {
-                $commint="عليكم فاتورة";
+             ($saleInvoice->payment_type ===2)
+              {
+                if($saleInvoice->transaction_type ===4)
+                {
+                    $commint="عليكم فاتورة";
+                }
+                if($saleInvoice->transaction_type ===5)
+                {
+                    $commint="لكم فاتورة";
+                }
+
+
             }
          $transactiontype=   TransactionType::fromValue($saleInvoice->transaction_type)?->label();
                          // إنشاء أو تحديث الإدخالات اليومية
@@ -284,7 +330,7 @@ class SaleController extends Controller
                     'Amount_Credit' => $net_total_after_discount ?: 0,
                     'Amount_debit' => $net_total_after_discount ?: 0,
                     'Statement' => $commint." ".$transactiontype." ".PaymentType::tryFrom($saleInvoice->payment_type)?->label() ,
-                    'Daily_page_id' => $daily_page_id,
+                    'Daily_page_id' => $daily_page_id ?? $dailyPage->page_id,
                     'Invoice_type' => $saleInvoice->payment_type,
                     'Currency_name' => 'ر',
                     'User_id' =>auth()->user()->id,
@@ -449,8 +495,10 @@ public function getSalesByInvoiceArrowLeft(Request $request)
     return response()->json([
         'sales' => $sales,
         'last_invoice_id' => $SaleInvoice->sales_invoice_id,
+        'SaleInvoice' => $SaleInvoice,
     ]);
 }
+
 
 public function getSalesByInvoiceArrowRight(Request $request)
 {

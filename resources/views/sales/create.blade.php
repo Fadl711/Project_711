@@ -2,13 +2,11 @@
 @section('conm')
 {{-- <p class="text-right  " > بيانات الدفع</p> --}}
 <style>
-    .select2-container--default .select2-dropdown {
-    max-height: 200px; /* ارتفاع القائمة */
-    overflow-y: auto; /* تمكين التمرير إذا تجاوز المحتوى الارتفاع */
-}
+
 .select2-container--default .select2-selection--single {
     height: 40px; /* ارتفاع العنصر الأساسي */
-    line-height: 45px; لتوسيط النص عموديًا
+    line-height: 45px; 
+    
 }
 .select2-container--default .select2-selection__rendered {
     padding-top: 5px; /* تحسين النصوص */
@@ -20,8 +18,9 @@
 <div class="min-w-[20%] px-1  bg-white rounded-xl ">
     <div class=" flex items-center">
         <div class="w-full min-w-full  py-1">
-            <form id="invoiceSales"   >
+            <form id="invoiceSales" method="POST">
                 @csrf
+                
                 <div class="flex gap-4">
                     @isset($PaymentType)
                     @foreach ($PaymentType as $index => $item)
@@ -32,7 +31,7 @@
                        @endforeach
                        @endisset
                 </div>
-                <div class="grid md:grid-cols-8 gap-2 text-right">
+                <div class="grid md:grid-cols-8   gap-2 text-right">
                     <div>
                         <label for="transaction_type" class="labelSale">نوع العملية</label>
                         <select dir="ltr" id="transaction_type" class="inputSale input-field" name="transaction_type">
@@ -107,9 +106,13 @@
                             إضافة الفاتورة
                         </button>
                     </div> --}}
+                
+                </div>
+                <div class="grid md:grid-cols-4   gap-2 text-right " id="grid2">
+
                     <div>
                         <label for="financial_account_id_main" class="labelSale"> حساب الدفع</label>
-                        <select name="financial_account_id_main" id="financial_account_id_main" dir="ltr" class="input-field select2 inputSale" required>
+                        <select name="financial_account_id_main" id="financial_account_id_main" dir="ltr" class=" select2 inputSale" >
                             @isset($MainAccounts)
                                 <option value="" selected>اختر الحساب</option>
                                 @foreach ($MainAccounts as $mainAccount)
@@ -137,7 +140,7 @@
     
                         </select>
                     </div>
-                </div>
+                    </div>
             </form>
         </div>
     </div>
@@ -618,7 +621,8 @@ function editDataSale(id) {
     });
 }
 $(document).on('click', '#delete_invoiceSales', function (e) {
-    e.preventDefault();    const invoiceId = $('#sales_invoice_id').val();        // الحصول على معرف الفاتورة من الحقل
+    e.preventDefault(); 
+       const invoiceId = $('#sales_invoice_id').val();        // الحصول على معرف الفاتورة من الحقل
     if (!invoiceId) {
         $('#errorMessage').show().text('لم يتم العثور على معرف الفاتورة.');
         setTimeout(() => {
@@ -686,6 +690,18 @@ function fetchSalesByInvoice(url, currentInvoiceId) {
         type: 'GET',
         data: { sales_invoice_id: currentInvoiceId },
         success: function (data) {
+            const rows = `
+<div>
+    <label for="invoice_number"> حفظ التعديل</label>
+    <button type="button" class="btn btn-primary" onclick="UpdateInvoiceSales(${data.last_invoice_id}, event)">
+        <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
+        </svg>
+    </button>
+</div>
+`;
+
+$('#invoiceSales #grid2').append(rows);
             $('#mainAccountsTable tbody').empty();
 
             if (data.sales && data.sales.length > 0) {
@@ -953,7 +969,7 @@ form.on('keydown', function (event) {
     // دالة الحفظ باستخدام Ajax
     function saveData() {
         const formData = new FormData(form[0]); // إنشاء FormData من النموذج
-
+        let rows = '';
         // تعريف الحقول والرسائل
         const successMessage = $('#successMessage'),
             errorMessage = $('#errorMessage'),
@@ -970,18 +986,38 @@ form.on('keydown', function (event) {
             processData: false, // ضروري مع FormData
             contentType: false, // ضروري مع FormData
             success: function (response) {
+                $('#invoiceSales #grid2 #invoiceid').empty();
+                $('#invoiceSales #grid2 #invoiceid2').empty();
+
                 if (response.success) {
+                    $('#invoiceSales #grid2 #invoiceid2').hide();
+
                     // تحديث الحقول إذا كانت موجودة
-                    if (invoiceField.length) {
-                        invoiceField.val(response.invoice_number).trigger('change');
+                    displayMessage(successMessage, response.message);
+                   invoiceField.val(response.invoice_number).trigger('change');
+
+                    if (invoiceField.length)
+                     {
+                        const rows = `
+<div id="invoiceid2" class="">
+    <label for=""> حفظ التعديل</label>
+    <button id="invoiceid" class="btn btn-primary" data-invoice-id="${response.last_invoice_id}" onclick="UpdateInvoiceSales(${response.last_invoice_id}, event)"  >
+        <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
+        </svg>
+    </button>
+</div>
+`;
+$('#invoiceSales #grid2').append(rows);
+
                     }
                     if (customerIdField.length) {
                         customerIdField.val(response.customer_number).trigger('change');
                     }
 
+                   
                     // تنظيف الجدول وإظهار رسالة النجاح
                     $('#mainAccountsTable tbody').empty();
-                    displayMessage(successMessage, response.message);
                     $('#product_id').select2('open'); // فتح القائمة المنسدلة
                 } else {
                     displayMessage(errorMessage, response.message || 'حدث خطأ غير معروف.');
@@ -1004,6 +1040,57 @@ form.on('keydown', function (event) {
 
  </script>
 
+<script>
+  $(document).ready(function() {
+    window.UpdateInvoiceSales = function(id, event) {
+    event.preventDefault(); // منع الإرسال الافتراضي للنموذج
+        // إنشاء FormData من النموذج
+        const formData = new FormData($('#invoiceSales')[0]);
+
+        // تعريف الحقول والرسائل
+        const successMessage = $('#successMessage'),
+              errorMessage = $('#errorMessage');
+              let payment_type = $('input[name="payment_type"]:checked').val();
+              let sales_invoice_id = $('#sales_invoice_id').val();
+        // إضافة معرف الفاتورة إلى FormData
+        formData.append('sales_invoice_id', sales_invoice_id);  
+        formData.append('payment_type', payment_type);
+
+        
+
+        $.ajax({
+            url: '{{ route("invoiceSales.update") }}', // مسار التخزين
+            type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+            },
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if (response.success) {
+                    $('#total_price_sale').val(response.total_price_sale);
+                    $('#net_total_after_discount').val(response.net_total_after_discount);
+                    $('#discount').val(response.discount);
+                    successMessage.show().text(response.message).fadeOut(3000);
+                } else {
+                    errorMessage.show().text(response.message).fadeOut(3000);
+                }
+            },
+            error: function(xhr) {
+                const errorMessageText = xhr.responseJSON?.message || 'حدث خطأ غير متوقع.';
+                console.error(errorMessageText);
+                $('#errorMessage').show().text(errorMessageText).fadeOut(3000);
+            }
+        });
+    };
+
+   
+});
+
+    
+
+    </script>
 <script>
     // $(document).ready(function() {
     //     $('#start-scanner').on('click', function() {

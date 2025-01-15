@@ -83,14 +83,8 @@ class LocksFinancialPeriodsController extends Controller
 
         $totalExpenses = $ExpensesDebit + $RevenuePurchase - $ExpensesCredit; //اجمالي المصروفات
         $profit = $totalRevenue-$totalExpenses  ;
-
-
-
         // dd($profit);
-
-
-
-        return view('locks_financial_period.index', [
+       return view('locks_financial_period.index', [
             'profit' => $profit, 
             'totalRevenue' => $totalRevenue, 
             'totalExpenses' => $totalExpenses, 
@@ -109,7 +103,6 @@ class LocksFinancialPeriodsController extends Controller
                     'end_date' => now(),
                 ]);
             }
-    
             // إنشاء فترة محاسبية جديدة إذا لزم الأمر
             if (!AccountingPeriod::where('is_closed', false)->exists()) {
                 AccountingPeriod::create([
@@ -120,7 +113,6 @@ class LocksFinancialPeriodsController extends Controller
                     'is_closed' => false,
                 ]);
             }
-    
             // معالجة الحسابات الفرعية
             $subAccounts = SubAccount::whereIn('typeAccount', [1, 2, 3])->get();
             $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
@@ -315,8 +307,9 @@ class LocksFinancialPeriodsController extends Controller
                 'categorie_id' => null,
             ]
         );
-        // $productName->update([
-        //     'Quantity' => $Quantity,
-        // ]);
+
+        Product::where('product_id',  $productName->product_id)->update([
+            'Quantity' => $Quantity,
+        ]);
     }
 }
