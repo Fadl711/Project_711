@@ -218,13 +218,13 @@ private function handleTransactionType4($saleInvoice, $validatedData, $DefaultCu
         case 3:
         case 4:
             $account_debit = $validatedData['financial_account_id'];
-            $account_Credit = $warehouse_id; // قيمة مباشرة
+            $account_Credit =$DefaultCustomer->warehouse_id; // قيمة مباشرة
             $account_debit = intval($account_debit);
             $paid_amount = $net_total_after_discount;
             break;
 
         case 2:
-            $account_Credit = $warehouse_id; // قيمة مباشرة
+            $account_Credit = $DefaultCustomer->warehouse_id; // قيمة مباشرة
             $account_debit = $validatedData['Customer_name_id'];
             $account_debit = intval($account_debit);
             $paid_amount = $net_total_after_discount;
@@ -255,7 +255,7 @@ private function handleTransactionType5($saleInvoice, $validatedData, $DefaultCu
 
         case 2:
             $account_Credit = $validatedData['Customer_name_id'];
-            $account_debit = $validatedData['financial_account_id'];
+            $account_debit = $DefaultCustomer->warehouse_id;
             $account_debit = intval($account_debit);
             $paid_amount = $net_total_after_discount;
             break;
@@ -264,7 +264,6 @@ private function handleTransactionType5($saleInvoice, $validatedData, $DefaultCu
             // التعامل مع حالة غير متوقعة
             break;
     }
-   
 
     $this->updateSales($updateSale, $validatedData, $DefaultCustomer);
     $this->saleInvoiceupdate($validatedData,$saleInvoice, $account_Credit, $account_debit, $net_total_after_discount, $Getentrie_id, $transactiontype, $daily_page_id,  $validatedData['payment_type']);
@@ -309,21 +308,44 @@ private function saleInvoiceupdate($validatedData,$saleInvoice, $account_Credit,
     $payment_type = intval($payment_type);
     // تحديث أو إنشاء القيد
     // try {
+        if($payment_type==1)
+        {
 
+           $paymenttype="نقدا";
+
+        }
+        if($paymenttype==2)
+        {
+
+           $paymenttype="اجل";
+
+        }
+        if($paymenttype==3)
+        {
+
+           $paymenttype="تحويل بنكي";
+
+        }
+        if($paymenttype==4)
+        {
+
+           $paymenttype="شيك";
+
+        }
          
         $dailyEntrie = DailyEntrie::updateOrCreate(
             [
                 'entrie_id' => $Getentrie_id,
                 'accounting_period_id' => $accountingPeriod->accounting_period_id,
                 'Invoice_id' => $saleInvoice->sales_invoice_id,
-                'daily_entries_type' => $transactiontype,
             ],
             [
+                'daily_entries_type' => $transactiontype,
                 'account_Credit_id' => $account_Credit,
                 'account_debit_id' => $account_debit,
                 'Amount_Credit' => $net_total_after_discount ?: 0,
                 'Amount_debit' => $net_total_after_discount ?: 0,
-                'Statement' => $commint . " " . $transactiontype . " " . $payment_type,
+                'Statement' => $commint . " " . $transactiontype . " " . $paymenttype,
                 'Daily_page_id' => $daily_page_id ?? $dailyPage->page_id,
                 'Invoice_type' => $payment_type,
                 'Currency_name' => 'ر',
