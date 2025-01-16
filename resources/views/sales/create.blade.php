@@ -84,7 +84,6 @@
                         <label for="shipping_amount" class="labelSale">تكلفة الشحن</label>
                         <input type="text" name="shipping_amount" id="shipping_amount" class="inputSale" step="0.01" placeholder="0.00">
                     </div> --}}
-                  
                     <div>
                         <label for="total_price_sale" class="labelSale">الإجمالي</label>
                         <input type="text" name="total_price_sale" id="total_price_sale" class="inputSale" step="0.01" placeholder="0.00">
@@ -97,7 +96,6 @@
                         <label for="net_total_after_discount" class="labelSale"  > الإجمالي بعد الخصم </label>
                         <input type="text" name="net_total_after_discount" id="net_total_after_discount"   class="inputSale"  />
                     </div>
-                     
                     @auth
                         <input type="hidden" name="User_id" id="User_id" value="{{ Auth::user()->id }}">
                     @endauth
@@ -106,10 +104,8 @@
                             إضافة الفاتورة
                         </button>
                     </div> --}}
-                
                 </div>
                 <div class="grid md:grid-cols-4   gap-2 text-right " id="grid2">
-
                     <div>
                         <label for="financial_account_id_main" class="labelSale"> حساب الدفع</label>
                         <select name="financial_account_id_main" id="financial_account_id_main" dir="ltr" class=" select2 inputSale" >

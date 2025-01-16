@@ -589,14 +589,16 @@ if($Quantit=="QuantityCosts")
 
     }
 
+   
     public function store(Request $request)
     {
         if (!$request->product_name) {
             return response()->json([
                 'success' => false,
-                'message' => 'يجب عليك تحديد اسم المنتج .'
+                'message' => 'يجب عليك تحديد اسم المنتج.'
             ]);
         }
+    
         // تحويل الأرقام العربية إلى الإنجليزية
         $Quantity = $this->convertArabicNumbersToEnglish($request->input('Quantity'));
         $Selling_price = $this->convertArabicNumbersToEnglish($request->input('Selling_price'));
@@ -605,9 +607,9 @@ if($Quantit=="QuantityCosts")
         $Special_discount = $this->convertArabicNumbersToEnglish($request->input('Special_discount'));
         $Quantityprice = $this->convertArabicNumbersToEnglish($request->input('Quantityprice'));
         $product_idUpdate = $this->convertArabicNumbersToEnglish($request->input('producid'));
-        if(!$product_idUpdate)
-        {
-            $productname=Product::where('product_name', $request->product_name)->first();
+    
+        if (!$product_idUpdate) {
+            $productname = Product::where('product_name', $request->product_name)->first();
             if ($productname) {
                 return response()->json([
                     'success' => false,
@@ -615,130 +617,110 @@ if($Quantit=="QuantityCosts")
                 ]);
             }
         }
-        // الحصول على الفترة المحاسبية المفتوحة
-        if ($Quantity > 0)
-        {
-            if (!$request->account_debitid)
-            {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'يجب عليك تحديد مخزن.'
-                ]);
-
-            }
-
-            }
-
-
-            if (!$Purchase_price) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'يجب عليك تحديد سعر الشراء.'
-                ]);
-            }
-            if (!$Selling_price)
-             {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'يجب عليك تحديد سعر البيع .'
-                ]);
-            }
-            if ($request->cate)
-             {
-                if (!$Quantityprice) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'يجب عليك تحديد سعر البيع .'
-                    ]);
-                }
-            }
-
-// إنشاء منتج جديد أو تحديثه
-$ProductNew = Product::updateOrCreate(
-    [
-        'product_id' => $product_idUpdate , // شرط التحديث أو الإنشاء
-    ],
-    [
-        'Barcode' => $request->Barcode,
-        'product_name' => $request->product_name,
-        'Quantity' => $Quantity ?? 0,
-        'supplier_id' => $request->Supplier_id,
-        'Purchase_price' => $Purchase_price,
-        'Selling_price' => $Selling_price,
-        'Categorie_id' => $request->Categorie_id ?? null,
-        'Regular_discount' => $Regular_discount ?? 0,
-        'Special_discount' => $Special_discount?? 0,
-        'User_id' => auth()->id(),
-        'currency_id' => $request->currency_id,
-        'Total' => $request->Total ?? 0,
-        'Cost' => $request->Cost ?? 0,
-        'Profit' => $request->Profit ?? 0,
-        'note' => $request->note ?? ' ',
-        'warehouse_id' => $request->account_debitid ?? null,
-    ]
-);
-
-
-                  if($ProductNew)
-                  {
-        $Post = new Category;
+        if ($Quantity > 0) {
+        // التحقق من وجود المخزن وسعر الشراء وسعر البيع
+        if (!$request->account_debitid) {
+            return response()->json([
+                'success' => false,
+                'message' => 'يجب عليك تحديد مخزن.'
+            ]);
+        }
+        }
+        if (!$Purchase_price) {
+            return response()->json([
+                'success' => false,
+                'message' => 'يجب عليك تحديد سعر الشراء.'
+            ]);
+        }
+        if (!$Selling_price) {
+            return response()->json([
+                'success' => false,
+                'message' => 'يجب عليك تحديد سعر البيع.'
+            ]);
+        }
+    
+        // إنشاء منتج جديد أو تحديثه
+        $ProductNew = Product::updateOrCreate(
+            [
+                'product_id' => $product_idUpdate, // شرط التحديث أو الإنشاء
+            ],
+            [
+                'Barcode' => $request->Barcode,
+                'product_name' => $request->product_name,
+                'Quantity' => $Quantity,
+                'supplier_id' => $request->Supplier_id,
+                'Purchase_price' => $Purchase_price,
+                'Selling_price' => $Selling_price,
+                'Categorie_id' => $request->Categorie_id,
+                'Regular_discount' => $Regular_discount,
+                'Special_discount' => $Special_discount,
+                'User_id' => auth()->id(),
+                'currency_id' => $request->currency_id,
+                'Total' => $request->Total,
+                'Cost' => $request->Cost,
+                'Profit' => $request->Profit,
+                'note' => $request->note,
+                'warehouse_id' => $request->account_debitid,
+            ]
+        );
+    
         $product_name = Product::where('product_id', $ProductNew->product_id)->value('product_name');
         $produc = Product::where('product_id', $ProductNew->product_id)->first();
+    
         // التحقق من كمية المنتج وإنشاء سجل في جدول المشتريات
-          if ($request->cate) {
-            $Post->Categorie_name=$request->cate;
-            $Post->product_id=$produc->product_id;
-            $Post->Purchase_price=$produc->Purchase_price;
-            $Post->Selling_price=$produc->Selling_price ;
-            $Post->Quantityprice=$request->Quantityprice ??1 ;
-            $Post->user_id=$request->user_id;
+        if ($request->cate) {
+            $Post = new Category;
+            $Post->Categorie_name = $request->cate;
+            $Post->product_id = $produc->product_id;
+            $Post->Purchase_price = $produc->Purchase_price;
+            $Post->Selling_price = $produc->Selling_price;
+            $Post->Quantityprice = $request->Quantityprice ?? 1;
+            $Post->user_id = $request->user_id;
             $Post->save();
-
-            }
-        }
-        else
-
-{
-    return response()->json([
-        'success' => false,
-        'message' => 'لم يتم الحفظ .',
-    ]);
-
-}
-
-            $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
-            if (!$accountingPeriod)
-             {
+            if (!$Post->save()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'لا توجد فترة محاسبية مفتوحة.'
+                    'message' => 'حدث خطأ أثناء حفظ الفئة.'
                 ]);
             }
-            if ($Quantity >0)
-            {
-                $entrie_id = Purchase::where('purchase_id', $request->purchase_id)
-        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-        ->whereIn('transaction_type', [6,7])
-        ->first();
-        $transaction_type= $entrie_id->transaction_type;
+        }
+    
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+        if (!$accountingPeriod) {
+            return response()->json([
+                'success' => false,
+                'message' => 'لا توجد فترة محاسبية مفتوحة.'
+            ]);
+        }
+    
 
+        $entrie_id = Purchase::where('purchase_id', $request->purchase_id)
+            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+            ->whereIn('transaction_type', [6, 7])
+            ->first();
+    
+    
+        $transaction_type = $entrie_id->transaction_type ??6;
+
+        if ($Quantity >0) {
+
+        try {
             $purchase = Purchase::updateOrCreate(
                 [
                     'accounting_period_id' => $accountingPeriod->accounting_period_id,
                     'purchase_id' => $request->purchase_id,
-                    'transaction_type' =>  $transaction_type ?? 6,
-
                 ],
                 [
-                    'product_id' => $ProductNew->product_id,
-                    'Purchase_invoice_id' =>null,
+                    'transaction_type' => $transaction_type ?? 6,
+                    'product_id' => $produc->product_id,
+                    'Purchase_invoice_id' => null,
                     'Product_name' => $product_name,
                     'Barcode' => $produc->Barcode ?? 0,
                     'quantity' => $Quantity,
-                    'Quantityprice' => $Quantity ??0,
+                    'Quantityprice' => $Quantity ?? 0,
                     'Purchase_price' => $Purchase_price,
                     'Selling_price' => $Selling_price,
-                    'Total' => $Purchase_price* $Quantity ,
+                    'Total' => $Purchase_price * $Quantity,
                     'Cost' => 0,
                     'Currency_id' => null,
                     'Supplier_id' => $produc->supplier_id,
@@ -750,35 +732,44 @@ $ProductNew = Product::updateOrCreate(
                     'Exchange_rate' => 1.0,
                     'note' => $request->note ?? '',
                     'account_id' => $produc->supplier_id,
-                    'categorie_id' =>null,
+                    'transaction_type' => 6,
+                    'categorie_id' => null,
                 ]
             );
-        }
-        if($product_idUpdate)
-        {
-                return response()->json([
-                    'success' => true,
-                    'message' => ' تم تعديل الصنف بنجاح  .',
-                ]);
-            }
-            if($Post->save())
-            {
-                return response()->json([
-                    'success' => true,
-                    'message' => ' تم الحفظ بنجاح-تم تحديث مخزن-تم حفظ الوحدة .',
-                ]);
-            }
-
             return response()->json([
                 'success' => true,
-                'message' => 'تم الحفظ بنجاح وتحديث مخزن.',
+                'message' => 'تم الحفظ بنجاح-تم تحديث مخزن-تم حفظ الوحدة.',
             ]);
-
-
-
-
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ أثناء إنشاء أو تحديث السجل: ' . $e->getMessage()
+            ]);
+        
+        }
+        }
+    
+        if ($product_idUpdate) {
+            return response()->json([
+                'success' => true,
+                'message' => 'تم تعديل الصنف بنجاح.',
+            ]);
+        }
+    
+        
+    
+        if ($Post) {
+            return response()->json([
+                'success' => true,
+                'message' => 'تم الحفظ بنجاح-تم حفظ الوحدة.',
+            ]);
+        }
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'تم الحفظ بنجاح.',
+        ]);
     }
-
     public function edit($id){
         $prod= Product::where('product_id',$id)->first();
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();

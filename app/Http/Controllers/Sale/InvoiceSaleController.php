@@ -310,9 +310,7 @@ private function saleInvoiceupdate($validatedData,$saleInvoice, $account_Credit,
     // try {
         if($payment_type==1)
         {
-
            $paymenttype="نقدا";
-
         }
         if($payment_type==2)
         {
