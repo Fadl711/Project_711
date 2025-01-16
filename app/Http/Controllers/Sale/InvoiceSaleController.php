@@ -314,19 +314,19 @@ private function saleInvoiceupdate($validatedData,$saleInvoice, $account_Credit,
            $paymenttype="نقدا";
 
         }
-        if($paymenttype==2)
+        if($payment_type==2)
         {
 
            $paymenttype="اجل";
 
         }
-        if($paymenttype==3)
+        if($payment_type==3)
         {
 
            $paymenttype="تحويل بنكي";
 
         }
-        if($paymenttype==4)
+        if($payment_type==4)
         {
 
            $paymenttype="شيك";
