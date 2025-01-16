@@ -748,17 +748,15 @@ if($Quantit=="QuantityCosts")
         
         }
         }
-    
-        if ($product_idUpdate) {
+        if ($product_idUpdate)
+         {
             return response()->json([
                 'success' => true,
                 'message' => 'تم تعديل الصنف بنجاح.',
             ]);
         }
-    
-        
-    
-        if ($Post) {
+        if ($Post)
+         {
             return response()->json([
                 'success' => true,
                 'message' => 'تم الحفظ بنجاح-تم حفظ الوحدة.',

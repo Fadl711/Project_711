@@ -686,8 +686,10 @@ function fetchSalesByInvoice(url, currentInvoiceId) {
         type: 'GET',
         data: { sales_invoice_id: currentInvoiceId },
         success: function (data) {
+            $('#invoiceSales #grid2 #invoiceid2').hide();
+
             const rows = `
-<div>
+<div id="invoiceid2">
     <label for="invoice_number"> حفظ التعديل</label>
     <button type="button" class="btn btn-primary" onclick="UpdateInvoiceSales(${data.last_invoice_id}, event)">
         <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
