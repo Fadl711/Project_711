@@ -16,7 +16,7 @@
 <div id="errorMessage" style="display:none; color:red;"></div>
 
 <div class="min-w-[20%] px-1  bg-white rounded-xl ">
-    <div class=" flex items-center">
+    <div class=" flex ">
         <div class="w-full min-w-full  py-1">
             <form id="invoiceSales" method="POST">
                 @csrf
@@ -44,22 +44,7 @@
                             @endisset
                         </select>
                     </div>
-                    <div class="md:ml-6 relative ">
-                        <label for="Customer_name_id" class="labelSale">اسم العميل</label>
-                        <select name="Customer_name_id" id="Customer_name_id" class="inputSale select2 input-field">
-                            @isset($customers)
-                            @foreach ($customers as $cur)
-                            <option @isset($DefaultCustomer)
-                            @selected($cur->sub_account_id==$DefaultCustomer->subaccount_id)
-                            @endisset
-                            value="{{$cur->sub_account_id}}">{{$cur->sub_name}}</option>
-                             @endforeach
-                             @endisset
-                        </select>
-                        <button data-modal-target="crud-modal" data-modal-toggle="crud-modal" class=" w-10  absolute top-0 right-20 focus:outline-none " type="button">
-                            <i class="fas fa-plus "></i>
-                        </button>
-                    </div>
+                   
                     <div>
                         <label for="shipping_bearer" class="labelSale">جهة تحمل الشحن</label>
                         <select name="shipping_bearer" id="shipping_bearer" class="inputSale select2 input-field">
@@ -106,6 +91,20 @@
                     </div> --}}
                 </div>
                 <div class="grid md:grid-cols-4   gap-2 text-right " id="grid2">
+                    <div class=" ">
+                        <label for="Customer_name_id" class="labelSale">اسم العميل</label>
+                        <select name="Customer_name_id" id="Customer_name_id" class="inputSale select2 input-field">
+                            @isset($customers)
+                            @foreach ($customers as $cur)
+                            <option @isset($DefaultCustomer)
+                            @selected($cur->sub_account_id==$DefaultCustomer->subaccount_id)
+                            @endisset
+                            value="{{$cur->sub_account_id}}">{{$cur->sub_name}}</option>
+                             @endforeach
+                             @endisset
+                        </select>
+                      
+                    </div>
                     <div>
                         <label for="financial_account_id_main" class="labelSale"> حساب الدفع</label>
                         <select name="financial_account_id_main" id="financial_account_id_main" dir="ltr" class=" select2 inputSale" >
@@ -148,7 +147,7 @@
     <div class="min-w-[30%] border-x bg-white   rounded-xl">
         <form id="ajaxForm">
             @csrf
-            <div class="gap-2 grid grid-cols-3 px-1">
+            <div class="gap-2 grid grid-cols-2 px-1">
                 <div>
                     <label for="account_debitid" class="labelSale"> مخازن </label>
                     {{-- warehouse_to_id --}}

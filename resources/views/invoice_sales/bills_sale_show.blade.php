@@ -227,7 +227,7 @@
 
                             <th class="px-2 text-right">
                                 @if(isset($Sum_amount) && $Sum_amount > 0)
-                                    {{ number_format($Sum_amount) ?? 0 }}
+                                    {{ number_format($Sum_amount-$discount??0) ?? 0 }}
                                 @endif                        </tr>
                         @endif
 
