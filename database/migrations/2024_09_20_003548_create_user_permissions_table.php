@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('user_permissions', function (Blueprint $table) {
             $table->increments('permission_id');
+            $table->string('Authority_Name');
             $table->boolean('Readability')->default(true);
             $table->boolean('Writing_ability')->default(false);
             $table->boolean('Deletion_authority')->default(false);
