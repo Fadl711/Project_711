@@ -167,13 +167,13 @@ public function update(Request $request)
         return response()->json(['success' => false, 'message' => 'الفاتورة غير موجودة.'], 404);
     }
 
-    if ($accountingPeriod->accounting_period_id !== $saleInvoice->accounting_period_id) {
+    if ($accountingPeriod->accounting_period_id !== $saleInvoice->accounting_period_id)
+     {
         return response()->json(['success' => false, 'message' => 'فترة محاسبية مغلقة.']);
     }
 
     $net_total_after_discount = $this->calculateNetTotalAfterDiscount($saleInvoice, $validatedData) ?? 0;
     $discount = $validatedData['discount'] ?? $this->calculateDiscount($saleInvoice);
-
     $paid_amount = 0;
     $account_debit = null;
     $account_Credit = null;
@@ -539,8 +539,8 @@ public function print($id)
         $paymentype="نقداً";
     }
     $saleInvoice = SaleInvoice::where('sales_invoice_id', $id)
-        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->first();
+
     $DataSale = Sale::where('Invoice_id', $id)->get();
     $Categorys = Category::all();
    $curre=Currency::where('currency_id', $DataPurchaseInvoice->currency_id)->first();

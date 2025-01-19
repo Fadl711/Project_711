@@ -711,7 +711,7 @@ if($Quantit=="QuantityCosts")
                     'purchase_id' => $request->purchase_id,
                 ],
                 [
-                    'transaction_type' => $transaction_type ?? 6,
+                    'transaction_type' =>   $entrie_id->transaction_type ?? 6,
                     'product_id' => $produc->product_id,
                     'Purchase_invoice_id' => null,
                     'Product_name' => $product_name,
