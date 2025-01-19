@@ -46,7 +46,7 @@
                 <label for="name_The_known" class="labelSale">العنوان</label>
                 <input type="text" name="name_The_known" id="name_The_known" value="{{$SubAccount->name_The_known ?? null}}" class="input-field inputSale" />
             </div>
-           
+
             <div class="mb-2">
                 <label for="entrie_id"   class="labelSale">رقم الحساب</label>
                 <input type="text" value="{{$Getentrie_id->entrie_id ?? null}}" disabled name="entrie_id" id="entrie_id" class="input-field inputSale" />
@@ -61,5 +61,6 @@
     </form>
 
 
+    <script src="{{url('payments.js')}}">   </script>
 
 @endsection
