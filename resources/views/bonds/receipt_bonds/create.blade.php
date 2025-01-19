@@ -281,7 +281,6 @@
                 // إضافة الخيارات الجديدة إلى القائمة الفرعية
                 $('#DepositAccount').append(subAccountOptions);
 
-
                 // إعادة تهيئة Select2 بعد إضافة الخيارات
                 $('#DepositAccount').select2('destroy').select2();
             },

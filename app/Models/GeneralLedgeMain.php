@@ -15,5 +15,17 @@ class GeneralLedgeMain extends Model
       'Main_id',
       'accounting_id',
     ];
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'User_id');
+    }
 
+    public function mainAccount()
+    {
+        return $this->belongsTo(MainAccount::class, 'Main_id');
+    }
+
+   
+    // العلاقة مع جدول sub_accounts
+  
 }

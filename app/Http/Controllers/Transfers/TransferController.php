@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Transfers;
 use App\Http\Controllers\Controller;
 use App\Models\AccountingPeriod;
 use App\Models\DailyEntrie;
+use App\Models\GeneralLedge;
+use App\Models\GeneralLedgeMain;
 use App\Models\MainAccount;
 use App\Models\SubAccount;
 use Carbon\Carbon;
@@ -15,6 +17,23 @@ use Illuminate\Support\Facades\Log;
 class TransferController extends Controller
 {
     //
+    public function general_ledger(Request $request, $id)
+    {
+        $ledgers = GeneralLedge::with(['user', 'mainAccount', 'subAccount'])
+        ->where('accounting_id', $id)
+        ->get();
+     $accountingPeriods=   $request->accountingPeriods;
+        // return view('general_ledger.index', compact('ledgers'));
+        return view('transfer_restrictions.general-ledger',['accountingPeriods'=>$accountingPeriods,'ledgers'>$ledgers]);
+
+    }
+    public function general(Request $request,$accounting_id)
+    {
+        $ledgers = GeneralLedgeMain::with(['user', 'mainAccount', 'subAccount'])->get();
+        // return view('general_ledger.index', compact('ledgers'));
+        return view('transfer_restrictions.general-ledger-table',['accountingPeriods'=>$accounting_id,'ledgers'>$ledgers]);
+
+    }
     public function create(){
         $mainAccounts=MainAccount::all();
         $entries = session('entries',  []); // ستكون فارغة إذا لم تكن موجودة
@@ -173,19 +192,6 @@ class TransferController extends Controller
 private function fetchEntries($subAccountIdsCollection, $date, $TypeRestrictions)
 {
     $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
-//     $accountingPeriod = $accountingPeriod->created_at;
-// $accountingPeriodyear = Carbon::now()->format('Y');
-// $start_month = Carbon::now()->format('m');
-// $today = Carbon::now()->toDateString();
-    // $months = DailyEntrie::whereYear('created_at', $accountingPeriodyear)
-    // ->whereMonth('created_at', '>=', $start_month)
-    // ->whereMonth('created_at', '<=', $today)
-    // ->selectRaw('MONTH(created_at) as month, YEAR(created_at) as year')
-    // ->distinct()
-    // ->orderBy('year')
-    // ->orderBy('month')
-    // ->get();
-    // dd( $months);
     $query = DB::table('daily_entries')
         ->select('entrie_id', 'Amount_debit', 'Amount_Credit', 'account_debit_id', 'account_Credit_id', 'Statement', 'Daily_page_id', 'User_id', 'status','status_debit', 'created_at')
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id);
@@ -209,7 +215,6 @@ private function fetchEntries($subAccountIdsCollection, $date, $TypeRestrictions
             return collect(); // إرجاع مجموعة فارغة عند حدوث خطأ
         }
     }
-
     return $entries; // إرجاع الإدخالات
 }
 
@@ -218,7 +223,6 @@ private function prepareResponse($entries, $mainAccount = null, $date, $TypeRest
     // جلب معرفات الحسابات المدينة والدائنة
     $debitAccountIds = $entries->pluck('account_debit_id')->unique();
     $creditAccountIds = $entries->pluck('account_Credit_id')->unique();
-
     // جلب أسماء الحسابات الفرعية المدينة والدائنة
     $debitAccounts = DB::table('sub_accounts')
         ->whereIn('sub_account_id', $debitAccountIds)

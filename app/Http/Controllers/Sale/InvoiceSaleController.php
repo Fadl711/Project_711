@@ -18,6 +18,7 @@ use App\Models\User;
 use App\Models\UserPermission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use NumberToWords\NumberToWords;
@@ -46,8 +47,10 @@ class InvoiceSaleController extends Controller
         }
        // التحقق من صحة البيانات المدخلة
     $validatedData = $request->validate([
+        'date' => 'nullable|date', // تأكد من إضافة هذا الحقل
+        'listRadio' => 'required|in:1,2', // تحديث القيم هنا
+
         'Customer_name_id' => 'nullable|exists:sub_accounts,sub_account_id',
-        // 'payment_status' => 'required|in:paid,unpaid,partial',
         'total_price' => 'nullable|numeric|min:0',
         'total_price_sale' => 'nullable|numeric|min:0',
         'discount' => 'nullable|numeric|min:0',
@@ -66,6 +69,10 @@ class InvoiceSaleController extends Controller
     // عملية الحفظ
     try {
         $salesInvoice = new SaleInvoice();
+        if( $validatedData['listRadio']==2)
+        {
+            $salesInvoice->created_at =  $validatedData['date'];
+        }
         $salesInvoice->Customer_id = $validatedData['Customer_name_id'];
         // $salesInvoice->payment_status = $validatedData['payment_status'];
         $salesInvoice->total_price = $validatedData['total_price']??0;
@@ -125,6 +132,8 @@ public function update(Request $request)
     $validatedData = $request->validate([
         'Customer_name_id' => 'nullable|exists:sub_accounts,sub_account_id',
         'discount' => 'nullable|numeric|min:0',
+        'date' => 'nullable|date', // تأكد من إضافة هذا الحقل
+        'listRadio' => 'required|in:1,2',
         'sales_invoice_id' => 'nullable|numeric|min:0',
         'payment_type' => 'required|numeric',
         'financial_account_id' => 'required|numeric',
@@ -271,7 +280,16 @@ private function handleTransactionType5($saleInvoice, $validatedData, $DefaultCu
 }
 
 private function saleInvoiceupdate($validatedData,$saleInvoice, $account_Credit, $account_debit, $net_total_after_discount, $Getentrie_id, $transactiontype, $daily_page_id, $payment_type)
-{
+{ 
+    if ($validatedData['listRadio'] == 2) {
+   
+    $date = Carbon::createFromFormat('Y-m-d', $validatedData['date']); // استخدام createFromFormat
+
+    DB::table('sales_invoices')
+    ->where('sales_invoice_id', $saleInvoice->sales_invoice_id)
+    ->update(['created_at' => $date]);
+
+}
     $saleInvoice->update([
         'Customer_id' => $validatedData['Customer_name_id'],
         'paid_amount' => $paid_amount ?? 0,
@@ -301,7 +319,8 @@ private function saleInvoiceupdate($validatedData,$saleInvoice, $account_Credit,
         ]);
     }
 
-    if (!$dailyPage || !$dailyPage->page_id) {
+    if (!$dailyPage || !$dailyPage->page_id) 
+    {
         return response()->json(['success' => false, 'message' => 'فشل في إنشاء صفحة يومية']);
     }
     $commint = $this->getComment($saleInvoice);
@@ -314,21 +333,15 @@ private function saleInvoiceupdate($validatedData,$saleInvoice, $account_Credit,
         }
         if($payment_type==2)
         {
-
            $paymenttype="اجل";
-
         }
         if($payment_type==3)
         {
-
            $paymenttype="تحويل بنكي";
-
         }
         if($payment_type==4)
         {
-
            $paymenttype="شيك";
-
         }
          
         $dailyEntrie = DailyEntrie::updateOrCreate(
@@ -340,6 +353,8 @@ private function saleInvoiceupdate($validatedData,$saleInvoice, $account_Credit,
             [
                 'daily_entries_type' => $transactiontype,
                 'account_Credit_id' => $account_Credit,
+                'created_at' => $saleInvoice->created_at,
+
                 'account_debit_id' => $account_debit,
                 'Amount_Credit' => $net_total_after_discount ?: 0,
                 'Amount_debit' => $net_total_after_discount ?: 0,

@@ -227,6 +227,9 @@ Route::put('/daily_restrictions/{id}', [RestrictionController::class, 'update'])
 Route::delete('/daily_restrictions/{id1}', [RestrictionController::class, 'destroy'])->name('daily_restrictions.destroy');
 Route::get('/daily_restrictions/search', [RestrictionController::class, 'search'])->name('search.daily_restrictions');
 
+Route::get('/general/{id}/ledger/{accounting_id}', [TransferController::class, 'general_ledger'])->name('general.ledger');
+Route::get('/general/ledger/{accounting_id}', [TransferController::class, 'general'])->name('general');
+
 Route::get('/transfer_restrictions/create', [TransferController::class, 'create'])->name('transfer_restrictions.create');
 Route::get('/transfer_restrictions/index', [TransferController::class, 'index'])->name('transfer_restrictions.index');
 Route::post('/transfer_restrictions/optional', [TransferController::class, 'optional'])->name('transfer_restrictions.optional');
@@ -332,12 +335,8 @@ Route::delete('/accounts/Main_Account/{id}', [MainaccountController::class, 'des
 Route::get('/accounts/main-accounts/{type}', [MainaccountController::class, 'getMainAccountsByType']);
 Route::put('/accounts/Main_Account/{id}', [MainaccountController::class, 'update'])->name('accounts.Main_Account.update');
 
-
-
 // Route::get('/search', [MainaccountController::class, 'search']);
 Route::get('/get-options', [AccountCoctroller::class, 'show_all_accounts']);
-
-
 Route::get('/', [HomeCoctroller::class, 'index'])->name('home.index');
 
 

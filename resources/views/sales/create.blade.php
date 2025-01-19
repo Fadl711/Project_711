@@ -20,14 +20,13 @@
         <div class="w-full min-w-full  py-1">
             <form id="invoiceSales" method="POST">
                 @csrf
-                
                 <div class="flex gap-4">
                     @isset($PaymentType)
                     @foreach ($PaymentType as $index => $item)
-    <div class="flex">
-        <label for="" class="labelSale">{{$item->label()}}</label>
-        <input type="radio" name="payment_type" value="{{$item->value}}" {{ $index === 0 ? 'checked' : '' }} required>
-    </div>
+             <div class="flex">
+                 <label for="" class="labelSale">{{$item->label()}}</label>
+                 <input type="radio" name="payment_type" value="{{$item->value}}" {{ $index === 0 ? 'checked' : '' }} required>
+             </div>
                        @endforeach
                        @endisset
                 </div>
@@ -44,7 +43,6 @@
                             @endisset
                         </select>
                     </div>
-                   
                     <div>
                         <label for="shipping_bearer" class="labelSale">جهة تحمل الشحن</label>
                         <select name="shipping_bearer" id="shipping_bearer" class="inputSale select2 input-field">
@@ -89,7 +87,26 @@
                             إضافة الفاتورة
                         </button>
                     </div> --}}
+                    <div class="flex">
+                        <label for="date" class="text-center">التاريخ</label>
+                        <div class="text-center">
+                            <div class="text-center">
+                        @foreach(['1' => 'تلقائي', '2' => 'يدوي'] as $key => $label)
+                            <input type="radio" name="listRadio" value="{{ $key }}" {{ $key == 1 ? 'checked' : '' }} class="mr-2"> {{ $label }}
+                            @endforeach
+                        </div>
+                       
+                        <input
+                            id="date"
+                            name="date"
+                            type="date"
+                            class="inputSale"
+                            value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}"
+                        >
+                    </div>
+                    </div>
                 </div>
+                
                 <div class="grid md:grid-cols-4   gap-2 text-right " id="grid2">
                     <div class=" ">
                         <label for="Customer_name_id" class="labelSale">اسم العميل</label>

@@ -107,11 +107,9 @@ class SaleController extends Controller
                 ->first();
             if (!$saleInvoice) {
                 return response()->json(['success' => false, 'message' => 'الفاتورة غير موجودة.'], 404);
-            }
-         
+            } 
            // حفظ أو تحديث عملية البيع
            $Transaction_type=  $saleInvoice->transaction_type;
-
             $sales = Sale::updateOrCreate(
                 [
                     'accounting_period_id' => $accountingPeriod->accounting_period_id,
@@ -119,8 +117,6 @@ class SaleController extends Controller
                     'Product_name' => $Product->product_name,
                     'product_id' => $Product->product_id,
                     'Category_name' => $categorieId,
-
-
                 ],
                 [
                     'Barcode' => $Product->Barcode ?? '',
@@ -145,8 +141,6 @@ class SaleController extends Controller
             $total_price_sale = Sale::where('Invoice_id', $saleInvoice->sales_invoice_id )
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->sum('total_amount');
-          
-
             $net_total_after_discount = Sale::where('Invoice_id', $saleInvoice->sales_invoice_id )
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->sum('total_price');
@@ -156,30 +150,6 @@ class SaleController extends Controller
             $paid_amount = 0;
             $account_debit = null;
             $account_Credit = null;
-            if($saleInvoice->payment_type==1)
-            {
-   
-               $payment_type="نقدا";
-   
-            }
-            if($saleInvoice->payment_type==2)
-            {
-   
-               $payment_type="اجل";
-   
-            }
-            if($saleInvoice->payment_type==3)
-            {
-   
-               $payment_type="تحويل بنكي";
-   
-            }
-            if($saleInvoice->payment_type==4)
-            {
-   
-               $payment_type="شيك";
-   
-            }
             $DefaultCustomer = Default_customer::where('id', 1)->first();
             $warehouse_id = SubAccount::where('sub_account_id', $DefaultCustomer->warehouse_id)->value('sub_account_id'); 
             // تحديد الحساب المدين والمبلغ المدفوع بناءً على نوع الدفع
@@ -245,7 +215,7 @@ class SaleController extends Controller
              $Getentrie_id= $entrie_id->entrie_id ?? null;
                 $daily_page_id = $entrie_id->Daily_page_id ?? $dailyPage->page_id;
             
-                    $this->createOrUpdateDailyEntry($saleInvoice, $accountingPeriod,$account_Credit, $account_debit, $net_total_after_discount,$Getentrie_id,$payment_type,$daily_page_id);
+                    $this->createOrUpdateDailyEntry($saleInvoice, $accountingPeriod,$account_Credit, $account_debit, $net_total_after_discount,$Getentrie_id,$daily_page_id);
                      
         
 
@@ -277,7 +247,7 @@ class SaleController extends Controller
             return view('auth.login');
         }
     }
-    private function createOrUpdateDailyEntry($saleInvoice, $accountingPeriod,$account_Credit, $account_debit, $net_total_after_discount,$Getentrie_id,$payment_type,$daily_page_id)
+    private function createOrUpdateDailyEntry($saleInvoice, $accountingPeriod,$account_Credit, $account_debit, $net_total_after_discount,$Getentrie_id,$daily_page_id)
     {
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
 
@@ -339,6 +309,8 @@ class SaleController extends Controller
                 ],
                 [
                     'account_Credit_id' => $account_Credit,
+                    'created_at' => $saleInvoice->created_at,
+
                     'account_debit_id' => $account_debit,
                     'Amount_Credit' => $net_total_after_discount ?: 0,
                     'Amount_debit' => $net_total_after_discount ?: 0,
