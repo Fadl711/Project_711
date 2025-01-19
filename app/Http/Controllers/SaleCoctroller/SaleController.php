@@ -73,7 +73,6 @@ class SaleController extends Controller
         $discount_rate = $this->removeCommas($request->discount_rate);
         $Profit = $this->removeCommas($request->Profit);
         $total_discount_rate = $this->removeCommas($request->total_discount_rate);
-       
         // التحقق من صحة البيانات
         $validatedData = $request->validate([
             'product_id' => 'required|integer|exists:products,product_id',
@@ -95,18 +94,28 @@ class SaleController extends Controller
         ->value('Categorie_name');
             // الحصول على اسم المنتج
             $Product = Product::where('product_id', $request->product_id)->first();
-
             // التحقق من وجود الفترة المحاسبية
             $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
-            if (!$accountingPeriod) {
-                return response()->json(['success' => false, 'message' => 'لا توجد فترة محاسبية مفتوحة.']);
-            }
             // التحقق من وجود الفاتورة
             $saleInvoice = SaleInvoice::where('sales_invoice_id', $request->sales_invoice_id)
                 ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
                 ->first();
+               
+               // التحقق من تطابق الفترات المحاسبية
+if ($accountingPeriod->accounting_period_id !== $saleInvoice->accounting_period_id) {
+    Log::info('أصبحت هذه الفاتورة لسنة قديمة، لا يمكنك إضافة أي منتج إليها.');
+    return response()->json([
+        'success' => false,
+     'message' => 'أصبحت هذه الفاتورة لسنة قديمة، لا يمكنك إضافة أي منتج إليها.']);
+}
+
+               if (!$accountingPeriod) {
+                return response()->json([
+                    'success' => false,
+                     'message' => 'لا توجد فترة محاسبية مفتوحة.']);
+            }
             if (!$saleInvoice) {
-                return response()->json(['success' => false, 'message' => 'الفاتورة غير موجودة.'], 404);
+                return response()->json(['success' => false, 'message' => 'الفاتورة غير موجودة.']);
             } 
            // حفظ أو تحديث عملية البيع
            $Transaction_type=  $saleInvoice->transaction_type;
@@ -310,8 +319,7 @@ class SaleController extends Controller
                 [
                     'account_Credit_id' => $account_Credit,
                     'created_at' => $saleInvoice->created_at,
-
-                    'account_debit_id' => $account_debit,
+                    'account_debit_id' => $account_debit, 
                     'Amount_Credit' => $net_total_after_discount ?: 0,
                     'Amount_debit' => $net_total_after_discount ?: 0,
                     'Statement' => $commint." ".$transactiontype." ".PaymentType::tryFrom($saleInvoice->payment_type)?->label() ,

@@ -421,8 +421,15 @@ public function edit($id)
 }
 public function destroy($id)
 {
+    // dd($id);
+    $accountingPeriod = ModelsAccountingPeriod::where('is_closed', false)->first();
+
     // التحقق من وجود السجل
-    $purchase = Purchase::where('purchase_id', $id)->first();
+    $purchase = Purchase::where('purchase_id', $id)
+    ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+    ->whereIn('transaction_type', [1,2,3,6])
+    ->first();
+
     if (!$purchase) {
         return response()->json([
             'status' => 'error',
@@ -431,8 +438,12 @@ public function destroy($id)
     }
 
     try {
+        if($purchase->transaction_type!==7)
+        {
+
+            $purchase->delete();
+        }
         // حذف السجل
-        $purchase->delete();
         // تحديث الإجمالي
         $Purchasesum = Purchase::where('Purchase_invoice_id', $purchase->Purchase_invoice_id)->sum('Total');
         return response()->json([

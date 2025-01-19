@@ -12,8 +12,8 @@
     padding-top: 5px; /* تحسين النصوص */
 }
 </style>
-<div id="successMessage" style="display:none; color:green;"></div>
-<div id="errorMessage" style="display:none; color:red;"></div>
+<div id="successMessage"class="hidden fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert"></div>
+<div id="errorMessage" class="hidden fixed top-2 right-4 bg-red-500 text-white px-6 py-1 rounded-lg shadow-lg" role="alert"></div>
 
 <div class="min-w-[20%] px-1  bg-white rounded-xl ">
     <div class=" flex ">
@@ -107,7 +107,7 @@
                     </div>
                 </div>
                 
-                <div class="grid md:grid-cols-4   gap-2 text-right " id="grid2">
+                <div class="grid md:grid-cols-4   gap-2 text-right " id="grid2" >
                     <div class=" ">
                         <label for="Customer_name_id" class="labelSale">اسم العميل</label>
                         <select name="Customer_name_id" id="Customer_name_id" class="inputSale select2 input-field">
@@ -908,6 +908,7 @@ form.on('keydown', function (event) {
     processData: false,
     contentType: false,
                 success: function (response) {
+                    
                     handleAjaxSuccess(response);
                     submitButton.prop('disabled', false);
                 },
@@ -920,7 +921,7 @@ form.on('keydown', function (event) {
         // التعامل مع النجاح في الطلب
         function handleAjaxSuccess(response) {
             if (response.success) {
-                $('#successMessage').show().text(response.message).fadeOut(3000);
+                $('#successMessage').show().text(response.message).fadeOut(1000);
                 addToTableSale(response.purchase);
                 $('#total_price_sale').val(response.total_price_sale);
                 $('#net_total_after_discount').val(response.net_total_after_discount);
@@ -928,7 +929,9 @@ form.on('keydown', function (event) {
                 emptyData();
                 $('#product_id').select2('open').focus();
             } else {
-                alert('خطأ أثناء الحفظ! ' + response.message || 'حدث خطأ أثناء حفظ البيانات.');
+                $('#errorMessage').show().text(response.message).fadeOut(3000);
+
+                // alert('خطأ أثناء الحفظ! ' + response.message || 'حدث خطأ أثناء حفظ البيانات.');
             }
         }
         // التعامل مع الأخطاء في الطلب
@@ -960,6 +963,29 @@ form.on('keydown', function (event) {
 
  <script>
   $(document).ready(function () {
+    function emptyData(){
+                  $('#product_name,#total_price,#loss,#Quantityprice,#QuantityCategorie,#TotalPurchase').val('');
+                      $('#Barcode').val('');
+                      $('#InventoryId').val('');
+                      $('#Quantity').val('');
+                      $('#Purchase_price').val('');
+                      $('#Selling_price').val('');
+                      $('#Total').val('');
+                      $('#TotalPurchase').val('');
+                      $('#Cost').val('');
+                      $('#Discount_earned').val('');
+                      $('#Profit').val('');
+                      $('#Exchange_rate').val('');
+                      $('#product_id').val('');
+                      $('#note').val('');
+                      $('#QuantityPurchase').val('');
+                      $('#Categorie_name').val('');
+                      $('#discount_rate').val('');
+                      $('#total_discount_rate').val('');
+                      $('#purchase_id,#sale_id').val('');
+                      $('#product_id').select2('open');
+                   
+  };
     $('.select2').select2(); // تفعيل المكتبة select2
     $('#saveinvoiceSales').on('click', function () {
         saveData();
@@ -1004,6 +1030,7 @@ form.on('keydown', function (event) {
                 $('#invoiceSales #grid2 #invoiceid2').empty();
 
                 if (response.success) {
+                    emptyData();
                     $('#invoiceSales #grid2 #invoiceid2').hide();
 
                     // تحديث الحقول إذا كانت موجودة
@@ -1082,20 +1109,22 @@ $('#invoiceSales #grid2').append(rows);
             processData: false,
             contentType: false,
             success: function(response) {
-                if (response.success) {
-                    $('#total_price_sale').val(response.total_price_sale);
-                    $('#net_total_after_discount').val(response.net_total_after_discount);
-                    $('#discount').val(response.discount);
-                    successMessage.show().text(response.message).fadeOut(3000);
-                } else {
-                    errorMessage.show().text(response.message).fadeOut(3000);
-                }
-            },
-            error: function(xhr) {
-                const errorMessageText = xhr.responseJSON?.message || 'حدث خطأ غير متوقع.';
-                console.error(errorMessageText);
-                $('#errorMessage').show().text(errorMessageText).fadeOut(3000);
-            }
+    if (response.success) {
+        emptyData();
+
+        $('#total_price_sale').val(response.total_price_sale);
+        $('#net_total_after_discount').val(response.net_total_after_discount);
+        $('#discount').val(response.discount);
+        successMessage.show().text(response.message).fadeOut(3000);
+    } else {
+        errorMessage.show().text(response.message).fadeOut(3000);
+    }
+},
+error: function(xhr) {
+    const errorMessageText = xhr.responseJSON?.message || 'حدث خطأ غير متوقع.';
+    console.error(errorMessageText);
+    $('#errorMessage').show().text(errorMessageText).fadeOut(3000);
+}
         });
     };
 
