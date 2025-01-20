@@ -3,18 +3,16 @@
 @section('conm')
 <x-nav-transfer-restriction/>
 
-<div id="successMessage" class="bg-green-500  p-4 rounded" style="display: none;">
-    <p>تم الحفظ بنجاح!</p>
+<div id="successMessage" class="hidden fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg">
 </div>
   
-<div id="errorMessage" style="display: none; color: red;">
-    <p>حدث خطأ أثناء الحفظ.</p>
+<div id="errorMessage" class="hidden fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg">
   </div>
   <!-- منطقة طباعة البيانات المحفوظة -->
   <div id="results" class="results"></div>
 <!-- عرض الرسائل إذا كانت موجودة -->
 @if(session('error'))
-    <div class="bg-red-500 text-white p-4 rounded">
+    <div class="hidden fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg">
         {{ session('error') }}
     </div>
 @endif
@@ -164,12 +162,14 @@
                     </tr>
                 @else
                     @foreach($entries as $entry)
-                    <tr>
+                    <tr >
+                        <tr id="row-{{$entry->entrie_id }}">
+
                         <td class="py-1 border text-right">{{ $entry->entrie_id }}</td>
                         <td class="py-1 border text-right">{{ $debitAccounts[$entry->account_debit_id] ?? 'غير موجود' }}</td>
                         <td class="py-1 border text-right">{{ $entry->Amount_debit }}</td>
                         <td class="py-1 border text-right">
-                        <form id="ajaxForm" method="POST">
+                        <form id="ajaxForm" method="POST" >
                             @csrf
                             <input type="hidden" name="entrie_id" id="entrie_id" value="{{ $entry->entrie_id }}">
                             <input type="hidden" name="account_debit_id" id="account_debit_id" value="{{ $entry->account_debit_id }}">
@@ -257,17 +257,20 @@
                 contentType: false,
                 success: function (data) {
                     if (data.success) {
-                        successMessage.show().text('تم الترحيل');
-                        setTimeout(() => {
-                            successMessage.hide();
-                        }, 3000);
+                        // successMessage.show().text('تم الترحيل');
+                        successMessage.show().text(data.success).fadeOut(3000);
                         // form[0].reset(); // تفريغ النموذج
                     }
+                    else
+                    if (data.error){
+                        errorMessage.show().text(data.error).fadeOut(3000);                    }
                 },
                 error: function (xhr) {
                     let message = 'حدث خطأ أثناء الترحيل.';
-                    if (xhr.responseJSON && xhr.responseJSON.error) {
-                        message += `<br>${xhr.responseJSON.error}`;
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage.show().text(xhr.responseJSON.error).fadeOut(3000);
+
+                        // message += `<br>${xhr.responseJSON.error}`;
                     } else if (xhr.responseJSON && xhr.responseJSON.message) {
                         message += `<br>${xhr.responseJSON.message}`; // إضافة المزيد من التفاصيل في حال وجودها
                     }

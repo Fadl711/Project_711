@@ -33,10 +33,34 @@ protected $fillable = [
     'warehouse_from_id',
     'warehouse_to_id',
     'Quantityprice',
-
     'Supplier_id',
     'categorie_id',
 ];
+public function invoice()
+{
+    return $this->belongsTo(PurchaseInvoice::class, 'Purchase_invoice_id', 'purchase_invoice_id');
+} 
+
+// العلاقة مع SubAccount (المخزن الوجهة)
+public function warehouseTo()
+{
+    return $this->belongsTo(SubAccount::class, 'warehouse_to_id', 'sub_account_id');
+}
+
+// العلاقة مع SubAccount (الحساب المالي)
+
+
+// العلاقة مع SubAccount (العميل)
+public function customer()
+{
+    return $this->belongsTo(SubAccount::class, 'Supplier_id', 'sub_account_id');
+}
+
+// العلاقة مع User
+public function user()
+{
+    return $this->belongsTo(User::class, 'User_id');
+}
 // في Purchase.php
 
 // تعريف العلاقات (إذا لزم الأمر)

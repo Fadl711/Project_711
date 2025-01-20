@@ -35,44 +35,55 @@
             border: 1px solid #000;
         }
 
-
         .header-section, .totals-section {
             margin-top: 16px;
-            padding: 12px;
             border: 2px solid #000;
             border-radius: 8px;
         }
     </style>
 </head>
 <body class="bg-white">
-    <div class="container mx-auto print-container">
+    <div class=" mx-auto print-container">
         <!-- العنوان -->
         @include('includes.header2')
         <header class="flex justify-between items-center border-b-2 border-gray-800 pb-4 mb-4">
-            <div>
-                <p> اسم@isset($accountCla) {{{" "}}} {{$accountCla}}@endisset:  {{{" "}}}
+           
+            <div class="flex">
+                <div class="font-extrabold">
+                    <div class="">
+                        اسم@isset($accountCla) {{{" "}}} {{$accountCla}}@endisset:  {{{" "}}}
                     @isset($SubAccounts)
-                    {{{" "}}}   {{$SubAccounts->sub_name??null}}  {{{" "}}}</p>
+                    {{{" "}}}   {{$SubAccounts->sub_name??null}}  {{{" "}}}
                     @endisset
-
-                    <p>رقم الفاتورة:  {{$DataPurchaseInvoice->purchase_invoice_id??0}}
-                </p>
-
-
-
-            </div>
+                 </div>
+                    <div class="">
+                        {{ __('رقم الفاتورة:') }} 
+                        {{$DataPurchaseInvoice->purchase_invoice_id??0}}                </div>
+                </div>
+                </div>
+           
             <div>
-                <h2 class="text-lg">فاتورة :
-                    {{$transaction_type}}
-                    /
+                <h2 class="text-lg font-bold">فاتورة :
+                   {{$transaction_type??null}}/
+                   {{$Invoice_type}}
 
-                    {{ $Invoice_type }}
+
+
                 </h2>
             </div>
             <div>
-                <p>التاريخ: {{$DataPurchaseInvoice->created_at}}</p>
-                <p>رقم الإيصال:  {{$DataPurchaseInvoice->Receipt_number??0}}</p>
-            </div>
+                <div class="flex">
+                    <div class="font-extrabold">
+                        <div class="">
+                            {{ __('التاريخ') }} :
+                            {{ \Carbon\Carbon::parse($DataPurchaseInvoice->created_at)->format('Y-m-d') ?? __('غير متوفر') }} / {{ str_replace(['AM', 'PM'], ['ص', 'م'], \Carbon\Carbon::parse($DataPurchaseInvoice->created_at)->format('h:i A')) }}
+                        </div>
+                        <div class="">
+                            {{ __('رقم الإيصال:') }} 
+                            {{$DataPurchaseInvoice->Receipt_number??0}}                    </div>
+                    </div>
+                    </div>
+                   
         </header>
 
         <!-- جدول المنتجات -->
@@ -84,7 +95,7 @@
                     <th class="px-2 text-right"> الوحده</th>
                     <th class="px-2 text-center">الكمية</th>
                     <th class="px-2 text-right">سعر الشراء</th>
-                    <th class="border  text-right px-2 ">المخزن</th>
+                    <th class="px-2 text-right  ">المخزن</th>
                     <th class="px-2 text-right">الإجمالي</th>
                 </tr>
             </thead>

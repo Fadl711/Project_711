@@ -382,38 +382,51 @@ else{
     </script>
  
 <script type="text/javascript">
-$(document).on('keydown', function(event) {
-    if (event.ctrlKey && event.key === 'ArrowLeft') {
-        // الحصول على قيمة purchase_invoice_id من حقل الإدخال
-        let currentInvoiceId = $('#purchase_invoice_id').val();
-        
-        console.log('Current Invoice ID:', currentInvoiceId); // تحقق من القيمة
-        const baseUrl = "{{ url('/get-purchases-by-invoice') }}"; // تعريف URL الأساسي
+$(document).ready(function () {
 
-        $.ajax({
-            url: `${baseUrl}?purchase_invoice_id=${currentInvoiceId}`,
-            type: 'GET',
-           
-            success: function(data) {
-     
-                
-                console.log('Purchases Data:', data); // تحقق من البيانات المستلمة
-                if (data && data.length > 0) {
-                    $('#mainAccountsTable tbody').empty(); // مسح البيانات القديمة
+    $(document).on('keydown', function (event) {
+    let currentInvoiceId = $('#purchase_invoice_id').val();
 
-                    displayPurchases(data); // دالة لعرض المشتريات في الجدول
-                } else {
-                    console.log("No purchases found for this invoice.");
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('Error fetching purchases:', xhr.responseText);
-            }
-        });
-
+    if (event.ctrlKey && event.key === 'ArrowRight') {
+        fetchSalesByInvoice("{{url('/get-purchases-by-invoice/ArrowRight/')}}", currentInvoiceId);
         event.preventDefault();
     }
-});   
+
+    if (event.ctrlKey && event.key === 'ArrowLeft') {
+        fetchSalesByInvoice("{{('/get-purchases-by-invoice/ArrowRight/')}}", currentInvoiceId);
+        event.preventDefault();
+    }
+});
+
+function fetchSalesByInvoice(url, currentInvoiceId) {
+    if (!currentInvoiceId) {
+        console.error('Invoice ID is empty!');
+        alert('يرجى إدخال رقم الفاتورة.');
+        return;
+    }
+    $.ajax({
+        url: url,
+        type: 'GET',
+        data: { sales_invoice_id: currentInvoiceId },
+        success: function (data) {
+
+           
+            $('#mainAccountsTable tbody').empty();
+
+            if (data.sales && data.sales.length > 0) {
+                $('#purchase_invoice_id').val(data.last_invoice_id);
+                displayPurchases(data.sales);
+            } else {
+                alert(data.message || 'لا توجد مبيعات مرتبطة بهذه الفاتورة.');
+            }
+        },
+        error: function (xhr) {
+            console.error('AJAX Error:', xhr.status, xhr.statusText, xhr.responseText);
+            alert('حدث خطأ أثناء جلب البيانات. يرجى المحاولة لاحقًا.');
+        }
+    });
+}
+
 
 
 $(document).on('click', '.delete-payment', function (e) {
@@ -450,7 +463,6 @@ $(document).on('click', '.delete-payment', function (e) {
         });
     }
 });
-    $(document).ready(function () {
         $('#account_debitid').on('change', function() {
     $(this).select2('close');
     $('#product_id').select2('open');
@@ -588,11 +600,11 @@ $.ajax({
     }
 });
 }
-      function displayPurchases(purchases) {
+      function displayPurchases(sales) {
     let uniqueInvoices = new Set(); // Set لتخزين الفواتير الفريدة
     let rows = ''; // متغير لتخزين الصفوف
     $('#mainAccountsTable tbody').empty(); // تنظيف الجدول
-    purchases.forEach(function (purchase) {
+    sales.forEach(function (purchase) {
         // إضافة شرط للتأكد من عدم تكرار البيانات
         if (!uniqueInvoices.has(purchase.purchase_id)) {
             uniqueInvoices.add(purchase.purchase_id);
