@@ -68,6 +68,7 @@ class PurchaseController extends Controller
         }
     // dd($mainAccounts);
     return response()->json($subAccounts);}
+    // getPurchasesByInvoice
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [

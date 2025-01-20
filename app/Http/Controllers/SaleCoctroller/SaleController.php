@@ -476,7 +476,6 @@ public function getSalesByInvoiceArrowLeft(Request $request)
     if (!$SaleInvoice) {
         return response()->json(['message' => 'لا توجد فاتورة لاحقة.'], 404);
     }
-
     // جلب المبيعات المرتبطة بالفاتورة المحددة
     $sales = Sale::where('User_id', $user_id)
         ->where('Invoice_id', $SaleInvoice->sales_invoice_id)
@@ -504,7 +503,7 @@ public function getSalesByInvoiceArrowRight(Request $request)
         ->first();
 
     if (!$SaleInvoice) {
-        return response()->json(['message' => 'لا توجد فاتورة سابقة.'], 404);
+        return response()->json(['message' => 'لا توجد فاتورة سابقة.']);
     }
     // جلب المبيعات المرتبطة بالفاتورة المحددة
     $sales = Sale::where('User_id', $user_id)
@@ -512,7 +511,7 @@ public function getSalesByInvoiceArrowRight(Request $request)
         ->get();
 
     if ($sales->isEmpty()) {
-        return response()->json(['message' => 'لا توجد مبيعات مرتبطة بهذه الفاتورة.'], 404);
+        return response()->json(['message' => 'لا توجد مبيعات مرتبطة بهذه الفاتورة.']);
     }
     return response()->json([
         'sales' => $sales,

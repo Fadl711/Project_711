@@ -281,7 +281,63 @@ public function bills_purchase_show($id){
 }
 
 
+public function getSalesByInvoiceArrowLeft(Request $request)
+{
+    $invoiceId = $request->input('purchase_invoice_id');
+    $user_id = auth()->id();
 
+    // جلب أول فاتورة أكبر من الفاتورة الحالية
+    $SaleInvoice = PurchaseInvoice::where('purchase_invoice_id', '>', $invoiceId)
+        ->orderBy('purchase_invoice_id', 'asc') // ترتيب تصاعدي
+        ->first();
+
+    if (!$SaleInvoice) {
+        return response()->json(['message' => 'لا توجد فاتورة لاحقة.'], 404);
+    }
+
+    if (!$SaleInvoice) {
+        return response()->json(['message' => 'لا توجد فاتورة لاحقة.'], 404);
+    }
+
+    // جلب المبيعات المرتبطة بالفاتورة المحددة
+    $sales = Purchase::where('Purchase_invoice_id', $SaleInvoice->Purchase_invoice_id)
+    ->get();
+
+    if ($sales->isEmpty()) {
+        return response()->json(['message' => 'لا توجد مبيعات مرتبطة بهذه الفاتورة.'], 404);
+    }
+    return response()->json([
+        'sales' => $sales,
+        'last_invoice_id' => $SaleInvoice->purchase_invoice_id,
+        'SaleInvoice' => $SaleInvoice,
+    ]);
+}
+
+
+public function getSalesByInvoiceArrowRight(Request $request)
+{
+    $invoiceId = $request->input('purchase_invoice_id');
+    dd( $invoiceId );
+    $user_id = auth()->id();
+      
+    // جلب أول فاتورة أكبر من الفاتورة الحالية
+    $SaleInvoice = PurchaseInvoice::where('purchase_invoice_id', '>', $invoiceId)
+        ->orderBy('purchase_invoice_id', 'asc') // ترتيب تصاعدي
+        ->first();
+    if (!$SaleInvoice) {
+        return response()->json(['message' => 'لا توجد فاتورة لاحقة.'], 404);
+    }
+    // جلب المبيعات المرتبطة بالفاتورة المحددة
+    $sales = Purchase::where('Purchase_invoice_id', $SaleInvoice->purchase_invoice_id)->get();
+    if ($sales->isEmpty())
+     {
+        return response()->json(['message' => 'لا توجد مبيعات مرتبطة بهذه الفاتورة.']);
+     }
+    return response()->json([
+        'sales' => $sales,
+        'last_invoice_id' => $SaleInvoice->purchase_invoice_id,
+    ]);
+}
 
 
 

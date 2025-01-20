@@ -131,8 +131,8 @@ class TransferController extends Controller
     if ($subAccounts instanceof \Illuminate\Database\Eloquent\Collection) {
         $subAccountIds = $subAccounts->pluck('sub_account_id')->toArray(); // تحويل إلى مصفوفة
         $query->where(function($subQuery) use ($subAccountIds) {
-            $subQuery->whereIn('account_debit_id', $subAccountIds)
-                     ->orWhereIn('account_Credit_id', $subAccountIds);
+            $subQuery->where('account_debit_id', $subAccountIds)
+                     ->orWhere('account_Credit_id', $subAccountIds);
         });
     } else {
         $query->where(function ($subQuery) use ($subAccounts) {
