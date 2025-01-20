@@ -4,7 +4,7 @@
 <!-- component -->
 <aside class=" bg-white h-screen shadow-md flex flex-col justify-between">
     <div class="p-6">
-   
+
         <nav class="space-y-2">
             <a href="{{route('company_data.settings.create')}}" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
                 <span class="mr-3">
@@ -24,8 +24,8 @@
                 </span>
                 <span>العملات</span>
             </a>
-           
-           
+
+
             {{-- <a href="#" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
                 <span class="mr-3">
                     <!-- Analytics Icon -->
@@ -44,9 +44,9 @@
                 </span>
                 <span>الإقفال السنوي</span>
             </a>
-           
+
             <hr class="my-2 border-gray-300">
-            <a href="{{route('default_customers.index')}}" class="flex items-center p-2 text-gray-700 bg-gray-100 rounded">
+            <a href="{{route('default_customers.index')}}" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
                 <span class="mr-3">
                     <!-- Training Icon -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -85,9 +85,7 @@
             <a href="{{route('permission_user')}}" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
                 <span class="mr-3">
                     <!-- Embed Icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9.5L12 3l9 6.5v9.5a2 2 0 01-2 2h-4a2 2 0 01-2-2v-4H9v4a2 2 0 01-2 2H3a2 2 0 01-2-2V9.5z" />
-                    </svg>
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M4 21C4 17.134 7.13401 14 11 14C11.3395 14 11.6734 14.0242 12 14.0709M15 7C15 9.20914 13.2091 11 11 11C8.79086 11 7 9.20914 7 7C7 4.79086 8.79086 3 11 3C13.2091 3 15 4.79086 15 7ZM12.5898 21L14.6148 20.595C14.7914 20.5597 14.8797 20.542 14.962 20.5097C15.0351 20.4811 15.1045 20.4439 15.1689 20.399C15.2414 20.3484 15.3051 20.2848 15.4324 20.1574L19.5898 16C20.1421 15.4477 20.1421 14.5523 19.5898 14C19.0376 13.4477 18.1421 13.4477 17.5898 14L13.4324 18.1574C13.3051 18.2848 13.2414 18.3484 13.1908 18.421C13.1459 18.4853 13.1088 18.5548 13.0801 18.6279C13.0478 18.7102 13.0302 18.7985 12.9948 18.975L12.5898 21Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
                 </span>
                 <span>  التحكم بالصلاحيات </span>
             </a>
@@ -101,7 +99,7 @@
                 </span>
                 <span>نسخ احتياطي للبيانات</span>
             </a>
-            <a href="{{route('default_suppliers.index')}}" class="flex items-center p-2 text-gray-700 bg-gray-100 rounded">
+            <a href="{{route('default_suppliers.index')}}" class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
                 <span class="mr-3">
                     <!-- Leads Icon -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

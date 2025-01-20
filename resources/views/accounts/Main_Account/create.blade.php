@@ -2,8 +2,7 @@
 @section('conm')
 
 <x-navbar_accounts/>
-<h1 > انشأ حساب رئيسي  </h1>
-
+<br>
 <style>
   /* تثبيت الأرقام بالإنجليزية */
   .english-numbers {
@@ -23,11 +22,11 @@
 <div  class="w-[80%]">
   <form id="ajaxForm"  >
     @csrf
-<div class=" flex">
-  
-  <div class="flex ">
-    <label class="" for="">طبيعة الحساب</label>
-    
+<div class=" flex border-b-2 border-blue-700  pb-2">
+
+  <div class="flex   ">
+    <label class="font-bold" for="">طبيعة الحساب :</label>
+
     <div class="flex px-4" >
     <label class="labelSale">مدين</label>
       <input  type="radio" required value="مدين" name="Nature_account" class="input-field w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
@@ -38,18 +37,18 @@
       <input type="radio" required  value="دائن"  name="Nature_account" class="input-field w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
     </div>
     </div>
-    
+
   <div class="flex px-4">
-    <label class="" for=""> نوع الحساب </label>
+    <label class="font-bold" for=""> نوع الحساب :</label>
         @isset($accountClasses)
-            
+
    @foreach($accountClasses as $accountClass)
-   
+
         <div class="flex px-4" >
           <label class="labelSale">{{ $accountClass->label() }} </label>
       <input  type="radio" required  value="{{ $accountClass->value }}" id="AccountClass" name="AccountClass" class="input-field w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
     </div>
-  
+
   @endforeach
   @endisset
 
@@ -59,11 +58,11 @@
   <div class="grid gap-4 mb-4  lg:grid-cols-6  max-sm:grid-cols-2">
     <div class="mb-2">
       <label class="labelSale" for="account_name">اسم الحساب</label>
-      <input name="account_name" class="inputSale input-field" id="account_name" type="text" required placeholder="اسم الحساب الجديد"/>
+      <input name="account_name" class="inputSale  h-7 input-field" id="account_name" type="text" required placeholder="اسم الحساب الجديد"/>
   </div>
   <div class="mb-2">
     <label class="labelSale  "   for="typeAccount"> تصنيف الحساب</label>
-      <select class=" input-field inputSale text-left select2 " required  name="typeAccount" id="typeAccount">
+      <select class=" input-field inputSale  text-left select2 " required  name="typeAccount" id="typeAccount">
         <option selected></option>
         @foreach ($AccountTypes as $AccountType)
         <option value="{{$AccountType->value}}" >{{$AccountType->label() }} </option>
@@ -73,7 +72,7 @@
     </select>
 
     </div>
-    
+
   <div class="mb-2">
     <label class="labelSale  " required for="Type_migration"> يرحل الى </label>
       <select id="Type_migration" class=" text-left select2 input-field inputSale" name="Type_migration">
@@ -86,14 +85,14 @@
     </div>
 
       <div class="mb-2">
-        <button type="button" id="saveButton" class="input-field text-white inline-flex items-center bgcolor hover:bg-stone-400  font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+        <button type="button" id="saveButton" class="  inline-flex items-center bg-gradient-to-t text-white from-indigo-900 to-indigo-600   font-medium rounded-lg text-sm px-5 text-nowrap py-2.5 m-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
 
             حفظ البيانات
           </button></div>
     </div>
  </div>
  @auth
- <input type="text" name="User_id" required id="User_id" value="{{Auth::user()->id}}">
+ <input type="hidden" name="User_id" required id="User_id" value="{{Auth::user()->id}}">
  @endauth
 
 
@@ -230,10 +229,10 @@ $(document).ready(function () {
   const errorMessage = $('#errorMessage');
   const inputs = $('.input-field'); // تحديد جميع الحقول
   const account_name = $('#account_name');
-  
+
   // تركيز على حقل الاسم عند بدء التشغيل
   account_name.focus();
-  
+
   // منع السلوك الافتراضي لزر Enter
   const form = $('#ajaxForm');
   form.on('keydown', function (event) {

@@ -7,6 +7,7 @@
 
         <title>{{ config('app.name', 'Laravel') }}</title>
         <link href="{{ asset('assets/css/select2.min.css') }}" rel="stylesheet">
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         <!-- jQuery -->
         <script src="{{ asset('assets/js/jquery/dist/jquery.min.js') }}"></script>

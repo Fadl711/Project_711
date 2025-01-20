@@ -86,6 +86,7 @@ class SubaccountController extends Controller
 
     }
     public function edit($id){
+        $MainAccounts=MainAccount::all();
         $SubAccount=SubAccount::where('sub_account_id',$id)->first();
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
         $transaction_type="رصيد افتتاحي";
@@ -96,7 +97,7 @@ class SubaccountController extends Controller
             ->first();
             // dd($Getentrie_id);
 
-        return view('accounts.Sub_Accounts.edit',compact('SubAccount','Getentrie_id'));
+        return view('accounts.Sub_Accounts.edit',compact('SubAccount','Getentrie_id','MainAccounts'));
     }
     public function update(Request $request)
     {
