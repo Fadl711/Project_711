@@ -39,8 +39,8 @@ class reportsConreoller extends Controller
     public function create(Request $request){
                $MainAccounts= MainAccount::all();
                $SubAccount= SubAccount::all();
-        
-                return view('report.create');
+
+                return view('report.create',compact('MainAccounts','SubAccount'));
             }
     public function inventoryReport(){
 
@@ -55,7 +55,7 @@ class reportsConreoller extends Controller
     }
 
     public function summaryPdf(){
-        
+
         $MainAccounts= MainAccount::all();
         $SubAccount= SubAccount::all();
         return view('report.Summary.summaryPdf',['name'=>'الحساب','SubAccount'=>$SubAccount,'MainAccounts'=>$MainAccounts]);
