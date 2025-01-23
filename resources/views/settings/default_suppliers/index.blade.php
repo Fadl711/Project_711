@@ -34,15 +34,15 @@ window.onload = function() {
     <div class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
         <form action="{{ route('route.clear') }}" method="POST">
             @csrf
-            <button type="submit" class="btn btn-danger">تحديث المسارات</button>
+            <button type="submit" class="btn btn-danger text-white">تحديث المسارات</button>
         </form>
     </div>
     <div class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
         <form action="{{ route('git.pull') }}" method="POST">
             @csrf
-            <button type="submit" class="btn btn-primary">تحديث المشروع</button>
+            <button type="submit" class="btn btn-primary text-white">تحديث المشروع</button>
         </form>
     </div>
-  
+
 </div>
 @endsection
