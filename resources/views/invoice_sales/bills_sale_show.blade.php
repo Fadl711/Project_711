@@ -201,8 +201,10 @@
                         $sum1 = $Sum_amount-$Sale_CostSum  ;
                     @endphp
                         <tr class="bg-blue-100">
+
                             @if($sum1>0)
-                            <th class="px-2 text-right">رصيد سابق</th>
+  <th class="px-2 text-left w-[20%] border-0  bg-white"></th>                          
+                              <th class="px-2 text-left w-[20%]">رصيد سابق</th>
                             <th class="px-2 text-right">
                                 @if(isset( $sum1) &&   $sum1> 0)
                                 @if($payment_type=="أجل")
@@ -227,7 +229,9 @@
                             @php
                           $Sum_amount ;
                         @endphp
-                            <th class="px-2 text-right">الجمالي رصيد</th>
+                          <th class="px-2 text-left w-[20%] border-0  bg-white"></th>                          
+
+                            <th class="px-2 text-left w-[20%]">الجمالي رصيد</th>
 
                             <th class="px-2 text-right">
                                 @if(isset($Sum_amount) && $Sum_amount > 0)
