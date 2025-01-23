@@ -186,7 +186,7 @@
                     <thead class=" ">
                         <tr class="bg-blue-100 ">
                           
-                            <th class="px-2 text-left w-[20%] border-0  bg-white">
+                            <th class="px-2 text-left w-[30%] border-0  bg-white">
                             </th>
                             <th class="px-2 text-left w-[20%] ">
                                 <p class="font-">المبلغ المستحق</p>
@@ -203,7 +203,7 @@
                         <tr class="bg-blue-100">
 
                             @if($sum1>0)
-  <th class="px-2 text-left w-[20%] border-0  bg-white"></th>                          
+  <th class="px-2 text-left w-[30%] border-0  bg-white"></th>                          
                               <th class="px-2 text-left w-[20%]">رصيد سابق</th>
                             <th class="px-2 text-right">
                                 @if(isset( $sum1) &&   $sum1> 0)
@@ -229,7 +229,7 @@
                             @php
                           $Sum_amount ;
                         @endphp
-                          <th class="px-2 text-left w-[20%] border-0  bg-white"></th>                          
+                          <th class="px-2 text-left w-[30%] border-0  bg-white"></th>                          
 
                             <th class="px-2 text-left w-[20%]">الجمالي رصيد</th>
 
