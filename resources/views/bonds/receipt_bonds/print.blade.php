@@ -53,7 +53,7 @@
             </div> 
             <div class="inline-flex items-center text-center w-full ">
                 <span  class="px-4   font-bold  bg-white  border  border-l-0.5 rounded-s-lg border-black  ">{{$PaymentBond->transaction_type}}</span>
-                <span class="px-8 font-bold  text-blue-700  bg-white border  border-l-0.5 rounded-e-lg  border-black">({{$payment_type}})</span>
+                <span class="px-8 font-bold  text-blue-700  bg-white border  border-l-0.5 rounded-e-lg  c">({{$payment_type}})</span>
             </div>
             <div class="text-right">
               

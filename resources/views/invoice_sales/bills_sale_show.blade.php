@@ -160,7 +160,7 @@
 
                     }
                 @endphp
-                <tr class="bg-[#1749fd15] ">
+                <tr class="bg-[#1749fd15]  ">
                     <th colspan="{{$x}}" class="font-bold text-right px-2 "> </th>
                     @if ($discount>0)
                     <th class="font-bold text-red-500 px-2 ">الخصم</th>
@@ -179,15 +179,19 @@
             </tbody>
 
         </table>
-        <table class="w-[60%] text-sm ">
+        <div class="flex justify-start">
+            <table class=" text-sm mx-auto">
 
 
-                    <thead>
-                        <tr class="bg-blue-100">
-                            <th class="px-2 text-right w-[30%]">
+                    <thead class=" ">
+                        <tr class="bg-blue-100 ">
+                          
+                            <th class="px-2 text-left w-[20%] border-0  bg-white">
+                            </th>
+                            <th class="px-2 text-left w-[20%] ">
                                 <p class="font-">المبلغ المستحق</p>
                             </th>
-                            <th class="px-2 text-right">
+                            <th class="px-2 text-right ">
                                 {{ number_format($Sale_priceSum-$discount) ?? 0 }}
                                 <p class="text-sm">{{ $priceInWords }}</p>
                             </th>
@@ -235,7 +239,8 @@
 
 
         </table>
-        @isset($note)
+    </div>
+        @if($note)
         
         <br>
         <div class="rounded-md border p-4 py-2 align-text-bottom-2 border-gray-800">
@@ -250,7 +255,7 @@
         </div>
         <br>
 
-        @endisset
+        @endif
         <!-- الإجماليات -->
         <div class="totals- bg-gray-100 p-4">
             <div class="flex justify-between ">
