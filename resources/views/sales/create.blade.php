@@ -106,8 +106,9 @@
                     </div>
                     </div>
                 </div>
-                
-                <div class="grid md:grid-cols-4   gap-2 text-right " id="grid2" >
+                <div class="grid md:grid-cols-5   gap-2 text-right " id="" >
+
+                <div class="  gap-2 text-right " id="" >
                     <div class=" ">
                         <label for="Customer_name_id" class="labelSale">اسم العميل</label>
                         <select name="Customer_name_id" id="Customer_name_id" class="inputSale select2 input-field">
@@ -122,6 +123,9 @@
                         </select>
                       
                     </div>
+                    </div>
+                    <div class="  gap-2 text-right " id="" >
+
                     <div>
                         <label for="financial_account_id_main" class="labelSale"> حساب الدفع</label>
                         <select name="financial_account_id_main" id="financial_account_id_main" dir="ltr" class=" select2 inputSale" >
@@ -133,6 +137,9 @@
                             @endisset
                         </select>
                     </div>
+                    </div>
+                    <div class="  gap-2 text-right " id="" >
+
                     <div>
                         <label for="financial_account_id" class="labelSale"> تحديد الحساب</label>
                         <select name="financial_account_id" id="financial_account_id" dir="ltr" class="input-field select2 inputSale" required>
@@ -142,15 +149,23 @@
                             @foreach ($financialts as $financialt)
                             @if ($financialt->sub_account_id==$financial_account)
                             <option  selected value="{{$financialt->sub_account_id}}">{{$financialt->sub_name}}</option>
-    
                             @endif
                             @endforeach
                             @endisset
                             @endisset
-    
-    
-    
                         </select>
+                    </div>
+                  
+                    </div>
+                    <div class="  gap-2 text-right " >
+
+                        <div>
+                            <label for="total_price" class="labelSale">ملاحظة
+                            </label>
+                                <textarea name="note" id="note" cols="30" rows="1" class="inputSale"></textarea>
+                    </div>
+                    </div>
+                    <div class="  gap-2 text-right " id="grid2" >
                     </div>
                     </div>
             </form>
@@ -300,13 +315,23 @@
                     </button>
                     </div>
                     <div class="col-span-6 sm:col-span-3" >
+                        @foreach(['1' => 'تلقائي', '2' => 'تحليل'] as $key => $label)
+                        <div class="w-full text-center">
+                            <input type="radio" name="analysis" value="{{ $key }}" {{ $key == 1 ? 'checked' : '' }} class="mr-2"> {{ $label }}
+                        </div>
+                    @endforeach
                         <button onclick="openInvoiceWindow(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح الفاتورة</button>
                     </div>
+                   
                
             </div>
            
 
         </form>
+        <div class="">
+            <label for="TotalProfit" class="labelSale"  >    </label>
+            <input type="text" name="TotalProfit" id="TotalProfit"   class="inputSale text-center"   disabled/>
+        </div>
     </div>
     <div class="container mx-auto  " id="mainAccountsTable">
         <div class="w-full overflow-y-auto max-h-[80vh]  bg-white">
@@ -326,6 +351,7 @@
                 </thead>
                 <tbody>       
             </table>
+           
     </div>
 
     </div>
@@ -363,7 +389,8 @@
 function getUnitPriceCategorie(mainAccountId,categoryName)
 {
     
-    if (mainAccountId!==null) {
+    if (mainAccountId!==null) 
+    {
         const baseUrl = "{{ url('/GetProduct') }}";
         $.ajax({
             url: `${baseUrl}/${mainAccountId}/price?mainAccountId=${mainAccountId}&Categoriename=${categoryName}`,
@@ -812,13 +839,16 @@ function displayProductDetails(product) {
     }
 }
     function openInvoiceWindow(e) {
+
 const successMessage= $('#successMessage');
 const invoiceField = document.getElementById('sales_invoice_id').value; // الحصول على قيمة حقل رقم الفاتورة
 if(invoiceField){
     e.preventDefault(); // منع تحديث الصفحة
-const url = `{{ route('invoiceSales.print', ':invoiceField') }}`.replace(':invoiceField', invoiceField); // استبدال القيمة في الرابط
+    const analysis = $('input[name="analysis"]:checked').val(); // الخيار المحدد لعرض القائمة
+const url = `{{ route('invoiceSales.print', ':invoiceField') }}`.replace(':invoiceField', invoiceField)
++ `?analysis=${analysis}`;
 
-window.open(url, '_blank', 'width=600,height=800'); // فتح الرابط مع استبدال القيمة
+window.open(url, '_blank', 'width=800,height=800');
 }
 else{        
 
@@ -926,6 +956,7 @@ form.on('keydown', function (event) {
                 $('#total_price_sale').val(response.total_price_sale);
                 $('#net_total_after_discount').val(response.net_total_after_discount);
                 $('#discount').val(response.discount);
+                $('#TotalProfit').val(response.Profit);
                 emptyData();
                 $('#product_id').select2('open').focus();
             } else {
@@ -967,6 +998,7 @@ form.on('keydown', function (event) {
                   $('#product_name,#total_price,#loss,#Quantityprice,#QuantityCategorie,#TotalPurchase').val('');
                       $('#Barcode').val('');
                       $('#InventoryId').val('');
+                      $('#TotalProfit').val('');
                       $('#Quantity').val('');
                       $('#Purchase_price').val('');
                       $('#Selling_price').val('');

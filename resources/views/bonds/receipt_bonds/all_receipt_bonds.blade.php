@@ -1,7 +1,9 @@
 @extends('bonds.index')
 @section('tital'){{'gamal'}} @endsection
 @section('bonds')
+@vite(['resources/css/app.css', 'resources/js/app.js'])
 <style>
+
   /* تثبيت الأرقام بالإنجليزية */
   .english-numbers {
       font-feature-settings: 'tnum';
@@ -46,7 +48,7 @@
       <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">تحديث البيانات</button>
   </div>
   <!-- Date Filter Section -->
-  <form class="bg-gray-50 p-1 rounded-lg shadow-md mb-2">
+  <form class="bg-white rounded-lg shadow-md mb-2">
       <ul class="flex flex-col sm:flex-row gap-4 items-center">
           <li class="w-full text-center">
               <label class="text-sm font-medium">عرض حسب</label>
@@ -80,9 +82,9 @@
   </form>
   
   </div>
-  <div id="displayContainer" class="overflow-y-auto max-h-[80vh] bg-white px-4 py-1 rounded-lg shadow-md">
+  <div id="displayContainer" class="overflow-y-auto max-h-[80vh] bg-white px-4 py-1  ">
   </div>
-  <div id="displayContainer2" class="overflow-y-auto max-h-[80vh] bg-white px-4 py-1 rounded-lg shadow-md">
+  <div id="displayContainer2" class="overflow-y-auto max-h-[80vh] bg-white px-4 py-1  ">
     
   </div>
 
@@ -132,8 +134,8 @@ $(document).ready(function () {
     // إنشاء كارت عرض الفاتورة
     function renderInvoiceCard(invoice) {
     return `
-        <div class="mb-2 border border-gray-300 rounded-lg px-2 py-2 shadow-lg max-w-full" id="invoice-${invoice.payment_bond_id}">
-            <div class="bg-white border border-gray-300 rounded-lg shadow-md p-2 mb-1">
+        <div class="mb-2 border border-black rounded-lg px-2 py-2  max-w-full" id="invoice-${invoice.payment_bond_id}">
+            <div class="bg-white border border-gray-300 rounded-lg  p-2 mb-1">
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <div class="text-right">
                         <p>رقم السند: <span class="font-bold text-gray-800">${invoice.payment_bond_id}</span></p>

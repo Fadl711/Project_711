@@ -2,7 +2,7 @@
 @section('conm')
 <div class="container mx-auto ">
     <!-- Search and Filter Section -->
-    <div class="bg-white p-1 shadow-lg rounded-lg flex flex-col sm:flex-row items-center gap-4 justify-between mb-2">
+        <div class="w-full sm:w-auto flex items-center bg-white p-1 shadow-lg rounded-lg gap-4 justify-between mb-2  ">
         <div class="w-full sm:w-auto flex gap-4 items-center">
             <select name="searchType" class="border border-gray-300 rounded-lg p-2 w-full sm:w-auto focus:ring-2 focus:ring-indigo-500">
                 <option selected>كل الفواتير</option>
@@ -11,7 +11,17 @@
             </select>
             <input type="search" name="search" class="border border-gray-300 rounded-lg p-2 w-full sm:w-auto focus:ring-2 focus:ring-indigo-500" placeholder="بحث" name="search">
         </div>
+        <div class="col-span-6 sm:col-span-3" >
+            @foreach(['1' => 'تلقائي', '2' => 'تحليل'] as $key => $label)
+            <div class="w-full text-center">
+                <input type="radio" name="analysis" value="{{ $key }}" {{ $key == 1 ? 'checked' : '' }} class="mr-2"> {{ $label }}
+            </div>
+        @endforeach
+    </div>
+        <div class="col-span-6 sm:col-span-3" >
+
         <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">تحديث البيانات</button>
+    </div>
     </div>
     <!-- Date Filter Section -->
     <form class="bg-gray-50 p-1 rounded-lg shadow-md mb-2">
@@ -123,7 +133,6 @@
                             <td class="py-1 px-4">
                                   <div class="flex gap-8 space-x-2">
                        <a href="#" class="text-red-600 hover:underline show-payment" data-id="${sale.invoice_number}" data-url="${sale.view_url}">عرض</a>
-                            <a href="${sale.edit_url}" class="text-green-600 hover:underline">تعديل</a>
                            <a href="#" class="text-red-600 hover:underline delete-payment" data-id="${sale.invoice_number}" data-url="${sale.destroy_url}">حذف</a>
                                                 </div>
                             </td>
@@ -140,9 +149,11 @@
     e.preventDefault();
 
     let invoiceField = $(this).data('id');
-    const url = `{{ route('invoiceSales.print', ':invoiceField') }}`.replace(':invoiceField', invoiceField);
+    const analysis = $('input[name="analysis"]:checked').val(); // الخيار المحدد لعرض القائمة
+const url = `{{ route('invoiceSales.print', ':invoiceField') }}`.replace(':invoiceField', invoiceField)
++ `?analysis=${analysis}`;
 
-window.open(url, '_blank', 'width=600,height=800');// فتح الرابط في نافذة جديدة
+window.open(url, '_blank', 'width=800,height=800');// فتح الرابط في نافذة جديدة
   });
   $(document).on('click', '.delete-payment', function (e) {
     e.preventDefault();

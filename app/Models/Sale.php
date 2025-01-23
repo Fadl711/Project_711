@@ -20,6 +20,9 @@ class Sale extends Model
         'Barcode',
         'quantity',
         'Selling_price',
+        'Purchase_price',
+        'Profit',
+        'total_Profit',
         'note',
         'total_amount',
         'net_amount',
@@ -54,13 +57,11 @@ class Sale extends Model
     {
         return $this->belongsTo(SubAccount::class, 'warehouse_to_id', 'sub_account_id');
     }
-
     // العلاقة مع SubAccount (الحساب المالي)
     public function financialAccount()
     {
         return $this->belongsTo(SubAccount::class, 'financial_account_id', 'sub_account_id');
     }
-
     // العلاقة مع SubAccount (العميل)
     public function customer()
     {

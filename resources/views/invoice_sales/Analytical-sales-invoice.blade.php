@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>فاتورة مبيعات</title>
+    <title> تحليل فاتورة مبيعات </title>
     <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
     <style>
         /* تخصيص للطباعة */
@@ -73,7 +73,7 @@
 
             </div>
             <div>
-                <h2 class="text-lg font-bold">فاتورة :
+                <h2 class="text-lg font-bold">تحليل فاتورة :
                    {{$transaction_type??null}}/
                    {{$payment_type}}
 
@@ -118,6 +118,8 @@
                     <th class="px-2 text-right">سعر الوحده</th>
                     <th class="px-2 text-right">المخزن</th>
                     <th class="px-2 text-right">الإجمالي</th>
+                    <th class="px-2 text-right">الربح</th>
+                    <th class="px-2 text-right">اجمالي الربح</th>
                 </tr>
             </thead>
             <tbody>
@@ -146,7 +148,8 @@
                         </td>
 
                         <td class=" text-right">{{ number_format($Sale->total_amount )}}</td>
-
+                        <td class="text-right">{{ number_format($Sale->Profit, 2) }}</td>
+                        <td class="text-right">{{ number_format($Sale->total_Profit, 2) }}</td>
                     </tr>
                 @endforeach
                 @php
@@ -161,18 +164,26 @@
                     }
                 @endphp
                 <tr class="bg-[#1749fd15] ">
-                    <th colspan="{{$x}}" class="font-bold text-right px-2 "> </th>
-                    @if ($discount>0)
+                    <th colspan="4" class="font-bold text-right px-2 "> </th>
+                    {{-- @if ($discount>0) --}}
+                    <th class="font-bold text- px-2 ">صافي الربح</th>
                     <th class="font-bold text-red-500 px-2 ">الخصم</th>
-                    @endif
+                    {{-- @endif --}}
                     <th class="font-bold text- px-2 ">الإجمالي</th>
+                    <th class="font-bold text- px-2 "></th>
+                    <th class="font-bold text- px-2 ">اجمالي الربح</th>
                 </tr>
                 <tr>
-                    <td  colspan="{{$x}}" class="font-bold text-right px-2 "></td>
-                    @if ($discount>0)
-                    <th class="font-bold text-red-500 px-2 " >{{ number_format($discount )}}</th>
-                    @endif
+                    <td  colspan="4" class="font-bold text-right px-2 "></td>
+                    <th class="font-bold text-red-500 px-2">
+                        {{ number_format( $total_Profit-$discount , 2) }}
+                    </th>                    {{-- @if ($discount>0) --}}
+                    <th class="font-bold text-red-500 px-2 " >{{ number_format($discount,2 )??0}}</th>
+                    {{-- @endif --}}
                     <th>{{ number_format($Sale_CostSum )}}</th>
+                    <th class="font-bold text- px-2 "></th>
+
+                    <th class="font-bold text-red-500 px-2 " >{{ number_format($total_Profit,2 )??0}}</th>
                 </tr>
 
                 @endisset
@@ -232,13 +243,11 @@
                         @endif
 
                     </thead>
-
-
         </table>
+        <!-- الإجماليات -->
         @isset($note)
-        
         <br>
-        <div class="rounded-md border p-4 py-2 align-text-bottom-2 border-gray-800">
+        <div class="rounded-md border border-black p-4 py-2 align-text-bottom-2 ">
             <div class="flex justify-between">
                 <div>
                     <p class="text-sm" dir="ltr">
@@ -251,7 +260,7 @@
         <br>
 
         @endisset
-        <!-- الإجماليات -->
+
         <div class="totals- bg-gray-100 p-4">
             <div class="flex justify-between ">
                 <div>

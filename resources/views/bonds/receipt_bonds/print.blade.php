@@ -8,7 +8,6 @@
     <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
     <style>
         body {
-            background-color: #f9fafb;
             font-family: 'Tajawal', sans-serif;
         }
         .header-section {
@@ -39,17 +38,22 @@
     </style>
 </head>
 <body>
-<div class="container mx-auto px-2 py-2">
+<div class="container mx-auto px-2 py-2 ">
+    <div class=" rounded-lg border mb-0.5 border-black ">
+
     @include('includes.header2')
-    <div class="bg-white border border-gray-300 rounded-lg shadow-md px-2">
-        <div class="grid grid-cols-3 gap-4">
+</div> 
+
+    <div class="bg-white py-1  rounded-lg border mb-0.5 border-black  px-2">
+        <div class="grid grid-cols-3 gap-4  ">
             <div class="text-right">
-                <p>رقم السند: <span class="font-bold text-gray-800">{{$PaymentBond->payment_bond_id}}</span></p>
+                <p>رقم السند: <span class="font-bold text-gray-800 ">{{$PaymentBond->payment_bond_id}}</span></p>
                 <p>تاريخ السند: <span class="font-bold text-gray-800">{{ \Carbon\Carbon::parse($PaymentBond->created_at)->format('Y/m/d') }}</span></p>
                 <p>رقم المرجع: <span class="font-bold text-gray-800"></span></p>
             </div> 
-            <div class="text-center">
-                <p class="text-2xl font-bold text-blue-700">{{$PaymentBond->transaction_type}} ({{$payment_type}})</p>
+            <div class="inline-flex items-center text-center w-full ">
+                <span  class="px-4   font-bold  bg-white  border  border-l-0.5 rounded-s-lg border-black  ">{{$PaymentBond->transaction_type}}</span>
+                <span class="px-8 font-bold  text-blue-700  bg-white border  border-l-0.5 rounded-e-lg  border-black">({{$payment_type}})</span>
             </div>
             <div class="text-right">
               
@@ -63,7 +67,7 @@
         </div>
     </div>
 
-    <div class="bg-white border border-gray-300 rounded-lg shadow-md px-2">
+    <div class="bg-white  border border-black rounded-lg  px-2">
         <p>  اسم المستلم: <span class="font-bold text-gray-800">
             @if ($PaymentBond->transaction_type==="سند صرف")
 
@@ -77,23 +81,23 @@
 
         <p>تقيد المبلغ لحساب /الدائن</p>
 
-        <table class="w-full text-sm bg-gray-100 border border-gray-300 rounded-lg">
-            <thead class="bg-gray-300">
+        <table class="w-full text-sm border border-black rounded-lg">
+            <thead class="bg-gray-100">
                 <tr>
-                    <th class="px-4  border">م</th>
-                    <th class="px-4  border">اسم الحساب</th>
-                    <th class="px-4  border">البيان</th>
-                    <th class="px-4  border">المبلغ</th>
-                    <th class="px-4  border">العملة</th>
+                    <th class="px-4 border-black border">م</th>
+                    <th class="px-4 border-black border">اسم الحساب</th>
+                    <th class="px-4 border-black border">البيان</th>
+                    <th class="px-4 border-black border">المبلغ</th>
+                    <th class="px-4 border-black border">العملة</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td class="px-4  border">1</td>
-                    <td class="px-4  border">{{ $SubAccounts->where('sub_account_id', $PaymentBond->Credit_sub_account_id)->first()->sub_name }}</td>
-                    <td class="px-4  border">{{$PaymentBond->Statement}}</td>
-                    <td class="px-4  border">{{number_format($PaymentBond->Amount_debit)}}</td>
-                    <td class="px-4  border">{{ $Currencies->where('currency_id', $PaymentBond->Currency_id)->first()->currency_name }}</td>
+                    <td class="px-4 border-black border">1</td>
+                    <td class="px-4 border-black border">{{ $SubAccounts->where('sub_account_id', $PaymentBond->Credit_sub_account_id)->first()->sub_name }}</td>
+                    <td class="px-4 border-black border">{{$PaymentBond->Statement}}</td>
+                    <td class="px-4 border-black border">{{number_format($PaymentBond->Amount_debit)}}</td>
+                    <td class="px-4 border-black border">{{ $Currencies->where('currency_id', $PaymentBond->Currency_id)->first()->currency_name }}</td>
                 </tr>
             </tbody>
         </table>
@@ -109,7 +113,7 @@
                     </div>
 
                     <div>
-                        <p class="text-sm" dir="ltr">المسؤول : {{ $PaymentBond->UserName ?? 0 }}</p>
+                        <p class="text-sm" dir="ltr">المحاسب : {{ $PaymentBond->UserName ?? 0 }}</p>
                     </div>
                 </div>
             </div>

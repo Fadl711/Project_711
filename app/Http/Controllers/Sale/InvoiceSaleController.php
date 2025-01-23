@@ -36,8 +36,6 @@ class InvoiceSaleController extends Controller
  ->first();
  if (optional($us)->Writing_ability == 1) {
     
-
-
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
         if (!$accountingPeriod) {
             return response()->json([
@@ -49,7 +47,6 @@ class InvoiceSaleController extends Controller
     $validatedData = $request->validate([
         'date' => 'nullable|date', // تأكد من إضافة هذا الحقل
         'listRadio' => 'required|in:1,2', // تحديث القيم هنا
-
         'Customer_name_id' => 'nullable|exists:sub_accounts,sub_account_id',
         'total_price' => 'nullable|numeric|min:0',
         'total_price_sale' => 'nullable|numeric|min:0',
@@ -58,6 +55,7 @@ class InvoiceSaleController extends Controller
         'paid_amount' => 'nullable|numeric|min:0',
         'remaining_amount' => 'nullable|numeric|min:0',
         'payment_type' => 'required|numeric',
+        'note' => 'nullable',
         'financial_account_id' => 'required|numeric',
         'currency_id' => 'required|exists:currencies,currency_id', // assuming there's a currencies table
         'exchange_rate' => 'nullable|numeric|min:0',
@@ -83,6 +81,7 @@ class InvoiceSaleController extends Controller
         $salesInvoice->shipping_amount = $validatedData['shipping_amount'] ?? 0;
         $salesInvoice->remaining_amount =0;
         $salesInvoice->payment_type = $validatedData['payment_type'];
+        $salesInvoice->note = $validatedData['note'];
         $salesInvoice->account_id = $validatedData['financial_account_id'];
         $salesInvoice->currency_id = $validatedData['currency_id'];
         $salesInvoice->exchange_rate = $validatedData['exchange_rate'] ?? 0;
@@ -141,6 +140,7 @@ public function update(Request $request)
         'exchange_rate' => 'nullable|numeric|min:0',
         'shipping_bearer' => 'required|in:customer,merchant',
         'transaction_type' => 'required|numeric',
+        'note' => 'nullable',
         'shipping_amount' => 'nullable|numeric|min:0',
     ]);
 
@@ -298,6 +298,7 @@ private function saleInvoiceupdate($validatedData,$saleInvoice, $account_Credit,
         'remaining_amount' => $net_total_after_discount - ($paid_amount ?? 0),
         'financial_account_id' => $validatedData['financial_account_id'],
         'payment_type' => $validatedData['payment_type'],
+        'note' => $validatedData['note'],
         'account_id' => $validatedData['financial_account_id'],
         'currency_id' => $validatedData['currency_id'],
         'exchange_rate' => $validatedData['exchange_rate'] ?? 0,
@@ -343,6 +344,15 @@ private function saleInvoiceupdate($validatedData,$saleInvoice, $account_Credit,
         {
            $paymenttype="شيك";
         }
+        if( $validatedData['note'])
+        {
+            $note="/".$validatedData['note'] ??'';
+
+        }
+        else
+        {
+            $note='';
+        }
          
         $dailyEntrie = DailyEntrie::updateOrCreate(
             [
@@ -358,7 +368,7 @@ private function saleInvoiceupdate($validatedData,$saleInvoice, $account_Credit,
                 'account_debit_id' => $account_debit,
                 'Amount_Credit' => $net_total_after_discount ?: 0,
                 'Amount_debit' => $net_total_after_discount ?: 0,
-                'Statement' => $commint . " " . $transactiontype . " " . $paymenttype,
+                'Statement' => $commint . " " . $transactiontype . " " . $paymenttype.$note,
                 'Daily_page_id' => $daily_page_id ?? $dailyPage->page_id,
                 'Invoice_type' => $payment_type,
                 'Currency_name' => 'ر',
@@ -487,7 +497,7 @@ public function getSaleInvoice(Request $request, $filterType)
             'user_name' => $invoice->userName ?? 'غير معروف',
             'updated_at' => optional($invoice->updated_at)->format('Y-m-d') ?? 'غير متاح',
             'view_url' => route('searchInvoices', $invoice->sales_invoice_id),
-            'edit_url' => route('receip.edit', $invoice->sales_invoice_id),
+            // 'edit_url' => route('receip.edit', $invoice->sales_invoice_id),
             'destroy_url' => route('sales-invoice.delete', $invoice->sales_invoice_id),
         ];
 
@@ -503,8 +513,14 @@ public function getSaleInvoice(Request $request, $filterType)
 }
 
 
-public function print($id)
+public function print(Request $request,$id)
 {
+
+    $validated = $request->validate([
+      
+        'analysis' => 'required|numeric',
+    ]);
+    // dd( $validated['analysis']);
     $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
 
     $DataPurchaseInvoice = SaleInvoice::where('sales_invoice_id', $id)->first();
@@ -540,14 +556,21 @@ public function print($id)
     }
     $saleInvoice = SaleInvoice::where('sales_invoice_id', $id)
         ->first();
+        $note=$saleInvoice->note ?? '';
 
-    $DataSale = Sale::where('Invoice_id', $id)->get();
-    $Categorys = Category::all();
-   $curre=Currency::where('currency_id', $DataPurchaseInvoice->currency_id)->first();
-    // حساب مجموع السعر والتكلفة
-
-    $Sale_priceSum = Sale::where('Invoice_id', $id)->sum('total_price');
-    $Sale_CostSum = Sale::where('Invoice_id', $id)->sum('total_amount');
+        $Categorys = Category::all();
+        $curre=Currency::where('currency_id', $DataPurchaseInvoice->currency_id)->first();
+        // حساب مجموع السعر والتكلفة
+        
+        $DataSale = Sale::where('Invoice_id', $id)->get();
+        if ($DataSale->isEmpty()) {
+            $Sale_priceSum = 0;
+            $Sale_CostSum = 0;
+        } else {
+            $Sale_priceSum = $DataSale->sum('total_price');
+            $Sale_CostSum = $DataSale->sum('total_amount');
+            $total_Profit = $DataSale->sum('total_Profit');
+        }
     // $Sale_CostSum = Sale::where('Invoice_id', $id)->sum('total_amount');
     $discount=   $Sale_CostSum -  $saleInvoice->net_total_after_discount ??0;
     $SumDebtor_amount=DailyEntrie::where('account_debit_id',$SubAccount->sub_account_id)->sum('Amount_debit');
@@ -583,26 +606,58 @@ public function print($id)
     $us=UserPermission::where('User_id', $user)
     ->where('Authority_Name',$AuthorityName)
     ->first();
+    // Analytical-sales-invoice
     if (optional($us)->Readability == 1) {
-        return view('invoice_sales.bills_sale_show', [
-            'DataPurchaseInvoice' => $DataPurchaseInvoice,
-            'DataSale' => $DataSale,
-            'SubAccounts' => $SubAccount,
-            'Sale_priceSum' => $Sale_priceSum,
-            'Sale_CostSum' => $Sale_CostSum,
-            'priceInWords' => $numeric,
-            'Categorys' => $Categorys,
-            'currency' => $curre->currency_name,
-            'payment_type' => PaymentType::tryFrom($DataPurchaseInvoice->payment_type)?->label() ?? 'غير معروف',
-            'transaction_type' => TransactionType::fromValue($DataPurchaseInvoice->transaction_type)?->label() ?? 'غير معروف',
-            'warehouses' => $SubName,
-            'UserName' => $UserName,
-            'accountCla' => $AccountClassName,
-            'Sum_amount' => $Sum_amount,
-            'thanks'=>$thanks,
-            'discount'=>$discount,
+if($validated['analysis']==1)
+{
+    return view('invoice_sales.bills_sale_show', [
+        'DataPurchaseInvoice' => $DataPurchaseInvoice,
+        'DataSale' => $DataSale,
+        'SubAccounts' => $SubAccount,
+        'Sale_priceSum' => $Sale_priceSum,
+        'Sale_CostSum' => $Sale_CostSum,
+        'priceInWords' => $numeric,
+        'Categorys' => $Categorys,
+        'currency' => $curre->currency_name,
+        'payment_type' => PaymentType::tryFrom($DataPurchaseInvoice->payment_type)?->label() ?? 'غير معروف',
+        'transaction_type' => TransactionType::fromValue($DataPurchaseInvoice->transaction_type)?->label() ?? 'غير معروف',
+        'warehouses' => $SubName,
+        'total_Profit' => $total_Profit??0,
+        'UserName' => $UserName,
+        'accountCla' => $AccountClassName,
+        'Sum_amount' => $Sum_amount,
+        'thanks'=>$thanks,
+        'note'=>$note ??'',
+        'discount'=>$discount,
 
-        ]);
+    ]);
+}
+       
+if($validated['analysis']==2)
+{
+    return view('invoice_sales.Analytical-sales-invoice', [
+        'DataPurchaseInvoice' => $DataPurchaseInvoice,
+        'DataSale' => $DataSale,
+        'SubAccounts' => $SubAccount,
+        'Sale_priceSum' => $Sale_priceSum,
+        'Sale_CostSum' => $Sale_CostSum,
+        'priceInWords' => $numeric,
+        'total_Profit' => $total_Profit??0,
+        'Categorys' => $Categorys,
+        'currency' => $curre->currency_name,
+        'payment_type' => PaymentType::tryFrom($DataPurchaseInvoice->payment_type)?->label() ?? 'غير معروف',
+        'transaction_type' => TransactionType::fromValue($DataPurchaseInvoice->transaction_type)?->label() ?? 'غير معروف',
+        'warehouses' => $SubName,
+        'UserName' => $UserName,
+        'accountCla' => $AccountClassName,
+        'Sum_amount' => $Sum_amount,
+        'thanks'=>$thanks,
+        'note'=>$note ??''
+        'discount'=>$discount,
+
+    ]);
+}
+       
     } else {
         return view('auth.login');
     }

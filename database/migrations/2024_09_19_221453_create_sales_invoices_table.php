@@ -27,7 +27,6 @@ return new class extends Migration
    $table->decimal('total_price_sale', 15, 2)->comment('إجمالي سعر البيع');
      // إضافة عمود "الخصم" (اختياري حسب احتياجك)
      $table->decimal('discount', 15, 2)->default(0)->comment('قيمة الخصم الممنوح');
-
      // إضافة عمود "الإجمالي الصافي بعد الخصم"
      $table->decimal('net_total_after_discount', 15, 2)->default(0)->comment('الإجمالي الصافي بعد الخصم'); 
 

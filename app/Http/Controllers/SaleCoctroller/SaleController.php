@@ -88,10 +88,13 @@ class SaleController extends Controller
         
         try {
           
-            $categorieId = Category::where('product_id', $request->product_id)
+            $categorie = Category::where('product_id', $request->product_id)
         ->where('categorie_id', $request->Categorie_name)
         ->orwhere('Categorie_name', $request->Categorie_name)
         ->value('Categorie_name');
+          
+
+
             // الحصول على اسم المنتج
             $Product = Product::where('product_id', $request->product_id)->first();
             // التحقق من وجود الفترة المحاسبية
@@ -119,19 +122,33 @@ if ($accountingPeriod->accounting_period_id !== $saleInvoice->accounting_period_
             } 
            // حفظ أو تحديث عملية البيع
            $Transaction_type=  $saleInvoice->transaction_type;
+           $Purchase = Category::where('product_id', $request->product_id)
+           ->where('categorie_id', $request->Categorie_name)
+           ->first();
+           $Quantity=$request->Quantity;
+          $purchasePrice=$Purchase->Purchase_price ??0;
+          $SellingPrice=$Selling_price ??0;
+           $Profit=$SellingPrice-$purchasePrice;
+            $total_Profit = $Quantity * $Profit;
+
+        //    $request->Quantity*
+        //    dd( $request->Purchase_price);
             $sales = Sale::updateOrCreate(
                 [
                     'accounting_period_id' => $accountingPeriod->accounting_period_id,
                     'Invoice_id' => $saleInvoice->sales_invoice_id,
                     'Product_name' => $Product->product_name,
                     'product_id' => $Product->product_id,
-                    'Category_name' => $categorieId,
+                    'Category_name' => $categorie,
                 ],
                 [
                     'Barcode' => $Product->Barcode ?? '',
+                    'Selling_price' => $Selling_price,
+                    'Purchase_price' =>  $Purchase->Purchase_price?? 0,
+                    'Profit' => $Profit??0,
+                    'total_Profit' => $total_Profit??0,
                     'Quantityprice' => $request->Quantity,
                     'quantity' => $request->Quantityprice,
-                    'Selling_price' => $Selling_price,
                     'discount_rate' => $discount_rate ?? 0,
                     'discount' => $total_discount_rate ?? 0,
                     'total_amount' => $request->Quantity * $Selling_price,
@@ -147,6 +164,8 @@ if ($accountingPeriod->accounting_period_id !== $saleInvoice->accounting_period_
                     'note' => $request->note ?? '',
                 ]
             );
+           
+
             $total_price_sale = Sale::where('Invoice_id', $saleInvoice->sales_invoice_id )
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->sum('total_amount');
@@ -156,6 +175,13 @@ if ($accountingPeriod->accounting_period_id !== $saleInvoice->accounting_period_
             $discount = Sale::where('Invoice_id', $saleInvoice->sales_invoice_id )
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->sum('discount');
+
+           
+            $Profit = Sale::where('Invoice_id', $saleInvoice->sales_invoice_id )
+            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+            ->sum('total_Profit');
+            $total_Profit=$Profit-$discount;
+
             $paid_amount = 0;
             $account_debit = null;
             $account_Credit = null;
@@ -164,7 +190,6 @@ if ($accountingPeriod->accounting_period_id !== $saleInvoice->accounting_period_
             // تحديد الحساب المدين والمبلغ المدفوع بناءً على نوع الدفع
             if ($saleInvoice->transaction_type ===4) 
             {
-               
         if (in_array($saleInvoice->payment_type, [1, 3, 4])){
                 $account_Credit= $request->account_debitid;
                 $account_debit = $saleInvoice->account_id;
@@ -215,7 +240,6 @@ if ($accountingPeriod->accounting_period_id !== $saleInvoice->accounting_period_
                 return response()->json(['success' => false, 'message' => 'فشل في إنشاء صفحة يومية']);
             }
             $transactiontype=   TransactionType::fromValue($saleInvoice->transaction_type)?->label();
-
             // إعداد بيانات الإدخالات اليومية
             $entrie_id = DailyEntrie::where('Invoice_id',$saleInvoice->sales_invoice_id)
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
@@ -236,6 +260,7 @@ if ($accountingPeriod->accounting_period_id !== $saleInvoice->accounting_period_
                 'total_price_sale' => $total_price_sale,
                 'net_total_after_discount' => $net_total_after_discount,
                 'discount' => $discount,
+                'Profit' => $total_Profit,
             ]);
         }  
         
@@ -304,9 +329,14 @@ if ($accountingPeriod->accounting_period_id !== $saleInvoice->accounting_period_
               }
 
                 }
-
-
-            
+                if($saleInvoice->note)
+                {
+                    $note="/".$saleInvoice->note ??'';
+                }
+                else
+                {
+                    $note='';
+                }
          $transactiontype=   TransactionType::fromValue($saleInvoice->transaction_type)?->label();
                          // إنشاء أو تحديث الإدخالات اليومية
             $dailyEntrie = DailyEntrie::updateOrCreate(
@@ -322,7 +352,7 @@ if ($accountingPeriod->accounting_period_id !== $saleInvoice->accounting_period_
                     'account_debit_id' => $account_debit, 
                     'Amount_Credit' => $net_total_after_discount ?: 0,
                     'Amount_debit' => $net_total_after_discount ?: 0,
-                    'Statement' => $commint." ".$transactiontype." ".PaymentType::tryFrom($saleInvoice->payment_type)?->label() ,
+                    'Statement' => $commint." ".$transactiontype." ".PaymentType::tryFrom($saleInvoice->payment_type)?->label().$note ,
                     'Daily_page_id' => $daily_page_id ?? $dailyPage->page_id,
                     'Invoice_type' => $saleInvoice->payment_type,
                     'Currency_name' => 'ر',

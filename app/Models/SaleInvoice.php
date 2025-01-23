@@ -25,7 +25,8 @@ class SaleInvoice extends Model
          'payment_type',
         'currency_id',
          'exchange_rate', 
-         
+         'note',
+
          'transaction_type',
          'account_id',
         'shipping_bearer',
