@@ -652,7 +652,7 @@ if($validated['analysis']==2)
         'accountCla' => $AccountClassName,
         'Sum_amount' => $Sum_amount,
         'thanks'=>$thanks,
-        'note'=>$note ??''
+        'note'=>$note ??'',
         'discount'=>$discount,
 
     ]);
