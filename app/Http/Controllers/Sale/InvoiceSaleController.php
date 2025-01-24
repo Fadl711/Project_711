@@ -458,18 +458,7 @@ public function getSaleInvoice(Request $request, $filterType)
         $query->whereBetween('created_at', [$validated['fromDate'], $validated['toDate']]);
     }
             break;
-        default:
           
-            // if ($fromDate && $toDate) {
-            //     try {
-            //         $fromDate = Carbon::parse($fromDate);
-            //         $toDate = Carbon::parse($toDate);
-            //     } catch (\Exception $e) {
-            //         return response()->json(['message' => 'تنسيق التواريخ غير صحيح.'], 400);
-            //     }
-            //     $query->whereBetween('created_at', [$fromDate, $toDate]);
-            // }
-            // break;
     }
 
     
@@ -489,8 +478,8 @@ public function getSaleInvoice(Request $request, $filterType)
             'discount' => $invoice->discount ?? 'غير متاح',
             'payment_type' => PaymentType::tryFrom($invoice->payment_type)?->label() ?? 'غير معروف',
             'shipping_bearer' => $invoice->shipping_bearer ?? 'غير متاح',
-            'shipping_amount' => $invoice->shipping_amount ?? 0,
-            'total_price_sale' => $invoice->total_price_sale ?? 0,
+            'shipping_amount' =>number_format($invoice->shipping_amount,2)  ?? 0,
+            'total_price_sale' =>number_format( $invoice->total_price_sale,2)  ?? 0, 
             'net_total_after_discount' => $invoice->net_total_after_discount ?? 0,
             'paid_amount' => $invoice->paid_amount ?? 0,
             'remaining_amount' => $invoice->remaining_amount ?? 0,
@@ -622,7 +611,7 @@ if($validated['analysis']==1)
         'payment_type' => PaymentType::tryFrom($DataPurchaseInvoice->payment_type)?->label() ?? 'غير معروف',
         'transaction_type' => TransactionType::fromValue($DataPurchaseInvoice->transaction_type)?->label() ?? 'غير معروف',
         'warehouses' => $SubName,
-        'total_Profit' => $total_Profit??0,
+        'total_Profit' =>number_format($total_Profit,2)??0,
         'UserName' => $UserName,
         'accountCla' => $AccountClassName,
         'Sum_amount' => $Sum_amount,

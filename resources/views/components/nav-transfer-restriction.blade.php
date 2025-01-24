@@ -2,13 +2,16 @@
     <ul class="grid grid-cols-4 text-right container relative shadow-md px-2 py-2 bg-gradient-to-t text-white from-indigo-900 to-indigo-600 rounded-md  font-medium capitalize hover:text-blue-600">
         <li class="rounded">
             <a href="{{ route('restrictions.create') }}"
-            class="py-2 px-4 {{ Route::is('restrictions.create') ? 'border-b-2 font-bold text-xl' : 'border-b-0' }} border-white hover:text-blue-600">
-            قيد جديد
+            class="py-2 px-4 {{ Route::is('restrictions.create') ? 'border-b-2 font-bold text-xl' : 'border-b-0' }} border-white hover:text-blue-600"
+            >
+           إنشاء قيد 
         </a>
         </li>
         <li class="rounded">
             <a href="{{ route('all_restrictions_show_1') }}"
-            class="py-2 px-4 {{ Route::is('all_restrictions_show_1') ? 'border-b-2 font-bold text-xl' : 'border-b-0' }} border-white hover:text-blue-600">
+            class="py-2 px-4 {{ Route::is('all_restrictions_show_1') ? 'border-b-2 font-bold text-xl' : 'border-b-0' }} border-white hover:text-blue-600"
+            
+            >
             القيود
         </a>
     </li>

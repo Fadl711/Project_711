@@ -125,11 +125,10 @@ if ($accountingPeriod->accounting_period_id !== $saleInvoice->accounting_period_
            $Purchase = Category::where('product_id', $request->product_id)
            ->where('categorie_id', $request->Categorie_name)
            ->first();
-           $Quantity=$request->Quantity;
           $purchasePrice=$Purchase->Purchase_price ??0;
           $SellingPrice=$Selling_price ??0;
-           $Profit=$SellingPrice-$purchasePrice;
-            $total_Profit = $Quantity * $Profit;
+           $Profit1=$SellingPrice-$purchasePrice;
+            $total_Profit = $request->Quantity * $Profit1;
 
         //    $request->Quantity*
         //    dd( $request->Purchase_price);
@@ -145,7 +144,7 @@ if ($accountingPeriod->accounting_period_id !== $saleInvoice->accounting_period_
                     'Barcode' => $Product->Barcode ?? '',
                     'Selling_price' => $Selling_price,
                     'Purchase_price' =>  $Purchase->Purchase_price?? 0,
-                    'Profit' => $Profit??0,
+                    'Profit' => $Profit1??0,
                     'total_Profit' => $total_Profit??0,
                     'Quantityprice' => $request->Quantity,
                     'quantity' => $request->Quantityprice,
@@ -177,10 +176,10 @@ if ($accountingPeriod->accounting_period_id !== $saleInvoice->accounting_period_
             ->sum('discount');
 
            
-            $Profit = Sale::where('Invoice_id', $saleInvoice->sales_invoice_id )
+            $Profits = Sale::where('Invoice_id', $saleInvoice->sales_invoice_id )
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->sum('total_Profit');
-            $total_Profit=$Profit-$discount;
+            $total_Profit=$Profits-$discount;
 
             $paid_amount = 0;
             $account_debit = null;
@@ -257,10 +256,10 @@ if ($accountingPeriod->accounting_period_id !== $saleInvoice->accounting_period_
                 'success' => true,
                 'message' => 'تمت إضافة عملية البيع بنجاح!',
                 'purchase' => $sales,
-                'total_price_sale' => $total_price_sale,
-                'net_total_after_discount' => $net_total_after_discount,
+                'total_price_sale' =>number_format($total_price_sale,2),
+                'net_total_after_discount' => number_format($net_total_after_discount,2),
                 'discount' => $discount,
-                'Profit' => $total_Profit,
+                'Profit' => number_format($total_Profit,2)??0,
             ]);
         }  
         
