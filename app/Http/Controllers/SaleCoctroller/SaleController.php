@@ -174,8 +174,6 @@ if ($accountingPeriod->accounting_period_id !== $saleInvoice->accounting_period_
             $discount = Sale::where('Invoice_id', $saleInvoice->sales_invoice_id )
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->sum('discount');
-
-           
             $Profits = Sale::where('Invoice_id', $saleInvoice->sales_invoice_id )
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->sum('total_Profit');
@@ -493,30 +491,52 @@ public function deleteInvoice($id)
 }
 public function getSalesByInvoiceArrowLeft(Request $request)
 {
+    $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+
     $invoiceId = $request->input('sales_invoice_id');
     $user_id = auth()->id();
-
     // جلب أول فاتورة أكبر من الفاتورة الحالية
-    $SaleInvoice = SaleInvoice::where('User_id', $user_id)
+    $SaleInvoice = SaleInvoice::where('sub_Account', $user_id)
         ->where('sales_invoice_id', '>', $invoiceId)
         ->orderBy('sales_invoice_id', 'asc') // ترتيب تصاعدي
         ->first();
 
+        $SubAccount = SubAccount::where('sub_account_id', $SaleInvoice->Customer_id)->first();
+        $Customer_name=$SubAccount->sub_name;
+        $Customer_id=$SubAccount->sub_account_id;
     if (!$SaleInvoice) {
         return response()->json(['message' => 'لا توجد فاتورة لاحقة.'], 404);
     }
     // جلب المبيعات المرتبطة بالفاتورة المحددة
-    $sales = Sale::where('User_id', $user_id)
-        ->where('Invoice_id', $SaleInvoice->sales_invoice_id)
+    $sales = Sale::where('Invoice_id', $SaleInvoice->sales_invoice_id)
         ->get();
-
-    if ($sales->isEmpty()) {
-        return response()->json(['message' => 'لا توجد مبيعات مرتبطة بهذه الفاتورة.'], 404);
-    }
+        $total_price_sale = Sale::where('Invoice_id', $SaleInvoice->sales_invoice_id )
+        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        ->sum('total_amount');
+        $net_total_after_discount = Sale::where('Invoice_id', $SaleInvoice->sales_invoice_id )
+        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        ->sum('total_price');
+        $discount = Sale::where('Invoice_id', $SaleInvoice->sales_invoice_id )
+        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        ->sum('discount');
+        $Profits = Sale::where('Invoice_id', $SaleInvoice->sales_invoice_id )
+        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        ->sum('total_Profit');
+        $total_Profit=$Profits-$discount;
+    // if ($sales->isEmpty()) {
+    //     return response()->json(['message' => 'لا توجد مبيعات مرتبطة بهذه الفاتورة.'], 404);
+    // }
     return response()->json([
         'sales' => $sales,
+        'Customer_name' => $Customer_name,
+        'Customer_id' => $Customer_id,
         'last_invoice_id' => $SaleInvoice->sales_invoice_id,
         'SaleInvoice' => $SaleInvoice,
+        'payment_type' => $SaleInvoice->payment_type,
+        'total_price_sale' =>number_format($total_price_sale,2),
+        'net_total_after_discount' => number_format($net_total_after_discount,2),
+        'discount' => $discount,
+        'Profit' => number_format($total_Profit,2)??0,
     ]);
 }
 
@@ -525,26 +545,50 @@ public function getSalesByInvoiceArrowRight(Request $request)
 {
     $invoiceId = $request->input('sales_invoice_id');
     $user_id = auth()->id();
+    $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+
     // جلب أول فاتورة أصغر من الفاتورة الحالية
     $SaleInvoice = SaleInvoice::where('User_id', $user_id)
         ->where('sales_invoice_id', '<', $invoiceId)
         ->orderBy('sales_invoice_id', 'desc') // ترتيب تنازلي
         ->first();
-
+        $total_price_sale = Sale::where('Invoice_id', $SaleInvoice->sales_invoice_id )
+        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        ->sum('total_amount');
+        $net_total_after_discount = Sale::where('Invoice_id', $SaleInvoice->sales_invoice_id )
+        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        ->sum('total_price');
+        $discount = Sale::where('Invoice_id', $SaleInvoice->sales_invoice_id )
+        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        ->sum('discount');
+        $Profits = Sale::where('Invoice_id', $SaleInvoice->sales_invoice_id )
+        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        ->sum('total_Profit');
+        $total_Profit=$Profits-$discount;
+        $SubAccount = SubAccount::where('sub_account_id', $SaleInvoice->Customer_id)->first();
+        $Customer_name=$SubAccount->sub_name;
+        $Customer_id=$SubAccount->sub_account_id;
     if (!$SaleInvoice) {
         return response()->json(['message' => 'لا توجد فاتورة سابقة.']);
     }
     // جلب المبيعات المرتبطة بالفاتورة المحددة
-    $sales = Sale::where('User_id', $user_id)
-        ->where('Invoice_id', $SaleInvoice->sales_invoice_id)
-        ->get();
+    $sales = Sale::where('Invoice_id', $SaleInvoice->sales_invoice_id)
+    ->get();
 
-    if ($sales->isEmpty()) {
-        return response()->json(['message' => 'لا توجد مبيعات مرتبطة بهذه الفاتورة.']);
-    }
+    // if ($sales->isEmpty()) {
+    //     return response()->json(['message' => 'لا توجد مبيعات مرتبطة بهذه الفاتورة.']);
+    // }
     return response()->json([
         'sales' => $sales,
+        'Customer_name' => $Customer_name,
+        'Customer_id' => $Customer_id,
         'last_invoice_id' => $SaleInvoice->sales_invoice_id,
+        'payment_type' => $SaleInvoice->payment_type,
+
+        'total_price_sale' =>number_format($total_price_sale,2),
+        'net_total_after_discount' => number_format($net_total_after_discount,2),
+        'discount' => $discount,
+        'Profit' => number_format($total_Profit,2)??0,
     ]);
 }
 

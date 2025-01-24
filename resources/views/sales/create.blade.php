@@ -730,6 +730,7 @@ function fetchSalesByInvoice(url, currentInvoiceId) {
         data: { sales_invoice_id: currentInvoiceId },
         success: function (data) {
             $('#invoiceSales #grid2 #invoiceid2').hide();
+           const Customer_name_id= $('#Customer_name_id');
 
             const rows = `
 <div id="invoiceid2">
@@ -746,8 +747,22 @@ $('#invoiceSales #grid2').append(rows);
             $('#mainAccountsTable tbody').empty();
 
             if (data.sales && data.sales.length > 0) {
-                $('#sales_invoice_id').val(data.last_invoice_id);
                 displaySales(data.sales);
+
+                $('#sales_invoice_id').val(data.last_invoice_id);
+// افترض أن data تم جلبها بنجاح من الخادم
+// افترض أن data تم جلبها بنجاح من الخادم
+$('input[name="payment_type"][value="' + data.payment_type + '"]').prop('checked', true);                $('#total_price_sale').val(data.total_price_sale);
+                $('#net_total_after_discount').val(data.net_total_after_discount);
+                $('#discount').val(data.discount);
+                $('#TotalProfit').val(data.Profit);
+Customer_name_id.empty();
+    const  subAccountOptions = 
+          `
+          <option value="${data.Customer_id}">${data.Customer_name}</option>`
+     ;
+
+     Customer_name_id.append(subAccountOptions);
             } else {
                 alert(data.message || 'لا توجد مبيعات مرتبطة بهذه الفاتورة.');
             }
