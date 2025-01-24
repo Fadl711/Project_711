@@ -603,7 +603,7 @@ public function getSalesByInvoiceArrowRight(Request $request)
 
         'total_price_sale' =>number_format($total_price_sale,2),
         'net_total_after_discount' => number_format($net_total_after_discount,2),
-        'discount' => $discount,
+        'discount' => $SaleInvoice->discount,
         'Profit' => number_format($total_Profit,2)??0,
     ]);
 }
