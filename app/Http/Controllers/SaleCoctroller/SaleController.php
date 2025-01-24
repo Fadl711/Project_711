@@ -526,18 +526,27 @@ public function getSalesByInvoiceArrowLeft(Request $request)
     // if ($sales->isEmpty()) {
     //     return response()->json(['message' => 'لا توجد مبيعات مرتبطة بهذه الفاتورة.'], 404);
     // }
+    $label= TransactionType::fromValue($SaleInvoice->transaction_type)?->label() ?? 'غير معروف';
+    $valueType= TransactionType::fromValue($SaleInvoice->transaction_type)?->value;
+   
     return response()->json([
         'sales' => $sales,
         'Customer_name' => $Customer_name,
         'Customer_id' => $Customer_id,
+        'transaction_typelabel' => $label,
+        'transaction_valueType' => $valueType,
         'last_invoice_id' => $SaleInvoice->sales_invoice_id,
-        'SaleInvoice' => $SaleInvoice,
+        'note' => $SaleInvoice->note ??'',
         'payment_type' => $SaleInvoice->payment_type,
+        
+        'created_at' => $SaleInvoice->created_at->format('Y-m-d'),
+
         'total_price_sale' =>number_format($total_price_sale,2),
         'net_total_after_discount' => number_format($net_total_after_discount,2),
         'discount' => $discount,
         'Profit' => number_format($total_Profit,2)??0,
     ]);
+
 }
 
 
@@ -578,12 +587,19 @@ public function getSalesByInvoiceArrowRight(Request $request)
     // if ($sales->isEmpty()) {
     //     return response()->json(['message' => 'لا توجد مبيعات مرتبطة بهذه الفاتورة.']);
     // }
+   $label= TransactionType::fromValue($SaleInvoice->transaction_type)?->label() ?? 'غير معروف';
+   $valueType= TransactionType::fromValue($SaleInvoice->transaction_type)?->value??1;
     return response()->json([
         'sales' => $sales,
         'Customer_name' => $Customer_name,
         'Customer_id' => $Customer_id,
+        'transaction_typelabel' => $label,
+        'transaction_valueType' => $valueType,
         'last_invoice_id' => $SaleInvoice->sales_invoice_id,
+        'note' => $SaleInvoice->note ??'',
         'payment_type' => $SaleInvoice->payment_type,
+        
+        'created_at' => $SaleInvoice->created_at->format('Y-m-d'),
 
         'total_price_sale' =>number_format($total_price_sale,2),
         'net_total_after_discount' => number_format($net_total_after_discount,2),

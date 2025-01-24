@@ -37,7 +37,7 @@
                             @isset($transactionTypes)
                             @foreach ($transactionTypes as $transactionType)
                                 @if (in_array($transactionType->value, [4, 5]))
-                                    <option value="{{ $transactionType->value }}">{{ $transactionType->label() }}</option>
+                                    <option  value="{{ $transactionType->value }}">{{ $transactionType->label() }}</option>
                                 @endif
                             @endforeach
                             @endisset
@@ -731,6 +731,14 @@ function fetchSalesByInvoice(url, currentInvoiceId) {
         success: function (data) {
             $('#invoiceSales #grid2 #invoiceid2').hide();
            const Customer_name_id= $('#Customer_name_id');
+           const transaction_type= $('#transaction_type');
+           $('#sales_invoice_id').val(data.last_invoice_id);
+                $('input[name="payment_type"][value="' + data.payment_type + '"]').prop('checked', true);                $('#total_price_sale').val(data.total_price_sale);
+                $('#net_total_after_discount').val(data.net_total_after_discount);
+                $('#discount').val(data.discount);
+                $('#date').val(data.created_at);
+                $('#TotalProfit').val(data.Profit);
+                $('#note').val(data.note);
 
             const rows = `
 <div id="invoiceid2">
@@ -749,20 +757,21 @@ $('#invoiceSales #grid2').append(rows);
             if (data.sales && data.sales.length > 0) {
                 displaySales(data.sales);
 
-                $('#sales_invoice_id').val(data.last_invoice_id);
-// افترض أن data تم جلبها بنجاح من الخادم
-// افترض أن data تم جلبها بنجاح من الخادم
-$('input[name="payment_type"][value="' + data.payment_type + '"]').prop('checked', true);                $('#total_price_sale').val(data.total_price_sale);
-                $('#net_total_after_discount').val(data.net_total_after_discount);
-                $('#discount').val(data.discount);
-                $('#TotalProfit').val(data.Profit);
+             
 Customer_name_id.empty();
+transaction_type.empty();
+
     const  subAccountOptions = 
           `
           <option value="${data.Customer_id}">${data.Customer_name}</option>`
      ;
-
+    const  transaction_typ = 
+          `
+          <option value="${data.transaction_valueType}">${data.transaction_typelabel}</option>`
+     ;
      Customer_name_id.append(subAccountOptions);
+
+     transaction_type.append(transaction_typ);
             } else {
                 alert(data.message || 'لا توجد مبيعات مرتبطة بهذه الفاتورة.');
             }
