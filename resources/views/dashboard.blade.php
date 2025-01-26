@@ -36,23 +36,28 @@ $totalPayments = [
 
 
 
+<canvas id="paymentChart" width="400" height="200"></canvas>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const ctx = document.getElementById('paymentChart').getContext('2d');
 
     // تحويل البيانات من PHP إلى JavaScript
-    const totalPayments = {!! json_encode($totalPayments) !!}; // استخدام json_encode لتحويل المصفوفة إلى JSON
+    const dailyTotals = {!! json_encode($dailyTotals) !!}; // استخدام json_encode لتحويل المصفوفة إلى JSON
+    
+    // إعداد الملصقات والقيم
+    const labels = dailyTotals.map(item => item.day); // استخراج الأيام
+    const data = dailyTotals.map(item => item.total_Profit); // استخراج الأرباح
 
     const paymentChart = new Chart(ctx, {
         type: 'line', // أو 'bar' حسب نوع المخطط الذي تريده
         data: {
-            labels: Object.keys(totalPayments), // استخدام مفاتيح المصفوفة كملصقات
+            labels: labels, // استخدام الملصقات
             datasets: [{
-                label: 'Payments',
-                data: Object.values(totalPayments), // استخدام القيم في المصفوفة
+                label: 'الربح اليومي',
+                data: data, // استخدام القيم
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 2,
@@ -82,13 +87,13 @@ $totalPayments = [
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Amount'
+                        text: 'المبلغ'
                     }
                 },
                 x: {
                     title: {
                         display: true,
-                        text: 'Categories'
+                        text: 'الأيام'
                     }
                 }
             }

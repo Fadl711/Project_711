@@ -64,13 +64,36 @@ class InvoiceSaleController extends Controller
         'shipping_amount' => 'nullable|numeric|min:0',
     ]);
 
+      
+
+    
     // عملية الحفظ
     try {
         $salesInvoice = new SaleInvoice();
-        if( $validatedData['listRadio']==2)
+       
+        $invoice_id=SaleInvoice::where('sales_invoice_id',$request->invoice_id)->first();
+
+    if($invoice_id)
+    {
+        return response()->json([
+            'success' => false,
+            'message' => 'الفاتورة موجودة من قبل',
+
+        ], 201);
+    }
+    else
+    {
+        if($request->invoice_id)
         {
-            $salesInvoice->created_at =  $validatedData['date'];
+            $salesInvoice->sales_invoice_id =$request->invoice_id;
+
         }
+       
+    }
+    if( $validatedData['listRadio']==2)
+    {
+        $salesInvoice->created_at =  $validatedData['date'];
+    }
         $salesInvoice->Customer_id = $validatedData['Customer_name_id'];
         // $salesInvoice->payment_status = $validatedData['payment_status'];
         $salesInvoice->total_price = $validatedData['total_price']??0;
@@ -138,6 +161,7 @@ public function update(Request $request)
         'financial_account_id' => 'required|numeric',
         'currency_id' => 'required|exists:currencies,currency_id',
         'exchange_rate' => 'nullable|numeric|min:0',
+        'invoice_id' => 'nullable|numeric',
         'shipping_bearer' => 'required|in:customer,merchant',
         'transaction_type' => 'required|numeric',
         'note' => 'nullable',
@@ -486,7 +510,6 @@ public function getSaleInvoice(Request $request, $filterType)
             'user_name' => $invoice->userName ?? 'غير معروف',
             'updated_at' => optional($invoice->updated_at)->format('Y-m-d') ?? 'غير متاح',
             'view_url' => route('searchInvoices', $invoice->sales_invoice_id),
-            // 'edit_url' => route('receip.edit', $invoice->sales_invoice_id),
             'destroy_url' => route('sales-invoice.delete', $invoice->sales_invoice_id),
         ];
 

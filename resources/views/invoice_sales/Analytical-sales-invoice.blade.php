@@ -113,10 +113,9 @@
                     <th class="px-2 text-right">م</th>
                     <th class="px-2 text-right">اسم الصنف</th>
                     <th class="px-2 text-right"> الوحده</th>
-
                     <th class="px-2 text-center">الكمية</th>
-                    <th class="px-2 text-right">سعر الوحده</th>
-                    <th class="px-2 text-right">المخزن</th>
+                    <th class="px-2 text-right">سعر البيع </th>
+                    <th class="px-2 text-right">سعر شراء </th>
                     <th class="px-2 text-right">الإجمالي</th>
                     <th class="px-2 text-right">الربح</th>
                     <th class="px-2 text-right">اجمالي الربح</th>
@@ -136,17 +135,8 @@
                             </td>
                         <td class="px-2 text-center">{{ $Sale->Quantityprice }}</td>
                         <td class="px-2 text-right">{{number_format( $Sale->Selling_price) }}</td>
-                        <td class="px-2 text-right">
-                            @isset($warehouses)
-                            @foreach ($warehouses as $warehouse)
-                            @if($warehouse->sub_account_id === $Sale->warehouse_to_id)
-                            {{ $warehouse->sub_name }}
-                            @endif
-                            @endforeach
-                            @endisset
-
-                        </td>
-
+                        <td class="px-2 text-right">{{number_format( $Sale->Purchase_price) }}</td>
+                       
                         <td class=" text-right">{{ number_format($Sale->total_amount )}}</td>
                         <td class="text-right">{{ number_format($Sale->Profit, 2) }}</td>
                         <td class="text-right">{{ number_format($Sale->total_Profit, 2) }}</td>
@@ -167,7 +157,7 @@
                     <th colspan="4" class="font-bold text-right px-2 "> </th>
                     {{-- @if ($discount>0) --}}
                     <th class="font-bold text- px-2 ">صافي الربح</th>
-                    <th class="font-bold text-red-500 px-2 ">الخصم</th>
+                    <th class="font-bold  px-2 ">الخصم</th>
                     {{-- @endif --}}
                     <th class="font-bold text- px-2 ">الإجمالي</th>
                     <th class="font-bold text- px-2 "></th>

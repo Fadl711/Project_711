@@ -97,7 +97,7 @@
     // إنشاء كارت الفاتورة
     function renderInvoiceCard(sale) {
         return `
-            <div  class="mb-3 border border-gray-300 rounded-lg px-4 py-2 shadow-sm" id="invoice-${sale.invoice_number}">
+            <div  id="invoice-${sale.invoice_number}"  class="mb-3 border border-gray-300 rounded-lg px-4 py-2 shadow-sm" >
                 <div class="flex justify-between items-center ">
                     <div class="text-right">
                         <div class="text-gray-700 text-right">تاريخ الفاتورة: <span class="text-sm">${sale.formatted_date}</span></div>
@@ -123,7 +123,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="bg-gray-50">
+                        <tr id="invoice-${sale.invoice_number}" class="bg-gray-50">
                             <td class="py-1 px-4">${sale.total_price_sale.toLocaleString()}</td>
                             <td class="py-1 px-4">${sale.discount.toLocaleString()}</td>
                             <td class="py-1 px-4">${sale.shipping_amount.toLocaleString()}</td>

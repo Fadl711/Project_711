@@ -415,7 +415,6 @@ $total_price_sale = Sale::where('Invoice_id', $saleInvoice->sales_invoice_id )
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->where('daily_entries_type',$transactiontype)
                 ->first();
-
          // تحديث بيانات القيد اليومي
          $Getentrie_id->update([
             'Amount_Credit' => $net_total_after_discount ?: 0,
@@ -492,7 +491,8 @@ public function deleteInvoice($id)
 public function getSalesByInvoiceArrowLeft(Request $request)
 {
     $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
-
+    // $totalsale = Sale::where('accounting_period_id', $accountingPeriod->accounting_period_id)
+    // ->get();
     $invoiceId = $request->input('sales_invoice_id');
     $user_id = auth()->id();
     // جلب أول فاتورة أكبر من الفاتورة الحالية
@@ -510,6 +510,7 @@ public function getSalesByInvoiceArrowLeft(Request $request)
     // جلب المبيعات المرتبطة بالفاتورة المحددة
     $sales = Sale::where('Invoice_id', $SaleInvoice->sales_invoice_id)
         ->get();
+       
         $total_price_sale = Sale::where('Invoice_id', $SaleInvoice->sales_invoice_id )
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->sum('total_amount');

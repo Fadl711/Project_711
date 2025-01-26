@@ -106,7 +106,7 @@
                     </div>
                     </div>
                 </div>
-                <div class="grid md:grid-cols-5   gap-2 text-right " id="" >
+                <div class="grid grid-cols-6   gap-2 text-right " id="" >
 
                 <div class="  gap-2 text-right " id="" >
                     <div class=" ">
@@ -157,6 +157,14 @@
                     </div>
                   
                     </div>
+                    <div class="  gap-2 text-right " id="" >
+                        <div>
+
+                        <label for="invoice_id" class="labelSale"> الرقم الفاترة</label>
+
+                        <input type="number" id="invoice_id" name="invoice_id" class="inputSale">
+                    </div> 
+                    </div> 
                     <div class="  gap-2 text-right " >
 
                         <div>
