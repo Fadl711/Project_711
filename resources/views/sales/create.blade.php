@@ -1081,7 +1081,7 @@ form.on('keydown', function (event) {
             customerIdField = $('#Customer_id');
 
         $.ajax({
-            url: '{{ route("invoiceSales.store") }}', // مسار التخزين
+            url: '{{ route("invoiceSales.store")}}', // مسار التخزين
             type: 'POST',
             headers: {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}' // التوكن الخاص بـ Laravel
@@ -1092,6 +1092,7 @@ form.on('keydown', function (event) {
             success: function (response) {
                 $('#invoiceSales #grid2 #invoiceid').empty();
                 $('#invoiceSales #grid2 #invoiceid2').empty();
+                $('#invoice_id').val('');
 
                 if (response.success) {
                     emptyData();
