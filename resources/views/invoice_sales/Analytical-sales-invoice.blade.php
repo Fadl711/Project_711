@@ -166,7 +166,7 @@
                 <tr>
                     <td  colspan="4" class="font-bold text-right px-2 "></td>
                     <th class="font-bold text-red-500 px-2">
-                        {{ number_format( $total_Profit-$discount , 2) }}
+                        {{ number_format( $total_Profit-$discount , 2) ??0 }}
                     </th>                    {{-- @if ($discount>0) --}}
                     <th class="font-bold text-red-500 px-2 " >{{ number_format($discount,2 )??0}}</th>
                     {{-- @endif --}}

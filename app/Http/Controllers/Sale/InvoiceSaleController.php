@@ -70,8 +70,8 @@ class InvoiceSaleController extends Controller
     // عملية الحفظ
     try {
         $salesInvoice = new SaleInvoice();
+         $invoice_id=SaleInvoice::where('sales_invoice_id',$request->invoice_id)->first();
        
-        $invoice_id=SaleInvoice::where('sales_invoice_id',$request->invoice_id)->first();
 
     if($invoice_id)
     {
@@ -143,13 +143,11 @@ public function update(Request $request)
     $user = auth()->id();
     $AuthorityName = "الفواتير المبيعات";
     $transactionType = intval($request->transaction_type); // أو (int)$request->transaction_type
-
     // التحقق من وجود الفترة المحاسبية
     $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
     if (!$accountingPeriod) {
         return response()->json(['success' => false, 'message' => 'لا توجد فترة محاسبية مفتوحة.']);
     }
-
     // التحقق من صحة البيانات المدخلة
     $validatedData = $request->validate([
         'Customer_name_id' => 'nullable|exists:sub_accounts,sub_account_id',
@@ -634,13 +632,12 @@ if($validated['analysis']==1)
         'payment_type' => PaymentType::tryFrom($DataPurchaseInvoice->payment_type)?->label() ?? 'غير معروف',
         'transaction_type' => TransactionType::fromValue($DataPurchaseInvoice->transaction_type)?->label() ?? 'غير معروف',
         'warehouses' => $SubName,
-        'total_Profit' =>number_format($total_Profit,2)??0,
         'UserName' => $UserName,
         'accountCla' => $AccountClassName,
         'Sum_amount' => $Sum_amount,
         'thanks'=>$thanks,
         'note'=>$note ??'',
-        'discount'=>$discount,
+        'discount'=>$discount ??0,
 
     ]);
 }
@@ -654,7 +651,7 @@ if($validated['analysis']==2)
         'Sale_priceSum' => $Sale_priceSum,
         'Sale_CostSum' => $Sale_CostSum,
         'priceInWords' => $numeric,
-        'total_Profit' => $total_Profit??0,
+        'total_Profit' =>number_format($total_Profit,2)??0,
         'Categorys' => $Categorys,
         'currency' => $curre->currency_name,
         'payment_type' => PaymentType::tryFrom($DataPurchaseInvoice->payment_type)?->label() ?? 'غير معروف',
@@ -665,7 +662,7 @@ if($validated['analysis']==2)
         'Sum_amount' => $Sum_amount,
         'thanks'=>$thanks,
         'note'=>$note ??'',
-        'discount'=>$discount,
+        'discount'=>$discount??0,
 
     ]);
 }
