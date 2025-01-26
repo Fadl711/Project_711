@@ -82,11 +82,7 @@
                     @auth
                         <input type="hidden" name="User_id" id="User_id" value="{{ Auth::user()->id }}">
                     @endauth
-                    {{-- <div id="newInvoice1" style="display: block">
-                        <button id="saveinvoiceSales" type="button" class="inputSale flex font-bold">
-                            إضافة الفاتورة
-                        </button>
-                    </div> --}}
+                 
                     <div class="flex">
                         <label for="date" class="text-center">التاريخ</label>
                         <div class="text-center">
@@ -106,7 +102,7 @@
                     </div>
                     </div>
                 </div>
-                <div class="grid grid-cols-6   gap-2 text-right " id="" >
+                <div class="grid grid-cols-6 gap-2 text-right " id="" >
 
                 <div class="  gap-2 text-right " id="" >
                     <div class=" ">
@@ -139,7 +135,7 @@
                     </div>
                     </div>
                     <div class="  gap-2 text-right " id="" >
-
+                      
                     <div>
                         <label for="financial_account_id" class="labelSale"> تحديد الحساب</label>
                         <select name="financial_account_id" id="financial_account_id" dir="ltr" class="input-field select2 inputSale" required>
@@ -172,8 +168,18 @@
                             </label>
                                 <textarea name="note" id="note" cols="30" rows="1" class="inputSale"></textarea>
                     </div>
+
                     </div>
+                    {{-- <div class="  gap-2 text-right " id="" >
+
+                    <div id="newInvoice1">
+                        <button id="saveinvoiceSales" type="button" class="inputSale  font-bold">
+                            إضافة الفاتورة
+                        </button>
+                    </div> 
+                    </div>  --}}
                     <div class="  gap-2 text-right " id="grid2" >
+                     
                     </div>
                     </div>
             </form>

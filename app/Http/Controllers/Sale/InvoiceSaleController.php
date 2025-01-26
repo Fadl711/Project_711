@@ -55,6 +55,7 @@ class InvoiceSaleController extends Controller
         'paid_amount' => 'nullable|numeric|min:0',
         'remaining_amount' => 'nullable|numeric|min:0',
         'payment_type' => 'required|numeric',
+        'invoice_id' => 'nullable|numeric',
         'note' => 'nullable',
         'financial_account_id' => 'required|numeric',
         'currency_id' => 'required|exists:currencies,currency_id', // assuming there's a currencies table
@@ -70,7 +71,7 @@ class InvoiceSaleController extends Controller
     // عملية الحفظ
     try {
         $salesInvoice = new SaleInvoice();
-         $invoice_id=SaleInvoice::where('sales_invoice_id',$request->invoice_id)->first();
+         $invoice_id=SaleInvoice::where('sales_invoice_id',$validatedData['invoice_id'])->first();
        
 
     if($invoice_id)
@@ -83,9 +84,9 @@ class InvoiceSaleController extends Controller
     }
     else
     {
-        if($request->invoice_id)
+        if ($validatedData['invoice_id'])
         {
-            $salesInvoice->sales_invoice_id =$request->invoice_id;
+            $salesInvoice->sales_invoice_id =$validatedData['invoice_id'];
 
         }
        
