@@ -160,7 +160,7 @@
                     <div class="  gap-2 text-right " id="" >
                         <div>
 
-                        <label for="invoice_id" class="labelSale"> الرقم الفاترة</label>
+                        <label for="invoice_id" class="labelSale"> الرقم الفاتورة</label>
 
                         <input type="number" id="invoice_id" name="invoice_id" class="inputSale">
                     </div> 
