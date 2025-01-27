@@ -226,7 +226,7 @@ public function print($id){
         $payment_type="شيك";
     }
    
-    $currency = $currs->currency_name;
+    $currency = $currs->currency_name ??'';
 // جلب البيانات وتحويلها
 $numberToWords = new NumberToWords();
 $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية

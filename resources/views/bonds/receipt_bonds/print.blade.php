@@ -58,7 +58,7 @@
             <div class="text-right">
               
                 <p class="text-lg font-bold bg-gray-100 p-2 rounded-md">المبلغ:{{number_format($PaymentBond->Amount_debit)}}
-                    <span class="text-sm font-normal">{{ $Currencies->where('currency_id', $PaymentBond->Currency_id)->first()->currency_name }}</span>
+                    <span class="text-sm font-normal">{{ $Currencies->where('currency_id', $PaymentBond->Currency_id)->first()->currency_name ??'' }}</span>
                 </p>
                 <p>إيداع في حساب: <span class="font-bold text-gray-800">
                     {{ $SubAccounts->where('sub_account_id', $PaymentBond->Debit_sub_account_id)->first()->sub_name ?? '' }}
