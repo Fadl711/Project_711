@@ -53,13 +53,14 @@
             </div> 
             <div class="inline-flex items-center text-center w-full ">
                 <span  class="px-4   font-bold  bg-white  border  border-l-0.5 rounded-s-lg border-black  ">{{$PaymentBond->transaction_type}}</span>
-                <span class="px-8 font-bold  text-blue-700  bg-white border  border-l-0.5 rounded-e-lg  c">({{$payment_type}})</span>
+                <span class="px-8 font-bold  text-blue-700  bg-white border border-black  border-l-0.5 rounded-e-lg  c">({{$payment_type}})</span>
             </div>
             <div class="text-right">
               
                 <p class="text-lg font-bold bg-gray-100 p-2 rounded-md">المبلغ:{{number_format($PaymentBond->Amount_debit)}}
-                    <span class="text-sm font-normal">{{ $Currencies->where('currency_id', $PaymentBond->Currency_id)->first()->currency_name ??'' }}</span>
+                    <span class="text-sm font-normal">{{ $currency_name ??'' }}</span>
                 </p>
+
                 <p>إيداع في حساب: <span class="font-bold text-gray-800">
                     {{ $SubAccounts->where('sub_account_id', $PaymentBond->Debit_sub_account_id)->first()->sub_name ?? '' }}
                     </span></p>
@@ -97,7 +98,7 @@
                     <td class="px-4 border-black border">{{ $SubAccounts->where('sub_account_id', $PaymentBond->Credit_sub_account_id)->first()->sub_name }}</td>
                     <td class="px-4 border-black border">{{$PaymentBond->Statement}}</td>
                     <td class="px-4 border-black border">{{number_format($PaymentBond->Amount_debit)}}</td>
-                    <td class="px-4 border-black border">{{ $Currencies->where('currency_id', $PaymentBond->Currency_id)->first()->currency_name }}</td>
+                    <td class="px-4 border-black border">{{ $currency_name ??'' }}</td>
                 </tr>
             </tbody>
         </table>

@@ -226,15 +226,15 @@ public function print($id){
         $payment_type="شيك";
     }
    
-    $currency = $currs->currency_name ??'';
+    $currency_name = $currs->currency_name ??'';
 // جلب البيانات وتحويلها
 $numberToWords = new NumberToWords();
 $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
 $result = is_numeric($PaymentBond->Amount_debit) 
-? $numberTransformer->toWords($PaymentBond->Amount_debit) . ' ' . $currency
+? $numberTransformer->toWords($PaymentBond->Amount_debit) . ' ' . $currency_name
 : 'القيمة غير صالحة';
     // استخدام $currency بشكل صحيح
-    return view('bonds.receipt_bonds.print', compact('payment_type','PaymentBond', 'result'));
+    return view('bonds.receipt_bonds.print', compact('payment_type','PaymentBond', 'result','currency_name'));
 }
 
 public function getPaymentBond(Request $request, $filterType )
