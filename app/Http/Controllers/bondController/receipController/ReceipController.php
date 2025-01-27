@@ -101,6 +101,7 @@ $paymentBond = PaymentBond::updateOrCreate(
             'Amount_debit' => $Amount_debit ?: 0,
             'account_Credit_id' => $paymentBond->Credit_sub_account_id,
             'Statement' => $paymentBond->Statement,
+            'created_at' => $paymentBond->created_at,
             'Daily_page_id' => $daily_page_id,
             'Invoice_type' => $paymentBond->payment_type,
             'Currency_name' => $curre,
