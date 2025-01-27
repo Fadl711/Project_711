@@ -46,11 +46,11 @@
         @include('includes.header2')
 
 
-        <header class="flex justify-between items-center border-b-2 border-gray-800 ">
+        <header class="flex justify-between items-center border-b-2 border-gray-800  text-sm">
             <div>
                 <div>
                     <div class="flex">
-                        <div class="font-extrabold">
+                        <div class="font-extrabold text-sm">
                             {{ __('اسم') }} {{ $accountCla ?? __(' ') }}:
                         </div>
                         <div class="">
@@ -62,7 +62,7 @@
 
                 <div>
                     <div class="flex">
-                        <div class="font-extrabold">
+                        <div class="font-extrabold text-sm ">
                             {{ __('العملة') }} :
                         </div>
                         <div class="">
@@ -73,28 +73,29 @@
 
             </div>
             <div>
-                <h2 class="text-lg font-bold">فاتورة :
-                   {{$transaction_type??null}}/
-                   {{$payment_type}}
+                <div class="inline-flex items-center text-center w-full ">
+                 
+                   <span  class="px-4   font-bold  bg-white  border  border-l-0.5 rounded-s-lg border-black  ">فاتورة :
+                    {{$transaction_type??null}}</span>
+                   <span class="px-8 font-bold  text-blue-700  bg-white border border-black  border-l-0.5 rounded-e-lg  c">({{$payment_type}})</span>
+             
 
-
-
-                </h2>
+                </div>
             </div>
             <div>
                 <div>
                     <div class="flex">
-                        <div class="font-extrabold">
+                        <div class="font-extrabold text-sm">
                             {{ __('التاريخ') }} :
                         </div>
-                        <div class="">
+                        <div class=" ">
                             {{ \Carbon\Carbon::parse($DataPurchaseInvoice->created_at)->format('Y-m-d') ?? __('غير متوفر') }} / {{ str_replace(['AM', 'PM'], ['ص', 'م'], \Carbon\Carbon::parse($DataPurchaseInvoice->created_at)->format('h:i A')) }}
                         </div>
                     </div>
                 </div>
                 <div>
                     <div class="flex">
-                        <div class="font-extrabold">
+                        <div class="font-extrabold text-sm">
                             {{ __('رقم الفاتورة') }} :
                         </div>
                         <div class="">
