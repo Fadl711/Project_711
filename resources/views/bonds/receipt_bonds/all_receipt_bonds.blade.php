@@ -76,7 +76,8 @@
           </li>
           <li class="w-full flex items-center justify-center">
               <label class="text-sm font-medium">إلى:</label>
-              <input type="date" name="to-Date" class="mx-2 p-2 border rounded-md focus:ring-2 focus:ring-indigo-500">
+              <input type="date"                         value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}"
+              name="to-Date" class="mx-2 p-2 border rounded-md focus:ring-2 focus:ring-indigo-500">
           </li>
       </ul>
   </form>

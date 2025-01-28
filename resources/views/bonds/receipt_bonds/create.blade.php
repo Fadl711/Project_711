@@ -44,15 +44,18 @@
                  <option value="سند صرف">سند صرف</option>
                 </select>
             </div>
+         
             <div class="text-center">
                 <label for="date" class="text-center">التاريخ</label>
                 <input
                     name="date"
+                    id="date"
                     type="date"
                     class="inputSale"
-                    value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}"
                     @isset($ExchangeBond->created_at)
                         value="{{ \Carbon\Carbon::parse($ExchangeBond->created_at)->format('Y-m-d') }}"
+                    @else
+                        value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}"
                     @endisset
                 >
             </div>

@@ -48,13 +48,20 @@ if ($request->DepositAccount == $request->CreditAmount) {
 }
 }
 $payment_bond_id = $request->payment_bond_id;
+$date = Carbon::createFromFormat('Y-m-d', $request->date)
+->setTimezone('Asia/Aden')  // تصحيح الكتابة هنا
+->format('Y-m-d'); 
+// dd($request->date);
+// dd($date);
+// استخدام createFromFormat
+
 $paymentBond = PaymentBond::updateOrCreate(
     [
         'payment_bond_id' => $payment_bond_id,
         'accounting_period_id' => $accountingPeriod->accounting_period_id,
     ],
     [
-        'created_at' => $request->date,
+        'created_at' => $date,
         'Main_debit_account_id' => $request->AccountReceivable,
         'Debit_sub_account_id' => $request->DepositAccount,
         'Main_Credit_account_id' => $request->PaymentParty,
@@ -67,6 +74,10 @@ $paymentBond = PaymentBond::updateOrCreate(
         'User_id' => $request->User_id,
     ]
 );
+
+$paymentBond->created_at = $date; // تأكد من أن هذا هو العمود الصحيح
+$paymentBond->save();
+
         // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
         $curre=Currency::where('currency_id', $paymentBond->Currency_id)->pluck('currency_name')->first();
         // إذا لم توجد صفحة، قم بإنشائها
