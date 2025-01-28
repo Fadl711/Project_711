@@ -208,7 +208,11 @@ $paymentBond = PaymentBond::updateOrCreate(
         
 public function print($id){
     $PaymentBond = PaymentBond::where('payment_bond_id', $id)->first();
+    $subAccount=SubAccount::where('sub_account_id', $PaymentBond->Debit_sub_account_id)->first();
+    $Credit_sub=SubAccount::where('sub_account_id', $PaymentBond->Credit_sub_account_id)->first();
     $currs=Currency::where('currency_id',$PaymentBond->Currency_id)->first();
+    $sub_name= $subAccount->sub_name;
+    $Credit_sub_name= $subAccount->sub_name;
     if( $PaymentBond->payment_type===1)
     {
         $payment_type="نقداً";
@@ -234,7 +238,7 @@ $result = is_numeric($PaymentBond->Amount_debit)
 ? $numberTransformer->toWords($PaymentBond->Amount_debit) . ' ' . $currency_name
 : 'القيمة غير صالحة';
     // استخدام $currency بشكل صحيح
-    return view('bonds.receipt_bonds.print', compact('payment_type','PaymentBond', 'result','currency_name'));
+    return view('bonds.receipt_bonds.print', compact('payment_type','PaymentBond', 'result','currency_name','sub_name','Credit_sub_name'));
 }
 
 public function getPaymentBond(Request $request, $filterType )

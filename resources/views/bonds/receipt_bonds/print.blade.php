@@ -62,7 +62,7 @@
                 </p>
 
                 <p>إيداع في حساب: <span class="font-bold text-gray-800">
-                    {{ $SubAccounts->where('sub_account_id', $PaymentBond->Debit_sub_account_id)->first()->sub_name ?? '' }}
+                    {{ $sub_name ?? '' }}
                     </span></p>
             </div>
         </div>
@@ -72,7 +72,7 @@
         <p>  اسم المستلم: <span class="font-bold text-gray-800">
             @if ($PaymentBond->transaction_type==="سند صرف")
 
-            {{ $SubAccounts->where('sub_account_id', $PaymentBond->Debit_sub_account_id)->first()->sub_name ?? '' }}
+            {{ $sub_name ?? '' }}
             @endif
         </span></p>
         <p>مبلغ وقدره: <span class="text-lg font-bold">
@@ -95,7 +95,7 @@
             <tbody>
                 <tr>
                     <td class="px-4 border-black border">1</td>
-                    <td class="px-4 border-black border">{{ $SubAccounts->where('sub_account_id', $PaymentBond->Credit_sub_account_id)->first()->sub_name }}</td>
+                    <td class="px-4 border-black border">{{ $Credit_sub_name ??'' }}</td>
                     <td class="px-4 border-black border">{{$PaymentBond->Statement}}</td>
                     <td class="px-4 border-black border">{{number_format($PaymentBond->Amount_debit)}}</td>
                     <td class="px-4 border-black border">{{ $currency_name ??'' }}</td>
