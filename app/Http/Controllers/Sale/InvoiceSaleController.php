@@ -209,6 +209,7 @@ public function update(Request $request)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->whereIn('daily_entries_type', ["مردود مبيعات", "مبيعات"])
         ->first();
+        
 
     $Getentrie_id = $entrie_id->entrie_id ?? null;
     $daily_page_id = $entrie_id->Daily_page_id ?? $dailyPage->page_id;
@@ -483,8 +484,6 @@ public function getSaleInvoice(Request $request, $filterType)
             break;
           
     }
-
-    
  $user=auth()->id();
  $AuthorityName="الفواتير المبيعات";
  $us=UserPermission::where('User_id', $user)

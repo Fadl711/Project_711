@@ -10,6 +10,7 @@ use App\Models\Category;
 use App\Models\Currency;
 use App\Models\DailyEntrie;
 use App\Models\Default_customer;
+use App\Models\GeneralEntrie;
 use App\Models\GeneralJournal;
 use App\Models\MainAccount;
 use App\Models\Product;
@@ -378,6 +379,7 @@ public function destroy($id)
     $saleInvoice = SaleInvoice::where('sales_invoice_id', $sal->Invoice_id)
     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
     ->first();
+
 if (!$saleInvoice) {
     return response()->json(['success' => false, 'message' => 'الفاتورة غير موجودة.'], 404);
 }
@@ -464,11 +466,22 @@ public function deleteInvoice($id)
             return response()->json(['success' => false, 'message' => 'لا توجد فترة محاسبية مفتوحة.']);
         }
         $invoice->delete();
+        
         // البحث عن السجل المرتبط في DailyEntrie
         $GetentrieId = DailyEntrie::where('Invoice_id', $id)
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->where('daily_entries_type', $transactiontype)
             ->first();
+            $generalEntrieaccount_debit_id = GeneralEntrie::where([
+                'Daily_entry_id' => $GetentrieId->entrie_id,
+                'accounting_period_id' => $GetentrieId->accounting_period_id,
+                'sub_id' => $GetentrieId->account_debit_id,
+            ])->delete();
+            $generalEntrieaccount_debit_id = GeneralEntrie::where([
+                'Daily_entry_id' => $GetentrieId->entrie_id,
+                'accounting_period_id' => $GetentrieId->accounting_period_id,
+                'sub_id' => $GetentrieId->account_Credit_id,
+            ])->delete();
         // التحقق مما إذا كان السجل موجودًا قبل الحذف
         if ($GetentrieId) {
             $GetentrieId->delete(); // حذف السجل المرتبط

@@ -224,8 +224,7 @@ class PurchaseController extends Controller
         }
         // التحقق من فئة الحساب
         $subAccount = SubAccount::where('sub_account_id', $purchaseInvoice->account_id)->first();
-        if (($transactionType == 3 && $subAccount->AccountClass != 3) ||
-            ($transactionType == 1 && $subAccount->AccountClass == 3)) {
+        if ($transactionType == 3 && $subAccount->AccountClass != 3) {
             return response()->json([
                 'success' => false,
                 'message' => $transactionType == 3 

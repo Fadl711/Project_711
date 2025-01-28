@@ -8,6 +8,7 @@ use App\Enum\TransactionType;
 use App\Http\Controllers\Controller;
 use App\Models\AccountingPeriod;
 use App\Models\DailyEntrie;
+use App\Models\GeneralEntrie;
 use App\Models\MainAccount;
 use App\Models\Purchase;
 use App\Models\PurchaseInvoice;
@@ -149,11 +150,23 @@ class InvoicePurchaseController extends Controller
             return response()->json(['success' => false, 'message' => 'لا توجد فترة محاسبية مفتوحة.']);
         }
         // حذف الفاتورة نفسها
+        
         $invoice->delete();
         $Getentrie_id = DailyEntrie::where('Invoice_id',$id)
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->where('daily_entries_type',$transaction_type)
             ->first();
+          
+            $generalEntrieaccount_debit_id = GeneralEntrie::where([
+                'Daily_entry_id' => $Getentrie_id->entrie_id,
+                'accounting_period_id' => $Getentrie_id->accounting_period_id,
+                'sub_id' => $Getentrie_id->account_debit_id,
+            ])->delete();
+            $generalEntrieaccount_debit_id = GeneralEntrie::where([
+                'Daily_entry_id' => $Getentrie_id->entrie_id,
+                'accounting_period_id' => $Getentrie_id->accounting_period_id,
+                'sub_id' => $Getentrie_id->account_Credit_id,
+            ])->delete();
             if($Getentrie_id )
             {
                 $Getentrie_id->delete();
