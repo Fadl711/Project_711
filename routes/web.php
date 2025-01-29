@@ -422,7 +422,7 @@ $dailyTotals = $dailyProfits->map(function($sales, $day) {
 //  else {
 //     return response()->json(['message' => 'لا توجد فترة محاسبية مفتوحة'], 404);
 // }
-    return view('dashboard',['dailyTotals'=>$dailyTotals]);
+    return view('dashboard',['dailyTotals'=>$dailyTotals ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

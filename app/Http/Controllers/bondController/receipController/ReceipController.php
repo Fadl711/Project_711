@@ -184,8 +184,7 @@ $paymentBond->save();
                     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
                     ->where('daily_entries_type', $paymentBond->transaction_type)
                     ->first();
-
-                  
+   
                     $generalEntrieaccount_debit_id = GeneralEntrie::where([
                         'Daily_entry_id' => $DailyEntrie->entrie_id,
                         'accounting_period_id' => $DailyEntrie->accounting_period_id,
@@ -418,6 +417,9 @@ public function searchInvoices(Request $request)
             'statement' => $invoice->Statement ?? 'غير متاح',
             'user_name' => $invoice->userName, // استخدام Accessor
             'updated_at' => optional($invoice->updated_at)->format('Y-m-d') ?? 'غير متاح',
+            'view_url' => route('receip.show', $invoice->payment_bond_id),
+            'edit_url' => route('receip.edit', $invoice->payment_bond_id),
+            'destroy_url' => route('receip_destroy.destroy', $invoice->payment_bond_id),
         ];
     });
 
