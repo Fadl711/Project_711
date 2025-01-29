@@ -164,8 +164,8 @@ Route::post('/invoicePurchases/saveAndPrint', [PurchaseController::class, 'saveA
 Route::get('/get-purchases-by-invoice', [PurchaseController::class, 'getPurchasesByInvoice'])->name('getPurchasesByInvoice');
 Route::get('/invoice_purchases/{id}/print', [PurchaseController::class, 'print'])->name('invoicePurchases.print');
 Route::get('/invoice_purchases/{id}/GetInvoiceNumber', [InvoicePurchaseController::class, 'GetInvoiceNumber'])->name('GetInvoiceNumber');
-Route::get('/get-purchases-by-invoice/ArrowRight', [PurchaseInvoice::class, 'getSalesByInvoiceArrowRight'])->name('getSalesByInvoiceArrowRight');
-Route::get('/get-purchases-by-invoice/ArrowLeft', [PurchaseInvoice::class, 'getSalesByInvoiceArrowLeft'])->name('getSalesByInvoiceArrowLeft');
+Route::get('/get-purchases-by-invoice/ArrowRight', [PurchaseInvoice::class, 'getpurchasesByInvoiceArrowRight'])->name('getpurchasesByInvoiceArrowRight');
+Route::get('/get-purchases-by-invoice/ArrowLeft', [PurchaseInvoice::class, 'getpurchasesByInvoiceArrowLeft'])->name('getpurchasesByInvoiceArrowLeft');
 Route::get('/purchases/{id}',[PurchaseController::class,'edit'])->name('purchases.edit');
 Route::delete('/purchases/{id}',[PurchaseController::class,'destroy'])->name('purchases.destroy');
 // Route::delete('/purchases/destroyInvoice/{id}',[PurchaseController::class,'destroyInvoice'])->name('purchases.destroyInvoice');
