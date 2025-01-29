@@ -716,7 +716,7 @@ if($Quantit=="QuantityCosts")
                     'Purchase_invoice_id' => null,
                     'Product_name' => $product_name,
                     'Barcode' => $produc->Barcode ?? 0,
-                    'quantity' => $Quantity,
+                    'quantity' => $Quantity*$request->Quantityprice,
                     'Quantityprice' => $Quantity ?? 0,
                     'Purchase_price' => $Purchase_price,
                     'Selling_price' => $Selling_price,

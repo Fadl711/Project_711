@@ -140,7 +140,6 @@ class InvoicePurchaseController extends Controller
             ]);      
           }
           $transaction_type=  TransactionType::fromValue($invoice->transaction_type)?->label();
-
         // حذف جميع المشتريات المرتبطة إن وجدت
         if ($invoice->purchases()->exists())
          {
@@ -151,7 +150,6 @@ class InvoicePurchaseController extends Controller
             return response()->json(['success' => false, 'message' => 'لا توجد فترة محاسبية مفتوحة.']);
         }
         // حذف الفاتورة نفسها
-        
         $invoice->delete();
         $Getentrie_id = DailyEntrie::where('Invoice_id',$id)
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)

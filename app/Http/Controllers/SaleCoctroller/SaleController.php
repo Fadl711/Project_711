@@ -179,7 +179,6 @@ if ($accountingPeriod->accounting_period_id !== $saleInvoice->accounting_period_
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->sum('total_Profit');
             $total_Profit=$Profits-$discount;
-
             $paid_amount = 0;
             $account_debit = null;
             $account_Credit = null;
@@ -188,12 +187,14 @@ if ($accountingPeriod->accounting_period_id !== $saleInvoice->accounting_period_
             // تحديد الحساب المدين والمبلغ المدفوع بناءً على نوع الدفع
             if ($saleInvoice->transaction_type ===4) 
             {
-        if (in_array($saleInvoice->payment_type, [1, 3, 4])){
+        if (in_array($saleInvoice->payment_type, [1, 3, 4]))
+        {
                 $account_Credit= $request->account_debitid;
                 $account_debit = $saleInvoice->account_id;
                 $paid_amount = $net_total_after_discount;
 
-            } elseif ($saleInvoice->payment_type === 2)
+            } 
+            elseif ($saleInvoice->payment_type === 2)
              {
                 $account_Credit= $warehouse_id ;
                 $account_debit= $saleInvoice->Customer_id;
@@ -243,9 +244,9 @@ if ($accountingPeriod->accounting_period_id !== $saleInvoice->accounting_period_
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->where('daily_entries_type',$transactiontype)
             ->first();
+
              $Getentrie_id= $entrie_id->entrie_id ?? null;
                 $daily_page_id = $entrie_id->Daily_page_id ?? $dailyPage->page_id;
-            
                     $this->createOrUpdateDailyEntry($saleInvoice, $accountingPeriod,$account_Credit, $account_debit, $net_total_after_discount,$Getentrie_id,$daily_page_id);
                      
         
@@ -509,21 +510,13 @@ public function getSalesByInvoiceArrowLeft(Request $request)
     $invoiceId = $request->input('sales_invoice_id');
     $user_id = auth()->id();
     // جلب أول فاتورة أكبر من الفاتورة الحالية
-    $SaleInvoice = SaleInvoice::where('sub_Account', $user_id)
-        ->where('sales_invoice_id', '>', $invoiceId)
-        ->orderBy('sales_invoice_id', 'asc') // ترتيب تصاعدي
-        ->first();
+    $SaleInvoice = SaleInvoice::
+    where('sales_invoice_id', '>', $invoiceId)
+    ->orderBy('sales_invoice_id', 'asc') // ترتيب تنازلي
 
-        $SubAccount = SubAccount::where('sub_account_id', $SaleInvoice->Customer_id)->first();
-        $Customer_name=$SubAccount->sub_name;
-        $Customer_id=$SubAccount->sub_account_id;
-    if (!$SaleInvoice) {
-        return response()->json(['message' => 'لا توجد فاتورة لاحقة.'], 404);
-    }
-    // جلب المبيعات المرتبطة بالفاتورة المحددة
-    $sales = Sale::where('Invoice_id', $SaleInvoice->sales_invoice_id)
-        ->get();
-       
+->first();
+
+  
         $total_price_sale = Sale::where('Invoice_id', $SaleInvoice->sales_invoice_id )
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->sum('total_amount');
@@ -537,14 +530,24 @@ public function getSalesByInvoiceArrowLeft(Request $request)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->sum('total_Profit');
         $total_Profit=$Profits-$discount;
-    // if ($sales->isEmpty()) {
-    //     return response()->json(['message' => 'لا توجد مبيعات مرتبطة بهذه الفاتورة.'], 404);
-    // }
-    $label= TransactionType::fromValue($SaleInvoice->transaction_type)?->label() ?? 'غير معروف';
-    $valueType= TransactionType::fromValue($SaleInvoice->transaction_type)?->value;
+        $SubAccount = SubAccount::where('sub_account_id', $SaleInvoice->Customer_id)->first();
+        $customers=SubAccount::where('AccountClass',1)->get();
+
+        $Customer_name=$SubAccount->sub_name;
+        $Customer_id=$SubAccount->sub_account_id;
+    if (!$SaleInvoice) {
+        return response()->json(['message' => 'لا توجد فاتورة سابقة.']);
+    }
+    // جلب المبيعات المرتبطة بالفاتورة المحددة
+    $sales = Sale::where('Invoice_id', $SaleInvoice->sales_invoice_id)
+    ->get();
+
    
+   $label= TransactionType::fromValue($SaleInvoice->transaction_type)?->label() ?? 'غير معروف';
+   $valueType= TransactionType::fromValue($SaleInvoice->transaction_type)?->value??1;
     return response()->json([
         'sales' => $sales,
+        'customers' => $customers,
         'Customer_name' => $Customer_name,
         'Customer_id' => $Customer_id,
         'transaction_typelabel' => $label,
@@ -557,7 +560,7 @@ public function getSalesByInvoiceArrowLeft(Request $request)
 
         'total_price_sale' =>number_format($total_price_sale,2),
         'net_total_after_discount' => number_format($net_total_after_discount,2),
-        'discount' => $discount,
+        'discount' => $SaleInvoice->discount,
         'Profit' => number_format($total_Profit,2)??0,
     ]);
 
@@ -569,6 +572,7 @@ public function getSalesByInvoiceArrowRight(Request $request)
     $invoiceId = $request->input('sales_invoice_id');
     $user_id = auth()->id();
     $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+    $customers=SubAccount::where('AccountClass',1)->get();
 
     // جلب أول فاتورة أصغر من الفاتورة الحالية
     $SaleInvoice = SaleInvoice::where('User_id', $user_id)
@@ -605,6 +609,8 @@ public function getSalesByInvoiceArrowRight(Request $request)
    $valueType= TransactionType::fromValue($SaleInvoice->transaction_type)?->value??1;
     return response()->json([
         'sales' => $sales,
+        'customers' => $customers,
+
         'Customer_name' => $Customer_name,
         'Customer_id' => $Customer_id,
         'transaction_typelabel' => $label,

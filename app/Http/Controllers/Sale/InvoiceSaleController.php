@@ -48,21 +48,14 @@ class InvoiceSaleController extends Controller
         'date' => 'nullable|date', // تأكد من إضافة هذا الحقل
         'listRadio' => 'required|in:1,2', // تحديث القيم هنا
         'Customer_name_id' => 'nullable|exists:sub_accounts,sub_account_id',
-        'total_price' => 'nullable|numeric|min:0',
-        'total_price_sale' => 'nullable|numeric|min:0',
-        'discount' => 'nullable|numeric|min:0',
         'User_id' => 'required|exists:users,id',
-        'paid_amount' => 'nullable|numeric|min:0',
-        'remaining_amount' => 'nullable|numeric|min:0',
         'payment_type' => 'required|numeric',
-        'invoice_id' => 'nullable|numeric',
+        'invoice_id' => 'nullable',
         'note' => 'nullable',
         'financial_account_id' => 'required|numeric',
         'currency_id' => 'required|exists:currencies,currency_id', // assuming there's a currencies table
-        'exchange_rate' => 'nullable|numeric|min:0',
         'shipping_bearer' => 'required|in:customer,merchant',
         'transaction_type' => 'required|numeric',
-        'shipping_amount' => 'nullable|numeric|min:0',
     ]);
 
       
@@ -71,46 +64,48 @@ class InvoiceSaleController extends Controller
     // عملية الحفظ
     try {
         $salesInvoice = new SaleInvoice();
-         $invoice_id=SaleInvoice::where('sales_invoice_id',$validatedData['invoice_id'])->first();
        
+         if ($validatedData['invoice_id'])
+         {
+            $invoice_id=SaleInvoice::where('sales_invoice_id',$validatedData['invoice_id'])->first();
 
-    if($invoice_id)
-    {
-        return response()->json([
-            'success' => false,
-            'message' => 'الفاتورة موجودة من قبل',
+             if($invoice_id)
+             {
+                 return response()->json([
+                     'success' => false,
+                     'message' => 'الفاتورة موجودة من قبل',
+         
+                 ], 201);
+             }
+             else
+             {
+                $salesInvoice->sales_invoice_id =$validatedData['invoice_id'];
 
-        ], 201);
-    }
-    else
-    {
-        if ($validatedData['invoice_id'])
-        {
-            $salesInvoice->sales_invoice_id =$validatedData['invoice_id'];
+             }
+ 
+         }
 
-        }
-       
-    }
+   
     if( $validatedData['listRadio']==2)
     {
         $salesInvoice->created_at =  $validatedData['date'];
     }
         $salesInvoice->Customer_id = $validatedData['Customer_name_id'];
         // $salesInvoice->payment_status = $validatedData['payment_status'];
-        $salesInvoice->total_price = $validatedData['total_price']??0;
-        $salesInvoice->total_price_sale = $validatedData['total_price_sale']??0;
+        $salesInvoice->total_price = 0;
+        $salesInvoice->total_price_sale = 0;
         $salesInvoice->User_id = $validatedData['User_id'];
-        $salesInvoice->paid_amount = $validatedData['paid_amount'] ?? 0;
-        $salesInvoice->discount = $validatedData['discount'] ?? 0;
-        $salesInvoice->shipping_amount = $validatedData['shipping_amount'] ?? 0;
+        $salesInvoice->paid_amount = 0;
+        $salesInvoice->discount =  0;
+        $salesInvoice->shipping_amount =  0;
         $salesInvoice->remaining_amount =0;
         $salesInvoice->payment_type = $validatedData['payment_type'];
-        $salesInvoice->note = $validatedData['note'];
+        $salesInvoice->note = $validatedData['note'] ??'';
         $salesInvoice->account_id = $validatedData['financial_account_id'];
         $salesInvoice->currency_id = $validatedData['currency_id'];
-        $salesInvoice->exchange_rate = $validatedData['exchange_rate'] ?? 0;
+        $salesInvoice->exchange_rate = 0;
         $salesInvoice->transaction_type =$validatedData['transaction_type'];
-        $salesInvoice->shipping_bearer = $validatedData['shipping_bearer']??0;
+        $salesInvoice->shipping_bearer = $validatedData['shipping_bearer'];
         $salesInvoice->accounting_period_id = $accountingPeriod->accounting_period_id;
         $salesInvoice->save();
 

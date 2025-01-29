@@ -31,7 +31,7 @@ class DatabaseSeeder extends Seeder
             'main_account_id' => 1,
             'Nature_account' => 'مدين',
             'AccountClass' => 4,
-            'account_name' => 'حقوق الملكيه',
+            'account_name' => ' خصوم وحقوق الملكيه ' , 
             'typeAccount' => 3,
             'Type_migration' => 2,
             'User_id' => 1,

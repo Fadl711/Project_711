@@ -1,6 +1,5 @@
 @extends('layout')
 @section('conm')
-{{-- <p class="text-right  " > بيانات الدفع</p> --}}
 <style>
 
 .select2-container--default .select2-selection--single {
@@ -93,12 +92,7 @@
                         </div>
                        
                         <input
-                            id="date"
-                            name="date"
-                            type="date"
-                            class="inputSale"
-                            value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}"
-                        >
+                            id="date" name="date" type="date" class="inputSale" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
                     </div>
                     </div>
                 </div>
@@ -156,7 +150,7 @@
                     <div class="  gap-2 text-right " id="" >
                         <div>
 
-                        <label for="invoice_id" class="labelSale"> الرقم الفاتورة</label>
+                        <label for="invoice_id" class="labelSale">  الفاتورة</label>
 
                         <input type="number" id="invoice_id" name="invoice_id" class="inputSale">
                     </div> 
@@ -260,7 +254,6 @@
             </div>      
             <div class="grid grid-cols-3 gap-1 px-1">
                 {{-- <button id="saveButton" type="button">حفظ</button> --}}
-
                 <div>
                     <label for="Selling_price" class="labelSale">سعر البيع</label>
                     <input type="text" name="Selling_price" id="Selling_price" placeholder="0" class="inputSale" />
@@ -276,7 +269,6 @@
                     <label for="total_discount_rate " class="labelSale">الخصم</label>
                     <input type="text" name="total_discount_rate" id="total_discount_rate" placeholder="0" class="inputSale" />
 
-                    {{-- <input type="text" name="total_discount_rate" id="total_discount_rate" placeholder="0" class="inputSale" /> --}}
                 </div>
             </div>
             <div class="grid grid-cols-3 gap-1 px-1">
@@ -431,7 +423,8 @@ function getUnitPriceCategorie(mainAccountId,categoryName)
     $('#product_id').on('change', function() { // عند تغيير المنتج المختار في القائمة
         var productId = $(this).val(); // الحصول على قيمة المنتج المختار
         var account_debitid = $('#account_debitid').val(); // الحصول على قيمة المنتج المختار
-        
+        emptyDataProduct();
+
         if (productId) { // تحقق من وجود منتج محدد
             
             $.ajax({
@@ -504,87 +497,7 @@ function showAccounts(mainAccountId)
     });
 };
 }
-function addToTableSale(account) {
-    const rowId = `#row-${account.sale_id}`;
-    const tableBody = $('#mainAccountsTable tbody');
-    // التحقق مما إذا كان الصف موجودًا بالفعل
-    if ($(rowId).length) {
-        // تحديث الصف في الجدول بناءً على القيم الجديدة
-        $(`${rowId} td:nth-child(1)`).text(account.Barcode);
-        $(`${rowId} td:nth-child(2)`).text(account.Product_name);
-        $(`${rowId} td:nth-child(3)`).text(account.Category_name);
-        $(`${rowId} td:nth-child(4)`).text(account.Quantityprice ? Number(account.Quantityprice).toLocaleString() : '0');
-        $(`${rowId} td:nth-child(5)`).text(account.Selling_price ? Number(account.Selling_price).toLocaleString() : '0');
-        $(`${rowId} td:nth-child(6)`).text(account.warehouse_to_id ? Number(account.warehouse_to_id).toLocaleString() : '0');
-        $(`${rowId} td:nth-child(7)`).text(account.total_amount ? Number(account.total_amount).toLocaleString() : '0');
-        $(`${rowId} td:nth-child(9)`).text(account.sale_id ? Number(account.sale_id).toLocaleString() : '0');
-    } else {
-        // إضافة الصف الجديد إلى الجدول إذا لم يكن موجودًا
-        const newRow = `
-            <tr id="row-${account.sale_id}">
-                <td class="text-right tagTd">${account.Barcode}</td>
-                <td class="text-right tagTd">${account.Product_name}</td>
-                <td class="text-right tagTd">${account.Category_name}</td>
-                <td class="text-right tagTd">${account.Quantityprice ? Number(account.Quantityprice).toLocaleString() : '0'}</td>
-                <td class="text-right tagTd">${account.Selling_price ? Number(account.Selling_price).toLocaleString() : '0'}</td>
-                <td class="text-right tagTd">${account.warehouse_to_id ? Number(account.warehouse_to_id).toLocaleString() : '0'}</td>
-                <td class="text-right tagTd">${account.total_amount ? Number(account.total_amount).toLocaleString() : '0'}</td>
-             <td class="flex">
-                    <button class="edit-btn" onclick="editDataSale(${account.sale_id})">
-                        <svg class="w-6 h-6 text-gray-800 dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
-                        </svg>
-                    </button>
-                            <button class="delete-payment" onclick="deleteDataSale(${account.sale_id})">
-                                     <svg class="w-6 h-6 text-red-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
-</svg>
-                        </button>
 
-                    
-                </td>
-              </tr>
-              `;
-          tableBody.append(newRow); // إضافة الصف الجديد إلى الجدول
-    }
-}
-
-function displaySales(sales) {
-    let uniqueInvoices = new Set(); // Set لتخزين الفواتير الفريدة
-    let rows = ''; // متغير لتخزين الصفوف
-    $('#mainAccountsTable tbody').empty(); // تنظيف الجدول
-    sales.forEach(function (sale) {
-        // إضافة شرط للتأكد من عدم تكرار البيانات
-        if (!uniqueInvoices.has(sale.sale_id)) {
-            uniqueInvoices.add(sale.sale_id);
-            rows += `
-                <tr id="row-${sale.sale_id}">
-                     <td  class="text-right tagTd">${sale.Barcode || '-'}</td>
-            <td  class="text-right tagTd">${sale.Product_name || '-'}</td>
-            <td  class="text-right tagTd">${sale.Category_name || '-'}</td>
-            <td  class="text-right tagTd">${sale.Quantityprice || '0'}</td>
-            <td  class="text-right tagTd">${sale.Selling_price || '0.00'}</td>
-            <td  class="text-right tagTd">${sale.warehouse_to_id || '-'}</td>
-            <td  class="text-right tagTd">${sale.total_price || '0.00'}</td>
-                    <td class="flex">
-                        <button class="" onclick="editDataSale(${sale.sale_id})">
-                                           <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
-</svg>
-                        </button>
-                        <button class="delete-payment" onclick="deleteDataSale(${sale.sale_id})">
-                                     <svg class="w-6 h-6 text-red-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
-</svg>
-                        </button>
-                    </td>
-                </tr>
-            `;
-        }
-    });
-
-    $('#mainAccountsTable tbody').append(rows);
-}
      
 function CsrfToken() {
     $.ajaxSetup({
@@ -716,171 +629,28 @@ $(document).on('click', '#delete_invoiceSales', function (e) {
                 }, 5000);   }
     });
     });
-
-
-$(document).on('keydown', function (event) {
+    $(document).on('keydown', function (event) {
     let currentInvoiceId = $('#sales_invoice_id').val();
 
-    if (event.ctrlKey && event.key === 'ArrowRight') {
+    if (event.ctrlKey && event.key == 'ArrowRight') {
         fetchSalesByInvoice("{{url('/get-sales-by-invoice/ArrowRight/')}}", currentInvoiceId);
         event.preventDefault();
     }
 
-    if (event.ctrlKey && event.key === 'ArrowLeft') {
-        fetchSalesByInvoice("{{('/get-sales-by-invoice/ArrowLeft/')}}", currentInvoiceId);
+    if (event.ctrlKey && event.key == 'ArrowLeft') {
+        fetchSalesByInvoice("{{ url('/get-sales-by-invoice/ArrowLeft/') }}/" ,currentInvoiceId);
+
         event.preventDefault();
     }
 });
 
-function fetchSalesByInvoice(url, currentInvoiceId) {
-    if (!currentInvoiceId) {
-        console.error('Invoice ID is empty!');
-        alert('يرجى إدخال رقم الفاتورة.');
-        return;
-    }
-    $.ajax({
-        url: url,
-        type: 'GET',
-        data: { sales_invoice_id: currentInvoiceId },
-        success: function (data) {
-            $('#invoiceSales #grid2 #invoiceid2').hide();
-           const Customer_name_id= $('#Customer_name_id');
-           const transaction_type= $('#transaction_type');
-           $('#sales_invoice_id').val(data.last_invoice_id);
-                $('input[name="payment_type"][value="' + data.payment_type + '"]').prop('checked', true);                $('#total_price_sale').val(data.total_price_sale);
-                $('#net_total_after_discount').val(data.net_total_after_discount);
-                $('#discount').val(data.discount);
-                $('#date').val(data.created_at);
-                $('#TotalProfit').val(data.Profit);
-                $('#note').val(data.note);
 
-            const rows = `
-<div id="invoiceid2">
-    <label for="invoice_number"> حفظ التعديل</label>
-    <button type="button" class="btn btn-primary" onclick="UpdateInvoiceSales(${data.last_invoice_id}, event)">
-        <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
-        </svg>
-    </button>
-</div>
-`;
-
-$('#invoiceSales #grid2').append(rows);
-            $('#mainAccountsTable tbody').empty();
-
-            if (data.sales && data.sales.length > 0) {
-                displaySales(data.sales);
-
-             
-Customer_name_id.empty();
-transaction_type.empty();
-
-    const  subAccountOptions = 
-          `
-          <option value="${data.Customer_id}">${data.Customer_name}</option>`
-     ;
-    const  transaction_typ = 
-          `
-          <option value="${data.transaction_valueType}">${data.transaction_typelabel}</option>`
-     ;
-     Customer_name_id.append(subAccountOptions);
-
-     transaction_type.append(transaction_typ);
-            } else {
-                alert(data.message || 'لا توجد مبيعات مرتبطة بهذه الفاتورة.');
-            }
-        },
-        error: function (xhr) {
-            console.error('AJAX Error:', xhr.status, xhr.statusText, xhr.responseText);
-            alert('حدث خطأ أثناء جلب البيانات. يرجى المحاولة لاحقًا.');
-        }
-    });
-}
-function displayProductDetails(product) {
-    const invoiceInput = $('#sales_invoice_id');
-    var   Categorie_name=$('#Categorie_name');
-    if (invoiceInput.length) {
-        // التأكد من أن العناصر موجودة قبل تحديثها
-        if ($('#Barcode').length) {
-            $('#Barcode').val(product.Barcode).trigger('change');
-        }
-
-        if ($('#product_name').length) {
-            $('#product_name').val(product.product_name).trigger('change');
-        }
-        if ($('#Selling_price').length) {
-            $('#Selling_price').val(product.Selling_price).trigger('change');
-        }
-        if ($('#Purchase_price').length) {
-            $('#Purchase_price').val(product.Purchase_price).trigger('change');
-        }
-        if ($('#QuantityPurchase').length) 
-            {
-            $('#QuantityPurchase').val(product.QuantityPurchase).trigger('change');
-        }
-        if ($('#discount_rate').length) {
-            const discountSelect = $('#discount_rate');
-            discountSelect.empty();
-            if (product.Regular_discount && product.Special_discount) {
-                const discountOptions = `
-                <option value="">لم يتم التحديد  </option>
-                    <option value="${product.Regular_discount}">الخصم العادي: ${product.Regular_discount}%</option>
-                    <option value="${product.Special_discount}">الخصم الخاص: ${product.Special_discount}%</option>
-                `;
-                discountSelect.append(discountOptions);
-            } else {
-                discountSelect.append('<option value="">لا توجد خصومات متاحة</option>');
-            }
-        }
-        
-        if ($('#created_at').length) {
-            $('#created_at').val(product.created_at).trigger('change');
-        }
-       // تعبئة قائمة الفئات (الوحدات)
-       const categorieSelect = $('#Categorie_name');
-       categorieSelect.empty();
-        // تفريغ القائمة السابقة
-        console.time('Select2 Initialization');
-    product.Categorie_names.forEach(categorie => {
-        $('#Categorie_name').append(new Option(categorie.Categorie_name, categorie.categorie_id));
-    });
-    
-    categorieSelect.append( `<option selected  value=""></option>`);
-        $('#Categorie_name').select2(); // إعادة التهيئة بعد الإضافة
-        
-        console.timeEnd('Select2 Initialization'); // عرض الوقت المستغرق
-        
-        // حساب التمويز بين البيع والشراء
-        var profit = 0;
-        if (product.Selling_price > 0 && product.Purchase_price > 0) {
-            profit = product.Selling_price - product.Purchase_price; // حساب التمويز بين البيع والشراء
-            profit = profit; // تقريب النتيجة إلى خانتين عشريتين
-        }
-        // إضافة التمويز إلى حقل الربح
-        if ($('#Profit').length) {
-            $('#Profit').val(profit).trigger('change');
-        }
-
-        // حساب التكلفة
-        var Yr_cost = parseFloat($('#Yr_cost').val()) || 0; 
-        // $Yr_cost=  $('#Yr_cost').val(); // عرض النتيجة
-        // جلب القيمة من الحقل كرقم عشري
-        if (!isNaN(Yr_cost) && Yr_cost > 0 && product.Purchase_price > 0) {
-            var cost = Yr_cost * product.Purchase_price; 
-            
-            // حساب التكلفة
-            cost = cost.toFixed(2); // تقريب النتيجة لخانتين عشريتين
-            $('#Cost').val(cost).trigger('change'); // إضافة النتيجة
-        } else {
-            $('#Cost').val(''); // في حال وجود خطأ أو قيم غير صالحة، يتم تفريغ الحقل
-        }
-    }
-}
     function openInvoiceWindow(e) {
 
 const successMessage= $('#successMessage');
 const invoiceField = document.getElementById('sales_invoice_id').value; // الحصول على قيمة حقل رقم الفاتورة
-if(invoiceField){
+if(invoiceField)
+{
     e.preventDefault(); // منع تحديث الصفحة
     const analysis = $('input[name="analysis"]:checked').val(); // الخيار المحدد لعرض القائمة
 const url = `{{ route('invoiceSales.print', ':invoiceField') }}`.replace(':invoiceField', invoiceField)
@@ -889,7 +659,6 @@ const url = `{{ route('invoiceSales.print', ':invoiceField') }}`.replace(':invoi
 window.open(url, '_blank', 'width=800,height=800');
 }
 else{        
-
 successMessage.text('لا توجد فاتورة').show();
                   setTimeout(() => {
                   successMessage.hide();
@@ -920,7 +689,6 @@ form.on('keydown', function (event) {
         $('#saveButton').on('click', function () {
             handleSave();
         });
-    
         // الوظيفة الرئيسية للحفظ
         function handleSave() {
             const quantityAvailable = parseFloat($('#QuantityPurchase').val()) || 0;
@@ -938,10 +706,8 @@ form.on('keydown', function (event) {
                     return;
                 }
             }
-    
             checkLoss();
         }
-    
         // التحقق من الخسارة
         function checkLoss() {
             const lossAmount = parseFloat($('#loss').val()) || 0;
@@ -989,13 +755,13 @@ form.on('keydown', function (event) {
         // التعامل مع النجاح في الطلب
         function handleAjaxSuccess(response) {
             if (response.success) {
-                $('#successMessage').show().text(response.message).fadeOut(1000);
+                $('#successMessage').show().text(response.message).fadeOut(500);
+                emptyDataProduct();
                 addToTableSale(response.purchase);
                 $('#total_price_sale').val(response.total_price_sale);
                 $('#net_total_after_discount').val(response.net_total_after_discount);
                 $('#discount').val(response.discount);
                 $('#TotalProfit').val(response.Profit);
-                emptyData();
                 $('#product_id').select2('open').focus();
             } else {
                 $('#errorMessage').show().text(response.message).fadeOut(3000);
@@ -1032,30 +798,7 @@ form.on('keydown', function (event) {
 
  <script>
   $(document).ready(function () {
-    function emptyData(){
-                  $('#product_name,#total_price,#loss,#Quantityprice,#QuantityCategorie,#TotalPurchase').val('');
-                      $('#Barcode').val('');
-                      $('#InventoryId').val('');
-                      $('#TotalProfit').val('');
-                      $('#Quantity').val('');
-                      $('#Purchase_price').val('');
-                      $('#Selling_price').val('');
-                      $('#Total').val('');
-                      $('#TotalPurchase').val('');
-                      $('#Cost').val('');
-                      $('#Discount_earned').val('');
-                      $('#Profit').val('');
-                      $('#Exchange_rate').val('');
-                      $('#product_id').val('');
-                      $('#note').val('');
-                      $('#QuantityPurchase').val('');
-                      $('#Categorie_name').val('');
-                      $('#discount_rate').val('');
-                      $('#total_discount_rate').val('');
-                      $('#purchase_id,#sale_id').val('');
-                      $('#product_id').select2('open');
-                   
-  };
+   
     $('.select2').select2(); // تفعيل المكتبة select2
     $('#saveinvoiceSales').on('click', function () {
         saveData();
@@ -1075,7 +818,6 @@ form.on('keydown', function (event) {
             saveData(); // استدعاء دالة الحفظ
         }
     });
-
     // دالة الحفظ باستخدام Ajax
     function saveData() {
         const formData = new FormData(form[0]); // إنشاء FormData من النموذج
@@ -1099,9 +841,9 @@ form.on('keydown', function (event) {
                 $('#invoiceSales #grid2 #invoiceid').empty();
                 $('#invoiceSales #grid2 #invoiceid2').empty();
                 $('#invoice_id').val('');
+                emptyData();
 
                 if (response.success) {
-                    emptyData();
                     $('#invoiceSales #grid2 #invoiceid2').hide();
 
                     // تحديث الحقول إذا كانت موجودة
@@ -1126,8 +868,6 @@ $('#invoiceSales #grid2').append(rows);
                     if (customerIdField.length) {
                         customerIdField.val(response.customer_number).trigger('change');
                     }
-
-                   
                     // تنظيف الجدول وإظهار رسالة النجاح
                     $('#mainAccountsTable tbody').empty();
                     $('#product_id').select2('open'); // فتح القائمة المنسدلة
@@ -1158,7 +898,6 @@ $('#invoiceSales #grid2').append(rows);
     event.preventDefault(); // منع الإرسال الافتراضي للنموذج
         // إنشاء FormData من النموذج
         const formData = new FormData($('#invoiceSales')[0]);
-
         // تعريف الحقول والرسائل
         const successMessage = $('#successMessage'),
               errorMessage = $('#errorMessage');
@@ -1202,7 +941,7 @@ error: function(xhr) {
    
 });
 
-    
+
 
     </script>
 <script>
@@ -1263,8 +1002,8 @@ error: function(xhr) {
     // });
 </script>
      {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script> --}}
-     {{-- <script src="{{ url('sales.js') }}"></script> --}}
-     <script src="{{ url('purchases.js') }}"></script>
+     <script src="{{ url('sales.js') }}"></script>
+     {{-- <script src="{{ url('purchases.js') }}"></script> --}}
      {{-- <script src="http://localhost/jamal-711/public/purchases.js"></script> --}}
      {{-- <script src="{{url('purchases/purchases.js')}}"></script> --}}
 
