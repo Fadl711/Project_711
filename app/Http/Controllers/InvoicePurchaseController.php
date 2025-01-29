@@ -156,7 +156,9 @@ class InvoicePurchaseController extends Controller
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->where('daily_entries_type',$transaction_type)
             ->first();
-          
+          if($Getentrie_id)
+          {
+         
             $generalEntrieaccount_debit_id = GeneralEntrie::where([
                 'Daily_entry_id' => $Getentrie_id->entrie_id,
                 'accounting_period_id' => $Getentrie_id->accounting_period_id,
@@ -167,6 +169,7 @@ class InvoicePurchaseController extends Controller
                 'accounting_period_id' => $Getentrie_id->accounting_period_id,
                 'sub_id' => $Getentrie_id->account_Credit_id,
             ])->delete();
+        }
             if($Getentrie_id )
             {
                 $Getentrie_id->delete();
