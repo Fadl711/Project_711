@@ -142,7 +142,8 @@ class InvoicePurchaseController extends Controller
           $transaction_type=  TransactionType::fromValue($invoice->transaction_type)?->label();
 
         // حذف جميع المشتريات المرتبطة إن وجدت
-        if ($invoice->purchases()->exists()) {
+        if ($invoice->purchases()->exists())
+         {
             $invoice->purchases()->delete();
         }
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
@@ -156,9 +157,8 @@ class InvoicePurchaseController extends Controller
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->where('daily_entries_type',$transaction_type)
             ->first();
-          if($Getentrie_id)
-          {
-         
+            if($Getentrie_id->entrie_id )
+            {
             $generalEntrieaccount_debit_id = GeneralEntrie::where([
                 'Daily_entry_id' => $Getentrie_id->entrie_id,
                 'accounting_period_id' => $Getentrie_id->accounting_period_id,
@@ -169,8 +169,8 @@ class InvoicePurchaseController extends Controller
                 'accounting_period_id' => $Getentrie_id->accounting_period_id,
                 'sub_id' => $Getentrie_id->account_Credit_id,
             ])->delete();
-        }
-            if($Getentrie_id )
+            }
+            if($Getentrie_id->entrie_id )
             {
                 $Getentrie_id->delete();
             }
