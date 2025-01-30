@@ -99,7 +99,7 @@ $paymentBond->save();
     
     $entrie_id = $Getentrie_id->entrie_id ?? null;
     $daily_page_id = $Getentrie_id->Daily_page_id ?? $dailyPage->page_id;
-    DailyEntrie::updateOrCreate(
+  $DailyEntrie=  DailyEntrie::updateOrCreate(
         [
             'entrie_id' => $entrie_id,
             'accounting_period_id' => $accountingPeriod->accounting_period_id,
@@ -121,7 +121,8 @@ $paymentBond->save();
             'status' => 'غير مرحل',
         ]
     );
-  
+    $DailyEntrie->created_at = $date; // تأكد من أن هذا هو العمود الصحيح
+    $DailyEntrie->save();
     return response()->json([
         'success' => 'تم بنجاح',
         'payment_bond_id' => $paymentBond->payment_bond_id ?? $payment_bond_id

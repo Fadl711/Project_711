@@ -360,6 +360,9 @@ if ($accountingPeriod->accounting_period_id !== $saleInvoice->accounting_period_
                     'status' => 'غير مرحل',
                 ]
             );
+            $date = Carbon::parse($saleInvoice->created_at)->format('Y-m-d'); 
+            $dailyEntrie->created_at = $date; // تأكد من أن هذا هو العمود الصحيح
+$dailyEntrie->save();
     return ; }
     
     public function edit($id)

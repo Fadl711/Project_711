@@ -396,6 +396,9 @@ private function saleInvoiceupdate($validatedData,$saleInvoice, $account_Credit,
                 'status' => 'غير مرحل',
             ]
         );
+        $date = Carbon::parse($saleInvoice->created_at)->format('Y-m-d'); 
+        $dailyEntrie->created_at = $date; // تأكد من أن هذا هو العمود الصحيح
+$dailyEntrie->save();
 }
 
 private function updateSales($updateSale, $validatedData, $DefaultCustomer)
