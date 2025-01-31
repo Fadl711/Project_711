@@ -64,8 +64,7 @@ class AppServiceProvider extends ServiceProvider
         {
             $subAccount=SubAccount::where('Main_id',$mainAccount_Warehouse->main_account_id)->get();
         }
-        $products = Product::orderBy('product_id', 'desc')->get() // ترتيب تنازلي
-        ;
+        $products = Product::all();
         if(isset($products)){
             View::share([
                 'products' => $products,

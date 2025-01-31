@@ -30,6 +30,7 @@ return new class extends Migration
            $table->date('entry_date'); // تاريخ القيد
            $table->enum('status', ['مرحل', 'غير مرحل']);         
            $table->timestamps();
+           
            $table->foreign('sub_id')->references('sub_account_id')->on('sub_accounts');
            $table->foreign('Main_id')->references('main_account_id')->on('main_accounts');
            $table->foreign('User_id')->references('id')->on('users');

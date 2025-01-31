@@ -17,6 +17,7 @@ use App\Http\Controllers\bondController\receipController\ReceipController;
 use App\Http\Controllers\chartController\ChartController;
 use App\Http\Controllers\DailyRestrictionController\RestrictionController;
 use App\Http\Controllers\FixedAssetsController;
+use App\Http\Controllers\generalEntrieController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\InvoicePurchaseController;
 use App\Http\Controllers\invoicesController\AllBillsController;
@@ -49,6 +50,7 @@ use App\Http\Controllers\UserPermissionController;
 use App\Http\Controllers\UsersController\UsersController;
 use App\Models\AccountingPeriod;
 use App\Models\DefaultSupplier;
+use App\Models\GeneralEntrie;
 use App\Models\MainAccount;
 use App\Models\PurchaseInvoice;
 use App\Models\Sale;
@@ -146,6 +148,7 @@ Route::get('/customers', [CustomerCoctroller::class, 'index'])->name('customers.
 Route::get('/customers/create', [CustomerCoctroller::class, 'create'])->name('customers.create');
 Route::post('/customers/store', [CustomerCoctroller::class, 'store'])->name('customers.store');
 
+Route::get('/general_entries/show', [generalEntrieController::class, 'show'])->name('general_entries.show');
 Route::get('/customers/show', [CustomerCoctroller::class, 'show'])->name('customers.show');
 Route::get('/customers/{id}/statement', [CustomerCoctroller::class, 'createStatement'])->name('customers.statement');
 Route::get('/report/create',[reportsConreoller::class,'create'])->name('report.create');

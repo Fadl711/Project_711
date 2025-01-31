@@ -182,11 +182,8 @@
         </table>
         <div class="flex justify-start">
             <table class=" text-sm mx-auto">
-
-
                     <thead class=" ">
                         <tr class="bg-blue-100 ">
-                          
                             <th class="px-2 text-left w-[30%] border-0  bg-white">
                             </th>
                             <th class="px-2 text-left w-[20%] ">

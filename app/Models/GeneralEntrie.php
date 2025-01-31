@@ -41,17 +41,29 @@ class GeneralEntrie extends Model
     public function generalEntries() {
         return $this->belongsTo(SubAccount::class, 'sub_id'); // أو حسب ما يناسب
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'User_id','id');
+    }
     public function debitAccount()
+    {
+        return $this->belongsTo(SubAccount::class, 'sub_id', 'sub_account_id');
+    }
+    public function subAccount()
     {
         return $this->belongsTo(SubAccount::class, 'sub_id', 'sub_account_id');
     }
     public function Daily_entryId()
     {
-        return $this->belongsTo(DailyEntrie::class, 'Daily_entry_id', 'entry_id');
+        return $this->belongsTo(DailyEntrie::class, 'Daily_entry_id', 'entrie_id');
     }
     public function DailyEntry()
     {
         return $this->belongsTo(DailyEntrie::class, 'Daily_entry_id');
+    }
+    public function getTransactionTypeLabelAttribute()
+    {
+        return $this->transactionType->label() ?? 'غير محدد';
     }
   
 

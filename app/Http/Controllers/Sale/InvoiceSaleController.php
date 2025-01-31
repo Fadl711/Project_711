@@ -575,7 +575,7 @@ public function print(Request $request,$id)
             $Sale_priceSum = 0;
             $Sale_CostSum = 0;
         } else {
-            $Sale_priceSum = $DataSale->sum('total_price');
+            $Sale_priceSum= $DataSale->sum('total_price');
             $Sale_CostSum = $DataSale->sum('total_amount');
             $total_Profit = $DataSale->sum('total_Profit');
         }

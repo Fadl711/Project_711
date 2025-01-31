@@ -18,7 +18,6 @@ enum TransactionType: int
             self::INVENTORY_TRANSFER => 'تحويل مخزني',
             self::SALE => 'مبيعات',
             self::RETURN_SALE => 'مردود مبيعات',
-
         };
     }
     public static function fromValue(int $value): ?self
