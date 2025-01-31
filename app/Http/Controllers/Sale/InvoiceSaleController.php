@@ -372,7 +372,9 @@ private function saleInvoiceupdate($validatedData,$saleInvoice, $account_Credit,
         {
             $note='';
         }
-         
+        $date = Carbon::parse($saleInvoice->created_at)->format('Y-m-d');
+        $curre=Currency::where('currency_id', $validatedData['currency_id'])->pluck('currency_name')->first();
+
         $dailyEntrie = DailyEntrie::updateOrCreate(
             [
                 'entrie_id' => $Getentrie_id,
@@ -382,23 +384,26 @@ private function saleInvoiceupdate($validatedData,$saleInvoice, $account_Credit,
             [
                 'daily_entries_type' => $transactiontype,
                 'account_Credit_id' => $account_Credit,
-                'created_at' => $saleInvoice->created_at,
-
                 'account_debit_id' => $account_debit,
                 'Amount_Credit' => $net_total_after_discount ?: 0,
                 'Amount_debit' => $net_total_after_discount ?: 0,
                 'Statement' => $commint . " " . $transactiontype . " " . $paymenttype.$note,
                 'Daily_page_id' => $daily_page_id ?? $dailyPage->page_id,
                 'Invoice_type' => $payment_type,
-                'Currency_name' => 'ر',
+                'Currency_name' => $curre,
                 'User_id' => auth()->user()->id,
                 'status_debit' => 'غير مرحل',
                 'status' => 'غير مرحل',
             ]
         );
-        $date = Carbon::parse($saleInvoice->created_at)->format('Y-m-d'); 
-        $dailyEntrie->created_at = $date; // تأكد من أن هذا هو العمود الصحيح
-$dailyEntrie->save();
+        $date = Carbon::createFromFormat('Y-m-d', $validatedData['date']); // استخدام createFromFormat
+
+        DB::table('daily_entries')
+        ->where('entrie_id', $Getentrie_id)
+        ->where('accounting_period_id',$accountingPeriod->accounting_period_id)
+        ->where(  'Invoice_id',$saleInvoice->sales_invoice_id)
+        ->update(['created_at' => $date]);
+
 }
 
 private function updateSales($updateSale, $validatedData, $DefaultCustomer)
