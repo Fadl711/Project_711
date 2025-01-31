@@ -1,6 +1,7 @@
 <?php
 
 use App\Enum\AccountType;
+use App\Enum\TransactionType;
 use App\Http\Controllers\CustomerCoctroller;
 use App\Http\Controllers\HomeCoctroller;
 use App\Http\Controllers\AccountCoctroller;
@@ -49,9 +50,11 @@ use App\Http\Controllers\Transfers\TransferController;
 use App\Http\Controllers\UserPermissionController;
 use App\Http\Controllers\UsersController\UsersController;
 use App\Models\AccountingPeriod;
+use App\Models\DailyEntrie;
 use App\Models\DefaultSupplier;
 use App\Models\GeneralEntrie;
 use App\Models\MainAccount;
+use App\Models\PaymentBond;
 use App\Models\PurchaseInvoice;
 use App\Models\Sale;
 use App\Models\SaleInvoice;
@@ -194,8 +197,6 @@ Route::get('/api/sale-invoices', [InvoiceSaleController::class, 'searchInvoices'
 Route::get('/all_bills_sale', [AllBillsController::class, 'all_bills_sale'])->name('invoice_sales.all_bills_sale');
 Route::get('/print_bills_sale', [AllBillsController::class, 'print_bills_sale'])->name('print_bills_sale');
 Route::get('/bills_sale_show', [AllBillsController::class, 'bills_sale_show'])->name('invoice_sales.bills_sale_show');
-
-
 
 Route::get('/api/Receip-invoices/{filterType}', [ReceipController::class, 'getPaymentBond']);
 Route::get('/api/Receip-invoices', [ReceipController::class, 'searchInvoices']);
@@ -354,6 +355,7 @@ Route::get('/', [HomeCoctroller::class, 'index'])->name('home.index');
 
 });
 
+
 Route::post('/executeC', [ArtController::class,'index'])->name('executeC');
 
 
@@ -414,19 +416,90 @@ $dailyTotals = $dailyProfits->map(function($sales, $day) {
         'day' => $day,
         'total_Profit' => $netProfit,
     ];
-})->values();// لتحويل المجموعات إلى مصفوفة
-    // $rr=number_format($monthlyTotals,2);
-    // dd($dailyTotals);
-    // لتحويل المجموعات إلى مصفوفة
+})->values();
 
-    // عرض النتائج
-    // return response()->json($monthlyTotals);
+
 }
-//  else {
-//     return response()->json(['message' => 'لا توجد فترة محاسبية مفتوحة'], 404);
-// }
+
     return view('dashboard',['dailyTotals'=>$dailyTotals ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+
+Route::post('/SaleInvoice', function () {
+    try {
+        // الحصول على الفترة المحاسبية غير المغلقة
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
+
+        // الحصول على جميع فواتير المبيعات الخاصة بالفترة المحاسبية
+        $saleInvoices = SaleInvoice::where('accounting_period_id', $accountingPeriod->accounting_period_id)->get();
+
+        foreach ($saleInvoices as $saleInvoice) {
+            // الحصول على المبيعات الخاصة بالفاتورة
+            $sales = Sale::where('Invoice_id', $saleInvoice->sales_invoice_id)->get();
+
+            foreach ($sales as $sale) {
+                // تحويل التاريخ إلى الصيغة المطلوبة
+                $date = Carbon::parse($sale->created_at)->format('Y-m-d');
+                $sale->created_at = $date;
+                $sale->save(); // حفظ التغييرات
+            }
+
+            // الحصول على نوع العملية
+            $transactiontype = TransactionType::fromValue($saleInvoice->transaction_type)?->label();
+
+            // العثور على الإدخال اليومي
+            $entrie_id = DailyEntrie::where('Invoice_id', $saleInvoice->sales_invoice_id)
+                ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                ->where('daily_entries_type', $transactiontype)
+                ->first();
+
+            if ($entrie_id) {
+                // تحديث تاريخ الإدخال اليومي
+                $date = Carbon::parse($saleInvoice->created_at)->format('Y-m-d');
+                $entrie_id->created_at = $date; // تأكد من أن هذا هو العمود الصحيح
+                $entrie_id->save(); // حفظ التغييرات
+            }
+        }
+        return redirect()->back()->with('success', '  تم  تحديث تاريخ الإدخال اليومي.');
+
+
+    } catch (ModelNotFoundException $e) {
+        return response()->json(['error' => 'Accounting period not found'], 404);
+    } catch (\Exception $e) {
+        // يمكنك تسجيل الخطأ هنا باستخدام Log::error($e)
+        return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
+    }
+})->name('Salesinvoices');
+Route::post('/paymentBonds', function () {
+    try {
+        // الحصول على الفترة المحاسبية غير المغلقة
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
+        // الحصول على جميع فواتير المبيعات الخاصة بالفترة المحاسبية
+        $saleInvoices = PaymentBond::where('accounting_period_id', $accountingPeriod->accounting_period_id)->get();
+
+        foreach ($saleInvoices as $saleInvoice) {
+            // العثور على الإدخال اليومي
+            $entrie_id = DailyEntrie::where('Invoice_id', $saleInvoice->payment_bond_id)
+            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+            ->whereIn('daily_entries_type', ['سند صرف', 'سند قبض'])
+            ->first();
+            if ($entrie_id) {
+                // تحديث تاريخ الإدخال اليومي
+                $date = Carbon::parse($saleInvoice->created_at)->format('Y-m-d');
+                $entrie_id->created_at = $date; // تأكد من أن هذا هو العمود الصحيح
+                $entrie_id->save(); // حفظ التغييرات
+            }
+        }
+        return redirect()->back()->with('success', '  تم  تحديث تاريخ الإدخال اليومي. للسندات');
+
+
+    } catch (ModelNotFoundException $e) {
+        return response()->json(['error' => 'Accounting period not found'], 404);
+    } catch (\Exception $e) {
+        // يمكنك تسجيل الخطأ هنا باستخدام Log::error($e)
+        return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
+    }
+})->name('paymentBonds');
 
 Route::middleware('auth')->group(function () {
 

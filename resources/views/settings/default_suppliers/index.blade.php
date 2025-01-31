@@ -40,7 +40,19 @@ window.onload = function() {
     <div class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
         <form action="{{ route('git.pull') }}" method="POST">
             @csrf
-            <button type="submit" class="btn btn-primary text-white">تحديث المشروع</button>
+            <button type="submit" class="btn btn-primary text-white">تحديث النظام</button>
+        </form>
+    </div>
+    <div class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+        <form action="{{ route('Salesinvoices') }}" method="POST">
+            @csrf
+            <button type="submit" class="btn btn-primary text-white">تحديث قيود المبيعات</button>
+        </form>
+    </div>
+    <div class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+        <form action="{{ route('paymentBonds') }}" method="POST">
+            @csrf
+            <button type="submit" class="btn btn-primary text-white">تحديث قيود السندات</button>
         </form>
     </div>
 
