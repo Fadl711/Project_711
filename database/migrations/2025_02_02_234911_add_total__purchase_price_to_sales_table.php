@@ -14,9 +14,7 @@ return new class extends Migration
     {
 
         Schema::table('sales', function (Blueprint $table) {
-            $table->decimal('total_purchasePrice', 15, 2)->nullable()->after('Purchase_price')->comment(' اجمالي التكتفه  للمنتج ') ;
-            
-            
+            $table->decimal('total_purchasePrice', 15, 2)->nullable()->comment(' اجمالي التكتفه  للمنتج') ;
             
         });
         // التحقق من وجود السجلات
@@ -25,8 +23,8 @@ return new class extends Migration
             foreach ($sales as $sale) {
                 $Purchase_price = $sale->Purchase_price ?? 0;
                 $Quantityprice =$sale->Quantityprice ?? 0;
-                $totalPurchase_price = $Purchase_price * $Quantityprice ??0;
-                $sale->total_purchasePrice = $totalPurchase_price;
+                $totalPurchase_price = $Purchase_price * $Quantityprice ;
+                $sale->total_purchasePrice = $totalPurchase_price ??0;
                 $sale->save();
             }
         }
@@ -38,6 +36,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('sales', function (Blueprint $table) {
+            $table->dropColumn('total_purchasePrice'); // حذف العمود إذا تم التراجع
+
             //
         });
     }
