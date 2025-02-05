@@ -14,7 +14,7 @@ return new class extends Migration
     {
 
         Schema::table('sales', function (Blueprint $table) {
-            $table->decimal('total_purchasePrice', 15, 2)->nullable()->after('Profit')->comment(' اجمالي الربح المعتمد للمنتج ') ;
+            $table->decimal('total_purchasePrice', 15, 2)->nullable()->after('Purchase_price')->comment(' اجمالي التكتفه  للمنتج ') ;
             
             
             
@@ -25,7 +25,7 @@ return new class extends Migration
             foreach ($sales as $sale) {
                 $Purchase_price = $sale->Purchase_price ?? 0;
                 $Quantityprice =$sale->Quantityprice ?? 0;
-                $totalPurchase_price = $Purchase_price * $Quantityprice;
+                $totalPurchase_price = $Purchase_price * $Quantityprice ??0;
                 $sale->total_purchasePrice = $totalPurchase_price;
                 $sale->save();
             }
