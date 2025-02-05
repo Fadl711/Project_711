@@ -35,7 +35,7 @@
                         <select dir="ltr" id="transaction_type" class="inputSale input-field" name="transaction_type">
                             @isset($transactionTypes)
                             @foreach ($transactionTypes as $transactionType)
-                                @if (in_array($transactionType->value, [4, 5]))
+                                @if (in_array($transactionType->value, [4, 5,6]))
                                     <option  value="{{ $transactionType->value }}">{{ $transactionType->label() }}</option>
                                 @endif
                             @endforeach
@@ -546,7 +546,7 @@ function editDataSale(id) {
         url: "{{url('/sales/')}}/"+id, // مسار الحذف
 
         success: function(data) {
-            $('#product_id').val(data.product_id);
+            // $('#product_id').val(data.product_id);
             $('#Barcode').val(data.Barcode);
             $('#Quantity').val(data.Quantityprice);
             $('#Quantityprice').val(data.quantity);
@@ -560,18 +560,24 @@ function editDataSale(id) {
             $('#Categorie_name').val(data.Category_name);
             let discount_rate=  $('#discount_rate');
             let categorie_name=  $('#Categorie_name');
+            let productid=  $('#product_id');
   
-            discount_rate.empty();
-              categorie_name.empty();
+            // discount_rate.empty();
+            //   categorie_name.empty();
               const  subAccountOptions = 
                     `
-                    <option value="${data.Category_name}">${data.Category_name}</option>`
+                    <option selected value="${data.Category_name}">${data.Category_name}</option>`
+               ;
+              const  Productname = 
+                    `
+                    <option selected value="${data.product_id}">${data.Product_name}</option>`
                ;
     
             categorie_name.append(subAccountOptions);
+            productid.append(Productname);
             const  discount = 
             `
-            <option value="${data.discount_rate}">${data.discount_rate}</option>
+            <option selected value="${data.discount_rate}">${data.discount_rate}</option>
             `
        ;
   

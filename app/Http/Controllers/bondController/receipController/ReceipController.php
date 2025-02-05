@@ -240,7 +240,6 @@ public function print($id){
     {
         $payment_type="شيك";
     }
-   
     $currency_name = $currs->currency_name ??'';
 // جلب البيانات وتحويلها
 $numberToWords = new NumberToWords();
@@ -251,7 +250,6 @@ $result = is_numeric($PaymentBond->Amount_debit)
     // استخدام $currency بشكل صحيح
     return view('bonds.receipt_bonds.print', compact('payment_type','PaymentBond', 'result','currency_name','sub_name','Credit_sub_name'));
 }
-
 public function getPaymentBond(Request $request, $filterType )
 {
       // التحقق من المدخلات
@@ -266,10 +264,10 @@ public function getPaymentBond(Request $request, $filterType )
     // الحصول على آخر فترة محاسبية نشطة
     $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
 
-    if (!$accountingPeriod) {
+    if (!$accountingPeriod)
+     {
         return response()->json(['message' => 'لم يتم العثور على فترة محاسبية حالية.'], 404);
-    }
-
+      }
     // إنشاء استعلام السندات
     $query = PaymentBond::with(['creditSubAccount', 'debitSubAccount', 'user'])
     ->where('transaction_type',  $validated['transactionType'])

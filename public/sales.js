@@ -273,7 +273,7 @@ $('#invoiceSales #grid2').append(rows);
                 displaySales(data.sales);
 
              
-                transaction_type.empty();
+                // transaction_type.empty();
                 
                 Customer_name_id.empty();
     const  subAccountOptions = 
@@ -288,7 +288,7 @@ $('#invoiceSales #grid2').append(rows);
 
     const  transaction_typ = 
           `
-          <option value="${data.transaction_valueType}">${data.transaction_typelabel}</option>`
+          <option selected value="${data.transaction_valueType}">${data.transaction_typelabel}</option>`
      ;
 
      transaction_type.append(transaction_typ);

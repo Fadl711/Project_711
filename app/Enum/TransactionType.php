@@ -9,6 +9,7 @@ enum TransactionType: int
     case INVENTORY_TRANSFER = 3;
     case SALE = 4;
     case RETURN_SALE = 5;
+    case SHOW_PRICE = 6;
 
     public function label(): string
     {
@@ -18,6 +19,7 @@ enum TransactionType: int
             self::INVENTORY_TRANSFER => 'تحويل مخزني',
             self::SALE => 'مبيعات',
             self::RETURN_SALE => 'مردود مبيعات',
+            self::SHOW_PRICE => 'عرض سعر',
         };
     }
     public static function fromValue(int $value): ?self

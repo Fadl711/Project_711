@@ -1,7 +1,6 @@
 @extends('daily_restrictions.index')
 @section('restrictions')
 
-
 <div class="container   " id="js-print-template" x-ref="printTemplate">
     {{-- <button onclick="window.history.back()">رجوع</button> --}}
 

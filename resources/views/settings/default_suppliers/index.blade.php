@@ -32,29 +32,33 @@ window.onload = function() {
 </script>
 <div class="container mx-auto  shadow-sm bg-white flex">
     <div class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
-        <form action="{{ route('route.clear') }}" method="POST">
-            @csrf
-            <button type="submit" class="btn btn-danger text-white">تحديث المسارات</button>
-        </form>
-    </div>
-    <div class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
         <form action="{{ route('git.pull') }}" method="POST">
             @csrf
             <button type="submit" class="btn btn-primary text-white">تحديث النظام</button>
         </form>
     </div>
     <div class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
-        <form action="{{ route('Salesinvoices') }}" method="POST">
+        <form action="{{ route('route.clear') }}" method="POST">
             @csrf
-            <button type="submit" class="btn btn-primary text-white">تحديث قيود المبيعات</button>
+            <button type="submit" class="btn btn-danger text-white">تحديث المسارات</button>
         </form>
     </div>
     <div class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
-        <form action="{{ route('paymentBonds') }}" method="POST">
+        <form action="{{ route('run_migration') }}" method="POST">
             @csrf
-            <button type="submit" class="btn btn-primary text-white">تحديث قيود السندات</button>
+            <button  type="submit" class="btn  btn-success">تشغيل الترحيل</button>
         </form>
     </div>
+  
+    <div class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+        <form action="{{ route('Saleupdate') }}" method="POST">
+            @csrf
+            <button type="submit" class="btn btn-primary text-white">تحديث قيود المبيعات </button>
+        </form>
+    </div>
+  
 
 </div>
+
+
 @endsection

@@ -34,6 +34,7 @@ class Sale extends Model
         'total_price',
         'currency',
         'shipping_cost',
+        'total_purchasePrice',
         'financial_account_id',
         'warehouse_to_id',
         'Customer_id',

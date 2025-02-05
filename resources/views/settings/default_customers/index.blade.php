@@ -41,7 +41,7 @@
 
                 @if ($SubAccount->sub_account_id==$Default_customers->subaccount_id)
                 <tr>
-                    <td class="py-2 px-4 border-b">{{ $SubAccount->sub_name }}</td>
+                    <td class="py-2 px-4 border-b">{{ $SubAccount->sub_name }}{{$Default_customers->subaccount_id}}</td>
                     <td class="py-2 px-4 border-b">{{ $SubAccount->Phone }}</td>
                     <td class="py-2 px-4 border-b">
                         <form action="{{ route('default_customers.destroy', $Default_customers->subaccount_id) }}" method="POST" class="inline">
@@ -75,7 +75,7 @@
                 <option @isset($defaultSuppliers->warehouse_id)
                     @selected($defaultSuppliers->warehouse_id==$SubAccount->sub_account_id)
                     @endisset
-                    value="{{ $SubAccount->sub_account_id }}">{{ $SubAccount->sub_name }}</option>
+                    value="{{ $SubAccount->sub_account_id }}">{{ $SubAccount->sub_name }}{{$defaultSuppliers->warehouse_id}}</option>
                     @endforeach
             @endisset
 
@@ -136,7 +136,7 @@
                 <option @isset($defaultSuppliers->financial_account_id)
                     @selected($defaultSuppliers->financial_account_id==$SubAccount->sub_account_id)
                     @endisset
-                    value="{{ $SubAccount->sub_account_id }}">{{ $SubAccount->sub_name }}</option>
+                    value="{{ $SubAccount->sub_account_id }}">{{ $SubAccount->sub_name }}{{$defaultSuppliers->financial_account_id}}</option>
                     @endforeach
                 @endisset
 

@@ -70,10 +70,10 @@ class generalEntrieController extends Controller
         'General_ledger_page_number_id'=>$generalentry->General_ledger_page_number_id ??0,
         'accounting_period_id'=>$generalentry->accounting_period_id,
         // 'typeAccount'=>$typeAccount,
-        'entry_type'=>($generalentry->entry_type=='debit'?'دائن':'مدين'),
+        'entry_type'=>($generalentry->entry_type=='debit'?'مدين':' دائن'),
         'amount'=>$generalentry->amount,
         'Currency_name'=>$generalentry->Currency_name,
-        'Invoice_type'=>   $paymenttype,
+        'Invoice_type'=>  $daily_entries->daily_entries_type." ". $paymenttype ,
         
         'Invoice_id'=>$generalentry->Invoice_id,
         'description'=>$generalentry->description,

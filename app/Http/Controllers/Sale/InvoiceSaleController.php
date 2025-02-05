@@ -10,6 +10,7 @@ use App\Models\Category;
 use App\Models\Currency;
 use App\Models\DailyEntrie;
 use App\Models\Default_customer;
+use App\Models\GeneralEntrie;
 use App\Models\GeneralJournal;
 use App\Models\Sale;
 use App\Models\SaleInvoice;
@@ -195,24 +196,20 @@ public function update(Request $request)
     $paid_amount = 0;
     $account_debit = null;
     $account_Credit = null;
-
     $updateSale = Sale::where('Invoice_id', $request->sales_invoice_id)->get();
     $DefaultCustomer = Default_customer::where('id', 1)->first();
     $warehouse_id = SubAccount::where('sub_account_id', $DefaultCustomer->warehouse_id)->value('sub_account_id'); // استخدام value بدلاً من pluck
-
     $entrie_id = DailyEntrie::where('Invoice_id', $request->sales_invoice_id)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->whereIn('daily_entries_type', ["مردود مبيعات", "مبيعات"])
         ->first();
-        
+   
 
-    $Getentrie_id = $entrie_id->entrie_id ?? null;
-    $daily_page_id = $entrie_id->Daily_page_id ?? $dailyPage->page_id;
-
-    if ($request->transaction_type == 4) {
-        $this->handleTransactionType4($saleInvoice, $validatedData, $DefaultCustomer, $warehouse_id, $net_total_after_discount, $Getentrie_id, $transactiontype, $daily_page_id, $updateSale);
-    } elseif ($request->transaction_type == 5) {
-        $this->handleTransactionType5($saleInvoice, $validatedData, $DefaultCustomer, $warehouse_id, $net_total_after_discount, $Getentrie_id, $transactiontype, $daily_page_id, $updateSale);
+    if ($request->transaction_type == 4 || $request->transaction_type == 6) {
+        $this->handleTransactionType4($saleInvoice, $validatedData, $DefaultCustomer, $net_total_after_discount, $transactiontype, $updateSale);
+    } elseif ($request->transaction_type == 5)
+     {
+        $this->handleTransactionType5($saleInvoice, $validatedData, $DefaultCustomer, $warehouse_id, $net_total_after_discount, $transactiontype, $updateSale);
     }
 
     return response()->json([
@@ -239,82 +236,268 @@ private function calculateDiscount($saleInvoice)
         ->sum('discount');
 }
 
-private function handleTransactionType4($saleInvoice, $validatedData, $DefaultCustomer, $warehouse_id, $net_total_after_discount, $Getentrie_id, $transactiontype, $daily_page_id, $updateSale)
+private function handleTransactionType4($saleInvoice, $validatedData, $DefaultCustomer, $net_total_after_discount, $transactiontype, $updateSale)
 {
+    $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+    $qurye = Sale::where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        ->where('Invoice_id', $saleInvoice->sales_invoice_id);
+
+    $Selling_price = $qurye->sum('total_amount');
+    $total_price_sale = $qurye->sum('total_price');
+    $discount = $qurye->sum('discount');
+    $Purchase_price = $qurye->sum('total_purchasePrice');
+
+    $Profit = $Selling_price - ($saleInvoice->discount ?? $discount ?? 0);
+    $ProfitTotal = $Profit - $Purchase_price;
+    $net_total_after_discount = $total_price_sale;
+    $amountCreditTotal = $Purchase_price;
+    $amountDeditTotal =  $saleInvoice->net_total_after_discount;
+    $paid_amount = 0;
+    $account_debit = null;
+    $account_Credit = null;
+
+    $paymentTypes = [1 => 'نقدا', 2 => 'اجل', 3 => 'تحويل بنكي', 4 => 'شيك'];
+    $paymenttype = $paymentTypes[$validatedData['payment_type']] ?? 'غير معروف';
+
     switch ($validatedData['payment_type']) {
         case 1:
         case 3:
         case 4:
             $account_debit = $validatedData['financial_account_id'];
-            $account_Credit =$DefaultCustomer->warehouse_id; // قيمة مباشرة
-            $account_debit = intval($account_debit);
+            $account_Credit = $DefaultCustomer->warehouse_id;
             $paid_amount = $net_total_after_discount;
             break;
 
         case 2:
-            $account_Credit = $DefaultCustomer->warehouse_id; // قيمة مباشرة
+            $account_Credit = $DefaultCustomer->warehouse_id;
             $account_debit = $validatedData['Customer_name_id'];
-            $account_debit = intval($account_debit);
-            $paid_amount = $net_total_after_discount;
+            $paid_amount = 0;
             break;
-
         default:
-            // التعامل مع حالة غير متوقعة
             break;
     }
 
-    $this->updateSales($updateSale, $validatedData, $DefaultCustomer);
-    $this->saleInvoiceupdate($validatedData,$saleInvoice, $account_Credit, $account_debit, $net_total_after_discount, $Getentrie_id, $transactiontype, $daily_page_id,  $validatedData['payment_type']);
+    $amountCredit = $ProfitTotal > 0 ? $ProfitTotal : 0;
+    $amountDebit = $ProfitTotal < 0 ? abs($ProfitTotal) : 0;
+
+    $accountCredit = SubAccount::where('sub_account_id', 2)->first();
+    $transaction_type=TransactionType::fromValue( $saleInvoice->transaction_type)?->label();
+
    
+
+    $this->updateSales($updateSale, $validatedData, $DefaultCustomer,$saleInvoice,$paid_amount);
+    $entrie_id = DailyEntrie::where('Invoice_id', $saleInvoice->sales_invoice_id)
+    ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+    ->where('daily_entries_type', $transaction_type)
+    ->where('account_Credit_id', '!=', $accountCredit->sub_account_id)
+    ->first();
+
+$entrieid = DailyEntrie::where('Invoice_id', $saleInvoice->sales_invoice_id)
+    ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+    ->where('daily_entries_type', $transaction_type)
+    ->where('account_Credit_id', $accountCredit->sub_account_id)
+    ->first();
+    $this->saleInvoiceupdate($validatedData, $saleInvoice, $accountingPeriod, $account_Credit, $account_debit, $entrie_id, $amountDeditTotal, $amountCreditTotal, $validatedData['payment_type'], $paid_amount ?? 0);
+    $this->saleInvoiceupdate($validatedData, $saleInvoice, $accountingPeriod, $accountCredit->sub_account_id, $accountCredit->sub_account_id, $entrieid, $amountDebit, $amountCredit, $validatedData['payment_type'], $paid_amount ?? 0);
 }
 
-private function handleTransactionType5($saleInvoice, $validatedData, $DefaultCustomer, $warehouse_id, $net_total_after_discount, $Getentrie_id, $transactiontype, $daily_page_id, $updateSale)
-{
 
+private function handleTransactionType5($saleInvoice, $validatedData, $DefaultCustomer, $net_total_after_discount, $transactiontype, $updateSale)
+{
+    $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+    $qurye = Sale::where('accounting_period_id', $accountingPeriod->accounting_period_id)
+    ->where('Invoice_id', $saleInvoice->sales_invoice_id);
+
+    $Selling_price = $qurye->sum('total_amount');
+    $total_price_sale = $qurye->sum('total_price');
+    $discount = $qurye->sum('discount');
+    $Purchase_price = $qurye->sum('total_purchasePrice');
+    // حساب الخصم والأرباح
+    $Profit =  $Selling_price - $validatedData['discount']?? $saleInvoice->discount ?? $discount ?? 0;
+    $ProfitTotal = $Profit - $Purchase_price;
+    $net_total_after_discount = $total_price_sale;
+    
+$amountCreditTotal =  $saleInvoice->net_total_after_discount;
+$amountDeditTotal = $Purchase_price;
+    $paid_amount = 0;
+    $account_debit = null;
+    $account_Credit = null; 
     switch ($validatedData['payment_type']) {
         case 1:
         case 3:
-        case 4:
-            $account_Credit = $validatedData['financial_account_id'];
-            $account_debit = $DefaultCustomer->warehouse_id; // قيمة مباشرة
-            $account_debit = intval($account_debit);
-            $paid_amount = $net_total_after_discount;
-            break;
-
-        case 2:
-            $account_Credit = $validatedData['Customer_name_id'];
-            $account_debit = $DefaultCustomer->warehouse_id;
-            $account_debit = intval($account_debit);
-            $paid_amount = $net_total_after_discount;
-            break;
+            case 4:
+                $account_Credit = $validatedData['financial_account_id'];
+                $account_debit = intval($DefaultCustomer->warehouse_id);
+                $paid_amount = $net_total_after_discount;
+                break;
+    
+            case 2:
+                $account_Credit = $validatedData['Customer_name_id'];
+                $account_debit = intval($DefaultCustomer->warehouse_id);
+                break;
 
         default:
-            // التعامل مع حالة غير متوقعة
             break;
     }
-
-    $this->updateSales($updateSale, $validatedData, $DefaultCustomer);
-    $this->saleInvoiceupdate($validatedData,$saleInvoice, $account_Credit, $account_debit, $net_total_after_discount, $Getentrie_id, $transactiontype, $daily_page_id,  $validatedData['payment_type']);
-  
-}
-
-private function saleInvoiceupdate($validatedData,$saleInvoice, $account_Credit, $account_debit, $net_total_after_discount, $Getentrie_id, $transactiontype, $daily_page_id, $payment_type)
-{ 
-    if ($validatedData['listRadio'] == 2) {
    
-    $date = Carbon::createFromFormat('Y-m-d', $validatedData['date']); // استخدام createFromFormat
+    $amountDebit = $ProfitTotal > 0 ? $ProfitTotal : 0;
+    $amountCredit = $ProfitTotal < 0 ? abs($ProfitTotal) : 0;
+    $transaction_type=TransactionType::fromValue( $saleInvoice->transaction_type)?->label();
+    $this->updateSales($updateSale, $validatedData, $DefaultCustomer,$saleInvoice,$paid_amount);
+ $accountCredit= SubAccount::where('sub_account_id', 2)->first();
+ $entrie_id = DailyEntrie::where('Invoice_id', $saleInvoice->sales_invoice_id)
+ ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+ ->whereIn('daily_entries_type', ["مردود مبيعات", "مبيعات"])
+ ->where('account_Credit_id', '!=', $accountCredit->sub_account_id) // هنا يجب التأكد من وجود قيمة صالحة لـ $accountCredit->sub_account_id
+ ->first();
+ $entrieid = DailyEntrie::where('Invoice_id', $saleInvoice->sales_invoice_id)
+ ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+ ->whereIn('daily_entries_type', ["مردود مبيعات", "مبيعات"])
+ ->where('account_Credit_id', $accountCredit->sub_account_id) // هنا يجب التأكد من وجود قيمة صالحة لـ $accountCredit->sub_account_id
+ ->first();
 
-    DB::table('sales_invoices')
-    ->where('sales_invoice_id', $saleInvoice->sales_invoice_id)
-    ->update(['created_at' => $date]);
+    $this->saleInvoiceupdate($validatedData,$saleInvoice,$accountingPeriod,$account_Credit, $account_debit,$entrie_id, $amountDeditTotal,$amountCreditTotal,$validatedData['payment_type'],$paid_amount??0);
+    $this->saleInvoiceupdate($validatedData,$saleInvoice,$accountingPeriod,$accountCredit->sub_account_id, $accountCredit->sub_account_id,$entrieid,$amountDebit,$amountCredit,$validatedData['payment_type'],$paid_amount??0);
+}
+
+private function saleInvoiceupdate($validatedData, $saleInvoice, $accountingPeriod, $account_Credit, $account_debit, $Getentrie_id, $amountDeditTotal, $amountCreditTotal, $payment_type, $paid_amount)
+{
+
+    // DB::beginTransaction();
+    try {
+        // تحديث تاريخ الفاتورة إذا كان listRadio == 2
+        if($validatedData['transaction_type']!=6){
+
+        if ($validatedData['listRadio'] == 2) {
+            $date = Carbon::createFromFormat('Y-m-d', $validatedData['date']);
+            DB::table('sales_invoices')->where('sales_invoice_id', $saleInvoice->sales_invoice_id)->update(['created_at' => $date]);
+        }
+
+        // تحديث بيانات الفاتورة
+      
+
+        // التحقق من وجود صفحة يومية
+        $today = Carbon::now()->toDateString();
+        $dailyPage = GeneralJournal::where('accounting_period_id',$accountingPeriod->accounting_period_id)->
+        whereDate('created_at', $today)->latest()->first();
+        if (!$dailyPage) {
+            $dailyPage = GeneralJournal::create(['accounting_period_id' => $accountingPeriod->accounting_period_id]);
+        }
+
+        if (!$dailyPage || !$dailyPage->page_id) {
+            // DB::rollBack();
+            return response()->json(['success' => false, 'message' => 'فشل في إنشاء صفحة يومية']);
+        }
+
+        // التعامل مع نوع الدفع
+        $payment_types = [
+            1 => 'نقدا',
+            2 => 'اجل',
+            3 => 'تحويل بنكي',
+            4 => 'شيك'
+        ];
+        $paymenttype = $payment_types[$payment_type] ?? 'غير معروف';
+
+        $commint = $this->getComment($saleInvoice);
+        $note = !empty($validatedData['note']) ? "/" . $validatedData['note'] : '';
+        $Getentrieid= $Getentrie_id->entrie_id ?? null;
+        $daily_page_id = $Getentrie_id->Daily_page_id ?? $dailyPage->page_id;
+     $transaction_type  = TransactionType::fromValue( $validatedData['transaction_type'])?->label();
+        // إنشاء أو تحديث القيد اليومي
+        $dailyEntrie = DailyEntrie::updateOrCreate(
+            [
+            'entrie_id' => $Getentrieid,
+            'Invoice_id' => $saleInvoice->sales_invoice_id,
+            'accounting_period_id' => $accountingPeriod->accounting_period_id,
+
+        ],
+
+            [
+                'daily_entries_type' =>$transaction_type ,
+                'account_Credit_id' => $account_Credit,
+                'account_debit_id' => $account_debit,
+                'Amount_Credit' => $amountCreditTotal ??0,
+                'created_at' => $saleInvoice->created_at,
+
+                'Amount_debit' => $amountDeditTotal ?: 0,
+                'Statement' => $commint." ".$transaction_type." ".PaymentType::tryFrom($saleInvoice->payment_type)?->label().$note ,
+                'Daily_page_id' => $daily_page_id ?? $dailyPage->page_id,
+                'Invoice_type' => $saleInvoice->payment_type,
+                'Currency_name' => 'd',
+                'User_id' => auth()->user()->id,
+                'status_debit' => 'غير مرحل',
+                'status' => 'غير مرحل',
+            ]
+        );
+        //    dd($dailyEntrie);
+
+
+        // تحديث تاريخ القيد اليومي
+        DB::table('daily_entries')
+            ->where('entrie_id', $Getentrie_id->entrie_id)
+            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+            ->where('Invoice_id', $saleInvoice->sales_invoice_id)
+            ->update(['created_at' => Carbon::createFromFormat('Y-m-d', $validatedData['date'])]);
+
+        // DB::commit();
+    }
+    if($validatedData['transaction_type']==6){
+        
+      
+        if ($Getentrie_id)
+        {
+            DB::table('daily_entries')
+            ->where('entrie_id', $Getentrie_id->entrie_id)
+            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+            ->where('Invoice_id', $saleInvoice->sales_invoice_id)
+            ->delete();
+            $generalEntrieaccount_debit_id = GeneralEntrie::where([
+                'Daily_entry_id' => $Getentrie_id->entrie_id,
+                'accounting_period_id' => $Getentrie_id->accounting_period_id,
+                'sub_id' => $Getentrie_id->account_debit_id,
+            ])->delete();
+            $generalEntrieaccount_debit_id = GeneralEntrie::where([
+                'Daily_entry_id' => $Getentrie_id->entrie_id,
+                'accounting_period_id' => $Getentrie_id->accounting_period_id,
+                'sub_id' => $Getentrie_id->account_Credit_id,
+            ])->delete();
+        //    $Getentrie_id->delete(); // حذف السجل المرتبط
+       }    
+    
+    }
+
+    } catch (\Exception $e) {
+        // DB::rollBack();
+        return response()->json(['success' => false, 'message' => 'حدث خطأ.']);
+    }
+
 
 }
+
+private function updateSales($updateSale, $validatedData, $DefaultCustomer,$saleInvoice,$paid_amount)
+{
+
+    // تحقق من أن $updateSale هو مصفوفة أو كائن قابل للتكرار
+    if (is_array($updateSale) || is_object($updateSale)) {
+        foreach ($updateSale as $sale) {
+            $sale->update([
+                'transaction_type' => $validatedData['transaction_type'],
+                'warehouse_to_id' => $DefaultCustomer->warehouse_id,
+                'Customer_id' => $validatedData['Customer_name_id'],
+                'financial_account_id' => $validatedData['financial_account_id'],
+            ]);
+        }
+    } else {
+        // التعامل مع الحالة عندما لا يكون المتغير مصفوفة أو كائن
+        return response()->json(['success' => false, 'message' => 'بيانات المبيعات غير صحيحة']);
+    }
+
     $saleInvoice->update([
         'Customer_id' => $validatedData['Customer_name_id'],
         'paid_amount' => $paid_amount ?? 0,
         'discount' => $validatedData['discount'] ?? 0,
         'shipping_amount' => $validatedData['shipping_amount'] ?? 0,
-        'remaining_amount' => $net_total_after_discount - ($paid_amount ?? 0),
+        'remaining_amount' => $saleInvoice->net_total_after_discount - ($paid_amount ?? 0),
         'financial_account_id' => $validatedData['financial_account_id'],
         'payment_type' => $validatedData['payment_type'],
         'note' => $validatedData['note'],
@@ -324,98 +507,6 @@ private function saleInvoiceupdate($validatedData,$saleInvoice, $account_Credit,
         'transaction_type' => $validatedData['transaction_type'],
         'shipping_bearer' => $validatedData['shipping_bearer'] ?? 0,
     ]);
-    $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
-    if (!$accountingPeriod) {
-        return response()->json(['success' => false, 'message' => 'لا توجد فترة محاسبية مفتوحة.']);
-    }
-
-    // التحقق من وجود الصفحة اليومية
-    $today = Carbon::now()->toDateString();
-    $dailyPage = GeneralJournal::whereDate('created_at', $today)->latest()->first();
-
-    if (!$dailyPage) {
-        $dailyPage = GeneralJournal::create([
-            'accounting_period_id' => $accountingPeriod->accounting_period_id,
-        ]);
-    }
-
-    if (!$dailyPage || !$dailyPage->page_id) 
-    {
-        return response()->json(['success' => false, 'message' => 'فشل في إنشاء صفحة يومية']);
-    }
-    $commint = $this->getComment($saleInvoice);
-    $payment_type = intval($payment_type);
-    // تحديث أو إنشاء القيد
-    // try {
-        if($payment_type==1)
-        {
-           $paymenttype="نقدا";
-        }
-        if($payment_type==2)
-        {
-           $paymenttype="اجل";
-        }
-        if($payment_type==3)
-        {
-           $paymenttype="تحويل بنكي";
-        }
-        if($payment_type==4)
-        {
-           $paymenttype="شيك";
-        }
-        if( $validatedData['note'])
-        {
-            $note="/".$validatedData['note'] ??'';
-
-        }
-        else
-        {
-            $note='';
-        }
-        $date = Carbon::parse($saleInvoice->created_at)->format('Y-m-d');
-        $curre=Currency::where('currency_id', $validatedData['currency_id'])->pluck('currency_name')->first();
-
-        $dailyEntrie = DailyEntrie::updateOrCreate(
-            [
-                'entrie_id' => $Getentrie_id,
-                'accounting_period_id' => $accountingPeriod->accounting_period_id,
-                'Invoice_id' => $saleInvoice->sales_invoice_id,
-            ],
-            [
-                'daily_entries_type' => $transactiontype,
-                'account_Credit_id' => $account_Credit,
-                'account_debit_id' => $account_debit,
-                'Amount_Credit' => $net_total_after_discount ?: 0,
-                'Amount_debit' => $net_total_after_discount ?: 0,
-                'Statement' => $commint . " " . $transactiontype . " " . $paymenttype.$note,
-                'Daily_page_id' => $daily_page_id ?? $dailyPage->page_id,
-                'Invoice_type' => $payment_type,
-                'Currency_name' => $curre,
-                'User_id' => auth()->user()->id,
-                'status_debit' => 'غير مرحل',
-                'status' => 'غير مرحل',
-            ]
-        );
-        $date = Carbon::createFromFormat('Y-m-d', $validatedData['date']); // استخدام createFromFormat
-
-        DB::table('daily_entries')
-        ->where('entrie_id', $Getentrie_id)
-        ->where('accounting_period_id',$accountingPeriod->accounting_period_id)
-        ->where(  'Invoice_id',$saleInvoice->sales_invoice_id)
-        ->update(['created_at' => $date]);
-
-}
-
-private function updateSales($updateSale, $validatedData, $DefaultCustomer)
-{
-    foreach ($updateSale as $sale) {
-        $sale->update([
-            'transaction_type' => $validatedData['transaction_type'],
-            'warehouse_to_id' => $DefaultCustomer->warehouse_id,
-            'Customer_id' => $validatedData['Customer_name_id'],
-            'financial_account_id' => $validatedData['financial_account_id'],
-        ]);
-    }
 }
 
 
@@ -608,8 +699,8 @@ public function print(Request $request,$id)
     // تحويل القيمة إلى نص مكتوب
     $numberToWords = new NumberToWords();
     $numberTransformer = $numberToWords->getNumberTransformer('ar');
-  $numeric=is_numeric($Sale_priceSum- $saleInvoice->discount) 
-    ? $numberTransformer->toWords($Sale_priceSum- $saleInvoice->discount) . ' ' . $curre->currency_name
+  $numeric=is_numeric($saleInvoice->net_total_after_discount) 
+    ? $numberTransformer->toWords( $saleInvoice->net_total_after_discount) . ' ' . $curre->currency_name
     : 'القيمة غير صالحة';
     // اللغة العربية
     $thanks="شكراً لتعاملك معنا";
@@ -638,6 +729,7 @@ if($validated['analysis']==1)
         'UserName' => $UserName,
         'accountCla' => $AccountClassName,
         'Sum_amount' => $Sum_amount,
+        'net_total_after_discount' =>  $saleInvoice->net_total_after_discount,
         'thanks'=>$thanks,
         'note'=>$note ??'',
         'discount'=>$discount ??0,
@@ -654,7 +746,7 @@ if($validated['analysis']==2)
         'Sale_priceSum' => $Sale_priceSum,
         'Sale_CostSum' => $Sale_CostSum,
         'priceInWords' => $numeric,
-        'total_Profit' =>number_format($total_Profit,2)??0,
+        'total_Profit' =>$total_Profit??0,
         'Categorys' => $Categorys,
         'currency' => $curre->currency_name,
         'payment_type' => PaymentType::tryFrom($DataPurchaseInvoice->payment_type)?->label() ?? 'غير معروف',

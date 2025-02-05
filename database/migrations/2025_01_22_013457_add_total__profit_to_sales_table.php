@@ -29,10 +29,8 @@ return new class extends Migration
                 $Quantityprice =$sale->Quantityprice ?? 0;
                 // حساب الربح
                 $totalProfit = $Profit * $Quantityprice;
-
                 // تعيين الربح
                 $sale->total_Profit = $totalProfit;
-
                 // حفظ التغيير
                 $sale->save();
             }

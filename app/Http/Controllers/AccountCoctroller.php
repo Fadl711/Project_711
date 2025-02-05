@@ -171,11 +171,6 @@ return response()->json( $data);
         // تحديد نوع القيد (مدين أو دائن) والتعليق
         if ($accountCreditId) {
             $accountId = $accountCreditId;
-
-            // $entries = DailyEntrie::where('accounting_period_id',$accountingPeriod->accounting_period_id)
-            // ->where('entrie_id', $entryId)
-            // ->where('account_Credit_id', $accountId)
-            // ->first();
             $amount= $Amount_Credit ??0;
             $descriptionCommint = "الى ح/";
             $entryType = "credit";
@@ -185,25 +180,22 @@ return response()->json( $data);
         if ($accountDebitId) 
         {
             $accountId = $accountDebitId;
-            // $entries = DailyEntrie::where('accounting_period_id',$accountingPeriod->accounting_period_id)
-            // ->where('entrie_id', $entryId)
-            // ->where('account_debit_id', $accountId)
-            // ->first();
             $amount= $Amount_debit;
 
             $descriptionCommint = "من ح/";
             $entryType = "debit";
         }
         // جلب الحسابات الفرعية والرئيسية
-        $subAccount = SubAccount::where('sub_account_id',$accountId)->firstOrFail();
+        $subAccount = SubAccount::where('sub_account_id',$accountId)->first();
         $Main_id=$subAccount->Main_id;
-        $mainAccount = MainAccount::where('main_account_id',$Main_id)->firstOrFail();
+        $mainAccount = MainAccount::where('main_account_id',$Main_id)->first();
             // تحديد الوصف بناءً على تصنيف الحساب
         if ($subAccount->AccountClass == 1) {
             $descriptionText = "العميل";
         } elseif ($subAccount->AccountClass == 2) {
             $descriptionText = "المورد";
         }
+     
         // إنشاء أو استرجاع السجل من GeneralLedgeMain ووضعه في General_ledger_page_number_id
         $generalLedgeMain = GeneralLedgeMain::firstOrCreate(
             [
@@ -238,27 +230,24 @@ return response()->json( $data);
         // الآن يمكنك استخدام $generalLedge بأمان
         $id = $generalLedge->general_ledge_id;
 
-        $generalEntrie = GeneralEntrie::where([
-            'Daily_entry_id' => $entry->entrie_id,
-            'accounting_period_id' => $accountingPeriod->accounting_period_id,
-            'sub_id' => $subAccount->sub_account_id,
-            'entry_type' => $entryType,
-            'amount' => $amount,
+        // $generalEntrie = GeneralEntrie::where([
+        //     'accounting_period_id' => $accountingPeriod->accounting_period_id,
+        //     'Daily_entry_id' => $entry->entrie_id,
+        //     'sub_id' => $subAccount->sub_account_id,
+        //     'entry_type' => $entryType,
+        //     'amount' => $amount,
 
 
 
-        ])->first();
+        // ])->first();
 
 
-        if(!$generalEntrie)
-        {
         if($amount!=0)
         {
         // إنشاء السجل في GeneralEntrie باستخدام المعرف الصحيح
         $generalEntry = GeneralEntrie::updateOrCreate([
-            'Daily_entry_id' => $entry->entrie_id,
-            'sub_id' => $subAccount->sub_account_id,
             'accounting_period_id' => $accountingPeriod->accounting_period_id,
+            'Daily_entry_id' => $entry->entrie_id,
             'entry_type' => $entryType ,
         ], [
             'General_ledger_page_number_id' =>  $generalLedge->general_ledge_id ?? null,
@@ -266,7 +255,7 @@ return response()->json( $data);
             'Main_id' => $mainAccount->main_account_id,
             'typeAccount' => $subAccount->typeAccount,
             'amount' => $amount,
-            'description' => $descriptionCommint . $descriptionText  ??" " . " " . $subAccount->sub_name ,
+            'description' => $descriptionCommint . $descriptionText  ." ". $subAccount->sub_name ??  " " ,
             'entry_date' => $entry->created_at,
             'status' =>'غير مرحل',
             'Invoice_type' => $entry->Invoice_type,
@@ -275,9 +264,9 @@ return response()->json( $data);
             'User_id' => auth()->id(),
         ]);
 
-        if (!$generalEntry) {
-            throw new \Exception("حدث خطأ أثناء إنشاء السجل في GeneralEntrie.");
-        }
+        // if (!$generalEntry) {
+        //     throw new \Exception("حدث خطأ أثناء إنشاء السجل في GeneralEntrie.");
+        // }
         // تحديث حالة القيد اليومي بعد الترحيل
         if ($accountDebitId) {
             $entry->update(['status_debit' => 'مرحل']);
@@ -286,7 +275,7 @@ return response()->json( $data);
          {
             $entry->update(['status' => 'مرحل']);
         }
-    }
+    
 
     }
     }

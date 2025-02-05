@@ -1,5 +1,39 @@
-@extends('daily_restrictions.index')
-@section('restrictions')
+@extends('layout')
+@section('conm')
+<style>
+    body {
+        font-family: 'Tajawal', sans-serif;
+    }
+    .header-section {
+        background-color: #f3f4f6;
+    }
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    table th, table td {
+        text-align: center;
+    }
+    .no-print button {
+        transition: background-color 0.3s ease;
+    }
+    .no-print button:hover {
+        transform: scale(1.05);
+    }
+    @media print {
+    .no-print {
+        display: none;
+    }
+    
+}
+body {
+    
+    font-family: Arial, sans-serif; /* الخط الافتراضي */
+}
+
+</style>
+<x-nav-transfer-restriction/>
+
     @if(session('success'))
         <div id="success-message" class=" fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg">
             {{ session('success') }}
@@ -10,43 +44,50 @@
   </div>
   <div id="successAlert1"  class="hidden fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
   </div>
-<div class=" text-sm">
-    <div colspan="4"  class="flex flex-col  justify-center items-center  py-2">
-<div class="absolute top-5 right-5 w-10 flex ">
-<span>رقم الصفحة</span>
-    <input  id="Daily_page_id"  type="text" class="rounded-md w-10  text-left outline-none border-0  " value="{{$id}}" >
-</div>
-        <div class="relative  border text-black border-gray-200 rounded-lg w-[50%]  ">
-            <input id="search" name="search" type="text" class="rounded-md w-full text-right placeholder:text-right" placeholder="ابحث با اسم الحساب او رقم القيد  ">
-        </div>
-    </div>
 
-    <div class=" min-w-full shadow rounded-lg    overflow-y-auto max-h-[80vh]  text-sm ">
-        <table class="min-w-full bg-white text-sm">
-            <thead class="bg-[#2430d3] text-white">
-                <tr>
-                    <th class="py-1 text-right bg-white"></th>
-                    <th colspan="2" class="py-1 border text-right">بيانات حساب المدين (الأخذ)</th>
-                    <th colspan="2" class="py-1 border text-right">بيانات حساب الدائن (المعطي)</th>
+
+    <div class=" overflow-x-auto bg-white shadow-md sm:rounded-lg    w-full px-4 py-2   max-h-[80vh]">
+        <table class="text-sm   font-semibold w-full overflow-y-auto max-h-[80vh] border-collapse">
+            {{-- <thead class="bg-gray-100 sticky top-0  uppercase dark:bg-gray-700 dark:text-gray-400"> --}}
+            {{-- <thead class="bg-[#2430d3] text-white"> --}}
+                <thead class="bg-[#2430d3] text-white sticky top-0  uppercase dark:bg-gray-700 dark:text-gray-400">
+
+                <tr class="">
+                    <th class=" text-right bg-white text-white   ">
+
+                       </th>
+                    <th colspan="2" class="rounded-s-lg border border-white text-right">بيانات حساب المدين (الأخذ)</th>
+                    <th colspan="2" class=" border-whi border  text-right">بيانات حساب الدائن (المعطي)</th>
+                    <th colspan="6" class=" text-right bg-white border-whi">
+                        <div class="relative  border text-black border-whi rounded-lg   ">
+                        <input id="search" name="search" type="text" class="rounded-md w-full text-right placeholder:text-right" placeholder="ابحث با اسم الحساب او رقم القيد  ">
+                    </div></th>
+                    <th class="border text-right text-white border-white rounded-e-lg ">
+                        رقم الصفحة
+{{$id}}
+                       </th>
+
                 </tr>
+
                 <tr>
-                    <th class="py-1 border text-right">رقم القيد</th>
-                    <th class="py-1 border text-right">نوع القيد</th>
-                    <th class="py-1 border text-right">من حساب/</th>
-                    <th class="py-1 border text-right">مدين</th>
-                    <th class="py-1 border text-right">الى حساب/</th>
-                    <th class="py-1 border text-right">دائن</th>
-                    <th class="py-1 border text-right">بيان الحساب</th>
-                    <th class="py-1 border text-right">تاريخ القيد</th>
-                    <th class="py-1 border text-right">تاريخ التحديث</th>
-                    <th class="py-1 border text-right">الحالة</th>
-                    <th class="py-1 border text-right">المستخدم</th>
-                    <th class="py-1 border text-right">عرض - تحرير</th>
+                    <th class="rounded-s-lg">رقم القيد</th>
+                    <th class="">نوع القيد</th>
+                    <th class="">من حساب/</th>
+                    <th class="">مدين</th>
+                    <th class="">الى حساب/</th>
+                    <th class="">دائن</th>
+                    <th class="">بيان الحساب</th>
+                    <th class="">تاريخ القيد</th>
+                    <th class="">تاريخ التحديث</th>
+                    <th class="">الحالة</th>
+                    <th class="">المستخدم</th>
+                    <th class=" rounded-e-lg ">عرض - تحرير</th>
                 </tr>
             </thead>
             <tbody id="products-table">
                 @forelse ($eail as $eai)
                 @php
+
                 $resultDebit1 = $suba->where('sub_account_id', $eai->account_debit_id)->first();
                 $resultDebit = $resultDebit1
                     ? $mainc->where('main_account_id', $resultDebit1->Main_id)->first()
@@ -57,22 +98,19 @@
                     ? $mainc->where('main_account_id', $resultCredit1->Main_id)->first()
                     : 'تم الحذف';
             @endphp
-
-            <tr class=" " id="row-{{$eai->entrie_id }}">
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200"
+         id="row-{{$eai->entrie_id }}">
                 <td class="border text-right">{{ $eai->entrie_id }}</td>
                         <td class="border text-right">{{ $eai->daily_entries_type }}</td>
                         <td class="border text-right">
-                            ({{ $resultDebit->account_name ?? 'لا يوجد حساب مدين' }})
-                            -
-                            ({{ $resultDebit1->sub_name ?? '' }})
-                        </td>                          <td class="border text-right">{{ $eai->Amount_debit }} ريال</td>
+                            {{ $resultDebit1->sub_name ?? '' }}
+                        </td>                    
+                              <td class="border text-right">{{ $eai->Amount_debit }} </td>
                         <td class="border text-right">
-                            ({{ $resultCredit->account_name ?? 'لا يوجد حساب دائن' }})
-                            -
-                            ({{ $resultCredit1->sub_name ?? '' }})
-                        </td>                        <td class="border text-right">{{ $eai->Amount_Credit }} ريال</td>
-                        <td class="border text-right">{{ $eai->Statement }}</td>
-                        <td class="border text-right">{{ $eai->created_at }}</td>
+                            {{ $resultCredit1->sub_name ?? '' }}
+                        </td>                        <td class="border text-right">{{ $eai->Amount_Credit }} </td>
+                        <td class="border text-right">{{ $eai->Statement }}/رقم المستند{{ $eai->Invoice_id }}</td>
+                        <td class="border text-right">{{ $eai->created_at->format('Y-m-d') }}</td>
                         <td class="border text-right">{{ $eai->updated_at }}</td>
                         <td class="border text-right">
                             @if ($eai->status == 'مرحل')
@@ -109,8 +147,7 @@
             @endforelse
         </tbody>
     </table>
-</div>
-{{$eail->links() }}
+    {{$eail->links() }}
 </div>
 
 <script >
@@ -165,9 +202,6 @@ $(document).ready(function() {
     });
 });
     $(document).ready(function() {
-
-
-
 
         $('#search').on('keyup', function() {
             var searchValue = $(this).val();

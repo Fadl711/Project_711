@@ -133,7 +133,11 @@
                         <td class="px-2 text-right">
                             {{ $Sale->Category_name ??'' }}
                             </td>
-                        <td class="px-2 text-center">{{ $Sale->Quantityprice }}</td>
+                        <td class="px-2 text-center">   @if (floor($Sale->Quantityprice) == $Sale->Quantityprice)
+                            {{ number_format($Sale->Quantityprice, 0, '.', '') }}
+                        @else
+                            {{ number_format($Sale->Quantityprice, 2, '.', '') }}
+                        @endif</td>
                         <td class="px-2 text-right">{{number_format( $Sale->Selling_price) }}</td>
                         <td class="px-2 text-right">
                             @isset($warehouses)
@@ -190,7 +194,7 @@
                                 <p class="font-">المبلغ المستحق</p>
                             </th>
                             <th class="px-2 text-right ">
-                                {{ number_format($Sale_priceSum-$discount) ?? 0 }}
+                                {{ number_format($net_total_after_discount) ?? 0 }}
                                 <p class="text-sm">{{ $priceInWords }}</p>
                             </th>
 

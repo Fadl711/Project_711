@@ -192,7 +192,7 @@ public function stor(Request $request){
         // $pageNums=GeneralJournal::all();
         $pageNums=GeneralJournal::where('accounting_period_id',$accountingPeriod->accounting_period_id)->get();
 
-        return view('daily_restrictions.all_restrictions_show1',['pagesNum'=>$pageNums,]);
+        return view('daily_restrictions.all_restrictions_show1',['pagesNum'=>$pageNums]);
     }
 
     public function   all_restrictions_show($id)
