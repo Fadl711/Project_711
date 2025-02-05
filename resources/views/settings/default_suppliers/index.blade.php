@@ -56,9 +56,8 @@ window.onload = function() {
             <button type="submit" class="btn btn-primary text-white">تحديث قيود المبيعات </button>
         </form>
     </div>
-  
-
 </div>
 
 
+<textarea name="" id="" cols="30" rows="1">php artisan migrate</textarea>
 @endsection
