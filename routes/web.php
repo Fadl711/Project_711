@@ -126,6 +126,9 @@ Route::post('/git-pull', function () {
    } elseif (strpos($output, 'error') !== false) {
        return redirect()->back()->with('error', 'فشل في تحديث المشروع: ' . nl2br(e($output)));
    } else {
+    Artisan::call('migrate', [
+        '--force' => true  // تأكيد الترحيل في بيئة الإنتاج
+    ]);
        return redirect()->back()->with('success', 'تم تحديث المشروع بنجاح.');
    }
 })->name('git.pull');
