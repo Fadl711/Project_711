@@ -14,7 +14,7 @@ return new class extends Migration
     {
 
         Schema::table('sales', function (Blueprint $table) {
-            $table->decimal('total_purchasePrice', 15, 2)->nullable()->comment(' اجمالي التكتفه  للمنتج') ;
+            $table->decimal('total_purchasePrice', 15, 2)->nullable()->comment(' اجمالي التكتفه  للمنتج');
             
         });
         // التحقق من وجود السجلات

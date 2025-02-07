@@ -29,7 +29,6 @@ class InvoiceSaleController extends Controller
     //
     public function store(Request $request)
     {
-      
  $user=auth()->id();
  $AuthorityName="الفواتير المبيعات";
  $us=UserPermission::where('User_id', $user)
@@ -199,11 +198,22 @@ public function update(Request $request)
     $updateSale = Sale::where('Invoice_id', $request->sales_invoice_id)->get();
     $DefaultCustomer = Default_customer::where('id', 1)->first();
     $warehouse_id = SubAccount::where('sub_account_id', $DefaultCustomer->warehouse_id)->value('sub_account_id'); // استخدام value بدلاً من pluck
-    $entrie_id = DailyEntrie::where('Invoice_id', $request->sales_invoice_id)
-        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-        ->whereIn('daily_entries_type', ["مردود مبيعات", "مبيعات"])
-        ->first();
-   
+
+    $saleInvoice->update([
+        'Customer_id' => $validatedData['Customer_name_id'],
+        'paid_amount' => $paid_amount ?? 0,
+        'discount' => $validatedData['discount'] ?? 0,
+        'shipping_amount' => $validatedData['shipping_amount'] ?? 0,
+        'remaining_amount' => $saleInvoice->net_total_after_discount - ($paid_amount ?? 0),
+        'financial_account_id' => $validatedData['financial_account_id'],
+        'payment_type' => $validatedData['payment_type'],
+        'note' => $validatedData['note'],
+        'account_id' => $validatedData['financial_account_id'],
+        'currency_id' => $validatedData['currency_id'],
+        'exchange_rate' => $validatedData['exchange_rate'] ?? 0,
+        'transaction_type' => $validatedData['transaction_type'],
+        'shipping_bearer' => $validatedData['shipping_bearer'] ?? 0,
+    ]);
 
     if ($request->transaction_type == 4 || $request->transaction_type == 6) {
         $this->handleTransactionType4($saleInvoice, $validatedData, $DefaultCustomer, $net_total_after_discount, $transactiontype, $updateSale);
@@ -255,10 +265,6 @@ private function handleTransactionType4($saleInvoice, $validatedData, $DefaultCu
     $paid_amount = 0;
     $account_debit = null;
     $account_Credit = null;
-
-    $paymentTypes = [1 => 'نقدا', 2 => 'اجل', 3 => 'تحويل بنكي', 4 => 'شيك'];
-    $paymenttype = $paymentTypes[$validatedData['payment_type']] ?? 'غير معروف';
-
     switch ($validatedData['payment_type']) {
         case 1:
         case 3:
@@ -282,23 +288,21 @@ private function handleTransactionType4($saleInvoice, $validatedData, $DefaultCu
 
     $accountCredit = SubAccount::where('sub_account_id', 2)->first();
     $transaction_type=TransactionType::fromValue( $saleInvoice->transaction_type)?->label();
-
-   
-
     $this->updateSales($updateSale, $validatedData, $DefaultCustomer,$saleInvoice,$paid_amount);
-    $entrie_id = DailyEntrie::where('Invoice_id', $saleInvoice->sales_invoice_id)
+    $inv=SaleInvoice::where('sales_invoice_id',$saleInvoice->sales_invoice_id) ->first();
+    $entrie_id = DailyEntrie::where('Invoice_id', $inv->sales_invoice_id)
     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-    ->where('daily_entries_type', $transaction_type)
-    ->where('account_Credit_id', '!=', $accountCredit->sub_account_id)
+    ->whereIn('daily_entries_type', ["مردود مبيعات", "مبيعات"])
+    ->where('account_Credit_id', '!=', $accountCredit->sub_account_id) // هنا يجب التأكد من وجود قيمة صالحة لـ $accountCredit->sub_account_id
     ->first();
+    $this->saleInvoiceupdate($validatedData, $inv, $accountingPeriod, $account_Credit, $account_debit, $entrie_id, $amountDeditTotal, $amountCreditTotal, $validatedData['payment_type'], $paid_amount ?? 0);
 
-$entrieid = DailyEntrie::where('Invoice_id', $saleInvoice->sales_invoice_id)
+    $entrieid = DailyEntrie::where('Invoice_id', $inv->sales_invoice_id)
     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-    ->where('daily_entries_type', $transaction_type)
+    ->whereIn('daily_entries_type', ["مردود مبيعات", "مبيعات"])
     ->where('account_Credit_id', $accountCredit->sub_account_id)
     ->first();
-    $this->saleInvoiceupdate($validatedData, $saleInvoice, $accountingPeriod, $account_Credit, $account_debit, $entrie_id, $amountDeditTotal, $amountCreditTotal, $validatedData['payment_type'], $paid_amount ?? 0);
-    $this->saleInvoiceupdate($validatedData, $saleInvoice, $accountingPeriod, $accountCredit->sub_account_id, $accountCredit->sub_account_id, $entrieid, $amountDebit, $amountCredit, $validatedData['payment_type'], $paid_amount ?? 0);
+    $this->saleInvoiceupdate($validatedData, $inv, $accountingPeriod, $accountCredit->sub_account_id, $accountCredit->sub_account_id, $entrieid, $amountDebit, $amountCredit, $validatedData['payment_type'], $paid_amount ?? 0);
 }
 
 
@@ -345,23 +349,27 @@ $amountDeditTotal = $Purchase_price;
     $transaction_type=TransactionType::fromValue( $saleInvoice->transaction_type)?->label();
     $this->updateSales($updateSale, $validatedData, $DefaultCustomer,$saleInvoice,$paid_amount);
  $accountCredit= SubAccount::where('sub_account_id', 2)->first();
- $entrie_id = DailyEntrie::where('Invoice_id', $saleInvoice->sales_invoice_id)
+ $inv=SaleInvoice::where('sales_invoice_id',$saleInvoice->sales_invoice_id) ->first();
+ ;
+ $entrie_id = DailyEntrie::where('Invoice_id', $inv->sales_invoice_id)
  ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
  ->whereIn('daily_entries_type', ["مردود مبيعات", "مبيعات"])
  ->where('account_Credit_id', '!=', $accountCredit->sub_account_id) // هنا يجب التأكد من وجود قيمة صالحة لـ $accountCredit->sub_account_id
  ->first();
- $entrieid = DailyEntrie::where('Invoice_id', $saleInvoice->sales_invoice_id)
- ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
- ->whereIn('daily_entries_type', ["مردود مبيعات", "مبيعات"])
- ->where('account_Credit_id', $accountCredit->sub_account_id) // هنا يجب التأكد من وجود قيمة صالحة لـ $accountCredit->sub_account_id
- ->first();
 
-    $this->saleInvoiceupdate($validatedData,$saleInvoice,$accountingPeriod,$account_Credit, $account_debit,$entrie_id, $amountDeditTotal,$amountCreditTotal,$validatedData['payment_type'],$paid_amount??0);
-    $this->saleInvoiceupdate($validatedData,$saleInvoice,$accountingPeriod,$accountCredit->sub_account_id, $accountCredit->sub_account_id,$entrieid,$amountDebit,$amountCredit,$validatedData['payment_type'],$paid_amount??0);
+
+    $this->saleInvoiceupdate($validatedData,$inv,$accountingPeriod,$account_Credit, $account_debit,$entrie_id, $amountDeditTotal,$amountCreditTotal,$validatedData['payment_type'],$paid_amount??0);
+    $entrieid = DailyEntrie::where('Invoice_id', $inv->sales_invoice_id)
+    ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+    ->whereIn('daily_entries_type', ["مردود مبيعات", "مبيعات"])
+    ->where('account_Credit_id', $accountCredit->sub_account_id) // هنا يجب التأكد من وجود قيمة صالحة لـ $accountCredit->sub_account_id
+    ->first();
+    $this->saleInvoiceupdate($validatedData,$inv,$accountingPeriod,$accountCredit->sub_account_id, $accountCredit->sub_account_id,$entrieid,$amountDebit,$amountCredit,$validatedData['payment_type'],$paid_amount??0);
 }
 
 private function saleInvoiceupdate($validatedData, $saleInvoice, $accountingPeriod, $account_Credit, $account_debit, $Getentrie_id, $amountDeditTotal, $amountCreditTotal, $payment_type, $paid_amount)
 {
+    
 
     // DB::beginTransaction();
     try {
@@ -461,7 +469,6 @@ private function saleInvoiceupdate($validatedData, $saleInvoice, $accountingPeri
                 'accounting_period_id' => $Getentrie_id->accounting_period_id,
                 'sub_id' => $Getentrie_id->account_Credit_id,
             ])->delete();
-        //    $Getentrie_id->delete(); // حذف السجل المرتبط
        }    
     
     }
@@ -492,21 +499,7 @@ private function updateSales($updateSale, $validatedData, $DefaultCustomer,$sale
         return response()->json(['success' => false, 'message' => 'بيانات المبيعات غير صحيحة']);
     }
 
-    $saleInvoice->update([
-        'Customer_id' => $validatedData['Customer_name_id'],
-        'paid_amount' => $paid_amount ?? 0,
-        'discount' => $validatedData['discount'] ?? 0,
-        'shipping_amount' => $validatedData['shipping_amount'] ?? 0,
-        'remaining_amount' => $saleInvoice->net_total_after_discount - ($paid_amount ?? 0),
-        'financial_account_id' => $validatedData['financial_account_id'],
-        'payment_type' => $validatedData['payment_type'],
-        'note' => $validatedData['note'],
-        'account_id' => $validatedData['financial_account_id'],
-        'currency_id' => $validatedData['currency_id'],
-        'exchange_rate' => $validatedData['exchange_rate'] ?? 0,
-        'transaction_type' => $validatedData['transaction_type'],
-        'shipping_bearer' => $validatedData['shipping_bearer'] ?? 0,
-    ]);
+   
 }
 
 
@@ -676,7 +669,7 @@ public function print(Request $request,$id)
             $total_Profit = $DataSale->sum('total_Profit');
         }
     // $Sale_CostSum = Sale::where('Invoice_id', $id)->sum('total_amount');
-    $discount=   $Sale_CostSum -  $saleInvoice->net_total_after_discount ??0;
+    // $discount=   $Sale_CostSum -  $saleInvoice->net_total_after_discount ??0;
     $SumDebtor_amount=DailyEntrie::where('account_debit_id',$SubAccount->sub_account_id)->sum('Amount_debit');
     $SumCredit_amount=DailyEntrie::where('account_Credit_id',$SubAccount->sub_account_id)->sum('Amount_Credit');
     $query = DailyEntrie::with(['debitAccount', 'debitAccount.mainAccount', 'creditAccount', 'creditAccount.mainAccount'])
@@ -732,7 +725,7 @@ if($validated['analysis']==1)
         'net_total_after_discount' =>  $saleInvoice->net_total_after_discount,
         'thanks'=>$thanks,
         'note'=>$note ??'',
-        'discount'=>$discount ??0,
+        'discount'=>$saleInvoice->discount ??0,
 
     ]);
 }
@@ -755,9 +748,10 @@ if($validated['analysis']==2)
         'UserName' => $UserName,
         'accountCla' => $AccountClassName,
         'Sum_amount' => $Sum_amount,
+        'net_total_after_discount' =>  $saleInvoice->net_total_after_discount,
         'thanks'=>$thanks,
         'note'=>$note ??'',
-        'discount'=>$discount??0,
+        'discount'=>$saleInvoice->discount ??0,
 
     ]);
 }

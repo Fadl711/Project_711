@@ -223,7 +223,7 @@ public function print($id){
     $Credit_sub=SubAccount::where('sub_account_id', $PaymentBond->Credit_sub_account_id)->first();
     $currs=Currency::where('currency_id',$PaymentBond->Currency_id)->first();
     $sub_name= $subAccount->sub_name;
-    $Credit_sub_name= $subAccount->sub_name;
+    $Credit_sub_name= $Credit_sub->sub_name;
     if( $PaymentBond->payment_type===1)
     {
         $payment_type="نقداً";

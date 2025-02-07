@@ -434,7 +434,7 @@ function getUnitPriceCategorie(mainAccountId,categoryName)
                 success: function(product) {
 
                     displayProductDetails(product);
-                    setTimeout(() => {}, 100);
+                    // setTimeout(() => {}, 100);
                     $('#Categorie_name').select2('open'); // فتح قائمة الفئات
                 },
                 error: function(xhr) {
@@ -459,7 +459,7 @@ $('#financial_account_id_main').on('change', function() {
     setTimeout(() => {
         $('#mainaccount_debit_id').select2('close'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
         $('#Supplier_id').select2('open');
-    }, 1000);
+    }, 300);
 
 });
 
@@ -619,20 +619,20 @@ $(document).on('click', '#delete_invoiceSales', function (e) {
                 successMessage.show().text(response.message);
                 setTimeout(() => {
                     successMessage.hide();
-                }, 5000); // هذا سيقوم بإعادة تحميل الصفحة بالكامل
+                }, 3000); // هذا سيقوم بإعادة تحميل الصفحة بالكامل
                 // إزالة الصف المرتبط بالفاتورة من الجدول بدون إعادة تحميل الصفحة
             } else {
                 $('#errorMessage').show().text(response.message);
                 setTimeout(() => {
                   errorMessage.hide();
-                }, 5000);
+                }, 3000);
             }
         },
         error: function(xhr, status, error) {
             $('#errorMessage').show().text(response.message);
                 setTimeout(() => {
                   errorMessage.hide();
-                }, 5000);   }
+                }, 3000);   }
     });
     });
     $(document).on('keydown', function (event) {

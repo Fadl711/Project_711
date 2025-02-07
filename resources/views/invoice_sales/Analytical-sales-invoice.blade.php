@@ -189,7 +189,7 @@
                                 <p class="font-">المبلغ المستحق</p>
                             </th>
                             <th class="px-2 text-right">
-                                {{ number_format($Sale_priceSum-$discount) ?? 0 }}
+                                {{ number_format($net_total_after_discount) ?? 0 }}
                                 <p class="text-sm">{{ $priceInWords }}</p>
                             </th>
 
