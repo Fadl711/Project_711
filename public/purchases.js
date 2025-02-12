@@ -286,40 +286,6 @@ function addToTable(account) {
 // استدعاء الدالة عند الضغط على الزر
 
 
-$(document).on('keydown', function(event) {
-    if (event.ctrlKey && event.key == 'ArrowLeft') {
-        // الحصول على قيمة purchase_invoice_id من حقل الإدخال
-        let currentInvoiceId = $('#purchase_invoice_id').val();
-        
-        console.log('Current Invoice ID:', currentInvoiceId); // تحقق من القيمة
-        const baseUrl = "{{ url('/get-purchases-by-invoice') }}"; // تعريف URL الأساسي
-
-        $.ajax({
-            url: `${baseUrl}?purchase_invoice_id=${currentInvoiceId}`,
-            type: 'GET',
-            data: {
-                purchase_invoice_id: currentInvoiceId
-            },
-            success: function(data) {
-     
-                
-                console.log('Purchases Data:', data); // تحقق من البيانات المستلمة
-                if (data && data.length > 0) {
-                    $('#mainAccountsTable tbody').empty(); // مسح البيانات القديمة
-
-                    displayPurchases(data); // دالة لعرض المشتريات في الجدول
-                } else {
-                    console.log("No purchases found for this invoice.");
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('Error fetching purchases:', xhr.responseText);
-            }
-        });
-
-        event.preventDefault();
-    }
-});
 
     $('#sub_account_debit_id').on('change', function() {
         $(this).select2('close');

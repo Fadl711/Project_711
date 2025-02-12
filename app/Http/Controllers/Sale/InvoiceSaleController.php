@@ -547,8 +547,9 @@ public function getSaleInvoice(Request $request, $filterType)
             $query->where('accounting_period_id', $accountingPeriod->accounting_period_id);
             break;
         case '2':
-            $query->where('accounting_period_id', $accountingPeriod->accounting_period_id);
+            // $today = Carbon::now()->toDateString(); 
 
+            $query->where('accounting_period_id', $accountingPeriod->accounting_period_id);
             $query->whereDate('created_at', now()->toDateString());
             break;
         case '3':

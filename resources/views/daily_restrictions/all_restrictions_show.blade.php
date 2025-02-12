@@ -48,8 +48,6 @@ body {
 
     <div class=" overflow-x-auto bg-white shadow-md sm:rounded-lg    w-full px-4 py-2   max-h-[80vh]">
         <table class="text-sm   font-semibold w-full overflow-y-auto max-h-[80vh] border-collapse">
-            {{-- <thead class="bg-gray-100 sticky top-0  uppercase dark:bg-gray-700 dark:text-gray-400"> --}}
-            {{-- <thead class="bg-[#2430d3] text-white"> --}}
                 <thead class="bg-[#2430d3] text-white sticky top-0  uppercase dark:bg-gray-700 dark:text-gray-400">
                 <tr class="">
                     <th  colspan="2" class=" text-right bg-white text-white   ">

@@ -19,66 +19,126 @@ class Review_BudgetController extends Controller
        // استرجاع الفترة المحاسبية المفتوحة
        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
  if ($accountingPeriod) {
-    // استرجاع الحسابات الرئيسية مع حساباتها الفرعية وجمع الأرصدة
-    $mainAccountsTotals = MainAccount::with(['subAccounts' => function ($query) use ($accountingPeriod) {
-        $query->select([
-            'sub_accounts.sub_account_id',
-            'sub_accounts.Main_id',
-            'sub_accounts.sub_name',
-            DB::raw('SUM(COALESCE(debit.Amount_debit, 0)) as total_debit'),
-            DB::raw('SUM(COALESCE(credit.Amount_credit, 0)) as total_credit'),
-            DB::raw('(SUM(COALESCE(debit.Amount_debit, 0)) - SUM(COALESCE(credit.Amount_credit, 0))) as balance')
-        ])
-        ->leftJoin('daily_entries AS debit', function($join) use ($accountingPeriod) {
-            $join->on('sub_accounts.sub_account_id', '=', 'debit.account_debit_id')
-                 ->whereBetween('debit.accounting_period_id', [$accountingPeriod->accounting_period_id, now()]); // تأكد من أن القيود في الفترة
-        })
-        ->leftJoin('daily_entries AS credit', function($join) use ($accountingPeriod) {
-            $join->on('sub_accounts.sub_account_id', '=', 'credit.account_Credit_id')
-                 ->whereBetween('credit.accounting_period_id', [$accountingPeriod->accounting_period_id, now()]) // تأكد من أن القيود في الفترة
-                 ->whereBetween('debit.accounting_period_id', [$accountingPeriod->accounting_period_id, now()]); // تأكد من أن القيود في الفترة
-        })
-        ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.Main_id', 'sub_accounts.sub_name');
-    }])->get();
+    $customerMainAccount = MainAccount::whereIn('typeAccount',[1,2,5] )->get();
+    // foreach ($customerMainAccount as $customerMai) {
+        // $idaccounn = $customerMai->main_account_id;
+        $SumDebtor_amount =0;
+        $SumCredit_amount =0;
+        foreach ($customerMainAccount as $balance)
+        {
+           $customerMainAccount = SubAccount::where('Main_id', $balance->main_account_id)->first();
+               $total_debit=DailyEntrie::where('accounting_period_id', $accountingPeriod->accounting_period_id)
+               ->where('account_debit_id',$customerMainAccount->sub_account_id)
+               ->sum('Amount_debit')
+               ;
+               $total_credit=DailyEntrie::where('accounting_period_id', $accountingPeriod->accounting_period_id)
+               ->where('account_Credit_id',$customerMainAccount->sub_account_id)
+               ->sum('Amount_Credit');
+   
+           $Sum_amount = ($total_debit ?? 0) - ($total_credit ?? 0);
+           
+           if ($Sum_amount !== 0) {
+               if ($Sum_amount > 0) {
+                   $SumDebtor_amount += $Sum_amount;
+                   $SumDebtoramount = $Sum_amount;
+                   $SumCreditamount = 0;
+               }
+               if ($Sum_amount < 0) {
+                   $SumCredit_amount += $Sum_amount;
+                   $SumCreditamount = $Sum_amount;
+                   $SumDebtoramount = 0;
+               }
+           }
+       }
+        $balances = DailyEntrie::selectRaw(
+            'sub_accounts.sub_account_id,
+            sub_accounts.sub_name,
+            sub_accounts.Phone,
+            sub_accounts.AccountClass,
+            sub_accounts.typeAccount,
+            SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_debit ELSE 0 END) as total_debit,
+            SUM(CASE WHEN daily_entries.account_Credit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_Credit ELSE 0 END) as total_credit'
+        )
+        ->where('daily_entries.accounting_period_id', $accountingPeriod->accounting_period_id)
+        ->join('sub_accounts', function ($join) {
+            $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')
+                 ->orOn('daily_entries.account_Credit_id', '=', 'sub_accounts.sub_account_id');
+        })->whereIn('sub_accounts.typeAccount',[1,2,5])
+        ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name', 'sub_accounts.Phone')
+        ->get();
+        // حساب الإجماليات (بناءً على البيانات المسترجعة)
+  
+
+        // حساب الفرق (الربح/الخسارة)
+        $Sale_priceSum = abs($SumDebtor_amount - $SumCredit_amount);
+
+        $balances2 = DailyEntrie::selectRaw(
+            'sub_accounts.sub_account_id,
+            sub_accounts.sub_name,
+            sub_accounts.Phone,
+            sub_accounts.AccountClass,
+            sub_accounts.typeAccount,
+            SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_debit ELSE 0 END) as total_debit2,
+            SUM(CASE WHEN daily_entries.account_Credit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_Credit ELSE 0 END) as total_credit2'
+        )
+        ->where('daily_entries.accounting_period_id', $accountingPeriod->accounting_period_id)
+        ->join('sub_accounts', function ($join) {
+            $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')
+                 ->orOn('daily_entries.account_Credit_id', '=', 'sub_accounts.sub_account_id');
+        })->where('sub_accounts.typeAccount',3)
+        ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name', 'sub_accounts.Phone')
+        ->get();
+
+ $SumDebtor_amount2 =0;
+        $SumCredit_amount2 =0;
+        $customerMainAccounts = MainAccount::where('typeAccount',4 )->get();
+
+        foreach ($customerMainAccounts as $balanc)
+        {
+           $customerMainAccoun = SubAccount::where('Main_id', $balanc->main_account_id)->get();
+           foreach ($customerMainAccoun as $balanc2)
+           {
+               $total_debit2=DailyEntrie::where('accounting_period_id', $accountingPeriod->accounting_period_id)
+               ->where('account_debit_id',$balanc2->sub_account_id)
+               ->sum('Amount_debit')
+               ;
+               $total_credit2=DailyEntrie::where('accounting_period_id', $accountingPeriod->accounting_period_id)
+               ->where('account_Credit_id',$balanc2->sub_account_id)
+               ->sum('Amount_Credit');
+   
+           $Sum_amount = ($total_debit2 ?? 0) - ($total_credit2 ?? 0);
+           
+           if ($Sum_amount !== 0) {
+               if ($Sum_amount > 0) {
+                   $SumDebtor_amount2 += $Sum_amount;
+                   $SumDebtor_amount2 = $Sum_amount;
+                   $SumCredit_amount2 = 0;
+               }
+               if ($Sum_amount < 0) {
+                   $SumCredit_amount2 += $Sum_amount;
+                   $SumCredit_amount2 = $Sum_amount;
+                   $SumDebtor_amount2 = 0;
+               }
+           }
+           }
+
+       }
+        // حساب الفرق (الربح/الخسارة)
+        $Sale_priceSum2 = abs($SumDebtor_amount2 - $SumCredit_amount2);
+
  } else {
-    // إذا لم توجد فترة محاسبية مفتوحة
-    $mainAccountsTotals = collect(); // أو يمكنك إرجاع رسالة مناسبة
 }
-        // استخدام المجموعات لتحسين العمليات الحسابية
-        $totals = $mainAccountsTotals->reduce(function ($carry, $mainAccount) {
-            $debitSum = 0;
-            $creditSum = 0;
-    
-            foreach ($mainAccount->subAccounts as $subAccount) {
-                $balance = $subAccount->balance;
-    
-                if ($balance > 0) {
-                    $debitSum += $balance; // مجموع الأرصدة المدينة
-                } elseif ($balance < 0) {
-                    $creditSum += $balance; // مجموع الأرصدة الدائنة
-                }
-            }
-            if (in_array($mainAccount->typeAccount, [1, 2])) {
-                $carry['totalDebit'] += $debitSum+$creditSum;
-                $carry['totalCredit'] += $creditSum;
-            } elseif ($mainAccount->typeAccount == 3) {
-                $carry['totalDebit2'] += $debitSum;
-                
-                // $carry['totalCredit2'] += $creditSum;
-                $carry['totalCredit2'] += $creditSum+$debitSum;
-            }
-    
-            return $carry;
-        }, ['totalDebit' => 0, 'totalCredit' => 0, 'totalDebit2' => 0, 'totalCredit2' => 0]);
-    
+       
         // تمرير البيانات إلى العرض
         return view('accounts.review-budget', [
-            'mainAccountsTotals' => $mainAccountsTotals,
             'accountingPeriod' => $accountingPeriod,
-            'totalDebit' => $totals['totalDebit'],
-            'totalCredit' => $totals['totalCredit'],
-            'totalDebit2' => $totals['totalDebit2'],
-            'totalCredit2' => $totals['totalCredit2'],
+         
+            'balances' => $balances,
+            'SumDebtor_amount' => $SumDebtor_amount,
+            'SumCredit_amount' => $SumCredit_amount,
+            'balances2' => $balances2,
+            'SumDebtor_amount2' => $SumDebtor_amount2,
+            'SumCredit_amount2' => $SumCredit_amount2,
         ]);
     }
     

@@ -97,7 +97,7 @@
             <thead>
                 <tr class="bg-blue-100">
                     <th class="px-4 text-center">#</th>
-                    <th class="px-4 text-right">اسم العميل</th>
+                    <th class="px-4 text-right">اسم الحساب</th>
                     <th class="px-4 text-center">رقم العميل</th>
                     <th class="px-4 text-center">الهاتف</th>
                     <th class="px-4 text-center">المدين</th>

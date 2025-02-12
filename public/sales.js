@@ -128,11 +128,10 @@ $(document).ready(function() {
 
 
 
-
 function addToTableSale(account) {
-
     const rowId = `#row-${account.sale_id}`;
     const tableBody = $('#mainAccountsTable tbody');
+    
     // التحقق مما إذا كان الصف موجودًا بالفعل
     if ($(rowId).length) {
         // تحديث الصف في الجدول بناءً على القيم الجديدة
@@ -144,37 +143,49 @@ function addToTableSale(account) {
         $(`${rowId} td:nth-child(6)`).text(account.warehouse_to_id ? Number(account.warehouse_to_id).toLocaleString() : '0');
         $(`${rowId} td:nth-child(7)`).text(account.total_amount ? Number(account.total_amount).toLocaleString() : '0');
         $(`${rowId} td:nth-child(9)`).text(account.sale_id ? Number(account.sale_id).toLocaleString() : '0');
+
     } else {
-        // إضافة الصف الجديد إلى الجدول إذا لم يكن موجودًا
+        // إضافة الصف الجديد إلى بداية الجدول إذا لم يكن موجودًا
         const newRow = `
-            <tr id="row-${account.sale_id}">
-                <td class="text-right tagTd">${account.Barcode}</td>
-                <td class="text-right tagTd">${account.Product_name}</td>
-                <td class="text-right tagTd">${account.Category_name}</td>
-                <td class="text-right tagTd">${account.Quantityprice ? Number(account.Quantityprice).toLocaleString() : '0'}</td>
-                <td class="text-right tagTd">${account.Selling_price ? Number(account.Selling_price).toLocaleString() : '0'}</td>
-                <td class="text-right tagTd">${account.warehouse_to_id ? Number(account.warehouse_to_id).toLocaleString() : '0'}</td>
-                <td class="text-right tagTd">${account.total_amount ? Number(account.total_amount).toLocaleString() : '0'}</td>
-             <td class="flex">
+            <tr id="row-${account.sale_id}" class=" bg-white border-b-2 border-blue-700 ">
+                <td class=" tagT">${account.Barcode}</td>
+                <td class=" tagT">${account.Product_name}</td>
+                <td class=" tagT">${account.Category_name}</td>
+                <td class=" tagT">${account.Quantityprice ? Number(account.Quantityprice).toLocaleString() : '0'}</td>
+                <td class=" tagT">${account.Selling_price ? Number(account.Selling_price).toLocaleString() : '0'}</td>
+                <td class=" tagT">${account.warehouse_to_id ? Number(account.warehouse_to_id).toLocaleString() : '0'}</td>
+                <td class=" tagT">${account.total_amount ? Number(account.total_amount).toLocaleString() : '0'}</td>
+                <td class="flex tagT">
                     <button class="edit-btn" onclick="editDataSale(${account.sale_id})">
                         <svg class="w-6 h-6 text-gray-800 dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
                         </svg>
                     </button>
-                            <button class="delete-payment" onclick="deleteDataSale(${account.sale_id})">
-                                     <svg class="w-6 h-6 text-red-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
-</svg>
-                        </button>
+                    <button class="delete-payment" onclick="deleteDataSale(${account.sale_id})">
+                        <svg class="w-6 h-6 text-red-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
+                        </svg>
+                    </button>
                 </td>
-              </tr>
-              `;
-          tableBody.append(newRow); // إضافة الصف الجديد إلى الجدول
+            </tr>
+        `;
+        tableBody.prepend(newRow); // إضافة الصف الجديد إلى بداية الجدول
+        
+        // إضافة اللون للصف الجديد
+        // $(`#row-${account.sale_id}`).css('background-color', '#D3F9D8'); // إضافة لون الخلفية
+        $(`#row-${account.sale_id} td.tagT`).css('background-color', '#f0cb46');
+
+        // إزالة اللون بعد 3 ثواني
+        setTimeout(() => {
+            $(`#row-${account.sale_id} td.tagT`).css('background-color', '');
+        }, 2000); // 3000 مللي ثانية (أي 3 ثواني)
     }
 }
 
+
 function displaySales(sales) {
-    let uniqueInvoices = new Set(); // Set لتخزين الفواتير الفريدة
+    let uniqueInvoices = new Set();
+     // Set لتخزين الفواتير الفريدة
     let rows = ''; // متغير لتخزين الصفوف
     $('#mainAccountsTable tbody').empty(); // تنظيف الجدول
     sales.forEach(function (sale) {
@@ -182,14 +193,14 @@ function displaySales(sales) {
         if (!uniqueInvoices.has(sale.sale_id)) {
             uniqueInvoices.add(sale.sale_id);
             rows += `
-                <tr id="row-${sale.sale_id}">
-                     <td  class="text-right tagTd">${sale.Barcode || '-'}</td>
-            <td  class="text-right tagTd">${sale.Product_name || '-'}</td>
-            <td  class="text-right tagTd">${sale.Category_name || '-'}</td>
-            <td  class="text-right tagTd">${sale.Quantityprice || '0'}</td>
-            <td  class="text-right tagTd">${sale.Selling_price || '0.00'}</td>
-            <td  class="text-right tagTd">${sale.warehouse_to_id || '-'}</td>
-            <td  class="text-right tagTd">${sale.total_price || '0.00'}</td>
+                <tr id="row-${sale.sale_id}"  class=" bg-white border-b-2 border-blue-700 ">
+                     <td  class=" tagT">${sale.Barcode || '-'}</td>
+            <td  class=" tagT">${sale.Product_name || '-'}</td>
+            <td  class=" tagT">${sale.Category_name || '-'}</td>
+            <td  class=" tagT">${sale.Quantityprice || '0'}</td>
+            <td  class=" tagT">${sale.Selling_price || '0.00'}</td>
+            <td  class=" tagT">${sale.warehouse_to_id || '-'}</td>
+            <td  class=" tagT">${sale.total_price || '0.00'}</td>
                     <td class="flex">
                         <button class="" onclick="editDataSale(${sale.sale_id})">
                                            <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -207,14 +218,12 @@ function displaySales(sales) {
         }
     });
 
-    $('#mainAccountsTable tbody').append(rows);
+    // $('#mainAccountsTable tbody').append(rows);
+    $('#mainAccountsTable tbody').prepend(rows); // إضافة الصف الجديد إلى بداية الجدول
+        
+
 }
 
-
-
-
-
-     
 function CsrfToken() {
     $.ajaxSetup({
         headers: {
@@ -254,7 +263,6 @@ function fetchSalesByInvoice(url, currentInvoiceId) {
                 $('#date').val(data.created_at);
                 $('#TotalProfit').val(data.Profit);
                 $('#note').val(data.note);
-
             const rows = `
 <div id="invoiceid2">
     <label for="invoice_number"> حفظ التعديل</label>
@@ -273,7 +281,6 @@ $('#invoiceSales #grid2').append(rows);
                 displaySales(data.sales);
 
              
-                // transaction_type.empty();
                 
                 Customer_name_id.empty();
     const  subAccountOptions = 
@@ -284,14 +291,19 @@ $('#invoiceSales #grid2').append(rows);
      data.customers.forEach(customer => {
         $('#Customer_name_id').append(new Option(customer.sub_name, customer.sub_account_id));
     });
+    $('#transaction_type').empty();  // لتفريغ الخيارات القديمة
+
+    // إضافة الخيارات الجديدة
+    data.TransactionTypes.forEach(TransactionType => {
+        $('#transaction_type').append(new Option(TransactionType.label, TransactionType.value));
+    });
+
     Customer_name_id.append( `<option selected  value="${data.Customer_id}">${data.Customer_name}</option>`);
 
-    const  transaction_typ = 
-          `
-          <option selected value="${data.transaction_valueType}">${data.transaction_typelabel}</option>`
-     ;
+    $('#transaction_type').append( `<option selected  value="${data.transaction_valueType}">${data.transaction_typelabel}</option>`);
+ 
 
-     transaction_type.append(transaction_typ);
+
             } else {
                 alert(data.message || 'لا توجد مبيعات مرتبطة بهذه الفاتورة.');
             }

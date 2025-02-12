@@ -249,7 +249,6 @@ class PurchaseController extends Controller
                 'categorie_id' => $categorieId,
                 'product_id' => $Product->product_id,
 
-                // 'purchase_id' => $request->purchase_id,
                 'Purchase_invoice_id' => $purchaseInvoice->purchase_invoice_id,
                 'accounting_period_id' => $accountingPeriod->accounting_period_id,
             ],

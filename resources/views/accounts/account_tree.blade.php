@@ -5,7 +5,65 @@
 
 <h1 class="font-bold">شجرة الحسابات</h1>
 <br>
-
+<div dir="rtl" class="flex min-w-full border ">
+    <div dir="ltr" id="largeMainAccounts" class="w-[15%] shadow-md rounded-md">
+    <ul>
+      @auth
+        @foreach ($TypesAccounts as $largeAccount)
+            <li class="py-2 px-2 ">
+                <a href="#"
+                   class= "{{ Request::is(' ') ? 'border-b-2 text-[#0a0aeec6]' : 'border-b-0' }} border-[#0a0aeec6] leading-none rounded hover:bg-gray-50 large-main-account link-item"
+                   data-id="{{ $largeAccount['id'] }}">
+                   {{ $largeAccount['id'] }}  {{ $largeAccount['TypesAccountName'] }}
+                </a>
+            </li>
+        @endforeach
+        @endauth
+    </ul>
+  </div>
+  
+  
+  
+  <div class="w-[100%]  ">
+  <!-- عرض الحسابات الرئيسية -->
+  <div id="mainAccountsTable" style="display: none;">
+      <h3>الحسابات الرئيسية</h3>
+      <table class="table ">
+          <thead>
+              <tr>
+                  <th class="tagHt border-r">رقم الحساب</th>
+                  <th class="tagHt">اسم الحساب</th>
+                  <th class="tagHt">الرصيد مدين</th>
+                  <th class="tagHt">الرصيد دائن</th>
+                  <th class="tagHt">الهاتف</th>
+              </tr>
+          </thead>
+          <tbody id="mainAccountsTableBody">
+              <!-- سيتم تعبئة الحسابات الرئيسية هنا عبر JavaScript -->
+          </tbody>
+      </table>
+  </div>
+  
+  <!-- عرض الحسابات الفرعية -->
+  <div id="subAccountsTable" class=" flex-col" style="display: none;">
+    <h3>الحسابات الفرعية</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="tagHt">رقم الحساب الفرعي</th>
+                <th class="tagHt">اسم الحساب الفرعي</th>
+                <th class="tagHt">الرصيد مدين</th>
+                <th class="tagHt">الرصيد دائن</th>
+            </tr>
+        </thead>
+        <tbody id="subAccountsTableBody">
+            <!-- سيتم تعبئة الحسابات الفرعية هنا عبر JavaScript -->
+        </tbody>
+    </table>
+  </div>
+  
+  </div>
+  </div>
 
 <script>
     $(document).ready(function() {
@@ -54,65 +112,7 @@
     });
 </script>
     <br>
-<div dir="rtl" class="flex min-w-full border ">
-  <div dir="ltr" id="largeMainAccounts" class="w-[15%] shadow-md rounded-md">
-  <ul>
-    @auth
-      @foreach ($TypesAccounts as $largeAccount)
-          <li class="py-2 px-2 ">
-              <a href="#"
-                 class= "{{ Request::is(' ') ? 'border-b-2 text-[#0a0aeec6]' : 'border-b-0' }} border-[#0a0aeec6] leading-none rounded hover:bg-gray-50 large-main-account link-item"
-                 data-id="{{ $largeAccount['id'] }}">
-                  {{ $largeAccount['TypesAccountName'] }}
-              </a>
-          </li>
-      @endforeach
-      @endauth
-  </ul>
-</div>
 
-
-
-<div class="w-[100%]  ">
-<!-- عرض الحسابات الرئيسية -->
-<div id="mainAccountsTable" style="display: none;">
-    <h3>الحسابات الرئيسية</h3>
-    <table class="table ">
-        <thead>
-            <tr>
-                <th class="tagHt border-r">رقم الحساب</th>
-                <th class="tagHt">اسم الحساب</th>
-                <th class="tagHt">الرصيد مدين</th>
-                <th class="tagHt">الرصيد دائن</th>
-                <th class="tagHt">الهاتف</th>
-            </tr>
-        </thead>
-        <tbody id="mainAccountsTableBody">
-            <!-- سيتم تعبئة الحسابات الرئيسية هنا عبر JavaScript -->
-        </tbody>
-    </table>
-</div>
-
-<!-- عرض الحسابات الفرعية -->
-<div id="subAccountsTable" class=" flex-col" style="display: none;">
-  <h3>الحسابات الفرعية</h3>
-  <table class="table">
-      <thead>
-          <tr>
-              <th class="tagHt">رقم الحساب الفرعي</th>
-              <th class="tagHt">اسم الحساب الفرعي</th>
-              <th class="tagHt">الرصيد مدين</th>
-              <th class="tagHt">الرصيد دائن</th>
-          </tr>
-      </thead>
-      <tbody id="subAccountsTableBody">
-          <!-- سيتم تعبئة الحسابات الفرعية هنا عبر JavaScript -->
-      </tbody>
-  </table>
-</div>
-
-</div>
-</div>
 
 
     <input type="text" id="search" name="search" placeholder="Search for sub-accounts" class="border border-gray-300 p-2 rounded w-full mb-4">

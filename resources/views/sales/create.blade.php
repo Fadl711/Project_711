@@ -13,7 +13,6 @@
 </style>
 <div id="successMessage"class="hidden fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert"></div>
 <div id="errorMessage" class="hidden fixed top-2 right-4 bg-red-500 text-white px-6 py-1 rounded-lg shadow-lg" role="alert"></div>
-
 <div class="min-w-[20%] px-1  bg-white rounded-xl ">
     <div class=" flex ">
         <div class="w-full min-w-full  py-1">
@@ -81,7 +80,6 @@
                     @auth
                         <input type="hidden" name="User_id" id="User_id" value="{{ Auth::user()->id }}">
                     @endauth
-                 
                     <div class="flex">
                         <label for="date" class="text-center">التاريخ</label>
                         <div class="text-center">
@@ -90,15 +88,12 @@
                             <input type="radio" name="listRadio" value="{{ $key }}" {{ $key == 1 ? 'checked' : '' }} class="mr-2"> {{ $label }}
                             @endforeach
                         </div>
-                       
-                        <input
-                            id="date" name="date" type="date" class="inputSale" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
+                        <input id="date" name="date" type="date" class="inputSale" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
                     </div>
                     </div>
                 </div>
                 <div class="grid grid-cols-6 gap-2 text-right " id="" >
-
-                <div class="  gap-2 text-right " id="" >
+                  <div class="  gap-2 text-right " id="" >
                     <div class=" ">
                         <label for="Customer_name_id" class="labelSale">اسم العميل</label>
                         <select name="Customer_name_id" id="Customer_name_id" class="inputSale select2 input-field">
@@ -111,11 +106,9 @@
                              @endforeach
                              @endisset
                         </select>
-                      
                     </div>
                     </div>
                     <div class="  gap-2 text-right " id="" >
-
                     <div>
                         <label for="financial_account_id_main" class="labelSale"> حساب الدفع</label>
                         <select name="financial_account_id_main" id="financial_account_id_main" dir="ltr" class=" select2 inputSale" >
@@ -129,7 +122,6 @@
                     </div>
                     </div>
                     <div class="  gap-2 text-right " id="" >
-                      
                     <div>
                         <label for="financial_account_id" class="labelSale"> تحديد الحساب</label>
                         <select name="financial_account_id" id="financial_account_id" dir="ltr" class="input-field select2 inputSale" required>
@@ -145,27 +137,21 @@
                             @endisset
                         </select>
                     </div>
-                  
                     </div>
-                    <div class="  gap-2 text-right " id="" >
+                    <div class="gap-2 text-right " id="" >
                         <div>
-
                         <label for="invoice_id" class="labelSale">  الفاتورة</label>
-
                         <input type="number" id="invoice_id" name="invoice_id" class="inputSale">
                     </div> 
                     </div> 
-                    <div class="  gap-2 text-right " >
-
+                    <div class="gap-2 text-right " >
                         <div>
                             <label for="total_price" class="labelSale">ملاحظة
                             </label>
                                 <textarea name="note" id="note" cols="30" rows="1" class="inputSale"></textarea>
                     </div>
-
                     </div>
                     {{-- <div class="  gap-2 text-right " id="" >
-
                     <div id="newInvoice1">
                         <button id="saveinvoiceSales" type="button" class="inputSale  font-bold">
                             إضافة الفاتورة
@@ -173,25 +159,21 @@
                     </div> 
                     </div>  --}}
                     <div class="  gap-2 text-right " id="grid2" >
-                     
                     </div>
                     </div>
             </form>
         </div>
     </div>
 </div>
-
-
-{{-- alert --}}
-<div class="flex max-md:block p-1 ">
-    <div class="min-w-[30%] border-x bg-white   rounded-xl">
+<div class="flex max-md:block p-1">
+    <div class="min-w-[30%] border-x bg-white rounded-xl">
         <form id="ajaxForm">
             @csrf
             <div class="gap-2 grid grid-cols-2 px-1">
                 <div>
                     <label for="account_debitid" class="labelSale"> مخازن </label>
                     {{-- warehouse_to_id --}}
-                    <select name="account_debitid" id="account_debitid"  dir="ltr" class="input-field select2 inputSale" required>
+                    <select name="account_debitid" id="account_debitid" dir="ltr" class="input-field select2 inputSale" required>
                         @isset($Warehouse)
                         @foreach ($Warehouse as $cur)
                         <option @isset($DefaultCustomer)
@@ -213,7 +195,6 @@
                          @endisset
                     </select>
                 </div>
-              
             </div>
             <div class="grid grid-cols-1 gap-1 px-1">
                 <div>
@@ -227,11 +208,8 @@
                         @endisset
                     </select>
                 </div>
-               
             </div>
-
             <div class="grid grid-cols-4 gap-1 px-1">
-              
                 <div>
                     <label for="Categorie_name" class="block labelSale">الوحدة </label>
                     <select name="Categorie_name" id="Categorie_name" dir="ltr" class="input-field select2 inputSale" required>
@@ -241,7 +219,6 @@
                 <div>
                     <label for="QuantityCategorie" class="labelSale">الكمية الوحدة</label>
                     <input type="text" name="QuantityCategorie" id="QuantityCategorie" placeholder="0" class="inputSale  english-numbers" required />
-               
                 </div>
                 <div>
                     <label for="Quantity" class="labelSale">الكمية</label>
@@ -313,26 +290,19 @@
                     <input type="number" name="sales_invoice_id" id="sales_invoice_id" placeholder="0" class="inputSale" required />
                 </div>
                 <div class="" >
-                    <button class="flex inputSale mt-2 " type="button" id="delete_invoiceSales">
-                            <svg class="w-6 h-5 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M11 16h2m6.707-9.293-2.414-2.414A1 1 0 0 0 16.586 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V7.414a1 1 0 0 0-.293-.707ZM16 20v-6a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v6h8ZM9 4h6v3a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V4Z"/>
-                            </svg>
-                            <span class="textNav mr-1"> حذف</span>
-                    </button>
+                    <button class="flex  mt-4 p-2 bg-[#2430d3] text-white rounded hover:bg-green-700" type="button" id="delete_invoiceSales">حذف الفاتورة</button>
                     </div>
                     <div class="col-span-6 sm:col-span-3" >
-                        @foreach(['1' => 'تلقائي', '2' => 'تحليل'] as $key => $label)
-                        <div class="w-full text-center">
-                            <input type="radio" name="analysis" value="{{ $key }}" {{ $key == 1 ? 'checked' : '' }} class="mr-2"> {{ $label }}
+                        <div class="w-full text-center  flex">
+                            @foreach(['1' => 'تلقائي', '2' => 'تحليل'] as $key => $label)
+                            <div class=" ">
+                                <input type="radio" name="analysis" value="{{ $key }}" {{ $key == 1 ? 'checked' : '' }} class="mr-2"> {{ $label }}
+                            </div>
+                            @endforeach
                         </div>
-                    @endforeach
-                        <button onclick="openInvoiceWindow(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح الفاتورة</button>
+                        <button onclick="openInvoiceWindow(event)" class="px-4 py-2 bg-[#2430d3] text-white rounded hover:bg-green-700">فتح الفاتورة</button>
                     </div>
-                   
-               
             </div>
-           
-
         </form>
         <div class="">
             <label for="TotalProfit" class="labelSale"  >    </label>
@@ -340,31 +310,26 @@
         </div>
     </div>
     <div class="container mx-auto  " id="mainAccountsTable">
-        <div class="w-full overflow-y-auto max-h-[80vh]  bg-white">
-            <table id="mainAccountsTable"   class="w-full mb-4 text-sm">
-                <thead >
-                    <tr class="bg-blue-100">
-                        <th class=" px-2 py-1  tagTd">م</th>
-                        <th class=" px-2 py-1  tagTd">اسم الصنف</th>
-                        <th class=" px-2 py-1  tagTd"> الوحدة</th>
-                        <th class=" px-2 py-1  tagTd">الكمية</th>
-                        <th class=" px-2 py-1  tagTd">السعر البيع</th>
-                        <th class=" px-2 py-1  tagTd">المخزن</th>
-                        <th class=" px-2 py-1  tagTd">الإجمالي</th>
-                        <th class=" px-2 py-1  tagTd"></th>
-                        <th class=" px-2 py-1  tagTd "></th>
+        <div class=" overflow-x-auto  shadow-md sm:rounded-lg bg-white   w-full px-4 py-2   max-h-[80vh]">
+            <table  id="mainAccountsTable" class="text-sm   font-semibold w-full overflow-y-auto max-h-[80vh] border-collapse">
+                    <thead class="bg-[#2430d3] text-white sticky top-0  uppercase dark:bg-gray-700 dark:text-gray-400">
+                    <tr class="bg-[#2430d3] text-white">
+                        <th class=" px-2 py-1 rounded-s-lg  tdP">م</th>
+                        <th class=" px-2 py-1  tdP">اسم الصنف</th>
+                        <th class=" px-2 py-1  tdP"> الوحدة</th>
+                        <th class=" px-2 py-1  tdP">الكمية</th>
+                        <th class=" px-2 py-1  tdP">السعر البيع</th>
+                        <th class=" px-2 py-1  tdP">المخزن</th>
+                        <th class=" px-2 py-1  tdP">الإجمالي</th>
+                        <th class=" px-2 py-1  tdP"></th>
+                        <th class=" px-2 py-1  tdP rounded-e-lg "></th>
                     </tr>
                 </thead>
                 <tbody>       
             </table>
-           
     </div>
-
     </div>
-    
 </div>
-
-<!-- إطار الطباعة -->
 <script>
    
     $(document).ready(function () {
@@ -376,7 +341,6 @@
         }
     });
 }
-
     $(document).ready(function() {
 
         $('#Categorie_name').on('change', function() {
@@ -551,6 +515,7 @@ function editDataSale(id) {
             $('#Quantity').val(data.Quantityprice);
             $('#Quantityprice').val(data.quantity);
             $('#Selling_price').val(data.Selling_price);
+            $('#Purchase_price').val(data.Purchase_price);
             $('#Total').val(data.total_amount);
             $('#total_discount_rate').val(data.discount);
             $('#total_price').val(data.total_price);
@@ -571,7 +536,7 @@ function editDataSale(id) {
               const  Productname = 
                     `
                     <option selected value="${data.product_id}">${data.Product_name}</option>`
-               ;
+                    ;
     
             categorie_name.append(subAccountOptions);
             productid.append(Productname);
@@ -748,7 +713,7 @@ form.on('keydown', function (event) {
     processData: false,
     contentType: false,
                 success: function (response) {
-                    
+
                     handleAjaxSuccess(response);
                     submitButton.prop('disabled', false);
                 },
@@ -859,13 +824,13 @@ form.on('keydown', function (event) {
                     if (invoiceField.length)
                      {
                         const rows = `
-<div id="invoiceid2" class="">
-    <label for=""> حفظ التعديل</label>
-    <button id="invoiceid" class="btn btn-primary" data-invoice-id="${response.last_invoice_id}" onclick="UpdateInvoiceSales(${response.last_invoice_id}, event)"  >
-        <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
-        </svg>
-    </button>
+<div id="invoiceid2" class="mt-4">
+    <button id="invoiceid" class=" p-2  bg-[#2430d3] text-white rounded hover:bg-green-700" data-invoice-id="${response.last_invoice_id}" onclick="UpdateInvoiceSales(${response.last_invoice_id}, event)"  >
+     
+            <span>          التعديل</span> 
+     
+
+        </button>
 </div>
 `;
 $('#invoiceSales #grid2').append(rows);
@@ -897,7 +862,6 @@ $('#invoiceSales #grid2').append(rows);
 });
 
  </script>
-
 <script>
   $(document).ready(function() {
     window.UpdateInvoiceSales = function(id, event) {
@@ -912,9 +876,6 @@ $('#invoiceSales #grid2').append(rows);
         // إضافة معرف الفاتورة إلى FormData
         formData.append('sales_invoice_id', sales_invoice_id);  
         formData.append('payment_type', payment_type);
-
-        
-
         $.ajax({
             url: '{{ route("invoiceSales.update") }}', // مسار التخزين
             type: 'POST',
@@ -946,8 +907,6 @@ error: function(xhr) {
 
    
 });
-
-
 
     </script>
 <script>

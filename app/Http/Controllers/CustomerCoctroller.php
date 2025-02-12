@@ -374,12 +374,11 @@ $SubAccounts = SubAccount::all();
             $SumDebtor_amount = 0;
             $SumCredit_amount = 0;
         
-            foreach ($SubAccounts as $balance) {
+            foreach ($SubAccounts as $balance)
+             {
                 $customerMainAccount = SubAccount::where('sub_account_id', $balance->sub_account_id)->first();
-        
                     $total_debit=DailyEntrie::where('accounting_period_id', $accountingPeriod->accounting_period_id)
                     ->where('account_debit_id',$customerMainAccount->sub_account_id)
-
                     ->sum('Amount_debit')
                     ;
                     $total_credit=DailyEntrie::where('accounting_period_id', $accountingPeriod->accounting_period_id)

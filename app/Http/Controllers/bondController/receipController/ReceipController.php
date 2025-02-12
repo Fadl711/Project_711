@@ -14,6 +14,7 @@ use App\Models\PaymentBond;
 use App\Models\SubAccount;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use NumberToWords\NumberToWords;
 
 class ReceipController extends Controller
@@ -61,7 +62,6 @@ $paymentBond = PaymentBond::updateOrCreate(
         'accounting_period_id' => $accountingPeriod->accounting_period_id,
     ],
     [
-        'created_at' => $date,
         'Main_debit_account_id' => $request->AccountReceivable,
         'Debit_sub_account_id' => $request->DepositAccount,
         'Main_Credit_account_id' => $request->PaymentParty,
@@ -75,9 +75,12 @@ $paymentBond = PaymentBond::updateOrCreate(
     ]
 );
 
-$paymentBond->created_at = $date; // تأكد من أن هذا هو العمود الصحيح
-$paymentBond->save();
-
+// $paymentBond->created_at = $date; // تأكد من أن هذا هو العمود الصحيح
+// $paymentBond->save();
+DB::table('payment_bonds')
+->where('payment_bond_id', $paymentBond->payment_bond_id)
+->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+->update(['created_at' => Carbon::createFromFormat('Y-m-d', $request->date)]);
         // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
         $curre=Currency::where('currency_id', $paymentBond->Currency_id)->pluck('currency_name')->first();
         // إذا لم توجد صفحة، قم بإنشائها
@@ -112,7 +115,6 @@ $paymentBond->save();
             'Amount_debit' => $Amount_debit ?: 0,
             'account_Credit_id' => $paymentBond->Credit_sub_account_id,
             'Statement' => $paymentBond->Statement,
-            'created_at' => $paymentBond->created_at,
             'Daily_page_id' => $daily_page_id,
             'Invoice_type' => $paymentBond->payment_type,
             'Currency_name' => $curre,
@@ -121,8 +123,12 @@ $paymentBond->save();
             'status' => 'غير مرحل',
         ]
     );
-    $DailyEntrie->created_at = $date; // تأكد من أن هذا هو العمود الصحيح
-    $DailyEntrie->save();
+    // $DailyEntrie->created_at = $date; // تأكد من أن هذا هو العمود الصحيح
+    // $DailyEntrie->save();
+    DB::table('daily_entries')
+->where('entrie_id', $DailyEntrie->entrie_id)
+->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+->update(['created_at' => Carbon::createFromFormat('Y-m-d', $request->date)]);
     return response()->json([
         'success' => 'تم بنجاح',
         'payment_bond_id' => $paymentBond->payment_bond_id ?? $payment_bond_id

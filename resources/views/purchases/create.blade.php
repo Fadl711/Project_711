@@ -61,7 +61,6 @@
                        <div>
                         <label for="Supplier_id" class="labelSale">اسم المورد</label>
                         <select name="Supplier_id" id="Supplier_id" dir="ltr" class="input-field w-full select2 inputSale" >
-                            <option selected value=""></option>
                             @isset($subAccountSupplierid)
                             @foreach ($subAccountSupplierid as $Supplier)
                             <option value="{{$Supplier->sub_account_id}}">{{$Supplier->sub_name}}</option>
@@ -381,41 +380,70 @@ else{
 });
     </script>
  
-<script type="text/javascript">
+<script >
 $(document).ready(function () {
 
-    $(document).on('keydown', function (event) {
+$(document).on('keydown', function (event) {
     let currentInvoiceId = $('#purchase_invoice_id').val();
 
-    if (event.ctrlKey && event.key === 'ArrowRight') {
-        fetchSalesByInvoice("{{url('/get-purchases-by-invoice/ArrowRight/')}}", currentInvoiceId);
+    if (event.ctrlKey && event.key == 'ArrowRight') {
+        fetchPurchasesByInvoice("{{url('/get-purchases-by-invoice/ArrowRight/')}}", currentInvoiceId);
         event.preventDefault();
     }
 
-    if (event.ctrlKey && event.key === 'ArrowLeft') {
-        fetchSalesByInvoice("{{('/get-purchases-by-invoice/ArrowRight/')}}", currentInvoiceId);
+    if (event.ctrlKey && event.key == 'ArrowLeft') {
+        fetchPurchasesByInvoice("{{ url('/get-purchases-by-invoice/ArrowLeft/') }}/" ,currentInvoiceId);
+
         event.preventDefault();
     }
 });
-
-function fetchSalesByInvoice(url, currentInvoiceId) {
+function CsrfToken() {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+}
+function fetchPurchasesByInvoice(url, currentInvoiceId) {
     if (!currentInvoiceId) {
         console.error('Invoice ID is empty!');
+        event.preventDefault();
+
         alert('يرجى إدخال رقم الفاتورة.');
+
         return;
     }
     $.ajax({
         url: url,
         type: 'GET',
-        data: { sales_invoice_id: currentInvoiceId },
+        data: { purchase_invoice_id: currentInvoiceId },
         success: function (data) {
 
            
+            $('#purchase_invoice_id').val(data.last_invoice_id);
             $('#mainAccountsTable tbody').empty();
-
+            
             if (data.sales && data.sales.length > 0) {
-                $('#purchase_invoice_id').val(data.last_invoice_id);
                 displayPurchases(data.sales);
+                
+                
+                
+                $('#Supplier_id').empty();  // لتفريغ الخيارات القديمة
+                data.suppliers.forEach(supplier => {
+         $('#Supplier_id').append(new Option(supplier.sub_name, supplier.sub_account_id));
+        });
+
+        $('#Supplier_id').append( `<option selected  value="${data.SupplierId}">${data.Supplier_name}</option>`);
+        $('#transaction_type').empty();  // لتفريغ الخيارات القديمة
+        
+    // إضافة الخيارات الجديدة
+    data.TransactionTypes.forEach(TransactionType => {
+        $('#transaction_type').append(new Option(TransactionType.label, TransactionType.value));
+    });
+
+
+    $('#transaction_type').append( `<option selected  value="${data.transaction_valueType}">${data.transaction_typelabel}</option>`);
+ 
             } else {
                 alert(data.message || 'لا توجد مبيعات مرتبطة بهذه الفاتورة.');
             }

@@ -5,6 +5,7 @@ use App\Http\Controllers\CustomerCoctroller;
 use App\Http\Controllers\HomeCoctroller;
 use App\Http\Controllers\AccountCoctroller;
 use App\Http\Controllers\Accounts\main_accounts\MainaccountController;
+
 use App\Http\Controllers\accounts\Review_BudgetController;
 use App\Http\Controllers\Accounts\sub_accounts\SubaccountController;
 use App\Http\Controllers\accounts\TreeAccountController;
@@ -48,6 +49,8 @@ use App\Http\Controllers\SmsController;
 use App\Http\Controllers\Transfers\TransferController;
 use App\Http\Controllers\UserPermissionController;
 use App\Http\Controllers\UsersController\UsersController;
+use App\Livewire\Counter;
+use App\Livewire\GeneralEntrieComponent;
 use App\Models\AccountingPeriod;
 use App\Models\DefaultSupplier;
 use App\Models\GeneralEntrie;
@@ -82,6 +85,9 @@ Route::delete('/Category/{Category}',[CategoryController::class,'destroy'])->nam
 
 
 Route::post('/route-clear', function () {
+    $result = Artisan::call('cache:clear');
+    $result = Artisan::call('config:clear');
+    $result = Artisan::call('view:clear');
     $result = Artisan::call('route:clear');
 
     if ($result === 0) {
@@ -168,8 +174,8 @@ Route::post('/invoicePurchases/saveAndPrint', [PurchaseController::class, 'saveA
 Route::get('/get-purchases-by-invoice', [PurchaseController::class, 'getPurchasesByInvoice'])->name('getPurchasesByInvoice');
 Route::get('/invoice_purchases/{id}/print', [PurchaseController::class, 'print'])->name('invoicePurchases.print');
 Route::get('/invoice_purchases/{id}/GetInvoiceNumber', [InvoicePurchaseController::class, 'GetInvoiceNumber'])->name('GetInvoiceNumber');
-Route::get('/get-purchases-by-invoice/ArrowRight', [PurchaseInvoice::class, 'getpurchasesByInvoiceArrowRight'])->name('getpurchasesByInvoiceArrowRight');
-Route::get('/get-purchases-by-invoice/ArrowLeft', [PurchaseInvoice::class, 'getpurchasesByInvoiceArrowLeft'])->name('getpurchasesByInvoiceArrowLeft');
+Route::get('/get-purchases-by-invoice/ArrowRight', [InvoicePurchaseController::class, 'getpurchasesByInvoiceArrowRight'])->name('getpurchasesByInvoiceArrowRight');
+Route::get('/get-purchases-by-invoice/ArrowLeft', [InvoicePurchaseController::class, 'getpurchasesByInvoiceArrowLeft'])->name('getpurchasesByInvoiceArrowLeft');
 Route::get('/purchases/{id}',[PurchaseController::class,'edit'])->name('purchases.edit');
 Route::delete('/purchases/{id}',[PurchaseController::class,'destroy'])->name('purchases.destroy');
 // Route::delete('/purchases/destroyInvoice/{id}',[PurchaseController::class,'destroyInvoice'])->name('purchases.destroyInvoice');
@@ -213,15 +219,15 @@ Route::put('/Receip/update', [ReceipController::class, 'update'])->name('receip.
 Route::delete('/Receips/{id}/destroy', [ReceipController::class, 'destroy'])->name('receip_destroy.destroy');
 Route::post('/Receip/stor', [ReceipController::class, 'stor'])->name('Receip.stor');
 
-Route::get('/exchange/index', [ExchangeController::class, 'index'])->name('exchange.index');
-Route::post('/exchange', [ExchangeController::class, 'store'])->name('exchange.store');
-Route::get('/exchange/all_exchange_bonds', [ExchangeController::class, 'all_exchange_bonds'])->name('all_exchange_bonds');
-Route::get('/exchanges/{exchange}', [ExchangeController::class, 'show'])->name('exchange.show');
-Route::get('/exchange/{id}/print', [ExchangeController::class, 'print'])->name('exchange.print');
-Route::get('/exchange/{id}/edit', [ExchangeController::class, 'edit'])->name('exchange.edit');
-Route::put('/exchange/update', [ExchangeController::class, 'update'])->name('exchange.update');
-Route::delete('/exchanges/{exchange}', [ExchangeController::class, 'destroy'])->name('exchange.destroy');
-Route::post('/exchange/stor', [ReceipController::class, 'stor'])->name('exchange.stor');
+// Route::get('/exchange/index', [ExchangeController::class, 'index'])->name('exchange.index');
+// Route::post('/exchange', [ExchangeController::class, 'store'])->name('exchange.store');
+// Route::get('/exchange/all_exchange_bonds', [ExchangeController::class, 'all_exchange_bonds'])->name('all_exchange_bonds');
+// Route::get('/exchanges/{exchange}', [ExchangeController::class, 'show'])->name('exchange.show');
+// Route::get('/exchange/{id}/print', [ExchangeController::class, 'print'])->name('exchange.print');
+// Route::get('/exchange/{id}/edit', [ExchangeController::class, 'edit'])->name('exchange.edit');
+// Route::put('/exchange/update', [ExchangeController::class, 'update'])->name('exchange.update');
+// Route::delete('/exchanges/{exchange}', [ExchangeController::class, 'destroy'])->name('exchange.destroy');
+// Route::post('/exchange/stor', [ReceipController::class, 'stor'])->name('exchange.stor');
 
 Route::get('/restrictions/create', [RestrictionController::class, 'create'])->name('restrictions.create');
 Route::get('/restrictions/index', [RestrictionController::class, 'index'])->name('restrictions.index');
@@ -237,6 +243,8 @@ Route::put('/daily_restrictions/{id}', [RestrictionController::class, 'update'])
 Route::delete('/daily_restrictions/{id1}', [RestrictionController::class, 'destroy'])->name('daily_restrictions.destroy');
 Route::get('/daily_restrictions/search', [RestrictionController::class, 'search'])->name('search.daily_restrictions');
 Route::get('/general_entries/show', [generalEntrieController::class, 'show'])->name('general_entries.show');
+
+
 
 Route::get('/general/{id}/ledger/{accounting_id}', [TransferController::class, 'general_ledger'])->name('general.ledger');
 Route::get('/general/ledger/{accounting_id}', [TransferController::class, 'general'])->name('general');
@@ -423,6 +431,7 @@ $dailyTotals = $dailyProfits->map(function($sales, $day) {
 
     return view('dashboard',['dailyTotals'=>$dailyTotals ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
+
 Route::post('/run-migration', function () {
     try {
         // Artisan::call('migrate');  // تنفيذ أمر migrate

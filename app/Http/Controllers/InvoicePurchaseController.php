@@ -295,61 +295,129 @@ public function bills_purchase_show($id){
 }
 
 
-public function getSalesByInvoiceArrowLeft(Request $request)
+public function getpurchasesByInvoiceArrowLeft(Request $request)
 {
+    $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+
     $invoiceId = $request->input('purchase_invoice_id');
+    // dd($invoiceId);
     $user_id = auth()->id();
 
     // جلب أول فاتورة أكبر من الفاتورة الحالية
-    $SaleInvoice = PurchaseInvoice::where('purchase_invoice_id', '>', $invoiceId)
+    $PurchaseInvoice = PurchaseInvoice::where('purchase_invoice_id', '>', $invoiceId)
+    ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+
         ->orderBy('purchase_invoice_id', 'asc') // ترتيب تصاعدي
         ->first();
 
-    if (!$SaleInvoice) {
-        return response()->json(['message' => 'لا توجد فاتورة لاحقة.'], 404);
-    }
+   
 
-    if (!$SaleInvoice) {
-        return response()->json(['message' => 'لا توجد فاتورة لاحقة.'], 404);
+    if (!$PurchaseInvoice) {
+        return response()->json(['message' => 'لا توجد فاتورة لاحقة.']);
     }
 
     // جلب المبيعات المرتبطة بالفاتورة المحددة
-    $sales = Purchase::where('Purchase_invoice_id', $SaleInvoice->Purchase_invoice_id)
+    $sales = Purchase::where('Purchase_invoice_id', $PurchaseInvoice->purchase_invoice_id)
     ->get();
+    $SubAccount = SubAccount::where('sub_account_id', $PurchaseInvoice->Supplier_id)->first();
+        $Suppliers=SubAccount::where('AccountClass',2)->where('sub_account_id','!=', $SubAccount->sub_account_id)
+        ->get();
+        $Supplier_name=$SubAccount->sub_name;
+        $Supplier_id=$SubAccount->sub_account_id; 
+    $TransactionTypes = [];
+    $TransactionTyS=TransactionType::cases();
+ 
+    $label= TransactionType::fromValue($PurchaseInvoice->transaction_type)?->label() ?? 'غير معروف';
+    $valueType= TransactionType::fromValue($PurchaseInvoice->transaction_type)?->value;
+    foreach ($TransactionTyS as $TransactionType) {
+        if (in_array($TransactionType->value, [1, 2, 3]) && $TransactionType->value != $valueType) {
+            // التحقق من أن الكائن ليس null
+            if ($TransactionType->label() && $TransactionType->value) {
+                $TransactionTypes[] = [
+                    'value' => $TransactionType->value,
+                    'label' => $TransactionType->label(),
+                ];
+            }
+        }
+    }
+    
 
     if ($sales->isEmpty()) {
-        return response()->json(['message' => 'لا توجد مبيعات مرتبطة بهذه الفاتورة.'], 404);
+        return response()->json(['message' => 'لا توجد مبيعات مرتبطة بهذه الفاتورة.']);
     }
+    // dd($PurchaseInvoice->Supplier_id);
     return response()->json([
         'sales' => $sales,
-        'last_invoice_id' => $SaleInvoice->purchase_invoice_id,
-        'SaleInvoice' => $SaleInvoice,
+        'suppliers' => $Suppliers,
+
+        'Supplier_name' => $SubAccount->sub_name,
+        'SupplierId' => $SubAccount->sub_account_id,
+        'TransactionTypes' => $TransactionTypes,
+        'transaction_typelabel' => $label,
+        'transaction_valueType' => $valueType,
+        'last_invoice_id' => $PurchaseInvoice->purchase_invoice_id,
+        'SaleInvoice' => $PurchaseInvoice,
     ]);
 }
 
 
-public function getSalesByInvoiceArrowRight(Request $request)
+public function getpurchasesByInvoiceArrowRight(Request $request)
 {
     $invoiceId = $request->input('purchase_invoice_id');
-    dd( $invoiceId );
+    // dd( $invoiceId );
     $user_id = auth()->id();
       
     // جلب أول فاتورة أكبر من الفاتورة الحالية
-    $SaleInvoice = PurchaseInvoice::where('purchase_invoice_id', '>', $invoiceId)
-        ->orderBy('purchase_invoice_id', 'asc') // ترتيب تصاعدي
+    $PurchaseInvoice = PurchaseInvoice::where('purchase_invoice_id', '<', $invoiceId)
+        ->orderBy('purchase_invoice_id', 'desc') // ترتيب تصاعدي
         ->first();
-    if (!$SaleInvoice) {
-        return response()->json(['message' => 'لا توجد فاتورة لاحقة.'], 404);
+    if (!$PurchaseInvoice) {
+        return response()->json(['message' => 'لا توجد فاتورة سابقة.'], 404);
     }
     // جلب المبيعات المرتبطة بالفاتورة المحددة
-    $sales = Purchase::where('Purchase_invoice_id', $SaleInvoice->purchase_invoice_id)->get();
+    $sales = Purchase::where('Purchase_invoice_id', $PurchaseInvoice->purchase_invoice_id)->get();
     if ($sales->isEmpty())
      {
         return response()->json(['message' => 'لا توجد مبيعات مرتبطة بهذه الفاتورة.']);
      }
+     $SubAccount = SubAccount::where('sub_account_id', $PurchaseInvoice->Supplier_id)->first();
+        $Suppliers=SubAccount::where('AccountClass',2)->where('sub_account_id','!=', $SubAccount->sub_account_id)
+        ->get();
+        $Supplier_name=$SubAccount->sub_name;
+        $Supplier_id=$SubAccount->sub_account_id; 
+    $TransactionTypes = [];
+    $TransactionTyS=TransactionType::cases();
+ 
+    $label= TransactionType::fromValue($PurchaseInvoice->transaction_type)?->label() ?? 'غير معروف';
+    $valueType= TransactionType::fromValue($PurchaseInvoice->transaction_type)?->value;
+    foreach ($TransactionTyS as $TransactionType) {
+        if (in_array($TransactionType->value, [1, 2, 3]) && $TransactionType->value != $valueType) {
+            // التحقق من أن الكائن ليس null
+            if ($TransactionType->label() && $TransactionType->value) {
+                $TransactionTypes[] = [
+                    'value' => $TransactionType->value,
+                    'label' => $TransactionType->label(),
+                ];
+            }
+        }
+    }
+    
+
+    if ($sales->isEmpty()) {
+        return response()->json(['message' => 'لا توجد مبيعات مرتبطة بهذه الفاتورة.']);
+    }
+    // dd($PurchaseInvoice->Supplier_id);
     return response()->json([
         'sales' => $sales,
-        'last_invoice_id' => $SaleInvoice->purchase_invoice_id,
+        'suppliers' => $Suppliers,
+
+        'Supplier_name' => $SubAccount->sub_name,
+        'SupplierId' => $SubAccount->sub_account_id,
+        'TransactionTypes' => $TransactionTypes,
+        'transaction_typelabel' => $label,
+        'transaction_valueType' => $valueType,
+        'last_invoice_id' => $PurchaseInvoice->purchase_invoice_id,
+        'SaleInvoice' => $PurchaseInvoice,
     ]);
 }
 
