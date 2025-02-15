@@ -43,21 +43,21 @@ window.onload = function() {
             <button type="submit" class="btn btn-danger text-white">تحديث المسارات</button>
         </form>
     </div>
-    <div class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+    {{-- <div class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
         <form action="{{ route('run_migration') }}" method="POST">
             @csrf
             <button  type="submit" class="btn  btn-success">تشغيل الترحيل</button>
         </form>
-    </div>
+    </div> --}}
   
-    <div class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+    {{-- <div class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
         <form action="{{ route('Saleupdate') }}" method="POST">
             @csrf
             <button type="submit" class="btn btn-primary text-white">تحديث قيود المبيعات </button>
         </form>
-    </div>
+    </div> --}}
 </div>
 
 
-<textarea name="" id="" cols="30" rows="1">php artisan migrate</textarea>
+{{-- <textarea name="" id="" cols="30" rows="1">php artisan migrate</textarea> --}}
 @endsection

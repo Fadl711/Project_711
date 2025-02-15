@@ -98,6 +98,39 @@ Route::post('/route-clear', function () {
         return redirect()->back()->with('error', 'فشل في تحديث المسارات');
     }
 })->name('route.clear');
+Route::get('/export-sales', function () {
+    $fileName = 'sales_data.csv';
+
+    $sales = DB::table('sales')
+        ->join('products', 'sales.product_id', '=', 'products.product_id')
+        ->select('products.product_name', 'sales.Invoice_id', 'sales.quantity', 'sales.created_at')
+        ->orderBy('sales.created_at', 'desc')
+        ->get();
+
+    $response = new StreamedResponse(function () use ($sales) {
+        $handle = fopen('php://output', 'w');
+
+        // إضافة رؤوس الأعمدة
+        fputcsv($handle, ['اسم المنتج', 'رقم الفاتورة', 'الكمية', 'تاريخ الإنشاء']);
+
+        // كتابة البيانات
+        foreach ($sales as $row) {
+            fputcsv($handle, [
+                $row->product_name,
+                $row->Invoice_id,
+                $row->quantity,
+                $row->created_at
+            ]);
+        }
+
+        fclose($handle);
+    });
+
+    $response->headers->set('Content-Type', 'text/csv');
+    $response->headers->set('Content-Disposition', 'attachment; filename="' . $fileName . '"');
+
+    return $response;
+})->name('export.sales');
 
 Route::post('/git-pull', function () {
    // تنفيذ الأمر git pull
