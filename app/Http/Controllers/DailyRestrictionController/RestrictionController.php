@@ -109,17 +109,20 @@ if (!$invoices) {
 }
 $mainc=MainAccount::all();
 $suba=SubAccount::all();
+$x=DailyEntrie::where('entrie_id',$request->entrie_id)->first();
+
 // // إنشاء القيد اليومي
 $dailyEntrie = DailyEntrie::updateOrCreate(
     [
         'entrie_id'=>$request->entrie_id ,
         'accounting_period_id' => $accountingPeriod->accounting_period_id,
+        'daily_entries_type'=>$x->daily_entries_type,   
+        'Invoice_id'=>$x->Invoice_id ?? $Invoice_id??null,
 
     ],
     [
         'Daily_page_id' => $dailyPage->page_id ??$dailyPageId->Daily_page_id,
-        'daily_entries_type' =>$invoice_type ?? $Payment_type,
-        'Invoice_id' =>  $Invoice_id??null,
+        'daily_entries_type' =>$x->daily_entries_type??$invoice_type ?? $Payment_type,
         'account_debit_id' => $validated['sub_account_debit_id'],
         'Amount_Credit' => $Amount_debit,
         'Amount_debit' =>  $Amount_debit ,
