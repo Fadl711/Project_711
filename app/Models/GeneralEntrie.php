@@ -30,6 +30,7 @@ class GeneralEntrie extends Model
         'entry_type',
         'amount',
         'currency',
+        'exchange_rate',
         'description',
         'entry_date',
         'status',

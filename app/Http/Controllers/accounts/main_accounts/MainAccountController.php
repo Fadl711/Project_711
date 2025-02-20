@@ -178,7 +178,7 @@ if ($DataSubAccount->debtor_amount!=0 || $DataSubAccount->creditor_amount!=0) {
         'account_debit_id' => $DSubAccount->sub_account_id ,
         'Amount_Credit' => $DataSubAccount->creditor_amount  ?: 0,
         'account_Credit_id' => $DSubAccount->sub_account_id ,
-        'Statement' => 'إدخال رصيد افتتاحي',
+        'Statement' =>$request->Statement?? 'إدخال رصيد افتتاحي',
         'Daily_page_id' =>$dailyPage->page_id,
         'Currency_name' => 'ر',
         'User_id' =>$User_id ,

@@ -27,6 +27,7 @@ class DailyEntrie extends Model
     'status_debit',
     'status',
     'daily_entries_type',
+    'exchange_rate',
 ];
        // تحديد أنواع الحقول
        protected $casts = [

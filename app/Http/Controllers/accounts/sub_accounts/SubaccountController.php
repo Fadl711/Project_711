@@ -137,6 +137,7 @@ $transaction_type="رصيد افتتاحي";
         ->update([
         'Amount_debit' => $SubAccount->debtor_amount,
         'Amount_Credit' => $SubAccount->creditor_amount,
+        'Statement' =>$request->Statement?? 'إدخال رصيد افتتاحي',
     ]);
 
     return redirect()->route('subAccounts.allShow');
@@ -154,7 +155,7 @@ $transaction_type="رصيد افتتاحي";
         'account_debit_id' => $SubAccount->sub_account_id ,
         'Amount_Credit' => $SubAccount->creditor_amount  ?: 0,
         'account_Credit_id' => $SubAccount->sub_account_id ,
-        'Statement' => 'إدخال رصيد افتتاحي',
+        'Statement' => $request->Statement??'إدخال رصيد افتتاحي',
         'Daily_page_id' =>$dailyPage->page_id,
         'Currency_name' => 'ر',
         'User_id' =>$request->User_id,

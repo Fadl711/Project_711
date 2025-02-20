@@ -42,6 +42,9 @@ class ReceipController extends Controller
 if (!$accountingPeriod) {
     return response()->json(['error' => 'لا توجد فترة محاسبية مفتوحة']);
 }
+if (!$request->exchange_rate) {
+    return response()->json(['error' => 'يجب ادخال سعر صرف العملة']);
+}
 
 if ($request->AccountReceivable == $request->PaymentParty) {
 if ($request->DepositAccount == $request->CreditAmount) {
@@ -49,13 +52,6 @@ if ($request->DepositAccount == $request->CreditAmount) {
 }
 }
 $payment_bond_id = $request->payment_bond_id;
-$date = Carbon::createFromFormat('Y-m-d', $request->date)
-->setTimezone('Asia/Aden')  // تصحيح الكتابة هنا
-->format('Y-m-d'); 
-// dd($request->date);
-// dd($date);
-// استخدام createFromFormat
-
 $paymentBond = PaymentBond::updateOrCreate(
     [
         'payment_bond_id' => $payment_bond_id,
@@ -68,6 +64,7 @@ $paymentBond = PaymentBond::updateOrCreate(
         'Credit_sub_account_id' => $request->CreditAmount,
         'payment_type' => $request->payment_type,
         'Currency_id' => $request->Currency,
+        'exchange_rate' => $request->exchange_rate,
         'Amount_debit' => $Amount_debit,
         'transaction_type' =>$request->transaction_type,
         'Statement' => $request->Statement ?? $request->transaction_type,
@@ -82,7 +79,7 @@ DB::table('payment_bonds')
 ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
 ->update(['created_at' => Carbon::createFromFormat('Y-m-d', $request->date)]);
         // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
-        $curre=Currency::where('currency_id', $paymentBond->Currency_id)->pluck('currency_name')->first();
+        $curre=Currency::where('currency_id', $paymentBond->Currency_id)->first();
         // إذا لم توجد صفحة، قم بإنشائها
         $today = Carbon::now()->toDateString();
         $dailyPage = GeneralJournal::whereDate('created_at', $today)->latest()->first();
@@ -93,7 +90,7 @@ DB::table('payment_bonds')
             ]);
         }
         if (!$dailyPage || !$dailyPage->page_id) {
-            return response()->json(['success' => false, 'message' => 'فشل في إنشاء صفحة يومية']);
+            return response()->json(['success' => false, 'message' =>'فشل في إنشاء صفحة يومية']);
         }
         $Getentrie_id = DailyEntrie::where('Invoice_id', $paymentBond->payment_bond_id)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
@@ -117,18 +114,21 @@ DB::table('payment_bonds')
             'Statement' => $paymentBond->Statement,
             'Daily_page_id' => $daily_page_id,
             'Invoice_type' => $paymentBond->payment_type,
-            'Currency_name' => $curre,
+            'Currency_name' => $curre->currency_name,
+            'exchange_rate' => $paymentBond->exchange_rate,
             'User_id' => auth()->user()->id,
             'status_debit' => 'غير مرحل',
             'status' => 'غير مرحل',
         ]
     );
-    // $DailyEntrie->created_at = $date; // تأكد من أن هذا هو العمود الصحيح
-    // $DailyEntrie->save();
+  
     DB::table('daily_entries')
 ->where('entrie_id', $DailyEntrie->entrie_id)
 ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
 ->update(['created_at' => Carbon::createFromFormat('Y-m-d', $request->date)]);
+// $ss=$DailyEntrie->Amount_debit*$DailyEntrie->exchange_rate;
+// dd($ss);
+
     return response()->json([
         'success' => 'تم بنجاح',
         'payment_bond_id' => $paymentBond->payment_bond_id ?? $payment_bond_id
