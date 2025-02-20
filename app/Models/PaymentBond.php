@@ -23,6 +23,8 @@ class PaymentBond extends Model
         'Credit_sub_account_id',
         'Statement',
         'Currency_id',
+        'exchange_rate',
+        'Currency_name',
         'User_id',
     ];
     

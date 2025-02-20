@@ -218,7 +218,6 @@ required>
   $(document).ready(function() {
       // تفعيل Select2
       $('.select2').select2();
-
         $('#Amount_debit').on('input', function() {
         let value = $(this).val();
         // إزالة أي شيء ليس رقماً أو فاصلة عشرية

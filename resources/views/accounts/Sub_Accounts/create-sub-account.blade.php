@@ -47,6 +47,15 @@
                 <label for="name_The_known" class="labelSale">العنوان</label>
                 <input type="text" name="name_The_known" id="name_The_known" class="input-field inputSale" />
             </div>
+            <div class="mb-2">
+                <label for="name_The_known" class="labelSale">بيان رصيد الافتتاحي</label>
+                <textarea
+                        class="inputSale"
+                        name="Statement"
+                        id="Statement"
+                        rows="3"
+                    ></textarea>
+                           </div>
 
 {{--             <div class="mb-2">
                 <label for="name_The_known"   class="labelSale">رقم الحساب</label>

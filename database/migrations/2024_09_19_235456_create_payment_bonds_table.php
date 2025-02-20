@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('Statement');
             $table->string('transaction_type');
             $table->integer('Currency_id')->unsigned();
+            
             $table->integer('User_id')->unsigned();
             $table->timestamps();
 

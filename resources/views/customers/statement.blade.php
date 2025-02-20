@@ -110,6 +110,9 @@
                     <th class=" text-center">رقم المرجع</th>
                     <th class=" text-right"> المدين</th>
                     <th class=" text-right"> الدائن</th>
+                    <th class=" text-center">العملة</th>
+
+
                 </tr>
                 @endisset
                 @isset($entriesTotally)
@@ -167,38 +170,84 @@
                             <td class=" text-center " style="width: 90px; ">{{ $entrie->entrie_id }}</td>
                             <td class="text-right px-1" style="width: 120px; {{ $cellColor }}">
                                 {{ number_format($entrie->total_debit ?? 0) }}
-                            </td>                            <td class="text-right px-1"  style="width: 120px; " >{{ number_format( $entrie->total_credit ?? 0) }}</td>
+                            </td>         
+                                               <td class="text-right px-1"  style="width: 120px; " >{{ number_format( $entrie->total_credit ?? 0) }}</td>
+
+                                                <td class=" text-center " style="width: 100px; ">{{ $entrie->Currency_name ?? ''}}</td>
                         </tr>
                     @endforeach
                 @endisset
                 <tr class="bg-blue-100">
-                        <td colspan="5" class=" text-right">اجمالي الرصيد</th>
-
+                <td colspan="5" class=" text-center">بيان الأرصدة </th>
                     <td class=" text-right ">
                         <p class="text-sm ">عليكم/الإجمالي  </p>
                     </td>
                     <td class=" text-right ">
                         <p class="">لكم/الإجمالي  </p>
                    </td>
+                    <td class=" text-right ">
+                        <p class="">نوع العملة  </p>
+                   </td>
                 </tr>
+                @if($amount_YER)
                  <tr class="bg-blue-100">
-                    <td colspan="5" class=" text-right"> </th>
+                    <th colspan="5" class=" text-center">اجمالي الرصيد العملة اليمنية </th>
                     <td class=" text-right ">
                         {{ number_format($SumDebtor_amount) ?? 0 }}
                     </td>
                     <td class=" text-right ">
                         {{ number_format($SumCredit_amount) ?? 0 }}
+                    </td>
+                    <td class=" text-right ">
+                        {{ $currencysettings }}
+                    </td>
+                </tr>
+                @endif
+                @if($amountASR)
+                <tr class="bg-blue-100">
+                <th colspan="5" class=" text-center">اجمالي الرصيد العملة السعودية</th>
+                    <td class=" text-right ">
+                        {{ number_format($SumDebtor_amountASR) ?? 0 }}
+                    </td>
+                    <td class=" text-right ">
+                        {{ number_format($SumCredit_amountASR) ?? 0 }}
+
+                    </td>
+                    <td class=" text-right ">
+                        {{ $currencysettingsASR }}
 
                     </td>
                 </tr>
+                @endif
+                @if($amountUSD)
+                <tr class="bg-blue-100">
+                <th colspan="5" class=" text-center">اجمالي الرصيد العملة الدولار  </th>
+                    <td class=" text-right ">
+                        {{ number_format($SumDebtor_amountUSD) ?? 0 }}
+                    </td>
+                    <td class=" text-right ">
+                        {{ number_format($SumCredit_amountUSD) ?? 0 }}
+
+                    </td>
+                    <td class=" text-right ">
+                        {{ $currencysettingsUSD }}
+
+                    </td>
+                </tr>
+                @endif
             </tbody>
         </table>
+
         <table class="w-[60%] text-sm ">
             <thead>
+            @php
+                $sum=$SumDebtor_amount-$SumCredit_amount;
+                @endphp
+                @if($sum!=0)
+
                 <tr class="bg-blue-100">
                     <th class="px-2 text-right ">
                         @php
-                        $sum=$SumDebtor_amount-$SumCredit_amount;
                         if ($sum>=0) {
                             $commintString  = "عليكم/ رصيد"   ;
 
@@ -215,6 +264,56 @@
                         <p class="text-sm">{{ $priceInWords }}</p>
                     </th>
                 </tr>
+                @endIf
+            @php
+                $sumASR=$SumDebtor_amountASR-$SumCredit_amountASR;
+                @endphp
+                @if($sumASR!=0)
+
+                <tr class="bg-blue-100">
+                    <th class="px-2 text-right ">
+                        @php
+                        if ($sumASR>=0) {
+                            $commintStringASR  = "عليكم/ رصيد"   ;
+
+                                         }
+                                         if ($sumASR<0) {
+                                            $commintStringASR  = "لكم/ رصيد"   ;
+                                         }
+                        @endphp
+                        <p class="">{{ $commintStringASR }}</p>
+                    </th>
+                    <th class="px-2 text-right">
+                        {{ number_format(abs($amountASR)) ?? 0 }}
+
+                        <p class="text-sm">{{ $priceInWordsASR }}</p>
+                    </th>
+                </tr>
+                @endIf
+            @php
+                $sumUSD=$SumDebtor_amountUSD-$SumCredit_amountUSD   ;
+                @endphp
+                @if($sumUSD!=0)
+
+                <tr class="bg-blue-100">
+                    <th class="px-2 text-right ">
+                        @php
+                        if ($sumUSD>=0) {
+                            $commintStringUSD  = "عليكم/ رصيد"   ;
+                                         }
+                                         if ($sumUSD<0) {
+                                            $commintStringUSD  = "لكم/ رصيد"   ;
+                                         }
+                        @endphp
+                        <p class="">{{ $commintStringUSD }}</p>
+                    </th>
+                    <th class="px-2 text-right">
+                        {{ number_format(abs($amountUSD)) ?? 0 }}
+
+                        <p class="text-sm">{{ $priceInWordsUSD }}</p>
+                    </th>
+                </tr>
+                @endIf
 
             </thead>
 

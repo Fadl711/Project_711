@@ -95,48 +95,149 @@
 
         <table class="text-sm font-semibold overflow-y-auto max-h-[80vh]">
             <thead>
-                <tr class="bg-blue-100">
-                    <th class="px-4 text-center">#</th>
-                    <th class="px-4 text-right">اسم الحساب</th>
-                    <th class="px-4 text-center">رقم العميل</th>
-                    <th class="px-4 text-center">الهاتف</th>
-                    <th class="px-4 text-center">المدين</th>
-                    <th class="px-4 text-center">الدائن</th>
+                <tr>
+                    <th colspan="3"></th>
+                    <th class="text-center" colspan="2">المبالغ بالعملة المحلية</th>
+                    <th class="text-center" colspan="2">المبالغ بالعملة السعودية</th>
+                    @isset($Sum_debitd_USD)
+                    <th class="text-center" colspan="2">المبالغ بالعملة الدولار</th>
+                    @endisset
+                </tr>
+                <tr class="bg-blue-100 ">
+
+                    <th class=" text-right">#</th>
+                    <th class=" text-right">اسم الحساب</th>
+                    <th class=" text-right">رقم الحساب</th>
+                    <th class=" text-center">المدين</th>
+                    <th class=" text-center">الدائن</th>
+                    
+                    <th class=" text-center">المدين</th>
+                    <th class=" text-center">الدائن</th>
+                    @isset($Sum_debitd_USD)
+
+                    <th class=" text-center">المدين</th>
+                    <th class=" text-center">الدائن</th>
+                    @endisset
                 </tr>
             </thead>
             <tbody class="bg-white">
                 @if(isset($balances))
                 @foreach ($balances as $index => $balance)
                     <tr class="hover:bg-gray-50">
-                        <td class="px-4 text-center">{{ $index + 1 }}</td>
-                        <td class="px-4 text-right">{{ $balance['sub_name'] }}</td>
-                        <td class="px-4 text-center">{{ $balance['sub_account_id'] }}</td>
-                        <td class="px-4 text-center">{{ $balance['Phone'] ?? 0 }}</td>
+                        <td class="text-right">{{ $index + 1 }}</td>
+                        <td class=" text-right">{{ $balance['sub_name'] }}</td>
+                        <td class=" text-center">{{ $balance['sub_account_id'] }}</td>
                         @php
-                            $totalDebit=0;
-                            $totalCredit=0;
-                            $sumAmount=$balance->total_debit-abs($balance->total_credit);
-                            if($sumAmount>=0)
-                            {
-                                $totalDebit=$sumAmount;
-                                $totalCredit=0;
+                            // Local Currency (ريال.يمني)
+                            $totalDebit = 0;
+                            $totalCredit = 0;
+                            $sumAmount = $balance->total_debit - abs($balance->total_credit);
+                            if($sumAmount >= 0) {
+                                $totalDebit = $sumAmount;
+                                $totalCredit = 0;
                             }
-                            if($sumAmount<0)
-                            {
-                                $totalCredit=$sumAmount;
-                                $totalDebit=0;
+                            if($sumAmount < 0) {
+                                $totalCredit = $sumAmount;
+                                $totalDebit = 0;
                             }
-
-
                         @endphp
-                        <td class="px-4 text-center">{{ number_format($totalDebit, 2) ?? 0 }}</td>
-                        <td class="px-4 text-center">{{ number_format(abs($totalCredit), 2) ?? 0 }}</td>
+                        {{-- Local Currency Debit --}}
+                        <td class="text-center">
+                            @php
+                                $wholeNumber = floor($totalDebit);
+                                $decimal = $totalDebit - $wholeNumber;
+                            @endphp
+                            {{ number_format($wholeNumber, 0, '.', ',') }}@if($decimal > 0)<span class="text-green-600">.{{ substr(number_format($decimal, 2, '.', ''), 2) }}</span>@endif
+                        </td>
+                        {{-- Local Currency Credit --}}
+                        <td class="text-center">
+                            @php
+                                $wholeNumber = floor(abs($totalCredit));
+                                $decimal = abs($totalCredit) - $wholeNumber;
+                            @endphp
+                            {{ number_format($wholeNumber, 0, '.', ',') }}@if($decimal > 0)<span class="text-green-600">.{{ substr(number_format($decimal, 2, '.', ''), 2) }}</span>@endif
+                        </td>
+
+                        {{-- Saudi Currency (ريال سعودي) --}}
+                        @php
+                            $totalDebits = 0;
+                            $totalCredits = 0;
+                            $sumAmounts = $balance->total_debits - abs($balance->total_credits);
+                            if($sumAmounts >= 0) {
+                                $totalDebits = $sumAmounts;
+                                $totalCredits = 0;
+                            }
+                            if($sumAmounts < 0) {
+                                $totalCredits = $sumAmounts;
+                                $totalDebits = 0;
+                            }
+                        @endphp
+                        {{-- Saudi Currency Debit --}}
+                        <td class="text-center">
+                            @php
+                                $wholeNumber = floor($totalDebits);
+                                $decimal = $totalDebits - $wholeNumber;
+                            @endphp
+                            {{ number_format($wholeNumber, 0, '.', ',') }}@if($decimal > 0)<span class="text-green-600">.{{ substr(number_format($decimal, 2, '.', ''), 2) }}</span>@endif
+                        </td>
+                        {{-- Saudi Currency Credit --}}
+                        <td class="text-center">
+                            @php
+                                $wholeNumber = floor(abs($totalCredits));
+                                $decimal = abs($totalCredits) - $wholeNumber;
+                            @endphp
+                            {{ number_format($wholeNumber, 0, '.', ',') }}@if($decimal > 0)<span class="text-green-600">.{{ substr(number_format($decimal, 2, '.', ''), 2) }}</span>@endif
+                        </td>
+                        @isset($Sum_debitd_USD)
+
+                        @php
+                            $totalDebitUSD=0;
+                            $totalCredistUSD=0;
+                            $sumAmountUSD=$balance->total_debitd-abs($balance->total_creditd);
+                            if($sumAmountUSD>=0)
+                            {
+                                $totalDebitUSD=$sumAmountUSD;
+                                $totalCredistUSD=0;
+                            }
+                            if($sumAmountUSD<0)
+                            {
+                                $totalCredistUSD=$sumAmountUSD;
+                                $totalDebitUSD=0;
+                            }
+                            $wholeNumberUS = floor($totalDebitUSD);
+                            $decimalUS = $totalDebitUSD - $wholeNumberUS;
+                        @endphp
+                        <td class=" text-center">
+                        {{ number_format($wholeNumberUS, 0, '.', ',') }}@if($decimalUS > 0)<span class="text-green-600">.{{ substr(number_format($decimalUS, 2, '.', ''), 2) }}</span>@endif
+                        </td>
+                        <td class=" text-center">
+                        @php
+                            $wholeNumberUS = floor(abs($totalCredistUSD));
+                            $decimalUS = abs($totalCredistUSD) - $wholeNumberUS;
+                        @endphp
+                        {{ number_format($wholeNumberUS, 0, '.', ',') }}@if($decimalUS > 0)<span class="text-green-600">.{{ substr(number_format($decimalUS, 2, '.', ''), 2) }}</span>@endif
+                        </td>
+                        @endisset
+
+
                     </tr>
                 @endforeach
                 <tr class="bg-blue-100">
-                    <th colspan="4" class="text-right">اجمالي الرصيد</th>
-                    <td class="px-4 text-center">{{ number_format($SumDebtor_amount ?? 0, 2) }}</td>
-                    <td class="px-4 text-center">{{ number_format (abs($SumCredit_amount) ?? 0, 2) }}</td>   
+                    <th colspan="3" class="text-right">اجمالي الرصيد</th>
+                    <td class=" text-center">
+                    @php
+                        $wholeNumber = floor($SumDebtor_amount);
+                        $decimal = $SumDebtor_amount - $wholeNumber;
+                    @endphp
+                    {{ number_format($wholeNumber, 0, '.', ',') }}@if($decimal > 0)<span class="text-green-600">.{{ substr(number_format($decimal, 2, '.', ''), 2) }}</span>@endif
+                    </td>
+                    <td class=" text-center">
+                    @php
+                        $wholeNumber = floor(abs($SumCredit_amount));
+                        $decimal = abs($SumCredit_amount) - $wholeNumber;
+                    @endphp
+                    {{ number_format($wholeNumber, 0, '.', ',') }}@if($decimal > 0)<span class="text-green-600">.{{ substr(number_format($decimal, 2, '.', ''), 2) }}</span>@endif
+                    </td>   
                              </tr>
                 @endif
             </tbody>
@@ -153,7 +254,7 @@
                         <p>{{ $commintString }}</p>
                     </th>
                     <th class="px-2 text-right">
-                        {{ number_format(abs($Sale_priceSum)) ?? 0 }}
+                        {{ number_format(abs($Sale_priceSum), 2, '.', ',') ?? 0 }}
                         <p class="text-sm">{{ $priceInWords }}</p>
                     </th>
                 </tr>

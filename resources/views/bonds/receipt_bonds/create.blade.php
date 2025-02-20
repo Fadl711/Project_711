@@ -84,6 +84,16 @@
                            @endisset
                         </select>
                        </div>
+                       <div class="text-center">
+    <label for="exchange_rate" class="text-center">سعر الصرف</label>
+    
+    <input 
+        id="exchange_rate" 
+        class="inputSale" 
+        name="exchange_rate"
+        value="{{ isset($ExchangeBond->exchange_rate) ? $ExchangeBond->exchange_rate : 1.00 }}">
+</div>
+
 
 
                        <div class="">
@@ -204,6 +214,8 @@
 <script>
 
   $(document).ready(function() {
+    $('.select2').select2();
+
     $('#Amount_debit').on('input', function() {
         let value = $(this).val();
     // إزالة أي شيء ليس رقمًا أو فاصلة عشرية
@@ -260,6 +272,7 @@
 });
       // تفعيل Select2
       $('.select2').select2();
+      
       $('#AccountReceivable').focus();
 
           $('#AccountReceivable').on('change', function() {
