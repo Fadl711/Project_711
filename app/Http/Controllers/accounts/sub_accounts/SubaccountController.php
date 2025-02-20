@@ -8,6 +8,9 @@ use App\Enum\IntOrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\AccountingPeriod;
 use App\Models\DailyEntrie;
+use App\Models\Currency;
+use App\Models\StringSetting;
+use App\Models\CurrencySetting;
 use App\Models\GeneralJournal;
 use App\Models\MainAccount;
 use App\Models\SubAccount;
@@ -33,10 +36,16 @@ class SubaccountController extends Controller
  ];
 
  $MainAccounts=MainAccount::all();
+ $curr=Currency::all();
+ $cu=CurrencySetting::first();
 
-//  dd( $MainAccounts);
-
- return view('accounts.Sub_Accounts.create-sub-account',['MainAccounts'=> $MainAccounts,'TypesAccounts'=> $TypesAccountName,'Deportattons'=> $dataDeportattons]);
+ return view('accounts.Sub_Accounts.create-sub-account',[
+     'MainAccounts'=> $MainAccounts,
+     'TypesAccounts'=> $TypesAccountName,
+     'Deportattons'=> $dataDeportattons,
+     'curr' => $curr,
+     'cu' => $cu
+ ]);
          }
     public function convertArabicToEnglish($number)
     {
@@ -157,7 +166,8 @@ $transaction_type="رصيد افتتاحي";
         'account_Credit_id' => $SubAccount->sub_account_id ,
         'Statement' => $request->Statement??'إدخال رصيد افتتاحي',
         'Daily_page_id' =>$dailyPage->page_id,
-        'Currency_name' => 'ر',
+        'Currency_name' => $request->Currency,
+        'exchange_rate' => $request->exchange_rate,
         'User_id' =>$request->User_id,
         'Invoice_type' =>1,
         'accounting_period_id' =>$accountingPeriod->accounting_period_id,
@@ -166,6 +176,10 @@ $transaction_type="رصيد افتتاحي";
         'status_debit' => 'غير مرحل',
         'status' => 'غير مرحل',
     ]);
+    DB::table('daily_entries')
+    ->where('entrie_id', $dailyEntry->entrie_id)
+    ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+    ->update(['created_at' => Carbon::createFromFormat('Y-m-d', $request->date)]);
 
     return redirect()->route('subAccounts.allShow');
 

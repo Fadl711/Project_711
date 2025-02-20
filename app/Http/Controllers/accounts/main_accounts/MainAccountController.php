@@ -33,11 +33,13 @@ class MainaccountController extends Controller
         $subAccount = SubAccount::all();
 
  $classd=AccountClass::cases();
+ $financal=IntOrderStatus::cases();
+
  $cus = MainAccount::where('AccountClass', $classd[0])->get();//+
 
 
 return view('accounts.Main_Account.create',
-[ 'mainAccounts'=>$mainAccount,'subAccounts'=>$subAccount,'cuo'=> $cus]);  }
+[ 'mainAccounts'=>$mainAccount,'subAccounts'=>$subAccount,'cuo'=> $cus,'financal'=>$financal]);  }
 
     public function convertArabicToEnglish($number)
     {
@@ -104,8 +106,6 @@ return view('accounts.Main_Account.create',
 
             return redirect()->route('Main_Account.create');
         }
-
-
 
     public function edit($id)
     {

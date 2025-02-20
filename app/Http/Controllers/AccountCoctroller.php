@@ -7,6 +7,8 @@ use App\Enum\Deportatton;
 use App\Enum\IntOrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\AccountingPeriod;
+use App\Models\Currency;
+use App\Models\CurrencySetting;
 use App\Models\DailyEntrie;
 use App\Models\GeneralEntrie;
 use App\Models\GeneralLedge;
@@ -23,8 +25,7 @@ class AccountCoctroller extends Controller
 {
     public function create(){
         
-        $MainAccounts=MainAccount::all();
-     
+       
 
  return view(['MainAccounts'=> $MainAccounts]);
          }
@@ -45,9 +46,12 @@ class AccountCoctroller extends Controller
 
             ];
             $post=MainAccount::all();
+            $MainAccounts=MainAccount::all();
+            $curr=Currency::all();
+            $cu=CurrencySetting::first();
 
 
-      return  view('accounts.index',['posts'=>$data,'post'=> $post]);
+      return  view('accounts.index',['posts'=>$data,'post'=> $post,'curr'=> $curr,'cu'=> $cu]);
     }
     public function getOptions( ){
         $options=[
@@ -70,6 +74,7 @@ return response()->json( $data);
     {
         $MainAccounts=MainAccount::all();
         $SubAccount=SubAccount::all();
+      
         
         $ASSETS=AccountType::FIXED_ASSETS;
 

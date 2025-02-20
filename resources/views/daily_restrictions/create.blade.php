@@ -158,6 +158,7 @@ required>
 
              required>
         </div>
+
         <div class="">
             <label for="Currency_name" class="block font-medium mb-2">العملة</label>
             <select dir="ltr" id="Currency_name" class="inputSale input-field" name="Currency_name">
@@ -177,6 +178,18 @@ required>
                 @endisset
             </select>
         </div>
+        <div class="text-center">
+    <label for="exchange_rate" class="text-center">سعر الصرف</label>
+    
+    <input 
+        id="exchange_rate" 
+        class="inputSale" 
+        name="exchange_rate"
+        type="number"
+        value="{{ isset($DailyEntrie->exchange_rate) ? $DailyEntrie->exchange_rate : 1.00 }}">
+</div>
+        
+       
         </div>
         <div class="">
             <label for="Statement" class="block font-medium mb-2">البيان</label>

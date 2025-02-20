@@ -7,13 +7,14 @@
     }
 </style>
 <x-navbar_accounts/>
-<h1>انشأ حساب فرعي</h1>
 
 
 
 <br>
-<div id="">
-    <form id="SubAccount" class="p-4 md:p-5" method="POST">
+<div id="" class ="rounded-lg shadow-lg bg-white">
+<h1 class="text-center  font-bold ">انشأ حساب فرعي</h1>
+
+    <form id="SubAccount" class="p-2 md:p-5" method="POST">
         @csrf
         <div id="successMessage" class="alert-success" style="display: none;"></div>
 
@@ -31,14 +32,7 @@
                     @endforeach
                 </select>
             </div>
-            <div class="mb-2">
-                <label class="labelSale" for="debtor_amount">رصيد افتتاحي مدين (اخذ)</label>
-                <input name="debtor_amount" class="inputSale input-field" id="debtor_amount" type="number" placeholder="0"/>
-            </div>
-            <div class="mb-2">
-                <label class="labelSale" for="creditor_amount">رصيد افتتاحي دائن (عاطي)</label>
-                <input name="creditor_amount" class="inputSale input-field" id="creditor_amount" type="number" placeholder="0"/>
-            </div>
+           
             <div class="mb-2">
                 <label for="Phone" class="labelSale">رقم التلفون</label>
                 <input type="number" name="Phone" id="Phone" class="input-field inputSale" />
@@ -47,6 +41,55 @@
                 <label for="name_The_known" class="labelSale">العنوان</label>
                 <input type="text" name="name_The_known" id="name_The_known" class="input-field inputSale" />
             </div>
+            </div>
+            <div class="  text-center grid grid-cols-2 ">  
+              <div class="text-center">
+                <label for="date" class="text-center">التاريخ</label>
+                <input
+                    name="date"
+                    id="date"
+                    type="date"
+                    class="inputSale"
+                   value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}"
+                >
+            </div>
+            <div class="mb-2">
+                <label class="labelSale" for="debtor_amount">رصيد افتتاحي مدين (اخذ)</label>
+                <input name="debtor_amount" class="inputSale input-field" id="debtor_amount" type="number" placeholder="0"/>
+            </div>
+            <div class="mb-2">
+                <label class="labelSale" for="creditor_amount">رصيد افتتاحي دائن (عاطي)</label>
+                <input name="creditor_amount" class="inputSale input-field" id="creditor_amount" type="number" placeholder="0"/>
+            </div>
+                <div class="  grid grid-cols-2" role="">
+                    <div  class=" text-center  ">
+                        <label for="Currency" class=" text-center" >العمله </label>
+                        <select   dir="ltr" id="Currency" class="inputSale select2 input-field " name="Currency"  >
+                            @isset($currs)
+                            <option selected value="{{$currs->currency_name}}">{{$currs->currency_name}}</option>
+                            @endisset
+                            @isset($curr)
+
+                          @foreach ($curr as $cur)
+                          <option @isset($cu)
+                          @selected($cur->currency_id==$cu->Currency_id)
+                          @endisset
+                          value="{{$cur->currency_name}}">{{$cur->currency_name}}</option>
+                           @endforeach
+                           @endisset
+                        </select>
+                       </div>
+                       <div class="text-center">
+    <label for="exchange_rate" class="text-center">سعر الصرف</label>
+
+    <input 
+        id="exchange_rate" 
+        class="inputSale" 
+        type="number"
+        name="exchange_rate"
+        value="{{1.00}}">
+</div>
+</div>
             <div class="mb-2">
                 <label for="name_The_known" class="labelSale">بيان رصيد الافتتاحي</label>
                 <textarea
@@ -56,18 +99,28 @@
                         rows="3"
                     ></textarea>
                            </div>
+                          
+                           </div>
 
-{{--             <div class="mb-2">
-                <label for="name_The_known"   class="labelSale">رقم الحساب</label>
-                <input type="text" disabled name="name_The_known" id="name_The_known" class="input-field inputSale" />
-            </div> --}}
-        </div>
+         
+      
         @auth
         <input type="hidden" name="User_id" required id="User_id" value="{{Auth::user()->id}}">
         @endauth
+        <div class="grid gap-4 mb-4 grid-cols-2">
+
+        <div class="mb-2">
+
         <button type="submit" id="submit" class="text-white inline-flex items-center bgcolor hover:bg-stone-400 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
             حفظ البيانات
         </button>
+        </div> 
+
+        <div class="mb-2">
+                <label for="name_The_known"   class="labelSale">رقم الحساب</label>
+                <input type="text" disabled name="name_The_known" id="name_The_known" class="input-field inputSale" />
+            </div> 
+            </div> 
     </form>
 
 

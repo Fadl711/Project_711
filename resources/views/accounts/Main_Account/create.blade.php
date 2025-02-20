@@ -77,8 +77,8 @@
     <label class="labelSale  " required for="Type_migration"> يرحل الى </label>
       <select id="Type_migration" class=" text-left select2 input-field inputSale" name="Type_migration">
         <option selected></option>
-        @foreach ($Deportattons as $Deportatton)
-        <option value="{{$Deportatton['id']}}" >{{$Deportatton['Deportatton']}} </option>
+        @foreach ($financal as $financa)
+        <option value="{{$financa->value}}" >{{$financa->label() }} </option>
         @endforeach
 
       </select>
@@ -135,11 +135,12 @@
         @if ($mainAccount->typeAccount==$TypesAccount['id']->value)
         <td class="text-right tagTd">{{$TypesAccount['TypesAccountName']}}</td>
         @endif
+       
         @endforeach
 
-        @foreach ($Deportattons as $Deportatton)
-        @if ($mainAccount->Type_migration==$Deportatton['id']->value)
-        <td class="text-right tagTd">{{$Deportatton['Deportatton']}}</td>
+        @foreach ($financal as $Deportatton)
+        @if ($mainAccount->Type_migration==$Deportatton->value)
+        <td class="text-right tagTd">{{$Deportatton->label() }}</td>
         @endif
         @endforeach
         <td class="text-right tagTd">{{$mainAccount->User_id}}</td>

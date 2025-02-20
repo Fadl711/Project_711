@@ -47,11 +47,11 @@ class AppServiceProvider extends ServiceProvider
                 $users = DB::table('users')->get();
             }
 
-            $dataDeportattons=[
-                ['Deportatton'=> (Deportatton::FINANCAL_CENTER_LIST ),'id'=>(IntOrderStatus::FINANCAL_CENTER_LIST )],
-                ['Deportatton'=> (Deportatton::INCOME_STATEMENT),'id'=>(IntOrderStatus::INCOME_STATEMENT)],
-            ];
-            View::share('dataDeportattons', $dataDeportattons);
+            // $dataDeportattons=[
+            //     ['Deportatton'=> (Deportatton::FINANCAL_CENTER_LIST ),'id'=>(IntOrderStatus::FINANCAL_CENTER_LIST )],
+            //     ['Deportatton'=> (Deportatton::INCOME_STATEMENT),'id'=>(IntOrderStatus::INCOME_STATEMENT)],
+            // ];
+            // View::share('dataDeportattons', $dataDeportattons);
 
             $TypesAccountName=[
                 ['TypesAccountName' => Deportatton::CURRENT_ASSETS, 'id' => AccountType::CURRENT_ASSETS],

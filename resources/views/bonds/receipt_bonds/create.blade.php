@@ -86,10 +86,11 @@
                        </div>
                        <div class="text-center">
     <label for="exchange_rate" class="text-center">سعر الصرف</label>
-    
+
     <input 
         id="exchange_rate" 
         class="inputSale" 
+        type="number"
         name="exchange_rate"
         value="{{ isset($ExchangeBond->exchange_rate) ? $ExchangeBond->exchange_rate : 1.00 }}">
 </div>

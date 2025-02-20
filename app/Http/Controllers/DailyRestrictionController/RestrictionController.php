@@ -55,6 +55,7 @@ class RestrictionController extends Controller
             'Statement' => 'nullable|string',
             'Currency_name' =>  'nullable|string', // تأكد من استخدام الاسم الصحيح هنا
             'User_id' => 'required|integer',
+            'exchange_rate' => 'required|integer',
         ]);
         // التأكد من عدم اختيار حسابين فرعيين متماثلين
         if ($request->sub_account_debit_id == $request->sub_account_Credit_id) {
@@ -131,6 +132,7 @@ $dailyEntrie = DailyEntrie::updateOrCreate(
         'Amount_Credit' => $Amount_debit,
         'Amount_debit' =>  $Amount_debit ,
         'account_Credit_id' => $validated['sub_account_Credit_id'],
+        'exchange_rate' => $validated['exchange_rate'],
         'Statement' => $validated['Statement']  ?? "قيد يومي",
         'Invoice_type' => $request->payment_type ,
         'Currency_name' => $validated['Currency_name'],
