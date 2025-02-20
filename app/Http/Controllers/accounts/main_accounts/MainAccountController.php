@@ -117,7 +117,8 @@ return view('accounts.Main_Account.create',
     public function edit($id)
     {
         $account = MainAccount::where('main_account_id', $id)->first();
-        return view('accounts.Main_Account.edit',['mainAccount'=>$account] );
+        $Deportattons=IntOrderStatus::cases();
+        return view('accounts.Main_Account.edit',['mainAccount'=>$account,'Deportattons'=>$Deportattons] );
     }
 
 

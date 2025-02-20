@@ -71,8 +71,8 @@
             <option></option>
             @foreach ($Deportattons as $Deportatton)
             
-              <option value="{{$Deportatton['id']}}" {{ $mainAccount->Type_migration == $Deportatton['id']->value ? 'selected' : '' }}>
-                {{$Deportatton['Deportatton']}}
+              <option value="{{$Deportatton->value}}" {{ $mainAccount->Type_migration == $Deportatton->value ? 'selected' : '' }}>
+                {{$Deportatton->label()}}
               </option>
             @endforeach
           </select>

@@ -8,8 +8,6 @@
 </style>
 <x-navbar_accounts/>
 
-
-
 <br>
 <div id="" class ="rounded-lg shadow-lg bg-white">
 <h1 class="text-center  font-bold ">انشأ حساب فرعي</h1>
