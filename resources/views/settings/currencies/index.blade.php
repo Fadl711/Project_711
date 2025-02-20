@@ -4,11 +4,10 @@
 <div class="text-center flex justify-evenly  bg-gray-100 shadow-md p-4  w-1/2 mx-auto rounded-lg">
 
 
-    <a href="{{route('settings.currencies.create')}}" class=" bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 rounded focus:outline-none focus:shadow-outline">اضافة عملة</a>
-    <a href="{{route('settings.currencies.create')}}" class=" bg-red-500 hover:bg-red-700 text-white py-1 px-2 rounded focus:outline-none focus:shadow-outline">تعديل العمله</a>
+    <a href="{{route('settings.currencies.create')}}" class=" bg-green-500 hover:bg-blue-700 text-white py-1 px-2 rounded focus:outline-none focus:shadow-outline">اضافة عملة</a>
     <div>
         <label for="">العملة الافتراضية</label>
-        <select  id="default-currency" name="default_currency"  class="  bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 rounded focus:outline-none focus:shadow-outline">
+        <select  id="default-currency" name="default_currency"  class="sel bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 rounded focus:outline-none focus:shadow-outline">
 
             @foreach ($curr as $cur)
             <option @isset($cu)
@@ -16,7 +15,7 @@
             @endisset
             value="{{$cur->currency_id}}">{{$cur->currency_name}}</option>
              @endforeach
-             
+
         </select>
     </div>
 
@@ -24,7 +23,7 @@
 <br>
 <br>
 
-    <div class=" flex container ">
+    <!-- <div class=" flex container ">
 
       <div  class=" text-center  ">
       <label for="" class=" text-center" >العمله </label>
@@ -48,7 +47,7 @@
       <input id="maont" type="number" class="inputSale "  required>
       </div>
 
-</div>
+</div> -->
 
 <script>
 $('#default-currency').on('change', function() {

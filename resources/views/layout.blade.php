@@ -28,6 +28,10 @@
         {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> --}}
 
         <style>
+            .sel{
+                appearance: auto;
+                background-image: none
+            }
             .select2-container {
 width: 100% !important; /* فرض العرض الكامل */
 }
