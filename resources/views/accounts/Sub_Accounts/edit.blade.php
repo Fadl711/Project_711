@@ -87,7 +87,6 @@
                        </div>
                        <div class="text-center">
     <label for="exchange_rate" class="text-center">سعر الصرف</label>
-
     <input 
         id="exchange_rate" 
         class="inputSale" 
