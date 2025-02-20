@@ -89,20 +89,27 @@ return view('accounts.Main_Account.create',
 
     public function update(Request $request, $id)
     {
+        $account_name = $request->account_name;
+        $typeAccount = $request->typeAccount;
+        $Nature_account = $request->Nature_account;
+        $Type_migration = $request->Type_migration;
+        $User_id = $request->User_id;
             MainAccount::where('main_account_id',$id)
             ->update([
-                'account_name'=>$request->account_name,
-                'Nature_account'=>$request->Nature_account,
-                'typeAccount'=>$request->typeAccount,
-                'Type_migration'=>$request->Type_migration,
-                'main_account_id'=>$request->main_account_id,
+                'account_name' => $account_name,
+                'Nature_account' => $Nature_account,
+                'typeAccount' => $typeAccount,
+                'User_id' => $User_id,
+                'Type_migration' => $Type_migration,
+                'AccountClass'=>$request->input('AccountClass')
         ]);
         SubAccount::where('Main_id', $id)
     ->update([
+        'AccountClass'=>$request->input('AccountClass'),
         'typeAccount' => $request->typeAccount,
      ]);
 
-            return redirect()->route('Main_Account.create');
+            return back();
         }
 
 
@@ -110,7 +117,7 @@ return view('accounts.Main_Account.create',
     public function edit($id)
     {
         $account = MainAccount::where('main_account_id', $id)->first();
-        return view('accounts.Main_Account.edit-main-account',['account'=>$account] );
+        return view('accounts.Main_Account.edit',['mainAccount'=>$account] );
     }
 
 

@@ -142,7 +142,7 @@
         <td class="text-right tagTd">{{$Deportatton['Deportatton']}}</td>
         @endif
         @endforeach
-        <td class="text-right tagTd">{{$mainAccount->User_id}}</td>
+        <td class="text-right tagTd">{{$mainAccount->user->name}}</td>
 
         <td class="text-right tagTd">  {{$mainAccount->created_at}}</td>
           <td class="text-right tagTd">{{$mainAccount->updated_at}}</td>

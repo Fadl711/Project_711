@@ -24,7 +24,10 @@ protected $primaryKey = 'sub_account_id';
         'AccountClass',
 
     ];
-
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'User_id', 'id');
+    }
     public function mainAccount()
     {
         return $this->belongsTo(MainAccount::class, 'Main_id', 'main_account_id');

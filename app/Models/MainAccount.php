@@ -29,6 +29,10 @@ class MainAccount extends Model
         {
             return $this->hasMany(SubAccount::class, 'Main_id', 'main_account_id');
         }
+        public function user()
+        {
+            return $this->belongsTo(User::class, 'User_id', 'id');
+        }
 
 
         // دالة لإرجاع التسمية بناءً على قيمة account_class
