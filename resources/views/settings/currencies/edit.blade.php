@@ -12,7 +12,7 @@
                         <div >
 
                             <label for="namecurr" class="btn">اسم العملة</label>
-                            <input  id="namecurr" name="namecurr" type="text"  class="inputSale" value="{{$curr->currency_name}}" />
+                            <input disabled id="namecurr" name="namecurr" type="text"  class="inputSale" value="{{$curr->currency_name}}" />
                         </div>
                         <div>
                             <label for="namecurr" class="btn">رمز العملة</label>

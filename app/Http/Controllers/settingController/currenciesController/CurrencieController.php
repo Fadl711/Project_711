@@ -35,7 +35,7 @@ class CurrencieController extends Controller
     }
     public function update(Request $request,$id){
             Currency::where('currency_id',$id)->update([
-            'currency_name'=>$request->namecurr,
+            
             'exchange_rate'=>$request->exchange_rate,
             'currency_symbol'=>$request->symbol
         ]);

@@ -18,13 +18,19 @@
                 <div class="w-full border-x border-y border-orange-950 rounded-xl">
                     <div class="px-1 flex justify-evenly">
                         <div >
-
                             <label for="namecurr" class="btn">اسم العملة</label>
-                            <input  id="namecurr" name="namecurr" type="text"  class="inputSale" />
+                        <select name="namecurr" id="namecurr" required 
+                                class=" border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">اختر العملة</option>
+                                <option value="ريال.يمني">ريال يمني</option>
+                                <option value="ريال سعودي">ريال سعودي</option>
+                                <option value="دولار امريكي">دولار امريكي</option>
+                            </select>
                         </div>
+
                         <div>
-                            <label for="namecurr" class="btn">رمز العملة</label>
-                        <input  id="namecurr" name="symbol" type="text"  class="inputSale" />
+                            <label for="namecurr1" class="btn">رمز العملة</label>
+                        <input  id="namecurr1" name="symbol" type="text"  class="inputSale" />
                         </div>
                         <div>
                             <label for="exchange_rate" class="btn"> سعر الصرف</label>
@@ -68,7 +74,7 @@
                 @forelse ($curr as $cur)
 
 
-                <tr class="bg-white transition-all duration-500 hover:bg-gray-50 border-b-2">
+                <tr class="px-2 bg-white transition-all duration-500 hover:bg-gray-50 border-b-2">
                     <td>{{$loop->iteration}}</td>
                     <td class="text-center">{{$cur->currency_name}}</td>
                     <td class="text-center">{{$cur->currency_symbol}}</td>
@@ -129,6 +135,7 @@
                  setTimeout(function() {
                      $('#successAlert').addClass('hidden');
                  }, 3000);
+                 window.location.reload();
 
                  console.log('تمت الإضافة بنجاح');
              },

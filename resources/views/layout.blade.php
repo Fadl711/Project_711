@@ -53,7 +53,6 @@ width: 100% !important; /* ضمان عرض عنصر select2 بشكل كامل */
                 @include('includes.swip')
 
             <div class="container relative ">
-
                 @yield('conm')
             </div>
         </div>

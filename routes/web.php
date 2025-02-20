@@ -26,7 +26,7 @@ use App\Http\Controllers\LocksFinancialPeriods\LocksFinancialPeriodsController;
 use App\Http\Controllers\PaymentCoctroller;
 use App\Http\Controllers\SaleCoctroller;
 
-
+// use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\settingController\SettingController;
 use App\Http\Controllers\SupplierCoctroller;
@@ -63,6 +63,9 @@ use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 Route::middleware(['auth'])->group(function () {
 Route::get('/all-products/{id}/show', [ProductCoctroller::class, 'allProducts'])->name('all-products');
@@ -329,8 +332,11 @@ Route::get('/permission_user',[UserPermissionController::class,'index'])->name('
 Route::post('/update-permission', [UserPermissionController::class, 'updatePermission'])->name('update.permission');
 Route::post('/getPermissions', [UserPermissionController::class, 'getPermissions'])->name('get.permissions');
 Route::post('/get-user-permissions', [UserPermissionController::class, 'getUserPermissions'])->name('get.user.permissions');
-
-
+Route::post('/permissions/delete', [UserPermissionController::class, 'deletePermission'])->name('delete.user.permission');
+Route::post('/get-user-permissions-table', [UserPermissionController::class, 'getUserPermissionsTable'])->name('get.user.permissions.table');
+Route::post('/permissions/create', [UserPermissionController::class, 'createPermission'])->name('create.permission');
+Route::post('/permissions/grant-all', [UserPermissionController::class, 'grantAllPermissions'])->name('grant.all.permissions');
+Route::post('/permissions/delete-all', [UserPermissionController::class, 'deleteAllPermissions'])->name('delete.all.permissions');
 
 Route::get('/chart',[ChartController::class,'index'])->name('chart.index');
 Route::get('bar-chart-data',[ChartController::class, 'getBarChartDate']);
