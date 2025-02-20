@@ -52,7 +52,7 @@
             <td class="text-right tagTd">{{$SubAccount->debtor_amount}}</td>
             <td class="text-right tagTd">{{$SubAccount->creditor_amount}}</td>
 
-            <td class="text-right tagTd">{{$SubAccount->User_id}}</td>
+            <td class="text-right tagTd">{{$SubAccount->user->name}}</td>
             <td class="text-right tagTd">{{$SubAccount->created_at}}</td>
             <td class="text-right tagTd">{{$SubAccount->updated_at}}</td>
 
