@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\DailyEntrie;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,7 +19,7 @@ return new class extends Migration
            if ($pb) {
         foreach ($pb as $p)
          {
-            
+
 
                 $p->Currency_name = "ريال.يمني";
                 $p->save();
