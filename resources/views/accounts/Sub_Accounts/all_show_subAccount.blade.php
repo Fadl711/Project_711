@@ -126,7 +126,7 @@
                         }
                     },
                     error: function (xhr) {
-                        errorMessage.show().text( 'حدث خطأ أثناء الاتصال بالخادم.');
+                        errorMessage.show().text( 'لايمكن حذف حساب لديه قيود');
                         setTimeout(() => {
                             errorMessage.hide();
                         }, 5000);
