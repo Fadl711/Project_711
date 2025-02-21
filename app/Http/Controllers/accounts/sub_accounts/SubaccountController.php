@@ -101,13 +101,19 @@ class SubaccountController extends Controller
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
         $transaction_type="رصيد افتتاحي";
 
+
         $Getentrie_id = DailyEntrie::where('Invoice_id',$SubAccount->sub_account_id)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->where('daily_entries_type',$transaction_type)
             ->first();
-            // dd($Getentrie_id);
 
-        return view('accounts.Sub_Accounts.edit',compact('SubAccount','Getentrie_id','MainAccounts'));
+            // dd($Getentrie_id);
+            $curr=Currency::all();
+            // $str=CurrencySetting::f
+            $cu=CurrencySetting::first();
+
+
+        return view('accounts.Sub_Accounts.edit',compact('SubAccount','Getentrie_id','MainAccounts','curr','cu'));
     }
     public function update(Request $request)
     {

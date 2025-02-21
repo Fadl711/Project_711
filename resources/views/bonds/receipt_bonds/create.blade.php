@@ -94,9 +94,6 @@
         name="exchange_rate"
         value="{{ isset($ExchangeBond->exchange_rate) ? $ExchangeBond->exchange_rate : 1.00 }}">
 </div>
-
-
-
                        <div class="">
                         <label for="Amount_debit" class="text-center">المبلغ</label>
                         <input 
@@ -234,7 +231,6 @@
         let [integer, decimal] = value.split('.');
         integer = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ","); // إضافة الفواصل بين الآلاف
         value = decimal ? integer + '.' + decimal : integer; // إعادة تركيب الرقم
-      
     }
     
     // تعيين القيمة المعدلة للحقل
@@ -314,8 +310,8 @@ $(document).ready(function() {
 
     $('#submitButton').click(function(event) {
         event.preventDefault();
+        const DepositAccount=  $('#DepositAccount').val(); 
       const CreditAmount=  $('#CreditAmount').val(); 
-      const DepositAccount=  $('#DepositAccount').val(); 
       let Amount_debit = $('#Amount_debit').val();
       Amount_debit = Amount_debit.replace(/,/g, ''); // إزالة جميع الفواصل
         $('#Amount_debit').val(Amount_debit);

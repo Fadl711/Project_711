@@ -78,7 +78,7 @@
 
                           @foreach ($curr as $cur)
                           <option @isset($cu)
-                          @selected($cur->currency_id==$cu->Currency_id)
+                          @selected($cur->currency_name==$cu->Currency_id)
                           @endisset
                           value="{{$cur->currency_id}}">{{$cur->currency_name}}</option>
                            @endforeach

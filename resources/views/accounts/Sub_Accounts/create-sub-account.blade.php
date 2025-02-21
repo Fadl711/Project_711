@@ -53,11 +53,11 @@
             </div>
             <div class="mb-2">
                 <label class="labelSale" for="debtor_amount">رصيد افتتاحي مدين (اخذ)</label>
-                <input name="debtor_amount" class="inputSale input-field" id="debtor_amount" type="number" placeholder="0"/>
+                <input name="debtor_amount" class="inputSale input-field" id="debtor_amount" type="text" placeholder="0"/>
             </div>
             <div class="mb-2">
                 <label class="labelSale" for="creditor_amount">رصيد افتتاحي دائن (عاطي)</label>
-                <input name="creditor_amount" class="inputSale input-field" id="creditor_amount" type="number" placeholder="0"/>
+                <input name="creditor_amount" class="inputSale input-field" id="creditor_amount" type="text" placeholder="0"/>
             </div>
                 <div class="  grid grid-cols-2" role="">
                     <div  class=" text-center  ">
@@ -134,6 +134,28 @@
     $(document).ready(function() {
         // تهيئة Select2 مع تحديد الحد الأدنى لعدد المدخلات المطلوبة
 
+        $('#debtor_amount,#creditor_amount').on('input', function() {
+        let value = $(this).val();
+    // إزالة أي شيء ليس رقمًا أو فاصلة عشرية
+    value = value.replace(/[^0-9.]/g, '');
+    let amountValue = $('#debtor_amount').val();
+    let amountValue2 = $('#creditor_amount').val();
+    amountValue = amountValue.replace(/,/g, '');
+    amountValue2 = amountValue2.replace(/,/g, '');
+    // التأكد من أن الفاصلة العشرية تظهر مرة واحدة فقط
+    const parts = value.split('.');
+    if (parts.length > 2) {
+        value = parts[0] + '.' + parts.slice(1).join('');
+    }
+    // إضافة الفاصلة بعد كل ثلاثة أرقام (فصل الآلاف)
+    if (value) {
+        let [integer, decimal] = value.split('.');
+        integer = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ","); // إضافة الفواصل بين الآلاف
+        value = decimal ? integer + '.' + decimal : integer; // إعادة تركيب الرقم
+    }
+    $(this).val(value);
+
+});
         // التركيز على حقل الاسم عند بدء التشغيل
         $('#sub_name').focus();
 
@@ -146,8 +168,13 @@
 
     // إضافة مؤشر تحميل
     $('#submitButton').prop('disabled', true).text('جارٍ الحفظ...');
-
-    // تجميع بيانات النموذج
+    let creditor_amount=  $('#creditor_amount').val(); 
+      let debtor_amount = $('#debtor_amount').val();
+      // تجميع بيانات النموذج
+      debtor_amount = debtor_amount.replace(/,/g, ''); // إزالة جميع الفواصل
+        $('#debtor_amount').val(debtor_amount);
+        creditor_amount = creditor_amount.replace(/,/g, ''); // إزالة جميع الفواصل
+        $('#creditor_amount').val(creditor_amount);
     var formData = $(this).serialize();
 
     // إرسال الطلب باستخدام AJAX
