@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title> كشف حساب {{$Myanalysis}}</title>
-    <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    
     <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
 
     <!-- jQuery -->
@@ -46,7 +45,7 @@
         /* padding: 8px; */
     }
 
-   
+
 
     /* تحسين مظهر الجدول */
     .header-section, .totals-section {
@@ -54,7 +53,7 @@
         border: 2px solid #000;
         border-radius: 8px;
     }
-        
+
     </style>
 </head>
 <body class="bg-white">
@@ -81,7 +80,7 @@
                     </div>
                 </div>
             </div>
-            
+
 
         </div>
     @endisset
@@ -204,7 +203,7 @@
                             <td class=" text-center " style="width: 90px; ">{{ $entrie->entrie_id }}</td>
                             <td class="text-right px-1" style="width: 120px; {{ $cellColor }}">
                                 {{ number_format($entrie->total_debit ?? 0) }}
-                            </td>         
+                            </td>
                                                <td class="text-right px-1"  style="width: 120px; " >{{ number_format( $entrie->total_credit ?? 0) }}</td>
 
                                                 <td class=" text-center " style="width: 100px; ">{{ $entrie->Currency_name ?? ''}}</td>
@@ -368,14 +367,14 @@
             {{ \Carbon\Carbon::now('Asia/Riyadh')->format('Y-m-d H:i:s') }}
 
         </div>
-       
-    
+
+
         <!-- زر الطباعة -->
         <div class="mt-4 no-print header1">
             <button id="myButton" class="px-4 py-2 bgcolor text-white rounded-lg shadow-md hover:bg-blue-600">
         تغيير الألوان
             </button>
-           
+
             <button id="myButton2" class="px-4 py-2 bgcolor2 text-black rounded-lg shadow-md hover:bg-blue-600">
         تغيير الألوان
             </button>
