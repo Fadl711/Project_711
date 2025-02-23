@@ -6,10 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title> كشف حساب {{$Myanalysis}}</title>
     <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
+    {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
-
     <!-- jQuery -->
     <script src="{{ asset('assets/js/jquery/dist/jquery.min.js') }}"></script>
 
@@ -41,7 +40,11 @@
         width: 100%;
     }
 
-    th, td {
+    th {
+        border: 1px solid #fff;
+        /* padding: 8px; */
+    }
+    td {
         border: 1px solid #000;
         /* padding: 8px; */
     }
@@ -137,14 +140,14 @@
                 @isset($entries)
 
                 <tr id="header1" class="bg-[#1749fd15]">
-                    <th class=" text-center">التاريخ </th>
+                    <th class=" text-center rounded-s-lg">التاريخ </th>
                     <th class=" text-center">نوع المستند</th>
                     <th class=" text-center">رقم المستند</th>
                     <th class=" text-center">البيان</th>
                     <th class=" text-center">رقم المرجع</th>
                     <th class=" text-right"> المدين</th>
                     <th class=" text-right"> الدائن</th>
-                    <th class=" text-center">العملة</th>
+                    <th class=" text-center rounded-e-lg">العملة</th>
 
 
                 </tr>
@@ -198,75 +201,77 @@
                             <td class=" text-right  "style="width: 120px; " >
                                 {{ $entrie->created_at ? $entrie->created_at->format('Y-m-d') : __('غير متوفر') }}
                             </td>
-                            <td class=" text-right " style="width: 130px; {{ $cellColor }} " >{{ $entrie->daily_entries_type }} {{ $Invoice_type  ?? ""}}</td>
+                            <td class=" text-right  " style="width: 130px; {{ $cellColor }} " >{{ $entrie->daily_entries_type }} {{ $Invoice_type  ?? ""}}</td>
                             <td class=" text-center " style="width: 100px; ">{{ $entrie->Invoice_id ?? ''}}</td>
                             <td class=" text-right "    style="width: 300px; {{ $cellColor }}">{{ $entrie->Statement }}</td>
                             <td class=" text-center " style="width: 90px; ">{{ $entrie->entrie_id }}</td>
                             <td class="text-right px-1" style="width: 120px; {{ $cellColor }}">
-                                {{ number_format($entrie->total_debit ?? 0) }}
+                                {{ $entrie->total_debit != 0 ? number_format($entrie->total_debit, 0, '.', ',') : '' }}
                             </td>         
-                                               <td class="text-right px-1"  style="width: 120px; " >{{ number_format( $entrie->total_credit ?? 0) }}</td>
+                                               <td class="text-right px-1"  style="width: 120px; " >
+                                                {{ $entrie->total_credit != 0 ? number_format($entrie->total_credit, 0, '.', ',') : '' }}
+                                            </td>
 
                                                 <td class=" text-center " style="width: 100px; ">{{ $entrie->Currency_name ?? ''}}</td>
                         </tr>
                     @endforeach
                 @endisset
-                <tr id="header1" class="bg-blue-100">
-                <td colspan="5" class=" text-center rounded-s-lg border-l-0 border-r-0 border-b-1">بيان الأرصدة </th>
-                    <td class=" text-right ">
+                <tr id="header1" class="bg-blue-100 ">
+                <th colspan="5" class=" text-center rounded-s-lg border-l-0 border-r-0 border-b-1">بيان الأرصدة </th>
+                    <th class=" text-right ">
                         <p class="text-sm ">عليكم/الإجمالي  </p>
-                    </td>
-                    <td class=" text-right ">
+                    </th>
+                    <th class=" text-right ">
                         <p class="">لكم/الإجمالي  </p>
-                   </td>
-                    <td class=" text-right rounded-e-lg border-0">
+                   </th>
+                    <th class=" text-right rounded-e-lg">
                         <p class="">نوع العملة  </p>
-                   </td>
+                   </th>
                 </tr>
                 @if($amount_YER)
                  <tr id="header1" class="bg-blue-100">
                     <th colspan="5" class=" text-center rounded-s-lg border-l-0 border-r-0 border-b-1 ">اجمالي الرصيد العملة اليمنية </th>
-                    <td class=" text-right ">
+                    <th class=" text-right ">
                         {{ number_format($SumDebtor_amount) ?? 0 }}
-                    </td>
-                    <td class=" text-right ">
+                    </th>
+                    <th class=" text-right ">
                         {{ number_format($SumCredit_amount) ?? 0 }}
-                    </td>
-                    <td class=" text-right rounded-e-lg border-0">
+                    </th>
+                    <th class=" text-right rounded-e-lg">
                         {{ $currencysettings }}
-                    </td>
+                    </th>
                 </tr>
                 @endif
                 @if($amountASR)
                 <tr id="header1" class="bg-blue-100">
                 <th colspan="5" class=" text-center rounded-s-lg border-l-0 border-r-0 border-b-1  ">اجمالي الرصيد العملة السعودية</th>
-                    <td class=" text-right  ">
+                    <th class=" text-right  ">
                         {{ number_format($SumDebtor_amountASR) ?? 0 }}
-                    </td>
-                    <td class=" text-right ">
+                    </th>
+                    <th class=" text-right ">
                         {{ number_format($SumCredit_amountASR) ?? 0 }}
 
-                    </td>
-                    <td class=" text-right rounded-e-lg border-0">
+                    </th>
+                    <th class=" text-right rounded-e-lg border-0">
                         {{ $currencysettingsASR }}
 
-                    </td>
+                    </th>
                 </tr>
                 @endif
                 @if($amountUSD)
                 <tr id="header1" class="bg-blue-100 " >
                 <th colspan="5" class=" text-center rounded-s-lg border-l-0 border-r-0 border-b-1 ">اجمالي الرصيد العملة الدولار  </th>
-                    <td class=" text-right ">
+                    <th class=" text-right ">
                         {{ number_format($SumDebtor_amountUSD) ?? 0 }}
-                    </td>
-                    <td class=" text-right ">
+                    </th>
+                    <th class=" text-right ">
                         {{ number_format($SumCredit_amountUSD) ?? 0 }}
 
-                    </td>
-                    <td class=" text-right border-r-0   rounded-e-lg border-0">
+                    </th>
+                    <th class=" text-right border-r-0   rounded-e-lg border">
                         {{ $currencysettingsUSD }}
 
-                    </td>
+                    </th>
                 </tr>
                 @endif
             </tbody>
@@ -280,7 +285,7 @@
                 @if($sum!=0)
 
                 <tr id="header1" class="bg-blue-100 ">
-                    <th class="px-2 text-right rounded-s-lg border-0 ">
+                    <th class="px-2 text-right rounded-s-lg  border   ">
                         @php
                         if ($sum>=0) {
                             $commintString  = "عليكم/ رصيد"   ;
@@ -298,6 +303,7 @@
                         <p class="text-sm">{{ $priceInWords }}</p>
                     </th>
                 </tr>
+                
                 @endIf
             @php
                 $sumASR=$SumDebtor_amountASR-$SumCredit_amountASR;
@@ -317,7 +323,7 @@
                         @endphp
                         <p class="">{{ $commintStringASR }}</p>
                     </th>
-                    <th class="px-2 text-right border-0 rounded-e-lg  ">
+                    <th class="px-2 text-right border rounded-e-lg  ">
                         {{ number_format(abs($amountASR)) ?? 0 }}
                         <p class="text-sm">{{ $priceInWordsASR }}</p>
                     </th>
@@ -329,7 +335,7 @@
                 @if($sumUSD!=0)
 
                 <tr id="header1" class="bg-blue-100 rounded-lg ">
-                    <th class="px-2 text-right rounded-s-lg border-0 ">
+                    <th class="px-2 text-right rounded-s-lg border ">
                         @php
                         if ($sumUSD>=0) {
                             $commintStringUSD  = "عليكم/ رصيد"   ;
@@ -340,7 +346,7 @@
                         @endphp
                         <p class="">{{ $commintStringUSD }}</p>
                     </th>
-                    <th class="px-2 text-right border-0 rounded-e-lg  ">
+                    <th class="px-2 text-right border rounded-e-lg  ">
                         {{ number_format(abs($amountUSD)) ?? 0 }}
                         <p class="text-sm">{{ $priceInWordsUSD }}</p>
                     </th>
@@ -349,8 +355,8 @@
             </thead>
 </table>
         <!-- الإجماليات -->
-        <div id="header1" class="totals-section bg-blue-100 p-4 rounded-lg ">
-            <div class="flex justify-between">
+        <div id="header1"  class="totals-section bg-blue-100 p-4 rounded-lg header2" id="">
+            <div class="flex justify-between" id="header">
                 <div>
 
                         <div class="text-sm">{{ __('  مصادقة الحساب  من  ') }}  {{ $AccountClassName ?? __('غير متوفر') }}: {{  $customer->sub_name ??$customer->account_name?? __('غير متوفر') }}</div>
@@ -376,7 +382,7 @@
         تغيير الألوان
             </button>
            
-            <button id="myButton2" class="px-4 py-2 bgcolor2 text-black rounded-lg shadow-md hover:bg-blue-600">
+            <button id="myButton2" class="px-4 py-2 bgcolor2 text-black rounded-lg bg-amber-400 shadow-md hover:bg-blue-600">
         تغيير الألوان
             </button>
             <button id="myButton3" class="px-4 py-2 bgcolor3  rounded-lg shadow-md hover:bg-blue-600">
@@ -384,6 +390,7 @@
             </button>
             <script>
                 $(document).ready(function(){
+
                     $("#myButton").click(function(){
                         $("div[id='header1']").toggleClass("text-white bgcolor shadow-sm   ");
                         $("tr[id='header1']").toggleClass("text-white bgcolor shadow-sm  ");
@@ -392,7 +399,6 @@
                     $("#myButton2").click(function(){
                         $("div[id='header1']").toggleClass("bgcolor2 shadow-sm   ");
                         $("tr[id='header1']").toggleClass(" bgcolor2 shadow-sm  ");
-
                     });
                     $("#myButton3").click(function(){
                         $("div[id='header1']").toggleClass("bgcolor3 shadow-sm   ");

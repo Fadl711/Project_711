@@ -412,6 +412,8 @@ private function saleInvoiceupdate($validatedData, $saleInvoice, $accountingPeri
         $daily_page_id = $Getentrie_id->Daily_page_id ?? $dailyPage->page_id;
      $transaction_type  = TransactionType::fromValue( $validatedData['transaction_type'])?->label();
         // إنشاء أو تحديث القيد اليومي
+        $curre=Currency::where('currency_id',$saleInvoice->currency_id)->first(); 
+
         $dailyEntrie = DailyEntrie::updateOrCreate(
             [
             'entrie_id' => $Getentrieid,
@@ -431,7 +433,7 @@ private function saleInvoiceupdate($validatedData, $saleInvoice, $accountingPeri
                 'Statement' => $commint." ".$transaction_type." ".PaymentType::tryFrom($saleInvoice->payment_type)?->label().$note ,
                 'Daily_page_id' => $daily_page_id ?? $dailyPage->page_id,
                 'Invoice_type' => $saleInvoice->payment_type,
-                'Currency_name' => 'd',
+                'Currency_name' => $curre->currency_name,
                 'User_id' => auth()->user()->id,
                 'status_debit' => 'غير مرحل',
                 'status' => 'غير مرحل',
