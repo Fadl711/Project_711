@@ -273,6 +273,8 @@ class SaleController extends Controller
                 $Getentrieid= $Getentrie_id->entrie_id ?? null;
                 $daily_page_id = $Getentrie_id->Daily_page_id ?? $dailyPage->page_id;
          $transactiontype=   TransactionType::fromValue($saleInvoice->transaction_type)?->label();// إنشاء أو تحديث الإدخالات اليومية
+         $curre=Currency::where('currency_id',$saleInvoice->currency_id)->first(); 
+
          $dailyEntrie = DailyEntrie::updateOrCreate(
                 [
                     'entrie_id'=> $Getentrieid,
@@ -289,7 +291,7 @@ class SaleController extends Controller
                     'Statement' => $commint." ".$transactiontype." ".PaymentType::tryFrom($saleInvoice->payment_type)?->label().$note ,
                     'Daily_page_id' => $daily_page_id ?? $dailyPage->page_id,
                     'Invoice_type' => $saleInvoice->payment_type,
-                    'Currency_name' => 'ر',
+                    'Currency_name' =>  $curre-> currency_name,
                     'User_id' =>auth()->user()->id,
                     'status_debit' => 'غير مرحل',
                     'status' => 'غير مرحل',
