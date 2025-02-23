@@ -139,7 +139,6 @@
         <!-- جدول المنتجات -->
         <table id="header1" class=" text-sm font-semibold  w-full overflow-y-auto max-h-[80vh] ">
             <thead id="header1"  class="">
-                @isset($entries)
 
                 <tr id="header1" class="bg-[#1749fd15]">
                     <th class=" text-center rounded-s-lg">التاريخ </th>
@@ -153,7 +152,6 @@
 
 
                 </tr>
-                @endisset
                 @isset($entriesTotally)
                 <tr class="">
                     <th class=" text-center">البيان</th>
@@ -213,9 +211,7 @@
                                                <td class="text-right px-1"  style="width: 120px; " >
                                                 {{ $entrie->total_credit != 0 ? number_format($entrie->total_credit, 0, '.', ',') : '' }}
                                             </td>
-                                {{ number_format($entrie->total_debit ?? 0) }}
-                            </td>
-                                               <td class="text-right px-1"  style="width: 120px; " >{{ number_format( $entrie->total_credit ?? 0) }}</td>
+                                            
 
                                                 <td class=" text-center " style="width: 100px; ">{{ $entrie->Currency_name ?? ''}}</td>
                         </tr>
@@ -387,7 +383,6 @@
         تغيير الألوان
             </button>
            
-            <button id="myButton2" class="px-4 py-2 bgcolor2 text-black rounded-lg bg-amber-400 shadow-md hover:bg-blue-600">
 
             <button id="myButton2" class="px-4 py-2 bgcolor2 text-black rounded-lg shadow-md hover:bg-blue-600">
         تغيير الألوان
