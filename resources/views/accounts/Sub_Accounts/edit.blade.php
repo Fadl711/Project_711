@@ -69,17 +69,25 @@
                 <div class="flex  " role="">
                     <div  class=" text-center  ">
                         <label for="Currency_name" class=" text-center" >العمله </label>
-                        <select   dir="ltr" id="Currency_name" class="inputSale select2 input-field " name="Currency_name"  >
-                            @isset($curr)
-                          @foreach ($curr as $cur)
-                          <option @isset($cur)
-                          @selected($cur->currency_name==$Getentrie_id->Currency_name)
-                            value="{{$cur->Currency_name}}"
-                          @endisset
-                          value="{{$cur->currency_name}}">{{$cur->currency_name}}</option>
-                           @endforeach
-                           @endisset
-                        </select>
+                        <label for="Currency_name" class="block font-medium mb-2">العملة</label>
+            <select dir="ltr" id="Currency_name" class="inputSale input-field" name="Currency_name">
+                {{-- @isset($currs)
+                    <option selected value="{{ $currs->currency_name }}">{{ $currs->currency_name }}</option>
+                @endisset --}}
+
+                @isset($currs)
+                    @foreach ($currs as $cur)
+                        <option 
+                            @isset($Getentrie_id)
+                                @selected($cur->currency_name == $Getentrie_id->Currency_name)
+                                value="{{ $cur->currency_name }}"
+                            @endisset
+                            value="{{ $cur->currency_name }}">
+                            {{ $cur->currency_name }}
+                        </option>
+                    @endforeach
+                @endisset
+            </select>
                        </div>
                        <div class="text-center">
     <label for="exchange_rate" class="text-center">سعر الصرف</label>

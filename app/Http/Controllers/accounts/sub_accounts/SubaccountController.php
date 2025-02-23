@@ -109,12 +109,12 @@ class SubaccountController extends Controller
             ->first();
 
             // dd($Getentrie_id);
-            $curr=Currency::all();
+            $currs=Currency::all();
             // $str=CurrencySetting::f
             $cu=CurrencySetting::first();
 
 
-        return view('accounts.Sub_Accounts.edit',compact('SubAccount','Getentrie_id','MainAccounts','curr','cu'));
+        return view('accounts.Sub_Accounts.edit',compact('SubAccount','Getentrie_id','MainAccounts','currs','cu'));
     }
     public function update(Request $request)
     {
@@ -147,6 +147,7 @@ $transaction_type="رصيد افتتاحي";
 
     if($Getentrie_id )
     {
+        // dd($request->Currency_name);
         $Getentrie = DailyEntrie::where('Invoice_id',$SubAccount->sub_account_id)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->where('daily_entries_type',$transaction_type)
