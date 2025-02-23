@@ -203,7 +203,15 @@
                             </td>
                             <td class=" text-right  " style="width: 130px; {{ $cellColor }} " >{{ $entrie->daily_entries_type }} {{ $Invoice_type  ?? ""}}</td>
                             <td class=" text-center " style="width: 100px; ">{{ $entrie->Invoice_id ?? ''}}</td>
-                            <td class=" text-right "    style="width: 300px; {{ $cellColor }}">{{ $entrie->Statement }}</td>
+                            <td class=" text-right "    style="width: 300px; {{ $cellColor }}">
+                             
+                                <span class="text-red-500">   من ح/</span>
+                                {{$entrie->debitAccount->sub_name }}
+                                <span class="text-green-500">الى ح/</span>
+                                {{$entrie->creditAccount->sub_name }}
+                                <span class="bg-slate-100 rounded px-1">  {{ $entrie->Statement }}</span>
+                              
+                            </td>
                             <td class=" text-center " style="width: 90px; ">{{ $entrie->entrie_id }}</td>
                             <td class="text-right px-1" style="width: 120px; {{ $cellColor }}">
                                 {{ $entrie->total_debit != 0 ? number_format($entrie->total_debit, 0, '.', ',') : '' }}
