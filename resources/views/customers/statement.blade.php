@@ -6,6 +6,13 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title> كشف حساب {{$Myanalysis}}</title>
     <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
+    {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="{{ asset('assets/js/jquery/dist/jquery.min.js') }}"></script>
+
     <style>
           body {
         font-family: Arial, sans-serif; /* الخط الافتراضي */
@@ -54,9 +61,26 @@
     <div class=" print-container px-1 ">
         <!-- العنوان -->
         @isset($buss)
-        <div class="header bg-[#1749fd15]  rounded-lg">
-            @include('includes.header2')
-
+        <div id="header1" class="header bg-[#1749fd15]  rounded-lg ">
+            <div id="header1" class="header-section border border-gray-300 rounded-lg shadow-md p-1">
+                <div class=" mx-2 flex justify-between ">
+                    <div class="text-right my-4" >
+                        <h2 class="font-extrabold    ">{{ $buss->Company_Name }}</h2>
+                        <p class="text-sm">{{ $buss->Services }}</p>
+                        <p class="text-sm">العنوان: {{ $buss->Company_Address }}</p>
+                        <p class="text-sm">التلفون: {{ $buss->Phone_Number }}</p>
+                    </div>
+                    <div class="flex justify-center ">
+                        <img class="w-32 h-32 rounded-lg " src="{{ url($buss->Company_Logo ? 'images/' . $buss->Company_Logo : '') }}" alt="Logo">
+                    </div>
+                    <div class="text-left  english my-4" >
+                        <h2 class="font-extrabold text-sm  ">{{ $buss->Company_NameE }}</h2>
+                        <div class=" text-sm ">{{ $buss->ServicesE }}</div>
+                        <div class="text-sm">Address: {{ $buss->Company_AddressE }}</div>
+                        <div class="text-sm">Phone: {{ $buss->Phone_Number }}</div>
+                    </div>
+                </div>
+            </div>
             
 
         </div>
@@ -92,17 +116,27 @@
             <div>
                 <div class="flex mt-2 ">
                     <div class="font-extrabold">{{ __('العملة') }} :</div>
-                    <div>{{ $currencysettings ?? __('YR') }}</div>
+                    <div>
+                        @if($SumDebtor_amount!=0||$SumCredit_amount!=0)
+                        {{ $currencysettings ?? __('') }}
+                        @endif
+                        @if($SumDebtor_amountASR!=0||$SumCredit_amountASR!=0)
+                        {{" - ". $currencysettingsASR ?? __('') }}
+                        @endif
+                        @if($SumDebtor_amountUSD!=0||$SumCredit_amountUSD!=0)
+                        {{" - ". $currencysettingsUSD ?? __('') }}
+                        @endif
+                    </div>
                 </div>
             </div>
 
         </header>
         <!-- جدول المنتجات -->
-        <table class=" text-sm font-semibold  w-full overflow-y-auto max-h-[80vh] ">
-            <thead>
+        <table id="header1" class=" text-sm font-semibold  w-full overflow-y-auto max-h-[80vh] ">
+            <thead id="header1"  class="">
                 @isset($entries)
 
-                <tr class="bg-[#1749fd15]">
+                <tr id="header1" class="bg-[#1749fd15]">
                     <th class=" text-center">التاريخ </th>
                     <th class=" text-center">نوع المستند</th>
                     <th class=" text-center">رقم المستند</th>
@@ -116,7 +150,7 @@
                 </tr>
                 @endisset
                 @isset($entriesTotally)
-                <tr class="bg-[#1749fd15]">
+                <tr class="">
                     <th class=" text-center">البيان</th>
                 </tr>
                 @endisset
@@ -135,7 +169,7 @@
 
                 @isset($entries)
                     @foreach ($entries as $entrie)
-                        <tr class="bg-white">
+                        <tr class="">
                             @php
                         if ($entrie->Invoice_type==2) {
                             $Invoice_type  = "آجل"   ;
@@ -177,51 +211,51 @@
                         </tr>
                     @endforeach
                 @endisset
-                <tr class="bg-blue-100">
-                <td colspan="5" class=" text-center">بيان الأرصدة </th>
+                <tr id="header1" class="bg-blue-100">
+                <td colspan="5" class=" text-center rounded-s-lg border-l-0 border-r-0 border-b-1">بيان الأرصدة </th>
                     <td class=" text-right ">
                         <p class="text-sm ">عليكم/الإجمالي  </p>
                     </td>
                     <td class=" text-right ">
                         <p class="">لكم/الإجمالي  </p>
                    </td>
-                    <td class=" text-right ">
+                    <td class=" text-right rounded-e-lg border-0">
                         <p class="">نوع العملة  </p>
                    </td>
                 </tr>
                 @if($amount_YER)
-                 <tr class="bg-blue-100">
-                    <th colspan="5" class=" text-center">اجمالي الرصيد العملة اليمنية </th>
+                 <tr id="header1" class="bg-blue-100">
+                    <th colspan="5" class=" text-center rounded-s-lg border-l-0 border-r-0 border-b-1 ">اجمالي الرصيد العملة اليمنية </th>
                     <td class=" text-right ">
                         {{ number_format($SumDebtor_amount) ?? 0 }}
                     </td>
                     <td class=" text-right ">
                         {{ number_format($SumCredit_amount) ?? 0 }}
                     </td>
-                    <td class=" text-right ">
+                    <td class=" text-right rounded-e-lg border-0">
                         {{ $currencysettings }}
                     </td>
                 </tr>
                 @endif
                 @if($amountASR)
-                <tr class="bg-blue-100">
-                <th colspan="5" class=" text-center">اجمالي الرصيد العملة السعودية</th>
-                    <td class=" text-right ">
+                <tr id="header1" class="bg-blue-100">
+                <th colspan="5" class=" text-center rounded-s-lg border-l-0 border-r-0 border-b-1  ">اجمالي الرصيد العملة السعودية</th>
+                    <td class=" text-right  ">
                         {{ number_format($SumDebtor_amountASR) ?? 0 }}
                     </td>
                     <td class=" text-right ">
                         {{ number_format($SumCredit_amountASR) ?? 0 }}
 
                     </td>
-                    <td class=" text-right ">
+                    <td class=" text-right rounded-e-lg border-0">
                         {{ $currencysettingsASR }}
 
                     </td>
                 </tr>
                 @endif
                 @if($amountUSD)
-                <tr class="bg-blue-100">
-                <th colspan="5" class=" text-center">اجمالي الرصيد العملة الدولار  </th>
+                <tr id="header1" class="bg-blue-100 " >
+                <th colspan="5" class=" text-center rounded-s-lg border-l-0 border-r-0 border-b-1 ">اجمالي الرصيد العملة الدولار  </th>
                     <td class=" text-right ">
                         {{ number_format($SumDebtor_amountUSD) ?? 0 }}
                     </td>
@@ -229,7 +263,7 @@
                         {{ number_format($SumCredit_amountUSD) ?? 0 }}
 
                     </td>
-                    <td class=" text-right ">
+                    <td class=" text-right border-r-0   rounded-e-lg border-0">
                         {{ $currencysettingsUSD }}
 
                     </td>
@@ -238,15 +272,15 @@
             </tbody>
         </table>
 
-        <table class="w-[60%] text-sm ">
-            <thead>
+        <table id="header1" class="w-[60%] text-sm ">
+            <thead class=" ">
             @php
                 $sum=$SumDebtor_amount-$SumCredit_amount;
                 @endphp
                 @if($sum!=0)
 
-                <tr class="bg-blue-100">
-                    <th class="px-2 text-right ">
+                <tr id="header1" class="bg-blue-100 ">
+                    <th class="px-2 text-right rounded-s-lg border-0 ">
                         @php
                         if ($sum>=0) {
                             $commintString  = "عليكم/ رصيد"   ;
@@ -258,7 +292,7 @@
                         @endphp
                         <p class="">{{ $commintString }}</p>
                     </th>
-                    <th class="px-2 text-right">
+                    <th class="px-2 text-right border-0 rounded-e-lg  ">
                         {{ number_format(abs($Sale_priceSum)) ?? 0 }}
 
                         <p class="text-sm">{{ $priceInWords }}</p>
@@ -270,8 +304,8 @@
                 @endphp
                 @if($sumASR!=0)
 
-                <tr class="bg-blue-100">
-                    <th class="px-2 text-right ">
+                <tr id="header1" class="bg-blue-100">
+                    <th class="px-2 text-right rounded-s-lg border-0 ">
                         @php
                         if ($sumASR>=0) {
                             $commintStringASR  = "عليكم/ رصيد"   ;
@@ -283,9 +317,8 @@
                         @endphp
                         <p class="">{{ $commintStringASR }}</p>
                     </th>
-                    <th class="px-2 text-right">
+                    <th class="px-2 text-right border-0 rounded-e-lg  ">
                         {{ number_format(abs($amountASR)) ?? 0 }}
-
                         <p class="text-sm">{{ $priceInWordsASR }}</p>
                     </th>
                 </tr>
@@ -295,8 +328,8 @@
                 @endphp
                 @if($sumUSD!=0)
 
-                <tr class="bg-blue-100">
-                    <th class="px-2 text-right ">
+                <tr id="header1" class="bg-blue-100 rounded-lg ">
+                    <th class="px-2 text-right rounded-s-lg border-0 ">
                         @php
                         if ($sumUSD>=0) {
                             $commintStringUSD  = "عليكم/ رصيد"   ;
@@ -307,25 +340,20 @@
                         @endphp
                         <p class="">{{ $commintStringUSD }}</p>
                     </th>
-                    <th class="px-2 text-right">
+                    <th class="px-2 text-right border-0 rounded-e-lg  ">
                         {{ number_format(abs($amountUSD)) ?? 0 }}
-
                         <p class="text-sm">{{ $priceInWordsUSD }}</p>
                     </th>
                 </tr>
                 @endIf
-
             </thead>
-
-
 </table>
         <!-- الإجماليات -->
-        <div class="totals-section bg-blue-100 p-4">
+        <div id="header1" class="totals-section bg-blue-100 p-4 rounded-lg ">
             <div class="flex justify-between">
                 <div>
 
                         <div class="text-sm">{{ __('  مصادقة الحساب  من  ') }}  {{ $AccountClassName ?? __('غير متوفر') }}: {{  $customer->sub_name ??$customer->account_name?? __('غير متوفر') }}</div>
-
                         <div>
                             <p class="text-sm" dir="ltr">................ التوقيع </p>
 
@@ -337,10 +365,42 @@
                     </div>
                 </div>
             </div>
-        </div>
+            {{ \Carbon\Carbon::now('Asia/Riyadh')->format('Y-m-d H:i:s') }}
 
+        </div>
+       
+    
         <!-- زر الطباعة -->
-        <div class="mt-4 no-print">
+        <div class="mt-4 no-print header1">
+            <button id="myButton" class="px-4 py-2 bgcolor text-white rounded-lg shadow-md hover:bg-blue-600">
+        تغيير الألوان
+            </button>
+           
+            <button id="myButton2" class="px-4 py-2 bgcolor2 text-black rounded-lg shadow-md hover:bg-blue-600">
+        تغيير الألوان
+            </button>
+            <button id="myButton3" class="px-4 py-2 bgcolor3  rounded-lg shadow-md hover:bg-blue-600">
+        تغيير الألوان
+            </button>
+            <script>
+                $(document).ready(function(){
+                    $("#myButton").click(function(){
+                        $("div[id='header1']").toggleClass("text-white bgcolor shadow-sm   ");
+                        $("tr[id='header1']").toggleClass("text-white bgcolor shadow-sm  ");
+
+                    });
+                    $("#myButton2").click(function(){
+                        $("div[id='header1']").toggleClass("bgcolor2 shadow-sm   ");
+                        $("tr[id='header1']").toggleClass(" bgcolor2 shadow-sm  ");
+
+                    });
+                    $("#myButton3").click(function(){
+                        $("div[id='header1']").toggleClass("bgcolor3 shadow-sm   ");
+                        $("tr[id='header1']").toggleClass(" bgcolor3 shadow-sm  ");
+
+                    });
+                });
+            </script>
             <button onclick="printAndClose()" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">طباعة</button>
 
             <script>

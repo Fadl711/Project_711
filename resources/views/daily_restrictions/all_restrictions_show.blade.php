@@ -72,6 +72,7 @@ body {
                     <th class="">الى حساب/الدائن</th>
                     <th class="">دائن</th>
                     <th class=""> البيان</th>
+                    <th class=""> العملة</th>
                     <th class="">تاريخ القيد</th>
                     <th class="">تاريخ التحديث</th>
                     <th class="">الحالة</th>
@@ -105,6 +106,7 @@ body {
                             {{ $resultCredit1->sub_name ?? '' }}
                         </td>                        <td class="border text-right bg-red-400">{{ $eai->Amount_Credit }} </td>
                         <td class="border text-right ">{{ $eai->Statement }}/رقم المستند<span class=" bg-red-400 px-1 rounded-md">{{ $eai->Invoice_id }}</span></td>
+                    </td>                        <td class="border text-right bg-red-400">{{ $eai->Currency_name }} </td>
                         <td class="border text-right">{{ $eai->created_at->format('Y-m-d') }}</td>
                         <td class="border text-right">{{ $eai->updated_at }}</td>
                         <td class="border text-right">

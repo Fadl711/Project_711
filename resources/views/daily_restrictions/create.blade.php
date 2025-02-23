@@ -154,8 +154,6 @@ required>
             <label for="Amount_debit" class="block font-medium mb-2">المبلغ المدين</label>
             <input name="Amount_debit" id="Amount_debit" type="text"  class=" inputSale input-field" placeholder="أدخل المبلغ"
                value="{{ $DailyEntrie->Amount_debit ?? $DailyEntrie->Amount_Credit ??null  }}"
-
-
              required>
         </div>
 
@@ -306,9 +304,9 @@ $('#errorMessage').show().text(data.errorMessage).fadeOut(3000);
                         $.each(errors, function(key, value) {
                             errorMessage += value[0] + '<br>'; // إضافة الأخطاء
                         });
-                        $('#errorMessage').show().html(errorMessage);
+                        $('#errorMessage').show().html(errorMessage).fadeOut(3000);;
                     } else {
-                        $('#errorMessage').show().text('حدث خطأ أثناء الحفظ.');
+                        $('#errorMessage').show().text('حدث خطأ أثناء الحفظ.').fadeOut(3000);
                     }
                 }
             });

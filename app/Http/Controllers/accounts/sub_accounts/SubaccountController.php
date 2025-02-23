@@ -16,6 +16,7 @@ use App\Models\MainAccount;
 use App\Models\SubAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class SubaccountController extends Controller
 {
@@ -151,13 +152,13 @@ $transaction_type="رصيد افتتاحي";
         ->where('daily_entries_type',$transaction_type)
         ->where('entrie_id',$Getentrie_id->entrie_id)
         ->update([
-        'Amount_debit' => $SubAccount->debtor_amount,
-        'Amount_Credit' => $SubAccount->creditor_amount,
+        'Amount_debit' => $SubAccount->debtor_amount??0,
+        'Amount_Credit' => $SubAccount->creditor_amount??0,
+        'Currency_name' => $request->Currency_name,
+        'exchange_rate' => $request->exchange_rate,
         'Statement' =>$request->Statement?? 'إدخال رصيد افتتاحي',
     ]);
-
     return redirect()->route('subAccounts.allShow');
-
    }
    if(!$Getentrie_id ){
     if (!$dailyPage)

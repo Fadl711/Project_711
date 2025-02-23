@@ -68,6 +68,12 @@
 .bgcolor{
    @apply bg-gradient-to-r from-stone-500 to-indigo-700;
 }
+.bgcolor2{
+   @apply bg-gradient-to-r from-amber-400 to-amber-400 text-black ;
+}
+.bgcolor3{
+   @apply bg-gradient-to-r from-indigo-700 to-indigo-700 text-white;
+}
 .dropdown:hover > .dropdown-content {
 	 display: block;
 }

@@ -63,24 +63,20 @@
 
        </div>
         <div class="text-gray-700  px-2">
-
         </div>
         <div class="text-gray-700 w-[50%] max-sm:w-[70%] ">
             <div class="  text-center  ">
                 <div class="flex  " role="">
                     <div  class=" text-center  ">
-                        <label for="Currency" class=" text-center" >العمله </label>
-                        <select   dir="ltr" id="Currency" class="inputSale select2 input-field " name="Currency"  >
-                            @isset($currs)
-                            <option selected value="{{$currs->currency_id}}">{{$currs->currency_name}}</option>
-                            @endisset
+                        <label for="Currency_name" class=" text-center" >العمله </label>
+                        <select   dir="ltr" id="Currency_name" class="inputSale select2 input-field " name="Currency_name"  >
                             @isset($curr)
-
                           @foreach ($curr as $cur)
-                          <option @isset($cu)
-                          @selected($cur->currency_name==$cu->Currency_id)
+                          <option @isset($cur)
+                          @selected($cur->currency_name==$Getentrie_id->Currency_name)
+                            value="{{$cur->Currency_name}}"
                           @endisset
-                          value="{{$cur->currency_id}}">{{$cur->currency_name}}</option>
+                          value="{{$cur->currency_name}}">{{$cur->currency_name}}</option>
                            @endforeach
                            @endisset
                         </select>
