@@ -55,7 +55,7 @@ class RestrictionController extends Controller
             'Statement' => 'nullable|string',
             'Currency_name' =>  'nullable|string', // تأكد من استخدام الاسم الصحيح هنا
             'User_id' => 'required|integer',
-            'exchange_rate' => 'required|integer',
+            'exchange_rate' => 'required',
         ]);
         // التأكد من عدم اختيار حسابين فرعيين متماثلين
         if ($request->sub_account_debit_id == $request->sub_account_Credit_id) {

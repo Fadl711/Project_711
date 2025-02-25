@@ -154,13 +154,7 @@ required>
             <label for="Amount_debit" class="block font-medium mb-2">المبلغ المدين</label>
             <input name="Amount_debit" id="Amount_debit" type="text" class="inputSale input-field"
             placeholder="أدخل المبلغ"
-            value="@php
-                 if (!empty($DailyEntrie->Amount_debit)) {
-                     echo number_format($DailyEntrie->Amount_debit, 0, ',', '');
-                 } elseif (!empty($DailyEntrie->Amount_Credit)) {
-                     echo number_format($DailyEntrie->Amount_Credit, 0, ',', '');
-                 }
-            @endphp"
+            value="{{ !empty($DailyEntrie->Amount_debit) ? number_format($DailyEntrie->Amount_debit, 0, '.', ',') : (!empty($DailyEntrie->Amount_Credit) ? number_format($DailyEntrie->Amount_Credit, 0, '.', ',') : '') }}"
             required>
      
      
@@ -193,8 +187,8 @@ required>
         class="inputSale" 
         name="exchange_rate"
         type="number"
-        value="{{ isset($DailyEntrie->exchange_rate) ?  number_format($DailyEntrie->exchange_rate , 0, '.', ',') : '' }}">
-</div>
+        value="{{ isset($DailyEntrie->exchange_rate) ? number_format($DailyEntrie->exchange_rate, 2, '.', ',') : '' }}" >
+    </div>
         
        
         </div>
