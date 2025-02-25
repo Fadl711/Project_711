@@ -104,14 +104,116 @@ return view('customers.show', compact('balances'));
             {
                 return $this->showStatementMainAccountTotally($validated, $id);
             }
-         if ($validated['list'] === "detail")
-
+            if ($validated['list'] === "detail")
+            
             {
                 return $this->getDailyEntriesMainAccountMyanalysis($validated, $id);
-
+                
                 // return $this->getDailyEntriesMainAccountMyanalysis($validated, $id);
             }
         }
+        
+        if ($validated['list'] === "dailyRestrictions") 
+        {
+            return $this->dailyRestrictions($validated, $id);
+        }
+        if ($validated['list'] === "dailyRestrictionsSelected") 
+        {
+            return $this->dailyRestrictions($validated, $id);
+        }
+    }
+    public function  dailyRestrictions($validated, $id)
+    {
+        $Myanalysis = "القيود";
+    // dd($id);
+
+
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+        // البحث عن التقارير المتعلقة في الحدود اليومية
+        if ($validated['list'] === "dailyRestrictions")
+    {
+        $query = DailyEntrie::with(['debitAccount', 'debitAccount.mainAccount', 'creditAccount', 'creditAccount.mainAccount'])
+       ;
+    }
+    if ($validated['list'] === "dailyRestrictionsSelected") 
+    {
+
+        $query = DailyEntrie::with(['debitAccount', 'debitAccount.mainAccount', 'creditAccount', 'creditAccount.mainAccount'])
+        ->join('sub_accounts', function ($join) {
+            $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')
+                 ->orOn('daily_entries.account_Credit_id', '=', 'sub_accounts.sub_account_id');
+        })
+       ;
+    
+
+        if ($validated['accountlistradio'] === "mainAccount") {
+            $query->whereExists(function ($query) use ($id) {
+                $query->select(DB::raw(0))
+                      ->from('main_accounts')
+                      ->whereRaw('sub_accounts.Main_id = main_accounts.main_account_id')
+                      ->where('main_accounts.main_account_id', $id);
+            });
+        } elseif ($validated['accountlistradio'] === "subAccount") {
+            $query->where('sub_accounts.sub_account_id', $id);
+        }
+    }
+    
+            $startDate = null;
+            $endDate = null;
+                  // تخصيص الفترة الزمنية بناءً على المدخلات
+                  switch ($validated['listradio'] ?? '') {
+                    case '1': // 
+                        $query->where('accounting_period_id',$accountingPeriod->accounting_period_id);
+                        $startDate = $accountingPeriod->created_at?->format('Y-m-d');
+                        $endDate = now()->toDateString();
+                        break;
+                    case '2': // اليوم
+                        $query->where('accounting_period_id',$accountingPeriod->accounting_period_id);
+                        $startDate = now()->toDateString();
+                        $endDate = now()->toDateString();
+                        $query->whereDate('created_at', $startDate);
+                        break;
+                    case '3': // هذا الأسبوع
+                        $query->where('accounting_period_id',$accountingPeriod->accounting_period_id);
+        
+                        $startDate = now()->startOfWeek()->toDateString();
+                        $endDate = now()->endOfWeek()->toDateString();
+                        $query->whereBetween('created_at', [$startDate, $endDate]);
+                        break;
+                    case '4': // هذا الشهر
+                        $query->where('accounting_period_id',$accountingPeriod->accounting_period_id);
+                        $startDate = now()->startOfMonth()->toDateString();
+                        $endDate = now()->endOfMonth()->toDateString();
+                        $query->whereMonth('created_at', now()->month)
+                              ->whereYear('created_at', now()->year);
+                        break;
+                    case '5': // هذا الشهر
+                        if ($validated['fromDate'] && $validated['toDate']) 
+                    {
+                        $query->whereBetween('created_at',[$validated['fromDate'],$validated['toDate']]);
+                        $startDate=$validated['fromDate'];
+                        $endDate=$validated['toDate'];
+                          break;
+        
+                    }
+                    else
+                    {
+                        $query->orderBy('created_at', 'asc'); // تصحيح ترتيب النتائج
+                        $startDate = $accountingPeriod->created_at?->format('Y-m-d') ?? 'غير متوفر';
+                        $endDate = now()->toDateString();
+                        break;
+                    }
+
+              
+                
+                }
+
+
+
+                $eail=$query->get();
+
+             
+                return view('daily_restrictions.print-all', compact('eail','Myanalysis','endDate','startDate'));
 
     }
     public function  Disclosure_of_all_sub_accounts_after_migration($validated, $id)
@@ -252,7 +354,6 @@ $priceInWords=is_numeric($Sale_priceSum)
     public function Full_disclosure_of_accounts_after_migration($validated, $id)
     {
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
-
 if($validated['list']=="Full_disclosure_of_accounts_after_migration")
 {
     $balances = GeneralEntrie::selectRaw(
@@ -297,7 +398,6 @@ $SubAccounts = SubAccount::all();
                 ->sum('amount');
     
             $Sum_amount = ($total_debit ?? 0) - ($total_credit ?? 0);
-            
             if ($Sum_amount !== 0) {
                 if ($Sum_amount > 0) {
                     $SumDebtor_amount += $Sum_amount;
@@ -503,7 +603,6 @@ $SubAccounts = SubAccount::all();
  
 
 return view('report.Final-full-disclosure', compact(
-    'Myanalysis',
     'Myanalysis',
     'balances',
     'AccountClassName',
@@ -840,7 +939,6 @@ return view('report.Final-full-disclosure', compact(
         $UserName = User::where('id',auth()->user()->id,)->pluck('name')->first();    
         $currencysettings=$curre->currency_name ?? 'ريال يمني';
     
-     
         $query = DailyEntrie::with(['debitAccount', 'debitAccount.mainAccount', 'creditAccount', 'creditAccount.mainAccount'])
         ->selectRaw(
             '
@@ -853,8 +951,7 @@ return view('report.Final-full-disclosure', compact(
         })
         ->where('sub_accounts.sub_account_id', $id); // إضافة الشرط للحساب الفرعي
         $startDate = null;
-$endDate = null;
-
+        $endDate = null;
       // تخصيص الفترة الزمنية بناءً على المدخلات
       switch ($validated['listradio'] ?? '') {
         case '1': // 
@@ -862,14 +959,12 @@ $endDate = null;
             break;
         case '2': // اليوم
             $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
-
             $startDate = now()->toDateString();
             $endDate = now()->toDateString();
             $query->whereDate('daily_entries.created_at', $startDate);
             break;
         case '3': // هذا الأسبوع
             $query->where('daily_entries.accounting_period_id',$accountingPeriod->accounting_period_id);
-
             $startDate = now()->startOfWeek()->toDateString();
             $endDate = now()->endOfWeek()->toDateString();
             $query->whereBetween('daily_entries.created_at', [$startDate, $endDate]);
@@ -938,14 +1033,7 @@ $endDate = null;
     $idCurr=1;
     $curre=CurrencySetting::where('currency_settings_id',$idCurr)->first(); 
     $UserName = User::where('id',auth()->user()->id,)->pluck('name')->first();    
-    $currencysettings=$curre->currency_name ?? 'ريال يمني';
-    // $pb = DailyEntrie::all();
-    // foreach ($pb as $p) {
-    //     if ($p->Currency_name!="ريال سعودي") {
-    //         $p->Currency_name = "ريال.يمني";
-    //         $p->save();
-    //     }
-    // }
+
  
     $query = DailyEntrie::with(['debitAccount', 'debitAccount.mainAccount', 'creditAccount', 'creditAccount.mainAccount'])
     ->selectRaw(
@@ -961,8 +1049,7 @@ $endDate = null;
   
          SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_debit ELSE 0 END) as total_debit,
          SUM(CASE WHEN daily_entries.account_Credit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_Credit ELSE 0 END) as total_credit'
-    )
-    ->join('sub_accounts', function ($join) {
+    )->join('sub_accounts', function ($join) {
         $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')
              ->orOn('daily_entries.account_Credit_id', '=', 'sub_accounts.sub_account_id');
     })
@@ -980,7 +1067,6 @@ $endDate = null;
         'daily_entries.Invoice_id',
         'daily_entries.created_at'
     );
-    // $query->whereIn('daily_entries.Currency_name', ['ريال سعودي','ريال.يمني']);
 
     $startDate = null;
     $endDate = null;

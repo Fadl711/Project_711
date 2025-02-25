@@ -10,6 +10,7 @@ use App\Models\SubAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;//+
 use Illuminate\Support\Facades\DB;//+
+use NumberToWords\NumberToWords;
 
 class Review_BudgetController extends Controller
 {
@@ -18,59 +19,71 @@ class Review_BudgetController extends Controller
     {
        // استرجاع الفترة المحاسبية المفتوحة
        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
- if ($accountingPeriod) {
-    $customerMainAccount = MainAccount::whereIn('typeAccount',[1,2,5] )->get();
-    // foreach ($customerMainAccount as $customerMai) {
-        // $idaccounn = $customerMai->main_account_id;
-        $SumDebtor_amount =0;
-        $SumCredit_amount =0;
-        foreach ($customerMainAccount as $balance)
-        {
-           $customerMainAccount = SubAccount::where('Main_id', $balance->main_account_id)->first();
-               $total_debit=DailyEntrie::where('accounting_period_id', $accountingPeriod->accounting_period_id)
-               ->where('account_debit_id',$customerMainAccount->sub_account_id)
-               ->sum('Amount_debit')
-               ;
-               $total_credit=DailyEntrie::where('accounting_period_id', $accountingPeriod->accounting_period_id)
-               ->where('account_Credit_id',$customerMainAccount->sub_account_id)
-               ->sum('Amount_Credit');
-   
-           $Sum_amount = ($total_debit ?? 0) - ($total_credit ?? 0);
-           
-           if ($Sum_amount !== 0) {
-               if ($Sum_amount > 0) {
-                   $SumDebtor_amount += $Sum_amount;
-                   $SumDebtoramount = $Sum_amount;
-                   $SumCreditamount = 0;
-               }
-               if ($Sum_amount < 0) {
-                   $SumCredit_amount += $Sum_amount;
-                   $SumCreditamount = $Sum_amount;
-                   $SumDebtoramount = 0;
-               }
-           }
-       }
-        $balances = DailyEntrie::selectRaw(
-            'sub_accounts.sub_account_id,
-            sub_accounts.sub_name,
-            sub_accounts.Phone,
-            sub_accounts.AccountClass,
-            sub_accounts.typeAccount,
-            SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_debit ELSE 0 END) as total_debit,
-            SUM(CASE WHEN daily_entries.account_Credit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_Credit ELSE 0 END) as total_credit'
-        )
-        ->where('daily_entries.accounting_period_id', $accountingPeriod->accounting_period_id)
-        ->join('sub_accounts', function ($join) {
-            $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')
-                 ->orOn('daily_entries.account_Credit_id', '=', 'sub_accounts.sub_account_id');
-        })->whereIn('sub_accounts.typeAccount',[1,2,5])
-        ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name', 'sub_accounts.Phone')
-        ->get();
-        // حساب الإجماليات (بناءً على البيانات المسترجعة)
-  
-
-        // حساب الفرق (الربح/الخسارة)
-        $Sale_priceSum = abs($SumDebtor_amount - $SumCredit_amount);
+       $balances = DailyEntrie::selectRaw(
+        'sub_accounts.sub_account_id,
+        sub_accounts.sub_name,
+        sub_accounts.Phone,
+        sub_accounts.typeAccount,
+        SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id AND daily_entries.Currency_name = "ريال.يمني" THEN daily_entries.Amount_debit ELSE 0 END) as total_debit,
+        SUM(CASE WHEN daily_entries.account_Credit_id = sub_accounts.sub_account_id AND daily_entries.Currency_name = "ريال.يمني" THEN daily_entries.Amount_Credit ELSE 0 END) as total_credit,
+        SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id AND daily_entries.Currency_name = "ريال سعودي" THEN daily_entries.Amount_debit ELSE 0 END) as total_debits,
+        SUM(CASE WHEN daily_entries.account_Credit_id = sub_accounts.sub_account_id AND daily_entries.Currency_name = "ريال سعودي" THEN daily_entries.Amount_Credit ELSE 0 END) as total_credits,
+        SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id AND daily_entries.Currency_name = "دولار امريكي" THEN daily_entries.Amount_debit ELSE 0 END) as total_debitd,
+        SUM(CASE WHEN daily_entries.account_Credit_id = sub_accounts.sub_account_id AND daily_entries.Currency_name = "دولار امريكي"  THEN daily_entries.Amount_Credit ELSE 0 END) as total_creditd
+    ')
+    ->join('sub_accounts', function ($join) {
+        $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')
+             ->orOn('daily_entries.account_Credit_id', '=', 'sub_accounts.sub_account_id');
+    })
+    ->where('daily_entries.accounting_period_id', $accountingPeriod->accounting_period_id)
+    ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name', 'sub_accounts.Phone','typeAccount')
+    ->get();
+    $total_balance_YER =0;
+    $total_balance_SAD = 0;
+    $total_balance_USD = 0;
+    $debit_YER   = 0;
+    $credit_YER  = 0;
+    $debits_SAD  = 0;
+    $credits_SAD = 0;
+    $debitd_USD  = 0;
+    $credits_USD = 0;
+    foreach($balances as $balance)
+    {
+        $debitd_USD+=$balance->total_debitd;
+        $credits_USD+=$balance->total_creditd;
+        $debit_YER+=$balance->total_debit;
+        $credit_YER+=$balance->total_credit;
+        $debits_SAD+=$balance->total_debits;
+        $credits_SAD+=$balance->total_credits;
+    }
+        $SumDebtor_amount = 0;
+        $SumCredit_amount = 0;
+        $total_debits_SAD = 0;
+        $total_credits_SAD = 0;     
+        $YER="ريال.يمني";
+        $SAD="ريال سعودي";
+        $USD="دولار امريكي";
+        $total_balance_YER=$debit_YER- $credit_YER;
+        $total_balance_SAD=$debits_SAD- $credits_SAD;
+        $total_balance_USD=$debitd_USD- $credits_USD;
+    $startDate = $accountingPeriod->created_at->format('Y-m-d') ?? 'غير متوفر';
+    $endDate = now()->toDateString();
+   // معالجة البيانات لإضافة الفارق ونوع
+    $Sale_priceSum = $SumDebtor_amount -abs( $SumCredit_amount);
+    $SumAmount = abs($SumDebtor_amount - $SumCredit_amount);
+   $numberToWords = new NumberToWords();
+    $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
+    $priceInWordsYER=is_numeric($total_balance_YER) 
+    ? $numberTransformer->toWords(abs( $total_balance_YER)) .' '.$YER
+    : 'القيمة غير صالحة';
+    $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
+    $priceInWordsSAD=is_numeric($total_balance_SAD) 
+    ? $numberTransformer->toWords(abs($total_balance_SAD)) . ' ' . $SAD
+    : 'القيمة غير صالحة';
+    $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
+    $priceInWordsUSD=is_numeric($total_balance_USD) 
+    ? $numberTransformer->toWords(abs($total_balance_USD)) . ' ' . $USD
+    : 'القيمة غير صالحة';
 
         $balances2 = DailyEntrie::selectRaw(
             'sub_accounts.sub_account_id,
@@ -124,22 +137,41 @@ class Review_BudgetController extends Controller
 
        }
         // حساب الفرق (الربح/الخسارة)
-        $Sale_priceSum2 = abs($SumDebtor_amount2 - $SumCredit_amount2);
+        // $Sale_priceSum2 = abs($SumDebtor_amount2 - $SumCredit_amount2);
 
- } else {
-}
+
+// dd($debit_YER);
        
         // تمرير البيانات إلى العرض
-        return view('accounts.review-budget', [
-            'accountingPeriod' => $accountingPeriod,
+        return view('accounts.review-budget', compact(
+            'accountingPeriod',
          
-            'balances' => $balances,
-            'SumDebtor_amount' => $SumDebtor_amount,
-            'SumCredit_amount' => $SumCredit_amount,
-            'balances2' => $balances2,
-            'SumDebtor_amount2' => $SumDebtor_amount2,
-            'SumCredit_amount2' => $SumCredit_amount2,
-        ]);
+            'balances',
+            'SumDebtor_amount', 
+            'SumCredit_amount' ,
+            'balances2',
+            'SumDebtor_amount2',
+            'SumCredit_amount2',
+
+            'accountingPeriod',
+            'priceInWordsYER',
+            'priceInWordsUSD',
+            'priceInWordsSAD',
+            'startDate',
+            'endDate',
+            'debit_YER' ,  
+            'credit_YER',
+            'debits_SAD' , 
+            'credits_SAD' ,
+            'debitd_USD' , 
+            'credits_USD' ,
+            'total_balance_YER',
+            'total_balance_SAD',
+            'total_balance_USD',
+             'YER',
+             'SAD',
+            'USD',
+));
     }
     
     

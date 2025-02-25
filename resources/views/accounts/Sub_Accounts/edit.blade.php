@@ -106,7 +106,7 @@
                         id="Statement"
                         rows="3"
                     >
-                    {{$Getentrie_id->Statement ??0 }}"
+                    {{$Getentrie_id->Statement ??'' }}
                 </textarea>
                            </div>
             <div class="mb-2">

@@ -116,7 +116,6 @@ if (!$invoices) {
 }
 $mainc=MainAccount::all();
 $suba=SubAccount::all();
-
 // // إنشاء القيد اليومي
 $dailyEntrie = DailyEntrie::updateOrCreate(
     [

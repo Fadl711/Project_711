@@ -71,10 +71,13 @@
             <option value="" selected>اختر نوع التقرير</option>
             @foreach([
 
-              'summary' => ' كشف كلي',
+            //   'summary' => ' كشف كلي',
               'detail' => ' كشف تحليلي',
+              'dailyRestrictions' => ' كشف القيود',
+              'dailyRestrictionsSelected' => ' كشف القيود  للحساب المحدد',
               'FullDisclosureOfSubAccounts' => 'كشف كلي الحسابات الفرعية قبل الترحيل',
               'FullDisclosureOfAccounts' => 'كشف  كلي للحسابات  قبل الترحيل',
+
               'Disclosure_of_all_sub_accounts_after_migration' => 'كشف كلي الحسابات الفرعية بعد الترحيل',
               'Full_disclosure_of_accounts_after_migration' => 'كشف  كلي للحسابات  بعد الترحيل',
 
@@ -87,8 +90,8 @@
 </div>
 </form>
 <div id="errorMessage" class="text-red-500 text-xs mt-2 hidden"></div>
-<button onclick="openInvoiceWindow(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح الفاتورة</button>
-<button onclick="openAndPrintInvoice2(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح وطباعة الفاتورة</button>
+<button onclick="openInvoiceWindow(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح الكشف</button>
+{{-- <button onclick="openAndPrintInvoice2(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح وطباعة الفاتورة</button> --}}
 <div id="successMessage" style="display:none;" class="text-red-500 font-semibold mt-2"></div>
 
 <script>
@@ -109,7 +112,7 @@ if (viewType === "") {
     return;
 }
 
-if(viewType==="FullDisclosureOfSubAccounts" || viewType==="Disclosure_of_all_sub_accounts_after_migration"  || viewType==="detail"  || viewType==="summary")
+if(viewType==="FullDisclosureOfSubAccounts" || viewType==="Disclosure_of_all_sub_accounts_after_migration"  || viewType==="detail"  || viewType==="summary" || viewType==="dailyRestrictionsSelected")
 {
 // التحقق من الحسابات
 if (accountListRadio === "mainAccount") {
@@ -137,6 +140,7 @@ if (viewType === "Full_disclosure_of_accounts_after_migration" ) {
     invoiceField = 0;
 }
 
+
 // عرض رسالة خطأ إذا لم يتم تحديد أي خيار
 if (invoiceField === -1) {
     displayMessage('يرجى تحديد  نوع التقرير أو الحساب', 'error'); // عرض رسالة خطأ\\
@@ -146,9 +150,11 @@ if (invoiceField === -1) {
     if (invoiceField>=0) {
         const FromDate =fromDate.val() ;
 const ToDate=toDate.val();
+
         const url = `{{ route('customers.statement', ':invoiceField') }}`
             .replace(':invoiceField', invoiceField)
             + `?list=${viewType}&listradio=${listRadio}&accountlistradio=${accountListRadio}&fromDate=${FromDate}&toDate=${ToDate}`;
+
 
         window.open(url, '_blank', 'width=800,height=800');
     } else {

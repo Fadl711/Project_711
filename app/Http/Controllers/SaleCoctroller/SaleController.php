@@ -291,7 +291,7 @@ class SaleController extends Controller
                     'Statement' => $commint." ".$transactiontype." ".PaymentType::tryFrom($saleInvoice->payment_type)?->label().$note ,
                     'Daily_page_id' => $daily_page_id ?? $dailyPage->page_id,
                     'Invoice_type' => $saleInvoice->payment_type,
-                    'Currency_name' =>  $curre-> currency_name,
+                    'Currency_name' =>  $curre->currency_name,
                     'User_id' =>auth()->user()->id,
                     'status_debit' => 'غير مرحل',
                     'status' => 'غير مرحل',

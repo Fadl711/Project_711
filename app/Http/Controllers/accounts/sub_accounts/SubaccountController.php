@@ -125,8 +125,8 @@ class SubaccountController extends Controller
             'AccountClass' => $TypeSubAccount->AccountClass,
             'typeAccount' => $TypeSubAccount->typeAccount,
             'User_id'=>$request->User_id,
-            'debtor_amount'=>$request->debtor_amount,
-            'creditor_amount'=>$request->creditor_amount,
+            'debtor_amount'=>$request->debtor_amount ??0,
+            'creditor_amount'=>$request->creditor_amount??0,
             'Phone' =>$request->Phone ,
             'name_The_known' =>$request->name_The_known ,
 
