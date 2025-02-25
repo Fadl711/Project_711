@@ -6,6 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>كشف حساب {{$Myanalysis}}</title>
     <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="{{ asset('assets/js/jquery/dist/jquery.min.js') }}"></script>
     <style>
           body {
         font-family: Arial, sans-serif; /* الخط الافتراضي */
@@ -185,6 +187,56 @@
     </div>
 
 <script>
+    $(document).ready(function() {
+    $(document).on('click', '.delete-payment', function (e) {
+        e.preventDefault();
+
+        var successMessage = $('#successAlert'); // الرسالة الناجحة
+        var errorMessage = $('#successAlert1'); // الرسالة الخطأ
+        // const url = "{{ url('daily_restrictions')}}"; // استخدم مُتغير
+        let paymentId = $(this).data('id');
+        console.log('Payment ID:', paymentId); // تحقق من قيمة paymentId
+
+        // const url = act.replace(':id', paymentId);
+
+        if (confirm('هل أنت متأكد أنك تريد حذف هذا القيد')) {
+            $.ajax({
+                url: "{{ url('daily_restrictions/')}}/" + paymentId,
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                },
+                success: function (response) {
+    console.log(response); // تحقق من استجابة الخادم
+    if (response.success) {
+        var rowSelector = '#row' + paymentId;
+        $(rowSelector).hide();
+        $(rowSelector).css('display', 'none');
+        $(rowSelector).slideUp();
+        $('#row-' + paymentId).fadeOut(); // إخفاء الصف
+
+        $(rowSelector).css('display', 'none');
+        $(rowSelector).fadeOut(function() {
+            console.log('Row faded out successfully'); // تحقق من نجاح الإخفاء
+        });
+
+        successMessage.text(response.message || 'تم الحذف بنجاح.').show();
+        setTimeout(() => successMessage.hide(), 3000);
+    } else {
+        errorMessage.text(response.message || 'حدث خطأ أثناء الحذف.').show();
+        setTimeout(() => errorMessage.hide(), 3000);
+    }
+},
+                error: function (xhr) {
+                    errorMessage.show().text(xhr.responseJSON.message || 'حدث خطأ أثناء الاتصال بالخادم.');
+                    setTimeout(() => {
+                        errorMessage.hide();
+                    }, 5000);
+                }
+            });
+        }
+    });
+});
     function printAndClose() {
         // $(".editHt").addClass("hidden");
                         // $(".editHt").toggleClass("bgcolor3 shadow-sm   ");

@@ -8,11 +8,11 @@
     <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
     {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="{{ asset('assets/js/jquery/dist/jquery.min.js') }}"></script>
 
     
     <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
     <!-- jQuery -->
-    <script src="{{ asset('assets/js/jquery/dist/jquery.min.js') }}"></script>
 
     <style>
           body {
