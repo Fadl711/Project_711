@@ -125,8 +125,8 @@ class SubaccountController extends Controller
             'AccountClass' => $TypeSubAccount->AccountClass,
             'typeAccount' => $TypeSubAccount->typeAccount,
             'User_id'=>$request->User_id,
-            'debtor_amount'=>$request->debtor_amount ??0,
-            'creditor_amount'=>$request->creditor_amount??0,
+            'debtor_amount'=>$request->debtor_amount ?? 0,
+            'creditor_amount'=>$request->creditor_amount?? 0,
             'Phone' =>$request->Phone ,
             'name_The_known' =>$request->name_The_known ,
 
@@ -212,6 +212,9 @@ $transaction_type="رصيد افتتاحي";
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->where('daily_entries_type',$transaction_type)
             ->value('entrie_id');
+            // if($Getentrie_id){
+            //     DailyEntrie::where('entrie_id', $Getentrie_id)->delete();
+            // }
 
             return redirect()->back();
 
@@ -248,6 +251,7 @@ $transaction_type="رصيد افتتاحي";
             $query = $request->get('search');
             if ($query != '') {
                 $SubAccounts = SubAccount::with('mainAccount')->where('sub_name', 'LIKE', '%'.$query.'%')
+                ->orWhere('sub_account_id', 'LIKE', '%'.$query.'%')
                     ->get();
 
 

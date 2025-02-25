@@ -4,15 +4,43 @@
 <x-navbar_accounts/>
 <br>
 <style>
+    body {
+        font-family: 'Tajawal', sans-serif;
+    }
+    .header-section {
+        background-color: #f3f4f6;
+    }
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    table th, table td {
+        text-align: center;
+    }
+    .no-print button {
+        transition: background-color 0.3s ease;
+    }
+    .no-print button:hover {
+        transform: scale(1.05);
+    }
+    @media print {
+    .no-print {
+        display: none;
+    }
+    
+}
+body {
+    
+    font-family: Arial, sans-serif; /* الخط الافتراضي */
+}
+
   /* تثبيت الأرقام بالإنجليزية */
   .english-numbers {
       font-feature-settings: 'tnum';
       direction: ltr;
       unicode-bidi: plaintext;
   }
-  td{
-    text-align: right;
-  }
+ 
 </style>
 <div id="successMessage" class="alert-success" style="display: none;"></div>
 
@@ -41,17 +69,13 @@
   <div class="flex px-4">
     <label class="font-bold" for=""> نوع الحساب :</label>
         @isset($accountClasses)
-
    @foreach($accountClasses as $accountClass)
-
         <div class="flex px-4" >
           <label class="labelSale">{{ $accountClass->label() }} </label>
       <input  type="radio" required  value="{{ $accountClass->value }}" id="AccountClass" name="AccountClass" class="input-field w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
     </div>
-
   @endforeach
   @endisset
-
     </div>
   </div>
   <br>
@@ -67,12 +91,8 @@
         @foreach ($AccountTypes as $AccountType)
         <option value="{{$AccountType->value}}" >{{$AccountType->label() }} </option>
         @endforeach
-
-
     </select>
-
     </div>
-
   <div class="mb-2">
     <label class="labelSale  " required for="Type_migration"> يرحل الى </label>
       <select id="Type_migration" class=" text-left select2 input-field inputSale" name="Type_migration">
@@ -99,10 +119,10 @@
 </form>
 </div>
 
-<div  class="w-[100%]" >
-<table class="w-[100%]" id="mainAccountsTable" >
-  <thead>
-      <tr class="">
+<div class=" overflow-x-auto bg-white shadow-md sm:rounded-lg    w-full px-4 py-2   max-h-[80vh]">
+  <table class="text-sm  bg-indigo-900 font-semibold w-full overflow-y-auto max-h-[80vh] border-collapse">
+          <thead class="bg-indigo-900 text-white sticky top-0  uppercase dark:bg-gray-700 dark:text-gray-400 ">
+      <tr class="text-white bg-[#2430d3]">
           <th class="text-right tagHt">رقم الحساب</th>
           <th class="text-right tagHt">اسم الحساب</th>
           <th class="text-right tagHt"> طبيعة الحساب</th>

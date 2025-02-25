@@ -50,7 +50,7 @@ body {
         <table class="text-sm   font-semibold w-full overflow-y-auto max-h-[80vh] border-collapse">
                 <thead class="bg-[#2430d3] text-white sticky top-0  uppercase dark:bg-gray-700 dark:text-gray-400">
                 <tr class="">
-                    <th  colspan="2" class=" text-right bg-white text-white   ">
+                    <th  colspan="2" class=" text-right bg-white text-white  ">
                        </th>
                     <th colspan="2" class="rounded-s-lg border border-white text-right">بيانات حساب المدين (الأخذ)</th>
                     <th colspan="2" class=" border-whi border  text-right">بيانات حساب الدائن (المعطي)</th>

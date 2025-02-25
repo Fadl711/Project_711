@@ -1,6 +1,38 @@
 @extends('layout')
 @section('conm')
 
+<style>
+      body {
+        font-family: 'Tajawal', sans-serif;
+    }
+    .header-section {
+        background-color: #f3f4f6;
+    }
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    table th, table td {
+        text-align: center;
+    }
+    .no-print button {
+        transition: background-color 0.3s ease;
+    }
+    .no-print button:hover {
+        transform: scale(1.05);
+    }
+    @media print {
+    .no-print {
+        display: none;
+    }
+    
+}
+body {
+    
+    font-family: Arial, sans-serif; /* الخط الافتراضي */
+}
+
+</style>
 <x-navbar_accounts/>
 
 <div id="successMessage" class="hidden fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
@@ -8,7 +40,6 @@
 </div>
 <div id="successAlert1"  class="hidden fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
 </div>
-<div class="w-full overflow-y-auto max-h-[80vh]  bg-white">
     <div class="flex flex-col gap-4 justify-center items-center p-2">
         <div class="relative  border border-gray-200 rounded-lg w-full max-w-lg">
             <input id="search"  type="text" class="rounded-md w-full text-right placeholder:text-right " placeholder="اسم الحساب الفرعي   ">
@@ -21,9 +52,10 @@
                 </span>
         </div>
     </div>
-  <table class="w-full mb-4 text-sm bg-white border border-gray-200 rounded-lg shadow-lg">
-
-      <thead>
+    <div class=" overflow-x-auto bg-white shadow-md sm:rounded-lg    w-full px-4 py-2   max-h-[80vh]">
+        
+        <table class="text-sm   font-semibold w-full overflow-y-auto max-h-[80vh] border-collapse">
+                <thead class="bg-[#2430d3] text-white sticky top-0  uppercase dark:bg-gray-700 dark:text-gray-400">
           <tr class="">
               <th class="text-right tagHt">رقم الحساب</th>
               <th class="text-right tagHt">  اسم الحساب الفرعي</th>
@@ -45,20 +77,40 @@
        {{-- @if ($subAccount->Main_id==$mainAccount->sub_account_id)  --}}
 
         <tr>
-            <td class="text-right tagTd">{{$SubAccount->sub_account_id}}</td>
+            <td class="text-right tagTd">
+                @php
+                    $accountClass = 0;
+            
+                    if ($SubAccount->typeAccount == 1) {
+                        $accountClass = 110; // سيتم تطبيق هذا فقط إذا كان typeAccount == 1
+                    } elseif ($SubAccount->typeAccount == 2) {
+                        $accountClass = 1110;
+                    } elseif ($SubAccount->typeAccount == 3) {
+                        $accountClass = 1120;
+                    }
+                    elseif ($SubAccount->typeAccount == 4) {
+                        $accountClass = 1130;
+                    }
+                    elseif ($SubAccount->typeAccount == 5) {
+                        $accountClass = 1140;
+                    }
+                @endphp
+            
+                {{  $accountClass .  $SubAccount->sub_account_id}}
+            </td>
+            
             <td class="text-right tagTd">{{$SubAccount->sub_name}}</td>
-            <td class="text-right tagTd">{{$SubAccount->mainAccount->accountClassLabel()}}</td>
-            <td class="text-right tagTd">{{$SubAccount->mainAccount->accountTypeLabel()}}</td>
+            <td class="text-right tagTd">
+                {{$SubAccount->mainAccount ? $SubAccount->mainAccount->accountClassLabel() : 'N/A'}}
+            </td>
+            <td class="text-right tagTd">
+                {{$SubAccount->mainAccount ? $SubAccount->mainAccount->accountTypeLabel() : 'N/A'}}
+            </td>
             <td class="text-right tagTd">{{$SubAccount->debtor_amount}}</td>
             <td class="text-right tagTd">{{$SubAccount->creditor_amount}}</td>
-
             <td class="text-right tagTd">{{$SubAccount->user->name}}</td>
             <td class="text-right tagTd">{{$SubAccount->created_at}}</td>
             <td class="text-right tagTd">{{$SubAccount->updated_at}}</td>
-
-
-
-
         <td class="text-right tagTd">
             <div class="flex items-center gap-1">
               <a  href="{{route('subAccounts.edit',$SubAccount->sub_account_id)}}"  class="p-1  rounded-full  group transition-all duration-500  flex item-center">
@@ -80,18 +132,17 @@
 
       </tbody>
     </table>
-    </div>
+</div>
+
 
 <script >
 
     $(document).ready(function() {
         $(document).on('click', '.delete-payment', function (e) {
             e.preventDefault();
-
             var successMessage = $('#successMessage'); // الرسالة الناجحة
             var errorMessage = $('#successAlert1'); // الرسالة الخطأ
             const act = "{{ route('subAccounts.destroy', ':id') }}"; // استخدم مُتغير
-
             let paymentId = $(this).data('id');
             console.log('Payment ID:', paymentId); // تحقق من قيمة paymentId
 

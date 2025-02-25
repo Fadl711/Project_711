@@ -174,6 +174,8 @@
                             }
                         @endphp
                         {{-- Local Currency Debit --}}
+                        @if($debit_YER!=0||$credit_YER!=0)
+
                         <td class="text-center">
                             @php
                                 $wholeNumber = floor($totalDebitYER);
@@ -194,6 +196,7 @@
     <span class="text-green-600">.{{ substr(number_format($decimal, 2, '.', ''), 2) }}</span>
 @endif
                         </td>
+                        @endif
 
                         {{-- Saudi Currency (ريال سعودي) --}}
                         @php
@@ -212,7 +215,8 @@
 
                             }
                         @endphp
-                        {{-- Saudi Currency Debit --}}
+                     @if($debits_SAD!=0||$credits_SAD!=0)
+
                         <td class="text-center">
                             @php
                                 $wholeNumber = floor($totalDebitsSAD);
@@ -228,6 +232,7 @@
                             @endphp
                             {{ $wholeNumber != 0 ? number_format($wholeNumber, 0, '.', ',') : '' }}@if($decimal > 0)<span class="text-green-600">.{{ substr(number_format($decimal, 2, '.', ''), 2) }}</span>@endif
                         </td>
+                        @endif
                         @if($debitd_USD!=0||$credits_USD!=0)
                         @php
                             $totalDebitUSD=0;
@@ -260,8 +265,6 @@
                          {{ $wholeNumberUS != 0 ? number_format($wholeNumberUS, 0, '.', ',') : '' }}@if($decimalUS > 0)<span class="text-green-600">.{{ substr(number_format($decimalUS, 2, '.', ''), 2) }}</span>@endif
                         </td>
                         @endif
-
-
                     </tr>
                 @endforeach
                 <tr class="bg-blue-100">

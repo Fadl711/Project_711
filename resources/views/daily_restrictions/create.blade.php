@@ -152,16 +152,25 @@ required>
           <div class="grid grid-cols-2 md:grid-cols-2 gap-4">
           <div>
             <label for="Amount_debit" class="block font-medium mb-2">المبلغ المدين</label>
-            <input name="Amount_debit" id="Amount_debit" type="text"  class=" inputSale input-field" placeholder="أدخل المبلغ"
-               value="{{ $DailyEntrie->Amount_debit ?? $DailyEntrie->Amount_Credit ??null  }}"
-             required>
+            <input name="Amount_debit" id="Amount_debit" type="text" class="inputSale input-field"
+            placeholder="أدخل المبلغ"
+            value="@php
+                 if (!empty($DailyEntrie->Amount_debit)) {
+                     echo number_format($DailyEntrie->Amount_debit, 0, ',', '');
+                 } elseif (!empty($DailyEntrie->Amount_Credit)) {
+                     echo number_format($DailyEntrie->Amount_Credit, 0, ',', '');
+                 }
+            @endphp"
+            required>
+     
+     
         </div>
 
         <div class="">
             <label for="Currency_name" class="block font-medium mb-2">العملة</label>
             <select dir="ltr" id="Currency_name" class="inputSale input-field" name="Currency_name">
                 @isset($currs)
-                    <option selected value="{{ $currs->currency_name }}">{{ $currs->currency_name }}</option>
+                    <option selected value="{{ $currs->currency_name }} ">{{ $currs->currency_name }}</option>
                 @endisset
 
                 @isset($curr)
@@ -184,7 +193,7 @@ required>
         class="inputSale" 
         name="exchange_rate"
         type="number"
-        value="{{ isset($DailyEntrie->exchange_rate) ? $DailyEntrie->exchange_rate : 1.00 }}">
+        value="{{ isset($DailyEntrie->exchange_rate) ?  number_format($DailyEntrie->exchange_rate , 0, '.', ',') : '' }}">
 </div>
         
        

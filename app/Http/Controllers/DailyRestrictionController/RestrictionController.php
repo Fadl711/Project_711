@@ -116,6 +116,8 @@ if (!$invoices) {
 }
 $mainc=MainAccount::all();
 $suba=SubAccount::all();
+// dd($validated['Currency_name']);
+
 // // إنشاء القيد اليومي
 $dailyEntrie = DailyEntrie::updateOrCreate(
     [
