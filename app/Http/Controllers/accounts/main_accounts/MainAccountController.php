@@ -223,11 +223,17 @@ public function getSubAccounts(Request $request , $id)
 }
 
 public function destroy($id){
-    if($id==1){
+    if($id==1)
+    {
 
         return redirect()->back();
     }else{
-        MainAccount::where('main_account_id',$id)->delete();
+        $mainAccount = MainAccount::find($id);
+
+
+        // MainAccount::where('main_account_id',$id)->delete();
+        // SubAccount::where('Main_id', $id)->delete();
+
         return redirect()->back();
 
     }
