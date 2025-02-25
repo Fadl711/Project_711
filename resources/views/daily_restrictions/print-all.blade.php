@@ -108,6 +108,7 @@
                     <th class="">تاريخ التحديث</th>
                     <th class="">الحالة</th>
                     <th class="">المستخدم</th>
+                    <th class="">الرقم الصفحة</th>
                     <th class="no-print  rounded-e-lg  ">عرض - تحرير</th>
                 </tr>
             </thead>
@@ -134,7 +135,8 @@
                         </td>                    
                               <td class="border text-right  ">{{ $eai->Amount_debit }} </td>
                         <td class=" text-right">
-                            {{ $eai->creditAccount->sub_name ?? $eai->account_debit_id  }}
+                            {{ $eai->creditAccount->sub_name  ?? $eai->account_debit_id}}
+
                         </td>                        <td class="border text-right">{{ $eai->Amount_Credit }} </td>
                         <td class="border text-right ">{{ $eai->Statement }}/رقم المستند<span class=" bg-red-400 px-1 rounded-md">{{ $eai->Invoice_id }}</span></td>
                     </td>                        <td class="border text-right">
@@ -149,6 +151,7 @@
                            @endif
                         </td>
                         <td class="border text-right">{{ $eai->user->name ?? $eai->account_Credit_id }}</td>
+                        <td class="border text-right">{{ $eai->Daily_page_id }}</td>
                         <td class="border text-right flex  no-print">
                             <a href="{{ route('restrictions.show', $eai->entrie_id) }}" class="text-sm py-2 leading-none rounded-md hover:bg-gray-100">
                                 <svg class="w-6 h-6 text-[#2430d3]" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
