@@ -265,7 +265,7 @@
             <div class="grid grid-cols-3 gap-1 px-1">
                 <div>
                     <label for="Total" class="labelSale total-field">الاجمالي</label>
-                    <input type="text" name="Total" id="Total" placeholder="0" class="inputSale total-field" required />
+                    <input type="text" name="Total" id="Total" placeholder="0" class="inputSale total-field " required />
                 </div>
                 <div>
                     <label for="total_price" class="labelSale"> الإجمالي  الصافي </label>
@@ -641,7 +641,7 @@ successMessage.text('لا توجد فاتورة').show();
 </script>
 <script>
 $(document).ready(function () {
-    
+  
     const inputs = $('.input-field '); // تحديد جميع الحقول
     const form = $('#ajaxForm');
 form.on('keydown', function (event) {
@@ -660,6 +660,7 @@ form.on('keydown', function (event) {
         $('#saveButton').on('click', function () {
             handleSave();
         });
+
         // الوظيفة الرئيسية للحفظ
         function handleSave() {
             const quantityAvailable = parseFloat($('#QuantityPurchase').val()) || 0;
@@ -763,6 +764,7 @@ form.on('keydown', function (event) {
             $(this).removeClass('is-invalid');
             parentDiv.find('.error-message').remove();
         });
+        
     });
    
 </script>

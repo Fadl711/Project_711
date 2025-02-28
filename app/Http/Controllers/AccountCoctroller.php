@@ -27,7 +27,7 @@ class AccountCoctroller extends Controller
         
        
 
- return view(['MainAccounts'=> $MainAccounts]);
+//  return view(['MainAccounts'=> $MainAccounts]);
          }
 
     public function index(){
@@ -132,26 +132,32 @@ return response()->json( $data);
                     'Daily_entry_id' => $request->entrie_id,
                     'accounting_period_id' => $accountingPeriod->accounting_period_id,
                     'sub_id' => $request->account_debit_id,
-                ])->exists()) {
+                ])->exists())
+                 {
                     return response()->json(['error' => 'تم ترحيل هذا القيد مسبقاً كـ مدين ']);
 
                     throw new \Exception("تم ترحيل هذا القيد مسبقاً كـ مدين .");
                 }   
-                $this->processEntry($request->account_debit_id, null, $entry->entrie_id,$entry->Amount_debit,$entry->Amount_Credit,$entry);  
+                // dd($request->account_debit_id);
+
+                $this->processEntry($request->account_debit_id,null, $entry->entrie_id,$entry->Amount_debit,$entry->Amount_Credit,$entry, $request->account_Credit_id);
                }
+            //    dd(5455);
+
             // معالجة القيد الدائن
             if ($request->account_Credit_id) {
-                if (GeneralEntrie::where([
-                    'Daily_entry_id' => $request->entrie_id,
-                    'accounting_period_id' => $accountingPeriod->accounting_period_id,
-                    'sub_id' => $request->account_Credit_id,
-                ])->exists())
-                 {
-                     return response()->json(['error' => '  تم ترحيل هذا القيد مسبقاً كـ دائن ']);
-                    throw new \Exception("تم ترحيل هذا القيد مسبقاً كـ دائن .");
+                // if (GeneralEntrie::where([
+                //     'Daily_entry_id' => $request->entrie_id,
+                //     'accounting_period_id' => $accountingPeriod->accounting_period_id,
+                //     'sub_id' => $request->account_Credit_id,
+                // ])->exists())
+                //  {
+                //      return response()->json(['error' => '  تم ترحيل هذا القيد مسبقاً كـ دائن ']);
+                //     throw new \Exception("تم ترحيل هذا القيد مسبقاً كـ دائن .");
 
-                }   
-                $this->processEntry(null, $request->account_Credit_id, $entry->entrie_id,$entry->Amount_debit,$entry->Amount_Credit,$entry);
+                // }   
+
+                $this->processEntry(null, $request->account_Credit_id, $entry->entrie_id,$entry->Amount_debit,$entry->Amount_Credit,$entry,$request->account_debit_id);
             }
     
             return response()->json(['success' => 'تم ترحيل القيد بنجاح!']);
@@ -162,13 +168,10 @@ return response()->json( $data);
         }
     }
     
-    private function processEntry($accountDebitId, $accountCreditId, $entryId,$Amount_debit,$Amount_Credit,$entry)
+    private function processEntry($accountDebitId, $accountCreditId, $entryId,$Amount_debit,$Amount_Credit,$entry,$accunt_id)
     {
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
-        // $entry = DailyEntrie::findOrFail($entryId);
-        // $entry = DailyEntrie::where('accounting_period_id',$accountingPeriod->accounting_period_id)
-        // ->where('entrie_id', $entryId)
-        // ->first();
+    //   dd($accountDebitId);
         $descriptionText = '';
         $descriptionCommint = '';
         $accountCreditId ?? null;
@@ -177,22 +180,23 @@ return response()->json( $data);
         if ($accountCreditId) {
             $accountId = $accountCreditId;
             $amount= $Amount_Credit ??0;
-            $descriptionCommint = "الى ح/";
+            $descriptionCommint = "من ح/";
             $entryType = "credit";
-            $subAccount = SubAccount::where('sub_account_id',$accountCreditId)->first();
+            $subAccount = SubAccount::where('sub_account_id',$accunt_id)->first();
 
         }  
     
-        
+        // dd($accountCreditId);
+        // dd($accountDebitId);
         if ($accountDebitId) 
         {
             $accountId = $accountDebitId;
-            $amount= $Amount_debit;
-            $subAccount = SubAccount::where('sub_account_id',$accountDebitId)->first();
-
-            $descriptionCommint = "من ح/";
+            $amount= $Amount_debit??0;
+            $subAccount = SubAccount::where('sub_account_id',$accunt_id)->first();
+            $descriptionCommint = "الى ح/";
             $entryType = "debit";
         }
+        $descriptionText="";
         // جلب الحسابات الفرعية والرئيسية
         $Main_id=$subAccount->Main_id;
         $mainAccount = MainAccount::where('main_account_id',$Main_id)->first();
@@ -237,42 +241,44 @@ return response()->json( $data);
         // الآن يمكنك استخدام $generalLedge بأمان
         $id = $generalLedge->general_ledge_id;
 
-        // $generalEntrie = GeneralEntrie::where([
-        //     'accounting_period_id' => $accountingPeriod->accounting_period_id,
-        //     'Daily_entry_id' => $entry->entrie_id,
-        //     'sub_id' => $subAccount->sub_account_id,
-        //     'entry_type' => $entryType,
+        $generalEntrie = GeneralEntrie::where([
+            'accounting_period_id' => $accountingPeriod->accounting_period_id,
+            'Daily_entry_id' => $entry->entrie_id,
+            'sub_id' => $subAccount->sub_account_id,
+            'entry_type' => $entryType,
 
 
 
-        // ])->first();
+        ])->first();
 
 
-        if($amount!=0)
-        {
+        // if($amount!=0)
+        // {
         // إنشاء السجل في GeneralEntrie باستخدام المعرف الصحيح
         $generalEntry = GeneralEntrie::updateOrCreate([
             'accounting_period_id' => $accountingPeriod->accounting_period_id,
             'Daily_entry_id' => $entry->entrie_id,
-            'entry_type' => $entryType,
+            'sub_id' => $accountId,
         ], [
+            'entry_type' => $entryType,
             'General_ledger_page_number_id' =>  $generalLedge->general_ledge_id ?? null,
             'Daily_Page_id' => $entry->Daily_page_id,
+            'entry_date' => $entry->created_at,
             'Main_id' => $mainAccount->main_account_id,
             'typeAccount' => $subAccount->typeAccount,
             'amount' => $amount,
-            'description' => $descriptionCommint . $descriptionText ??''  ." ". $subAccount->sub_name ??  " " ,
-            'entry_date' => $entry->created_at,
-            'status' =>'غير مرحل',
+'description' => $descriptionCommint . $descriptionText . " " . $subAccount->sub_name . "-" . $entry->Statement ?? " ",            'status' =>'غير مرحل',
             'Invoice_type' => $entry->Invoice_type,
             'Invoice_id' => $entry->Invoice_id ??null,
             'Currency_name' => $entry->Currency_name ??'',
+            'exchange_rate' => $entry->exchange_rate,
+
             'User_id' => auth()->id(),
         ]);
 
-        // if (!$generalEntry) {
-        //     throw new \Exception("حدث خطأ أثناء إنشاء السجل في GeneralEntrie.");
-        // }
+        if (!$generalEntry) {
+            throw new \Exception("حدث خطأ أثناء إنشاء السجل في GeneralEntrie.");
+        }
         // تحديث حالة القيد اليومي بعد الترحيل
         if ($accountDebitId) {
             $entry->update(['status_debit' => 'مرحل']);
@@ -283,13 +289,13 @@ return response()->json( $data);
         }
     
 
-    }
+    // }
     }
     
     public function storeAllEntries()
     {
         try {
-            $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
+            $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
                   $entries = DailyEntrie::where('accounting_period_id', $accountingPeriod->accounting_period_id)->get();
             if ($entries->isEmpty()) {
                 return response()->json(['error' => 'لا توجد قيود غير مرحل لترحيلها.'], 404);
@@ -298,17 +304,14 @@ return response()->json( $data);
                  {
                     if($entry->account_debit_id)
                     {
-                        if($entry->Amount_debit !=0)
-                        {
-
-                        $this->processEntry($entry->account_debit_id, null, $entry->entrie_id,$entry->Amount_debit??0,$entry->Amount_Credit ?? 0,$entry);
-                        }
+                       
+                        $this->processEntry($entry->account_debit_id, null, $entry->entrie_id,$entry->Amount_debit,$entry->Amount_Credit ,$entry,$entry->account_Credit_id);
+                        
                     }
                     if($entry->account_Credit_id){
-                        if($entry->Amount_Credit !=0)
-                        {
-                        $this->processEntry(null, $entry->account_Credit_id, $entry->entrie_id,$entry->Amount_debit??0,$entry->Amount_Credit ?? 0,$entry);
-                    }
+                       
+                        $this->processEntry(null, $entry->account_Credit_id, $entry->entrie_id,$entry->Amount_debit,$entry->Amount_Credit ,$entry,$entry->account_debit_id);
+                    
 
                     }
 
@@ -364,8 +367,14 @@ return response()->json( $data);
 
             if ($hasDebit || $hasCredit)
              {
-                // يتم ترحيل القيد لمرة واحدة بغض النظر عن م
-                $this->processEntry($hasDebit ? $entry->account_debit_id : null, $hasCredit ? $entry->account_Credit_id : null, $entry->entrie_id,$hasDebit ? $entry->Amount_Credit : null, $hasCredit ? $entry->Amount_Credit : null,$entry);
+                if ($hasDebit) {
+                    $account = $entry->account_debit_id;
+                } elseif ($hasCredit) {
+                    $account = $entry->account_Credit_id;
+                } else {
+                    $account = null;
+                }                // يتم ترحيل القيد لمرة واحدة بغض النظر عن م
+                $this->processEntry($hasDebit ? $entry->account_debit_id : null, $hasCredit ? $entry->account_Credit_id : null, $entry->entrie_id,$hasDebit ? $entry->Amount_Credit : null, $hasCredit ? $entry->Amount_Credit : null,$entry,$account);
             }
         }
         return response()->json(['success' => 'تم ترحيل جميع القيود بنجاح!']);

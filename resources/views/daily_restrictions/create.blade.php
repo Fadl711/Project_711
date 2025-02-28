@@ -12,39 +12,17 @@
 }
 </style>
 
-<form action="{{route('daily_restrictions.stor')}}" method="POST"  enctype="multipart/form-data">
-    @csrf
-    <div class="">
-        <label for="page_id" class="block font-medium ">رقم الصفحة</label>
-@auth
-@isset($dailyPage->page_id)
-<input type="text" name="page_id" id="page_id" class=" rounded-md w-[10%]"  value="{{$dailyPage['page_id']}}">
-@endisset
 
-
-@endauth
-
-    </div>
-    <button type="submit">إنشاء صفحة جديدة</button>
-</form>
-{{-- <div id="successMessage" style="display: none;"></div> --}}
-<div id="successMessage" class="hidden fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
-
-</div>
-{{-- <div id="errorMessage" style="display: none;"></div> --}}
-<div id="errorMessage" class="hidden fixed top-4 right-4 bg-red-300 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
-</div>
-
-
-<form id="dailyRestrictionsForm" method="POST" class="space-y-6">
+<div id="successMessage" class="hidden fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert"></div>
+<div id="errorMessage" class="hidden fixed top-4 right-4 bg-red-300 text-white px-6 py-4 rounded-lg shadow-lg" role="alert"></div>
+<form id="dailyRestrictionsForm" method="POST" class="space-y-6 ">
     @csrf
     <div class="container mx-auto  px-4">
-        <!-- Title -->
         <div class="flex gap-4">
             @foreach ($PaymentType as $index => $item)
 <div class="flex">
 <label for="" class="labelSale">{{$item->label()}}</label>
-<input type="radio" name="payment_type"
+<input type="radio" name="payment_type" class="input-field "
 value="{{$item->value}}"
 {{ isset($DailyEntrie->Invoice_type) && $DailyEntrie->Invoice_type == $item->value ? 'checked' : ($index === 0 ? 'checked' : '') }}
 required>
@@ -56,7 +34,7 @@ required>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <div class="">
                     <label for="Invoice_type" class="block font-medium">نوع المستند</label>
-                    <select name="Invoice_type" dir="ltr" class="select2 inputSale" id="Invoice_type">
+                    <select name="Invoice_type" dir="ltr" class="select2 inputSale " id="Invoice_type">
                         <option value="" selected>اختر نوع المستند</option>
                         @foreach ($transactionTypes as $transactionType)
                             <option value="{{ $transactionType->value }}"
@@ -71,7 +49,7 @@ required>
                 </div>
             <div class="">
                 <label for="Invoice_id" class="block font-medium  ">  رقم المستند</label>
-                <select name="Invoice_id" dir="ltr" class=" select2 inputSale" id="Invoice_id">
+                <select name="Invoice_id" dir="ltr" class=" select2 inputSale  " id="Invoice_id">
                     <option value="" selected>اختر  رقم المستند</option>
                     @isset($DailyEntrie->Invoice_id)
                     <option value="{{$DailyEntrie->Invoice_id}}" selected > {{$DailyEntrie->Invoice_id}} </option>
@@ -147,9 +125,9 @@ required>
             </div>
         </div>
         <!-- تفاصيل إضافية -->
-        <div class="shadow-lg rounded-lg p-1 bg-white border">
-          <h3 class="text-lg font-semibold mb-">تفاصيل إضافية</h3>
-          <div class="grid grid-cols-2 md:grid-cols-2 gap-4">
+        <div class="shadow-lg rounded-lg p-1 bg-white border ">
+            <h3 class="text-lg font-semibold text-center ">تفاصيل إضافية</h3>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div>
             <label for="Amount_debit" class="block font-medium mb-2">المبلغ المدين</label>
             <input name="Amount_debit" id="Amount_debit" type="text" class="inputSale input-field"
@@ -184,10 +162,10 @@ required>
     
     <input 
         id="exchange_rate" 
-        class="inputSale" 
+        class="inputSale input-field" 
         name="exchange_rate"
         type="number"
-        value="{{ isset($DailyEntrie->exchange_rate) ? number_format($DailyEntrie->exchange_rate, 2, '.', ',') : '' }}" >
+        value="{{ isset($DailyEntrie->exchange_rate) ? number_format($DailyEntrie->exchange_rate, 2, '.', ',') : 1 }}" >
     </div>
         
        
@@ -200,7 +178,7 @@ required>
                 @endisset
             </textarea>
         </div>
-            <div class="grid grid-cols-2 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
 
             <div class=" justify-">
               <button type="submit" id="submitButton" class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -208,6 +186,7 @@ required>
                   {{$submitButton ?? ' حفظ القيد'}}
               </button>
           </div>
+
             <div>
                 <label for="entrie_id" class="block font-medium mb-2">رقم القيد</label>
                 <input name="entrie_id" id="entrie_id" type="number"
@@ -215,6 +194,24 @@ required>
                 @isset($DailyEntrie->entrie_id)
                 value="{{$DailyEntrie->entrie_id}}"
                 @endisset >
+            </div>
+            <div class="">
+
+            <form action="{{route('daily_restrictions.stor')}}" method="POST"  enctype="multipart/form-data">
+                @csrf
+                <div class="">
+                    <label for="page_id" class="block font-medium ">رقم الصفحة</label>
+            @auth
+            @isset($dailyPage->page_id)
+            <input type="text" name="page_id" id="page_id" class=" rounded-md "  value="{{$dailyPage['page_id']}}">
+            @endisset
+            
+            
+            @endauth
+            
+                </div>
+                <button type="submit">إنشاء صفحة جديدة</button>
+            </form>
             </div>
             </div>
             @auth
@@ -250,14 +247,15 @@ required>
         // تعيين القيمة المعدلة للحقل
         $(this).val(value);
     });
-      // التركيز على الحقل الأول عند التحميل
-      $('#account_debit_id').focus();
-      // إضافة مؤشر تحميل
-     // إرسال النموذج باستخدام AJAX بدون تحديث الصفحة
+      $('#sub_account_debit_id').select2('open');// التركيز على الحقل الأول عند التحميل
       $(document).ready(function() {
-         
-    });
-      $(document).ready(function() {
+    const inputs = $('.input-field'); // تحديد جميع الحقول
+    const form = $('#dailyRestrictionsForm');
+form.on('keydown', function (event) {
+    if (event.key === 'Enter') {
+        event.preventDefault(); // منع الحفظ عند الضغط على زر Enter
+    }
+});
             $('#submitButton').click(function(event) {
                 const entrie_id = $('#entrie_id').val(); // الحصول على ID الحساب الرئيسي (المدين)
 
@@ -283,6 +281,8 @@ required>
                             window.location.href = '{{ route("restrictions.create") }}';  // توجيه المستخدم إلى صفحة "إنشاء"
                         }
                         $('#Amount_debit').val(""); // إعادة تعيين النموذج
+                        $('#sub_account_debit_id').select2('open');
+
                         // إخفاء الرسالة بعد 3 ثوانٍ
                         setTimeout(function() {
                             
@@ -299,29 +299,36 @@ $('#errorMessage').show().text(data.errorMessage).fadeOut(3000);
 
                     }
                 },
+
+      
                 error: function(xhr) {
                     if (xhr.status === 422) {
-                        // إظهار الأخطاء عند وجود أخطاء في التحقق
-                        var errors = xhr.responseJSON.errors;
-                        var errorMessage = '';
-                        $.each(errors, function(key, value) {
-                            errorMessage += value[0] + '<br>'; // إضافة الأخطاء
-                        });
-                        $('#errorMessage').show().html(errorMessage).fadeOut(3000);;
+                        const errors = xhr.responseJSON.errors;
+        for (const field in errors) {
+            const inputField = $(`#${field}`);
+            const parentDiv = inputField.closest('div');
+            parentDiv.find('.error-message').remove();
+            inputField.addClass('is-invalid');
+            parentDiv.append(`<div class="error-message text-danger text-sm">${errors[field][0]}</div>`);
+        }
                     } else {
                         $('#errorMessage').show().text('حدث خطأ أثناء الحفظ.').fadeOut(3000);
                     }
                 }
             });
         });
+        $('select, input').on('input change', function () {
+            const parentDiv = $(this).closest('div');
+            $(this).removeClass('is-invalid');
+            parentDiv.find('.error-message').remove();
+        });
     });
       // عند اختيار الحساب الرئيسي (المدين)
       $('#account_debit_id').on('change', function() {
+          $(this).select2('close');
     const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي (المدين)
-
-    // تفريغ القائمة الفرعية
-    $('#sub_account_debit_id').empty();
-
+        // تفريغ القائمة الفرعية
+        $('#sub_account_debit_id').empty();
     // التحقق من وجود قيمة
     if (mainAccountId) {
         // طلب AJAX لجلب الحسابات الفرعية بناءً على الحساب الرئيسي
@@ -337,13 +344,12 @@ $('#errorMessage').show().text(data.errorMessage).fadeOut(3000);
                 const subAccountOptions = data.map(subAccount =>
                     `<option value="${subAccount.sub_account_id}">${subAccount.sub_name}</option>`
                 ).join('');
-
                 // إضافة الخيارات الجديدة إلى القائمة الفرعية
                 $('#sub_account_debit_id').append(subAccountOptions);
-
-
                 // إعادة تهيئة Select2 بعد إضافة الخيارات
                 $('#sub_account_debit_id').select2('destroy').select2();
+                $('#sub_account_debit_id').select2('open');
+
             },
             error: function() {
                 console.error('Error fetching sub-accounts.');
@@ -351,12 +357,27 @@ $('#errorMessage').show().text(data.errorMessage).fadeOut(3000);
         });
     }
 });
-      // عند اختيار الحساب الرئيسي (الدائن)
-      $('#account_Credit_id').on('change', function() {
-    const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي (الدائن)
-    // تفريغ القائمة الفرعية وإضافة الخيار الافتراضي
+
+$('#account_Credit_id').on('change', function() {
+    const mainAccountId = $(this).val();
     $('#sub_account_Credit_id').empty();
-    // التحقق من وجود قيمة في الحساب الرئيسي
+    $('#account_Credit_id').select2('close'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
+    // الحصول على ID الحساب الرئيسي
+    showAccounts(mainAccountId);
+
+});
+$('#sub_account_debit_id').on('change', function() {
+    $('#account_Credit_id').select2('open'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
+});
+$('#sub_account_Credit_id').on('change', function() {
+    // $('#Amount_debit').input('focus');
+    let Amount_debit=  $('#Amount_debit');
+    $('#Amount_debit').focus(); 
+    Amount_debit.focus();
+    Amount_debit.addClass('focus');
+});
+      // عند اختيار الحساب الرئيسي (الدائن)
+     function  showAccounts(mainAccountId)  {
     if (mainAccountId) {
         // طلب AJAX لجلب الحسابات الفرعية بناءً على الحساب الرئيسي
         $.ajax({
@@ -367,24 +388,22 @@ $('#errorMessage').show().text(data.errorMessage).fadeOut(3000);
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
             success: function(data) {
-                // تعبئة الحسابات الفرعية الجديدة
                 const subAccountOptions = data.map(subAccount =>
                     `<option value="${subAccount.sub_account_id}">${subAccount.sub_name}</option>`
-                ).join('');
+                ).join('');       // تعبئة الحسابات الفرعية الجديدة
                 // إضافة الخيارات الجديدة إلى القائمة الفرعية
                 $('#sub_account_Credit_id').append(subAccountOptions);
-                // إعادة تهيئة Select2 بعد إضافة الخيارات
-                $('#sub_account_Credit_id').select2('destroy').select2();
+                $('#sub_account_Credit_id').select2('destroy').select2();// إعادة تهيئة Select2 بعد إضافة الخيارات
+                $('#sub_account_Credit_id').select2('open');
+
             },
             error: function() {
                 console.error('Error fetching sub-accounts.');
             }
         });
     }
-});
+}
   });
-
-
   function toggleLoading(state) {
   if (state) {
       $('#submitButton').prop('disabled', true).text('جارٍ الحفظ...');
@@ -393,8 +412,7 @@ $('#errorMessage').show().text(data.errorMessage).fadeOut(3000);
   }
 }
 $(document).ready(function() {
-    // تفعيل Select2
-    $('.select2').select2();
+    $('.select2').select2();   // تفعيل Select2
     });
     $('#Invoice_type').on('change', function () {
         const Invoice_typeId = $(this).val(); // الحصول على معرف التصنيف المحدد
@@ -405,10 +423,8 @@ $(document).ready(function() {
         }
         // استدعاء الدالة لجلب المنتج بناءً على التصنيف
         GetInvoiceNumber(Invoice_typeId);
-        // إغلاق القائمة المنسدلة بعد التأخير
         setTimeout(() => {
-            $('#Invoice_type').select2('close');
-            
+            $('#Invoice_type').select2('close');// إغلاق القائمة المنسدلة بعد التأخير
         }, 1000);
         setTimeout(function() {
             console.log('Focused on Quantity'); // للتأكد من التركيز
@@ -416,12 +432,10 @@ $(document).ready(function() {
     });
     function GetInvoiceNumber(Invoice_typeId) {
         const Invoice_number = $('#Invoice_id'); // حقل سعر البيع
-    
         if (!Invoice_typeId) {
             alert('يرجى اختيار التصنيف.');
             return;
         }
-
         // إرسال طلب AJAX إذا كان التصنيف صالحًا
         $.ajax({
             url:"{{url('/invoice_purchases/')}}/"+Invoice_typeId+"/GetInvoiceNumber",
@@ -441,10 +455,9 @@ $(document).ready(function() {
             },
             error: function (xhr) {
                 // التعامل مع الأخطاء
-                console.error('حدث خطأ أثناء جلب بيانات المنتج:', xhr.responseText);
-    
+                console.error('حدث خطأ :', xhr.responseText);
                 // تنبيه المستخدم بخطأ واضح
-                alert('حدث خطأ أثناء جلب سعر المنتج. يرجى المحاولة لاحقًا.');
+                alert('حدث خطأ. يرجى المحاولة لاحقًا.');
             }
         });
     }

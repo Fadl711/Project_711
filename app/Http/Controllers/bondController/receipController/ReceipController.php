@@ -285,8 +285,6 @@ public function getPaymentBond(Request $request, $filterType )
        
         case '1': // اليوم
             $query->where('accounting_period_id', $accountingPeriod->accounting_period_id);
-            $query->whereDate('created_at', $accountingPeriod->created_at);
-
             break;
         case '2': // اليوم
             $query->whereDate('created_at', now()->toDateString());
