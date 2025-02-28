@@ -266,12 +266,12 @@ return response()->json( $data);
             'entry_date' => $entry->created_at,
             'Main_id' => $mainAccount->main_account_id,
             'typeAccount' => $subAccount->typeAccount,
-            'amount' => $amount,
+            'amount' => $amount ??0 ,
 'description' => $descriptionCommint . $descriptionText . " " . $subAccount->sub_name . "-" . $entry->Statement ?? " ",            'status' =>'غير مرحل',
             'Invoice_type' => $entry->Invoice_type,
             'Invoice_id' => $entry->Invoice_id ??null,
             'Currency_name' => $entry->Currency_name ??'',
-            'exchange_rate' => $entry->exchange_rate,
+            'exchange_rate' => $entry->exchange_rate??1,
 
             'User_id' => auth()->id(),
         ]);
@@ -302,6 +302,7 @@ return response()->json( $data);
             }
             foreach ($entries as $entry)
                  {
+
                     if($entry->account_debit_id)
                     {
                        
