@@ -17,6 +17,7 @@ use App\Http\Controllers\bondController\receipController\All_Receipt_BondControl
 use App\Http\Controllers\bondController\receipController\ReceipController;
 use App\Http\Controllers\chartController\ChartController;
 use App\Http\Controllers\DailyRestrictionController\RestrictionController;
+use App\Http\Controllers\DatabaseController;
 use App\Http\Controllers\FixedAssetsController;
 use App\Http\Controllers\generalEntrieController;
 use App\Http\Controllers\InventoryController;
@@ -168,7 +169,7 @@ Route::post('/git-pull', function () {
    } elseif (strpos($output, 'error') !== false) {
        return redirect()->back()->with('error', 'فشل في تحديث المشروع: ' . nl2br(e($output)));
    } else {
-    
+
        return redirect()->back()->with('success', 'تم تحديث المشروع بنجاح.');
    }
 })->name('git.pull');
@@ -324,6 +325,7 @@ Route::get('/usersShow', [UsersController::class, 'show'])->name('users.details'
 
 Route::get('/backup1', [BackupController::class, 'showForm'])->name('backup.form');
 Route::post('/backup1', [BackupController::class, 'createBackup'])->name('backup');
+    Route::post('restore', [DatabaseController::class, 'restoreDatabase']);
 
 Route::get('/controle',function(){
 return view('controle');
@@ -431,17 +433,17 @@ if ($accountingPeriod) {
             'month' => $month,
             'total' => $sales->sum('total_Profit'), // أو أي عمود يمثل قيمة المبيعات
         ];
-    })->values(); 
+    })->values();
     $currentMonth = Carbon::now()->format('Y-m');
 
 // الحصول على المبيعات للشهر الحالي
 $sales = Sale::where('created_at', '>=', Carbon::now()->startOfMonth())
               ->where('created_at', '<=', Carbon::now()->endOfMonth())
-              ->where('transaction_type',4) 
+              ->where('transaction_type',4)
               ->get();
 $sa = Sale::where('created_at', '>=', Carbon::now()->startOfMonth())
               ->where('created_at', '<=', Carbon::now()->endOfMonth())
-              ->where('transaction_type',5) 
+              ->where('transaction_type',5)
               ->get();
 
 // تجميع الأرباح حسب اليوم
@@ -453,7 +455,7 @@ $dailyProfits = $sales->groupBy(function($sale) {
 $dailyTotals = $dailyProfits->map(function($sales, $day) {
     // حساب إجمالي الأرباح للمعاملات من النوع 4
     $profitType4 = $sales->where('transaction_type', 4)->sum('total_Profit');
-    
+
     // حساب إجمالي الأرباح للمعاملات من النوع 5
     $profitType5 = $sales->where('transaction_type', 5)->sum('total_Profit');
 
@@ -465,7 +467,7 @@ $dailyTotals = $dailyProfits->map(function($sales, $day) {
         'total_Profit' => $netProfit,
     ];
 })->values();// لتحويل المجموعات إلى مصفوفة
- 
+
 }
 
     return view('dashboard',['dailyTotals'=>$dailyTotals ]);

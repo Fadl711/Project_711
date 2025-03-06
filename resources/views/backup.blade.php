@@ -30,6 +30,26 @@
 
     <input type="file" id="filePicker" webkitdirectory style="display: none;" onchange="setPath()">
 
+
+<form action="{{ url('restore') }}" method="POST" enctype="multipart/form-data" class=" mx-auto p-6 bg-white shadow-md rounded-lg">
+                <h1 class="text-2xl font-bold text-gray-800 mb-4">استعادة قاعدة البيانات</h1>
+
+    @csrf
+    <div class="mb-4">
+        <label for="database_file" class="block text-gray-700 text-sm font-bold mb-2">
+            📂 اختر ملف قاعدة البيانات:
+        </label>
+        <input type="file" name="database_file" id="database_file" required
+               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+    </div>
+    <div class="flex justify-end">
+        <button type="submit"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+            🚀 استعادة قاعدة البيانات
+        </button>
+    </div>
+</form>
+
     <script>
         function openFilePicker() {
             document.getElementById('filePicker').click();
