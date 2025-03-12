@@ -31,41 +31,15 @@ class AccountCoctroller extends Controller
          }
 
     public function index(){
-        $data=[
-            ['idsec'=>'10','id'=>'1','sec'=>'العملاء','name'=>'جمال','pric'=>'$102'],
-            ['idsec'=>'1','id'=>'8','sec'=>'البنك','name'=>'','pric'=>'$102'],
-            ['idsec'=>'2','id'=>'2','sec'=>'الصندوق','name'=>'','pric'=>'$10225'],
-            ['idsec'=>'4','id'=>'3','sec'=>'المبيعات','name'=>'','pric'=>'$102248'],
-            ['idsec'=>'10','id'=>'4','sec'=>'العملاء','name'=>'سعيد','pric'=>'$10255'],
-            ['idsec'=>'2','id'=>'5','sec'=>'الصندوق','name'=>'','pric'=>'$10255'],
-            ['idsec'=>'1','id'=>'6','sec'=>'البنك','name'=>'','pric'=>'$102'],
-            ['idsec'=>'10','id'=>'7','sec'=>'العملاء','name'=>'علي','pric'=>'$1155'],
-            ['idsec'=>'10','id'=>'7','sec'=>'العملاء','name'=>'علي','pric'=>'$1155'],
-
-
-
-            ];
+     
             $post=MainAccount::all();
-            $MainAccounts=MainAccount::all();
-            $curr=Currency::all();
-            $cu=CurrencySetting::first();
+       
 
 
-      return  view('accounts.index',['posts'=>$data,'post'=> $post,'curr'=> $curr,'cu'=> $cu]);
+      return  view('accounts.index',['post'=> $post]);
     }
     public function getOptions( ){
-        $options=[
-            ['idsec'=>'10','id'=>'1','sec'=>'العملاء','name'=>'جمال','pric'=>'$102'],
-            ['idsec'=>'1','id'=>'8','sec'=>'البنك','name'=>'','pric'=>'$102'],
-            ['idsec'=>'2','id'=>'2','sec'=>'الصندوق','name'=>'','pric'=>'$10225'],
-            ['idsec'=>'4','id'=>'3','sec'=>'المبيعات','name'=>'','pric'=>'$102248'],
-            ['idsec'=>'10','id'=>'4','sec'=>'العملاء','name'=>'سعيد','pric'=>'$10255'],
-            ['idsec'=>'2','id'=>'5','sec'=>'الصندوق','name'=>'','pric'=>'$10255'],
-            ['idsec'=>'1','id'=>'6','sec'=>'البنك','name'=>'','pric'=>'$102'],
-            ['idsec'=>'10','id'=>'7','sec'=>'العملاء','name'=>'علي','pric'=>'$1155'],
-            ['idsec'=>'10','id'=>'7','sec'=>'العملاء','name'=>'علي','pric'=>'$1155'],
-
-            ];
+       
             $data=MainAccount::all();
 return response()->json( $data);
     //   return view('accounts.account_balancing',['posts'=>$data]);
@@ -128,21 +102,19 @@ return response()->json( $data);
             } 
             // معالجة القيد المدين
             if ($request->account_debit_id) {
-                if (GeneralEntrie::where([
-                    'Daily_entry_id' => $request->entrie_id,
-                    'accounting_period_id' => $accountingPeriod->accounting_period_id,
-                    'sub_id' => $request->account_debit_id,
-                ])->exists())
-                 {
-                    return response()->json(['error' => 'تم ترحيل هذا القيد مسبقاً كـ مدين ']);
+                // if (GeneralEntrie::where([
+                //     'Daily_entry_id' => $request->entrie_id,
+                //     'accounting_period_id' => $accountingPeriod->accounting_period_id,
+                //     'sub_id' => $request->account_debit_id,
+                // ])->exists())
+                //  {
+                //     return response()->json(['error' => 'تم ترحيل هذا القيد مسبقاً كـ مدين ']);
 
-                    throw new \Exception("تم ترحيل هذا القيد مسبقاً كـ مدين .");
-                }   
-                // dd($request->account_debit_id);
+                //     throw new \Exception("تم ترحيل هذا القيد مسبقاً كـ مدين .");
+                // }   
 
                 $this->processEntry($request->account_debit_id,null, $entry->entrie_id,$entry->Amount_debit,$entry->Amount_Credit,$entry, $request->account_Credit_id);
                }
-            //    dd(5455);
 
             // معالجة القيد الدائن
             if ($request->account_Credit_id) {
@@ -171,7 +143,6 @@ return response()->json( $data);
     private function processEntry($accountDebitId, $accountCreditId, $entryId,$Amount_debit,$Amount_Credit,$entry,$accunt_id)
     {
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
-    //   dd($accountDebitId);
         $descriptionText = '';
         $descriptionCommint = '';
         $accountCreditId ?? null;
@@ -321,10 +292,12 @@ return response()->json( $data);
                     
 
                   }
-            return response()->json(['success' => 'تم ترحيل جميع القيود بنجاح!']);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'حدث خطأ أثناء ترحيل القيود: ' . $e->getMessage()], 500);
-        }
+                  return response()->json(['success' => 'تم ترحيل جميع القيود بنجاح!']);
+                } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                    return response()->json(['error' => 'لم يتم العثور على الفترة المحاسبية المفتوحة.'], 404);
+                } catch (\Exception $e) {
+                    return response()->json(['error' => 'حدث خطأ أثناء ترحيل القيود: ' . $e->getMessage()], 500);
+                }
     }
     
     public function storeOptionalEntries($main_account, $subAccount)

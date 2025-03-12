@@ -72,8 +72,6 @@ $paymentBond = PaymentBond::updateOrCreate(
     ]
 );
 
-// $paymentBond->created_at = $date; // تأكد من أن هذا هو العمود الصحيح
-// $paymentBond->save();
 DB::table('payment_bonds')
 ->where('payment_bond_id', $paymentBond->payment_bond_id)
 ->where('accounting_period_id', $accountingPeriod->accounting_period_id)

@@ -55,4 +55,53 @@ class User extends Authenticatable
         return $this->hasMany(Product::class);
     }
 
+    // public function permissions()
+    // {
+    //     return $this->hasMany(UserPermission::class, 'User_id');
+    // }
+
+    /**
+     * التحقق من وجود صلاحية معينة.
+     */
+    public function hasPermission($ability)
+    {
+        return $this->permissions->where('Authority_Name', $ability)->isNotEmpty();
+    }
+
+    /**
+     * التحقق من إذن القراءة.
+     */
+    public function canRead($ability)
+    {
+        $permission = $this->permissions->where('Authority_Name', $ability)->first();
+        return $permission ? $permission->Readability : false;
+    }
+
+    /**
+     * التحقق من إذن الكتابة.
+     */
+    public function canWrite($ability)
+    {
+        $permission = $this->permissions->where('Authority_Name', $ability)->first();
+        return $permission ? $permission->Writing_ability : false;
+    }
+
+    /**
+     * التحقق من إذن الحذف.
+     */
+    public function canDelete($ability)
+    {
+        $permission = $this->permissions->where('Authority_Name', $ability)->first();
+        return $permission ? $permission->Deletion_authority : false;
+    }
+
+    /**
+     * التحقق من إذن التعديل.
+     */
+    public function canModify($ability)
+    {
+        $permission = $this->permissions->where('Authority_Name', $ability)->first();
+        return $permission ? $permission->Ability_modify : false;
+    }
+
 }

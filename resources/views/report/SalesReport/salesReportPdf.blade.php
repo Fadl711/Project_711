@@ -10,12 +10,10 @@
 <body>
 
 <div class=" container  min-w-full ">
-
     @include('includes.header')
     <div class="w-full p-3 bg-gray-100 border-black border-[1px] rounded-lg text-[10px]  my-2 text-center font-bold">
         <p > تقارير المبيعات من 2024/5/10 الى 2023/4/5</p>
     </div>
-
     <table class="min-w-full  text-[7px] text-nowrap bg-white border border-gray-200">
         <thead class="bg-gray-200 text-center">
             <tr>

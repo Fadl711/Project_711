@@ -204,12 +204,16 @@
                             <td class=" text-right  " style="width: 130px; {{ $cellColor }} " >{{ $entrie->daily_entries_type }} {{ $Invoice_type  ?? ""}}</td>
                             <td class=" text-center " style="width: 100px; ">{{ $entrie->Invoice_id ?? ''}}</td>
                             <td class=" text-right "    style="width: 300px; {{ $cellColor }}">
-                             
-                                <span class="text-red-500">   من ح/</span>
+                             <span id="Statement" class="">
+                                <span   class="text-red-500"> 
+                                    @if ( $entrie->daily_entries_type!="رصيد افتتاحي")
+                                      من ح/</span>
                                 {{$entrie->debitAccount->sub_name }}
                                 <span class="text-green-500">الى ح/</span>
                                 {{$entrie->creditAccount->sub_name }}
-                                <span class="bg-slate-100 rounded px-1">  {{ $entrie->Statement }}</span>
+                                @endif
+                            </span>
+                                <span id="Statement2" class="bg-slate-100 rounded px-1">  {{ $entrie->Statement }}</span>
                               
                             </td>
                             <td class=" text-center " style="width: 90px; ">{{ $entrie->entrie_id }}</td>
@@ -237,7 +241,7 @@
                         <p class="">نوع العملة  </p>
                    </th>
                 </tr>
-                @if($amount_YER)
+                @if($SumDebtor_amount!=0|| $SumCredit_amount!=0)
                  <tr id="header1" class="bg-blue-100">
                     <th colspan="5" class=" text-center rounded-s-lg border-l-0 border-r-0 border-b-1 ">اجمالي الرصيد العملة اليمنية </th>
                     <th class=" text-right ">
@@ -251,7 +255,7 @@
                     </th>
                 </tr>
                 @endif
-                @if($amountASR)
+                @if($SumDebtor_amountASR!=0 ||$SumCredit_amountASR)
                 <tr id="header1" class="bg-blue-100">
                 <th colspan="5" class=" text-center rounded-s-lg border-l-0 border-r-0 border-b-1  ">اجمالي الرصيد العملة السعودية</th>
                     <th class=" text-right  ">
@@ -267,7 +271,7 @@
                     </th>
                 </tr>
                 @endif
-                @if($amountUSD)
+                @if($SumDebtor_amountUSD!=0 ||$SumCredit_amountUSD)
                 <tr id="header1" class="bg-blue-100 " >
                 <th colspan="5" class=" text-center rounded-s-lg border-l-0 border-r-0 border-b-1 ">اجمالي الرصيد العملة الدولار  </th>
                     <th class=" text-right ">
@@ -291,7 +295,7 @@
             @php
                 $sum=$SumDebtor_amount-$SumCredit_amount;
                 @endphp
-                @if($sum!=0)
+                @if($SumDebtor_amount!=0 ||$SumCredit_amount)
 
                 <tr id="header1" class="bg-blue-100 ">
                     <th class="px-2 text-right rounded-s-lg  border   ">
@@ -317,7 +321,7 @@
             @php
                 $sumASR=$SumDebtor_amountASR-$SumCredit_amountASR;
                 @endphp
-                @if($sumASR!=0)
+                @if($SumDebtor_amountASR!=0 ||$SumCredit_amountASR)
 
                 <tr id="header1" class="bg-blue-100">
                     <th class="px-2 text-right rounded-s-lg border-0 ">
@@ -341,7 +345,7 @@
             @php
                 $sumUSD=$SumDebtor_amountUSD-$SumCredit_amountUSD   ;
                 @endphp
-                @if($sumUSD!=0)
+                @if($SumDebtor_amountUSD!=0 ||$SumCredit_amountUSD)
 
                 <tr id="header1" class="bg-blue-100 rounded-lg ">
                     <th class="px-2 text-right rounded-s-lg border ">
@@ -390,20 +394,27 @@
             <button id="myButton" class="px-4 py-2 bgcolor text-white rounded-lg shadow-md hover:bg-blue-600">
         تغيير الألوان
             </button>
-           
-
-            <button id="myButton2" class="px-4 py-2 bgcolor2 text-black rounded-lg shadow-md hover:bg-blue-600">
-        تغيير الألوان
+            
+            
+            <button id="myButton2" class="px-4 py-2 bgcolor2 text-black rounded-lg  shadow-md hover:bg-blue-600">
+                تغيير الألوان
             </button>
             <button id="myButton3" class="px-4 py-2 bgcolor3  rounded-lg shadow-md hover:bg-blue-600">
-        تغيير الألوان
+                تغيير الألوان
             </button>
+            <button id="myButton4" class="px-4 py-2   rounded-lg shadow-md hover:bg-blue-600">
+اخفاء بيانات الحسابات            </button>
             <script>
                 $(document).ready(function(){
 
                     $("#myButton").click(function(){
                         $("div[id='header1']").toggleClass("text-white bgcolor shadow-sm   ");
                         $("tr[id='header1']").toggleClass("text-white bgcolor shadow-sm  ");
+
+                    });
+                    $("#myButton4").click(function(){
+                        $("span[id='Statement']").toggleClass("hidden");
+                        // $("span[id='Statement2']").toggleClass("bg-white");
 
                     });
                     $("#myButton2").click(function(){

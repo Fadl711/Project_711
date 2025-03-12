@@ -21,6 +21,7 @@ use App\Models\User;
 use App\Models\UserPermission;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -32,15 +33,16 @@ class SaleController extends Controller
         $financialt=SubAccount::where('AccountClass',5)->get();
         $DefaultCustomer  = Default_customer::where('id',1)->first();
         $financial_account = Default_customer::where('id',1)->pluck('financial_account_id')->first();
-       
         $Currency_name=Currency::all();
         $MainAccounts= MainAccount::all();
-        $user=auth()->id();
-        $AuthorityName="المبيعات";
-        $us=UserPermission::where('User_id', $user)
-        ->where('Authority_Name',$AuthorityName)
-        ->first();
-        if ( $us) {
+        $user = Auth::user();
+        
+        // التحقق من إذن القراءةcanRead
+        if (! $user->hasPermission('المبيعات')) {
+            abort(403, 'غير مصرح لك بعرض الصفحة.');
+        }
+      
+      
             return view('sales.create', [
                 'customers' => $customers,
                 'DefaultCustomer' => $DefaultCustomer,
@@ -49,9 +51,7 @@ class SaleController extends Controller
                 'financial_account' => $financial_account,
                 'financialts' => $financialt,
             ]);
-        } else {
-            return view('auth.login');
-        }
+       
        
     }
     private function removeCommas($value)
@@ -62,20 +62,20 @@ class SaleController extends Controller
 
     public function store(Request $request)
     {
-        $user = auth()->id();
-        $AuthorityName = "المبيعات";
-        
-        $us = UserPermission::where('User_id', $user)
-            ->where('Authority_Name', $AuthorityName)
-            ->first();
-        
-        if (!$us || $us->Readability != 1) {
+        $user = Auth::user();
+        if (! $user->hasPermission('المبيعات')) {
+            abort(403, 'غير مصرح لك بعرض الصفحة.');
+        }
+
+        if (!$user->canWrite('المبيعات')) {
             return response()->json([
                 'success' => false,
-                'message' => 'لا يوجد لديك صلاحية'
+                'message' => 'لا يوجد لديك صلاحية',403
             ]);
+
+            // abort(403, 'غير مصرح لك بتعديل المنشورات.');
         }
-    
+     
         // إزالة الفواصل من الأرقام المدخلة
         $purchasePrice = $this->removeCommas($request->Purchase_price);
         $Selling_price = $this->removeCommas($request->Selling_price);
@@ -178,7 +178,11 @@ class SaleController extends Controller
                     'note' => $request->note ?? '',
                 ]
             );
-    
+          
+DB::table('sales')
+->where('sale_id', $sales->sale_id)
+->update(['created_at' => $saleInvoice->created_at]);
+
             // تحديث إجمالي الفاتورة
             $qurye = Sale::where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->where('Invoice_id', $saleInvoice->sales_invoice_id);
@@ -304,6 +308,12 @@ $dailyEntrie->save();
     
     public function edit($id)
 {
+    $user = Auth::user();
+
+    // التحقق من إذن الكتابة
+    if (! $user->canModify('المبيعات')) {
+        abort(403, 'غير مصرح لك بتعديل المنشورات.');
+    }
     $sales = Sale::where('sale_id',$id)->first();
     return response()->json($sales);
 }
@@ -319,9 +329,11 @@ public function SaleInvoiceupdate($saleInvoice, $accountingPeriod)
  $discount = $qurye->sum('discount');
  $Purchase_price = $qurye->sum('total_purchasePrice');
  // حساب الخصم والأرباح
+ 
  $Profit =  $Selling_price - $saleInvoice->discount ?? $discount ?? 0;
  $ProfitTotal = $Profit - $Purchase_price;
  $net_total_after_discount = $total_price_sale;
+
  $saleInvoice->update([
     'total_price_sale' => $Selling_price,
     'net_total_after_discount' => $Profit,
@@ -400,6 +412,14 @@ public function SaleInvoiceupdate($saleInvoice, $accountingPeriod)
 
 public function destroy($id)
 {
+    $user = Auth::user();
+
+    // التحقق من إذن بحذف
+   
+    if (!$user->canDelete('المبيعات')) {
+        return response()->json(['success' => false, 'message' =>  'غير مصرح لك بحذف المنتج.'], 404);
+
+    }
     $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
     if (!$accountingPeriod)
      {
@@ -443,6 +463,14 @@ public function destroy($id)
        }
 public function deleteInvoice($id)
 {
+    $user = Auth::user();
+
+    // التحقق من إذن بحذف
+   
+    if (!$user->canDelete('الفواتير المبيعات')) {
+        return response()->json(['success' => false, 'message' =>  'غير مصرح لك بحذف الفاتورة.'], 404);
+
+    }
     try {
         // البحث عن الفاتورة
         $invoice = SaleInvoice::where('sales_invoice_id', $id)->first();
@@ -509,17 +537,54 @@ public function deleteInvoice($id)
 public function Saleupdate()
 {
     // DB::beginTransaction();
+    
+
     try {
 
-    $accountingPeriod=AccountingPeriod::all();
-    foreach($accountingPeriod as $accountingPer)
-    {
-        $saleInvoices = SaleInvoice::where('accounting_period_id', $accountingPer->accounting_period_id)->get();
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+    
+        $saleInvoices = SaleInvoice::where('accounting_period_id', $accountingPeriod->accounting_period_id)->get();
         foreach($saleInvoices as $saleInvoice)
         {
             if ($saleInvoice->sales()->exists())
              {
-                $this->Invoiceupdate($saleInvoice, $accountingPer);
+                $qurye = Sale::where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                ->where('Invoice_id', $saleInvoice->sales_invoice_id);
+                $Selling_price = $qurye->sum('total_amount');
+                // $total_price_sale = $qurye->sum('total_price');
+                $discount = $qurye->sum('discount');
+                $quryes= $qurye->get();
+                $discountInvoices=$saleInvoice->discount;
+                $turr= $discountInvoices / $Selling_price ;
+                // dd( $turr);
+
+                if(  $discount!=0 || $discountInvoices!=0){
+                if(  $discount!=$discountInvoices){
+
+                foreach($quryes as $qury)
+                {
+                    if ($qury)
+                     {
+
+                        $totalAmount = $qury->total_amount ?? 0;
+                        $turrValue = $turr ?? 0;
+                    
+                        $qury->update([
+                            'discount' => $totalAmount * $turrValue,
+                            'discount_rate' => $turrValue,
+                        ]);
+                        DB::table('sales')
+                        ->where('sale_id', $qury->sale_id)
+                        ->update(['created_at' => $saleInvoice->created_at]);
+                        
+                    } 
+            }
+        }
+        
+        
+
+
+                // $this->Invoiceupdate($saleInvoice, $accountingPer);
 
             }
         }
@@ -540,6 +605,8 @@ public function Saleupdate()
 
 public function Invoiceupdate($saleInvoice, $accountingPeriod)
 {
+  
+
      // استرجاع البيانات المطلوبة
      $qurye = Sale::where('accounting_period_id', $accountingPeriod->accounting_period_id)
      ->where('Invoice_id', $saleInvoice->sales_invoice_id);
@@ -578,7 +645,6 @@ public function Invoiceupdate($saleInvoice, $accountingPeriod)
      $amountCredit = $ProfitTotal >0 ? $ProfitTotal : $ProfitTotal =0 ?0 :0;
      $amountDebit = $ProfitTotal < 0 ? abs($ProfitTotal) : $ProfitTotal = 0 ? 0:0;
  } elseif ($saleInvoice->transaction_type == 5) {
-
      $amountCreditTotal = $saleInvoice->net_total_after_discount = 0 ? 0 :  $saleInvoice->net_total_after_discount;
      $amountDeditTotal = $Purchase_price = 0 ?0 : $Purchase_price;
 

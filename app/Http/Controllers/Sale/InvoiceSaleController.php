@@ -485,10 +485,12 @@ private function saleInvoiceupdate($validatedData, $saleInvoice, $accountingPeri
 
 private function updateSales($updateSale, $validatedData, $DefaultCustomer,$saleInvoice,$paid_amount)
 {
-
+    $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
     // تحقق من أن $updateSale هو مصفوفة أو كائن قابل للتكرار
-    if (is_array($updateSale) || is_object($updateSale)) {
-        foreach ($updateSale as $sale) {
+    if (is_array($updateSale) || is_object($updateSale))
+     {
+        foreach ($updateSale as $sale) 
+        {
             $sale->update([
                 'transaction_type' => $validatedData['transaction_type'],
                 'warehouse_to_id' => $DefaultCustomer->warehouse_id,
@@ -496,8 +498,33 @@ private function updateSales($updateSale, $validatedData, $DefaultCustomer,$sale
                 'financial_account_id' => $validatedData['financial_account_id'],
             ]);
         }
-    } else {
-        // التعامل مع الحالة عندما لا يكون المتغير مصفوفة أو كائن
+        $qurye = Sale::where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        ->where('Invoice_id', $saleInvoice->sales_invoice_id);
+        $Selling_price = $qurye->sum('total_amount');
+        $discount = $qurye->sum('discount');
+        $quryes= $qurye->get();
+        $discountInvoices=$saleInvoice->discount;
+        $turr= $discountInvoices / $Selling_price ;
+        if(  $discount!=0 || $discountInvoices!=0)
+        {
+          if(  $discount!=$discountInvoices)
+          {
+              foreach($quryes as $qury)
+              {
+                  if ($qury)
+                   {
+                       $totalAmount = $qury->total_amount ?? 0;
+                       $turrValue = $turr ?? 0;
+                       $qury->update([
+                       'discount' => $totalAmount * $turrValue,
+                       'discount_rate' => $turrValue,
+                                ]);
+                    } 
+              }
+         }
+      }
+    }
+     else {
         return response()->json(['success' => false, 'message' => 'بيانات المبيعات غير صحيحة']);
     }
 

@@ -33,8 +33,19 @@ class RestrictionController extends Controller
     // تحقق من صحة البيانات
     public function store(Request $request)
     {
+        $user = Auth::user();
+        if (! $user->canWrite('القيود')) {
+            // return response()->json(['success'=>false,'errorMessage' => 'غير مصرح لك.']);
+
+            abort(403, 'غير مصرح لك.');
+        }
         $dailyPageId=DailyEntrie::where('entrie_id',$request->entrie_id)->first();
         if ($dailyPageId) {
+            if (! $user->canModify('القيود')) {
+                return response()->json(['success'=>false,'errorMessage' => 'غير مصرح لك.']);
+    
+                abort(403, 'غير مصرح لك.');
+            }
             if($dailyPageId->daily_entries_type=="رصيد افتتاحي" )
             {
                 return response()->json(['success'=>false,'errorMessage' => 'لا يمكنك تعديل الرصيد الافتتاحي من هنا يمكنك التعديل علية من صفحة الحسابات الفرعية']);
@@ -182,6 +193,14 @@ public function stor(Request $request){
 }
 
     public function create(){
+        $user = Auth::user();
+        if (! $user->hasPermission('القيود')) {
+            abort(403, 'غير مصرح لك بعرض الصفحة.');
+        }
+        if (! $user->canWrite('القيود')) {
+            abort(403, 'غير مصرح لك  .');
+        }
+       
         $mainAccount=MainAccount::all();
         $curr=Currency::all();
         // الحصول على تاريخ اليوم
@@ -192,11 +211,19 @@ public function stor(Request $request){
 
     public function index()
     {
+        $user = Auth::user();
+        if (! $user->hasPermission('القيود')) {
+            abort(403, 'غير مصرح لك بعرض الصفحة.');
+        }
         return view('daily_restrictions.index');
     }
 
     public function   all_restrictions_show_1()
     {    
+        $user = Auth::user();
+        if (! $user->canRead('القيود')) {
+            abort(403, 'غير مصرح لك بعرض القيد.');
+        }
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
 
         // $pageNums=GeneralJournal::all();
@@ -207,6 +234,10 @@ public function stor(Request $request){
 
     public function   all_restrictions_show($id)
     {
+        $user = Auth::user();
+        if (! $user->canRead('القيود')) {
+            abort(403, 'غير مصرح لك بعرض القيد.');
+        }
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
         $eail=DailyEntrie::where('Daily_page_id',$id)
         ->where('accounting_period_id',$accountingPeriod->accounting_period_id)
@@ -220,7 +251,29 @@ public function stor(Request $request){
 
     public function edit($id)
     {
+        $user = Auth::user();
+        if (! $user->canModify('القيود')) {
+
+            abort(403, 'غير مصرح لك.');
+        }
+
         $DailyEntrie=DailyEntrie::where('entrie_id',$id)->first();
+        if ($DailyEntrie) {
+            if($DailyEntrie->daily_entries_type=="رصيد افتتاحي" )
+            {
+                abort(403, 'لا يمكنك تعديل الرصيد الافتتاحي من هنا يمكنك التعديل علية من صفحة الحسابات الفرعية');
+
+                return response()->json(['success'=>false,'errorMessage' => 'لا يمكنك تعديل الرصيد الافتتاحي من هنا يمكنك التعديل علية من صفحة الحسابات الفرعية'],404);
+            }
+            if($DailyEntrie->daily_entries_type =="سند صرف" || $DailyEntrie->daily_entries_type =="سند قبض" || $DailyEntrie->daily_entries_type =="مبيعات" || $DailyEntrie->daily_entries_type =="مردود مبيعات")
+
+{
+    abort(403, ' لا يمكنك تعديل من هنا');
+
+    return response()->json(['success'=>false,'errorMessage' => 'لا يمكنك تعديل من هنا']);
+
+}
+}
         $main=MainAccount::all();
         $Debitsub_account_id=SubAccount::where('sub_account_id',$DailyEntrie->account_debit_id)->first();
         $Creditsub_account_id=SubAccount::where('sub_account_id',$DailyEntrie->account_Credit_id)->first();
@@ -228,14 +281,9 @@ public function stor(Request $request){
         // الحصول على تاريخ اليوم
         $today = Carbon::now()->toDateString(); // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
         $dailyPage = GeneralJournal::whereDate('created_at',$today)->first(); // البحث عن الصفحة
-        if ($DailyEntrie) {
-            if($DailyEntrie->daily_entries_type=="رصيد افتتاحي")
-            {
+      
+       
 
-                return back()->with('success', 'لايمكن تعديل قيد رصيد افتتاحي');
-
-            }
-        }
         return view('daily_restrictions.create', [
             'main'=>$main,
             'DailyEntrie' => $DailyEntrie ,
@@ -246,47 +294,13 @@ public function stor(Request $request){
         ]);
          }
 
-//     public function update(Request $request,$id){
-//         $today = Carbon::now()->toDateString();
-//         $dailyPage = GeneralJournal::whereDate('created_at', $today)->first();
-//         $Currency=Currency::where('currency_name',$request->Currency_name)->value('currency_id');
-
-
-//         $DailyEntrie =DailyEntrie::where('entrie_id',$id)->first();
-// $ct=$DailyEntrie->Daily_page_id;
-//         ExchangeBond::where('created_at',$DailyEntrie->created_at)->update([
-//             'Debit_sub_account_id'=>$request['sub_account_debit_id'],
-//             'Amount_debit'=>$request['Amount_debit'],
-//             'Credit_sub_account_id'=>$request['sub_account_Credit_id'],
-//             'Statement'=> $request['Statement'],
-//             'Currency_id'=>$Currency,
-
-//             'User_id'=>$request['User_id'],
-//         ]);
-//         PaymentBond::where('created_at',$DailyEntrie->created_at)->update([
-//             'Debit_sub_account_id'=>$request['sub_account_debit_id'],
-//             'Amount_debit'=>$request['Amount_debit'],
-//             'Credit_sub_account_id'=>$request['sub_account_Credit_id'],
-//             'Statement'=> $request['Statement'],
-//             'Currency_id'=>$Currency,
-//             'User_id'=>$request['User_id'],
-//         ]);
-//         $DailyEntrie->update([
-//             'account_debit_id'=>$request['sub_account_debit_id'],
-//             'Amount_debit'=>$request['Amount_debit'],
-//             'account_Credit_id'=>$request['sub_account_Credit_id'],
-//             'Amount_Credit'=>$request['Amount_debit'],
-//             'Statement'=> $request['Statement'],
-//             'Currency_name'=>$request['Currency_name'],
-//             'Daily_page_id'=>$dailyPage->page_id,
-//             'User_id'=>$request['User_id'],
-//         ]);
-
-//         return redirect()->route('all_restrictions_show',$ct);
-//     }
     public function  destroy($id){
+        $user = Auth::user();
+        if (! $user->canDelete('القيود')) {
+
+            abort(403, 'غير مصرح لك.');
+        }
         $DailyEntrie=DailyEntrie::where('entrie_id',$id)->first();
-// dd($id);
         PaymentBond::where(['transaction_type'=>$DailyEntrie->daily_entries_type,
         ])->delete();
         $generalEntrieaccount_debit_id = GeneralEntrie::where([
@@ -303,10 +317,13 @@ public function stor(Request $request){
 
         return response()->json(['success' =>true,'message'=> 'تم   حذف القيد بنجاح!']);
 
-        // return back();
     }
     public function show($id)
     {
+        $user = Auth::user();
+        if (! $user->canRead('القيود')) {
+            abort(403, 'غير مصرح لك بعرض القيد.');
+        }
         $mainc=MainAccount::all();
         $suba=SubAccount::all();
         $dailyEntrie =DailyEntrie::where('entrie_id',$id)->first();
@@ -314,6 +331,10 @@ public function stor(Request $request){
     }
 
     public function print($id){
+        $user = Auth::user();
+        if (! $user->canRead('القيود')) {
+            abort(403, 'غير مصرح لك بعرض القيد.');
+        }
         $mainc=MainAccount::all();
         $suba=SubAccount::all();
         $dailyEntrie =DailyEntrie::where('entrie_id',$id)->first();
@@ -321,6 +342,10 @@ public function stor(Request $request){
     }
     public function search(Request $request)
     {
+        $user = Auth::user();
+        if (! $user->canRead('القيود')) {
+            abort(403, 'غير مصرح لك بعرض القيد.');
+        }
         if ($request->ajax()) {
             $mainc = MainAccount::all();
             $suba = SubAccount::all();

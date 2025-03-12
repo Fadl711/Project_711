@@ -102,39 +102,6 @@ Route::post('/route-clear', function () {
         return redirect()->back()->with('error', 'فشل في تحديث المسارات');
     }
 })->name('route.clear');
-Route::get('/export-sales', function () {
-    $fileName = 'sales_data.csv';
-
-    $sales = DB::table('sales')
-        ->join('products', 'sales.product_id', '=', 'products.product_id')
-        ->select('products.product_name', 'sales.Invoice_id', 'sales.quantity', 'sales.created_at')
-        ->orderBy('sales.created_at', 'desc')
-        ->get();
-
-    $response = new StreamedResponse(function () use ($sales) {
-        $handle = fopen('php://output', 'w');
-
-        // إضافة رؤوس الأعمدة
-        fputcsv($handle, ['اسم المنتج', 'رقم الفاتورة', 'الكمية', 'تاريخ الإنشاء']);
-
-        // كتابة البيانات
-        foreach ($sales as $row) {
-            fputcsv($handle, [
-                $row->product_name,
-                $row->Invoice_id,
-                $row->quantity,
-                $row->created_at
-            ]);
-        }
-
-        fclose($handle);
-    });
-
-    $response->headers->set('Content-Type', 'text/csv');
-    $response->headers->set('Content-Disposition', 'attachment; filename="' . $fileName . '"');
-
-    return $response;
-})->name('export.sales');
 
 Route::post('/git-pull', function () {
    // تنفيذ الأمر git pull
@@ -327,9 +294,9 @@ Route::get('/backup1', [BackupController::class, 'showForm'])->name('backup.form
 Route::post('/backup1', [BackupController::class, 'createBackup'])->name('backup');
     Route::post('restore', [DatabaseController::class, 'restoreDatabase']);
 
-Route::get('/controle',function(){
-return view('controle');
-});
+// Route::get('/controle',function(){
+// return view('controle');
+// });
 Route::get('/permission_user',[UserPermissionController::class,'index'])->name('permission_user');
 Route::post('/update-permission', [UserPermissionController::class, 'updatePermission'])->name('update.permission');
 Route::post('/getPermissions', [UserPermissionController::class, 'getPermissions'])->name('get.permissions');
@@ -360,13 +327,14 @@ Route::get('/settings/warehouse/{id}/edit',[WarehouseController::class,'edit'])-
 Route::put('/settings/warehouse/{id}',[WarehouseController::class,'update'])->name('settings.warehouse.update');
 Route::delete('/settings/warehouse/{id}',[WarehouseController::class,'destroy'])->name('settings.warehouse.destroy');
 
-
-
 Route::get('/summary',[reportsConreoller::class,'summary'])->name('report.summary');
 
 Route::get('/inventoryReport',[reportsConreoller::class,'inventoryReport'])->name('report.inventoryReport');
 Route::get('/earningsReports',[reportsConreoller::class,'earningsReports'])->name('report.earningsReports');
 Route::get('/salesReport',[reportsConreoller::class,'salesReport'])->name('report.salesReport');
+Route::get('/salesReport/create',[reportsConreoller::class,'salesReport_create'])->name('salesReport.create');
+Route::get('/SalesReport/print', [reportsConreoller::class, 'print'])->name('SalesReport.print');
+
 Route::get('/summaryPdf',[reportsConreoller::class,'summaryPdf'])->name('summaryPdf');
 Route::get('/salesReportPdf',[reportsConreoller::class,'salesReportPdf'])->name('salesReportPdf');
 Route::get('/inventoryReportPdf',[reportsConreoller::class,'inventoryReportPdf'])->name('inventoryReportPdf');

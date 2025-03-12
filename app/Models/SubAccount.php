@@ -43,6 +43,10 @@ public function purchases()
 {
     return $this->belongsTo(Purchase::class, 'Supplier_id', 'sub_account_id');
 }
+public function sales()
+{
+    return $this->belongsTo(Sale::class, 'Customer_id');
+}
 public function purchase_invoices()
 {
     return $this->belongsTo(PurchaseInvoice::class, 'Supplier_id', 'sub_account_id');

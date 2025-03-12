@@ -12,7 +12,9 @@
                 </svg>
                 <span class="textNav"> الرئسية</span>
                     </a>
+                    
                 </li>
+                @if(auth()->user()->hasPermission('الحسابات'))
                     <li class="hover:text-black">
                     <a class=" NavTagA"  href="{{route('accounts.index')}}">
                         <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -22,6 +24,9 @@
                     <span class="textNav"> الحسابات</span>
                     </a>
                 </li>
+                @endif
+
+                @if(auth()->user()->hasPermission('القيود'))
                 <li class="hover:text-black">
                         <a class="NavTagA" href="{{ route('restrictions.index') }}">
                             <svg class="w-6 h-6  dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -30,6 +35,9 @@
                             <span class="textNav mr-1"> القيود</span>
                         </a>
                     </li>
+                    @endif
+                    @if(auth()->user()->hasPermission('السندات'))
+
                 <li class="hover:text-black">
                     <a class="NavTagA " href="{{route('bonds.index')}}">
                         <svg class="w-6 h-6  dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -38,29 +46,10 @@
                                               <span class="textNav mr-1"> السندات</span>
                     </a>
                 </li>
-                @php
-                use App\Models\UserPermission;
-                $us=Auth::user()->id
-                ;
-
-                            $use=UserPermission::where('User_id',Auth::user()->id)->get();
-
-                @endphp
-
-                @isset($use)
-                @foreach ($use as $item)
-                @if($item->Authority_Name==="المبيعات")
-                @php
-                    $ff=$item->Authority_Name;
-
-                @endphp
                 @endif
+               
+                @if(auth()->user()->hasPermission('المبيعات'))
 
-                @endforeach
-                @endisset
-
-                @foreach (Auth::user()->permissions as $permission)
-                @if ($permission->Authority_Name === "المبيعات")
             <li class="hover:text-black">
                 <a class="NavTagA" href="{{route('sales.create')}}">
                 <svg class="w-6 h-6   dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -69,14 +58,12 @@
                 <span class="textNav">المبيعات</span>
                 </a>
             </li>
-
             @endif
-            @endforeach
 
+          
+   
+            @if(auth()->user()->hasPermission('الفواتير المبيعات'))
 
-
-            @foreach (Auth::user()->permissions as $permission)
-            @if ($permission->Authority_Name === "الفواتير المبيعات")
                 <li class="hover:text-black"><a class="NavTagA" href="{{route('invoice_sales.all_invoices_sale')}}">
                     <svg class="w-6 h-6  dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3v4a1 1 0 0 1-1 1H5m8-2h3m-3 3h3m-4 3v6m4-3H8M19 4v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1ZM8 12v6h8v-6H8Z"/>
@@ -85,20 +72,19 @@
                     </a>
                 </li>
                 @endif
-            @endforeach
-            @foreach (Auth::user()->permissions as $permission)
-            @if ($permission->Authority_Name === "المشتريات")
-                                <li class="hover:text-black">
+         
+                                @if(auth()->user()->hasPermission('المشتريات'))
+                <li class="hover:text-black">
                     <a class="NavTagA" href="{{route('Purchases.create')}}">
                     <svg class="w-6 h-6   dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 4h1.5L9 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm-8.5-3h9.25L19 7h-1M8 7h-.688M13 5v4m-2-2h4"/>
                         </svg>
                     <span class="textNav">المشتريات</span>
-                    </a></li>
+                    </a>
+                </li>
                     @endif
-            @endforeach
-            @foreach (Auth::user()->permissions as $permission)
-            @if ($permission->Authority_Name === "الفواتير المشتريات")
+                    @if(auth()->user()->hasPermission('الفواتير المشتريات'))
+
                     <li class="hover:text-black"><a class="NavTagA" href="{{route('invoice_purchase.index')}}">
                         <svg class="w-6 h-6  dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3v4a1 1 0 0 1-1 1H5m8-2h3m-3 3h3m-4 3v6m4-3H8M19 4v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1ZM8 12v6h8v-6H8Z"/>
@@ -106,8 +92,7 @@
                         <span class="textNav">فواتير المشتريات</span>
                         </a></li>
                         @endif
-                        @endforeach
-                                                {{-- @if($resultDebit1->Authority_Name=="المنتجات") --}}
+                        @if(auth()->user()->hasPermission('المنتجات'))
                 <li class="hover:text-black"><a class="NavTagA" href="{{route('products.index')}}">
                     <svg class="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -116,8 +101,8 @@
                     </svg>
                     <span class="textNav">المنتجات</span>
                     </a></li>
-                    {{-- @endif --}}
-                    {{-- @if($resultDebit1->Authority_Name=="سجلات الترحيل") --}}
+                    @endif
+                    @if(auth()->user()->hasPermission('سجلات الترحيل'))
                     <li class="hover:text-black">
                     <a class="NavTagA" href="{{route('transfer_restrictions.index')}}">
                         <svg class="w-6 h-6  dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -125,16 +110,8 @@
                           </svg>
                            <span class="textNav mr-1"> سجلات الترحيل</span>
                     </a></li>
-                    {{-- @endif --}}
-                    {{-- @if($resultDebit1->Authority_Name=="المردودات") --}}
-
-{{--                     <li class="">
-                    <a class="NavTagA" href="{{route('refunds.index')}}">
-                        <svg class="w-6 h-6" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"></path><path d="M5.671 4.257c3.928-3.219 9.733-2.995 13.4.672 3.905 3.905 3.905 10.237 0 14.142-3.905 3.905-10.237 3.905-14.142 0A9.993 9.993 0 0 1 2.25 9.767l.077-.313 1.934.51a8 8 0 1 0 3.053-4.45l-.221.166L8.11 6.697l-4.596 1.06 1.06-4.596L5.67 4.257zM13 6v2h2.5v2H10a.5.5 0 0 0-.09.992L10 11h4a2.5 2.5 0 1 1 0 5h-1v2h-2v-2H8.5v-2H14a.5.5 0 0 0 .09-.992L14 13h-4a2.5 2.5 0 1 1 0-5h1V6h2z" fill="#ffffff" class="fill-000000"></path></svg>
-                            <span class="textNav"> المردودات</span>
-                    </a></li> --}}
-                    {{-- @endif --}}
-
+                    @endif
+                    @if(auth()->user()->hasPermission('قائمة الجرد'))
                     <li class="hover:text-black">
                         {{--  --}}
 
@@ -165,10 +142,10 @@
 
                                 {{--  --}}
                     </li>
-                    {{-- @endif --}}
+                    @endif
                     {{-- @if($resultDebit1->Authority_Name=="قائمة العملاء") --}}
 
-                   {{--  <li class="  ">
+                    {{-- <li class="  ">
 
 
 
@@ -215,15 +192,20 @@
                 {{-- @endif --}}
                 {{-- @if($resultDebit1->Authority_Name=="التقارير") --}}
 
+                @if(auth()->user()->hasPermission('التقارير'))
                 <li class="hover:text-black">
                     <a class="NavTagA" href="{{route('report.summary')}}">
-                        <svg class="w-6 h-6 " viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><svg class="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            <svg class="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
                         </svg>
                     <span class="textNav">التقارير</span>
-                    </a></li>
+                    </a>
+                </li>
+                    @endif
+
+                    @if(auth()->user()->hasPermission('الإعدادات'))
                 <li class="hover:text-black">
                     <a class="NavTagA" href="{{route('settings.index')}}">
                     <svg class="w-6 h-6   stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"stroke="currentColor">
@@ -231,6 +213,19 @@
                     </svg>
                     <span class="textNav">الإعدادات</span>
                     </a></li>
+                    @endif
+                    {{-- @if(auth()->user()->hasPermission('الإعدادات')) --}}
+                <li class="hover:text-black">
+                    <form action="{{route('Saleupdate')}} "  method="POST" >
+                    <button type="submit" >
+                    {{-- <a class="NavTagA" href="{{route('Saleupdate')}}"> --}}
+                   
+                    <span class="textNav">تفعيل الخصومات</span>
+                </button>
+            </form>
+                    {{-- </a> --}}
+                </li>
+                    {{-- @endif --}}
 
         </ul>
     </div>

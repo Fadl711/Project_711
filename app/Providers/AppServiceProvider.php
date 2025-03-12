@@ -23,7 +23,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
-
+use Illuminate\Support\Facades\Gate;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -42,6 +42,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $users = DB::table('users')->get();
+        Gate::define('update-post', function (User $user, Product $post) {
+            // يُسمح بالتحديث إذا كان المستخدم لديه صلاحية "update-post"
+            return $user->hasPermission('update-post');
+        });
 
         $dataDeportattons=[
             ['Deportatton'=> (Deportatton::FINANCAL_CENTER_LIST ),'id'=>(IntOrderStatus::FINANCAL_CENTER_LIST )],

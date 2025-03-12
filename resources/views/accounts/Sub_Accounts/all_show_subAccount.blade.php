@@ -56,17 +56,17 @@ body {
         
         <table class="text-sm   font-semibold w-full overflow-y-auto max-h-[80vh] border-collapse">
                 <thead class="bg-[#2430d3] text-white sticky top-0  uppercase dark:bg-gray-700 dark:text-gray-400">
-          <tr class="">
-              <th class="text-right tagHt">رقم الحساب</th>
-              <th class="text-right tagHt">  اسم الحساب الفرعي</th>
-              <th class="text-right tagHt">  نوع الحساب  </th>
-              <th class="text-right tagHt">  تصنيف الحساب  </th>
-              <th class="text-right tagHt">  رصيد مدين</th>
-              <th class="text-right tagHt"> رصيد دائن</th>
-              <th class="text-right tagHt"> المستخدم </th>
-              <th class="text-right tagHt"> تاريخ الإضافة</th>
-              <th class="text-right tagHt"> تاريخ التحديث</th>
-              <th class="text-right tagHt"> خيارات</th>
+          <tr class="text-white ">
+              <th class="text-right">رقم الحساب</th>
+              <th class="text-right">  اسم الحساب الفرعي</th>
+              <th class="text-right">  نوع الحساب  </th>
+              <th class="text-right">  تصنيف الحساب  </th>
+              <th class="text-right">  رصيد مدين</th>
+              <th class="text-right"> رصيد دائن</th>
+              <th class="text-right"> المستخدم </th>
+              <th class="text-right"> تاريخ الإضافة</th>
+              <th class="text-right"> تاريخ التحديث</th>
+              <th class="text-right"> خيارات</th>
 
           </tr>
       </thead>
