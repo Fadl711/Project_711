@@ -205,7 +205,7 @@
                 </li>
                     @endif
 
-                    {{-- @if(auth()->user()->hasPermission('الإعدادات')) --}}
+                    @if(auth()->user()->hasPermission('الإعدادات'))
                 <li class="hover:text-black">
                     <a class="NavTagA" href="{{route('settings.index')}}">
                     <svg class="w-6 h-6   stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"stroke="currentColor">
@@ -213,8 +213,8 @@
                     </svg>
                     <span class="textNav">الإعدادات</span>
                     </a></li>
-                    {{-- @endif --}}
-                    {{-- @if(auth()->user()->hasPermission('الإعدادات')) --}}
+                    @endif
+                    @if(auth()->user()->hasPermission('تفعيل'))
                 <li class="hover:text-black">
                     <form action="{{route('Saleupdate')}} "  method="POST" >
                     <button type="submit" >
@@ -225,7 +225,7 @@
             </form>
                     {{-- </a> --}}
                 </li>
-                    {{-- @endif --}}
+                    @endif
 
         </ul>
     </div>
