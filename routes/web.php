@@ -20,6 +20,7 @@ use App\Http\Controllers\DailyRestrictionController\RestrictionController;
 use App\Http\Controllers\DatabaseController;
 use App\Http\Controllers\FixedAssetsController;
 use App\Http\Controllers\generalEntrieController;
+use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\InvoicePurchaseController;
 use App\Http\Controllers\invoicesController\AllBillsController;
@@ -68,6 +69,14 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome');
 // });
 
+Route::get('/auth/google', [GoogleAuthController::class, 'redirectToGoogle'])->name('google.login');
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
+Route::get('/backup/google', [BackupController::class, 'backupDatabase'])->name('backup.google');
+Route::get('/backup1', [BackupController::class, 'showForm'])->name('backup.form');
+Route::post('/backup1', [BackupController::class, 'createBackup'])->name('backup');
+Route::post('restore', [DatabaseController::class, 'restoreDatabase']);
+
+
 Route::middleware(['auth'])->group(function () {
 Route::get('/all-products/{id}/show', [ProductCoctroller::class, 'allProducts'])->name('all-products');
 Route::get('/all-products/{id}/print', [ProductCoctroller::class, 'print'])->name('report.print');
@@ -85,6 +94,9 @@ Route::post('/Category/store',[CategoryController::class,'store'])->name('Catego
 Route::get('/Category/{Category}/edit', [CategoryController::class, 'edit'])->name('Category.edit');
 Route::put('/Category/{Category}', [CategoryController::class, 'update'])->name('Category.update');
 Route::delete('/Category/{Category}',[CategoryController::class,'destroy'])->name('Category.destroy');
+
+
+
 
 
 
@@ -290,9 +302,7 @@ Route::get('/fixedAssets', [FixedAssetsController::class, 'index'])->name('fixed
 Route::get('/usersControl', [UsersController::class, 'index'])->name('users.index');
 Route::get('/usersShow', [UsersController::class, 'show'])->name('users.details');
 
-Route::get('/backup1', [BackupController::class, 'showForm'])->name('backup.form');
-Route::post('/backup1', [BackupController::class, 'createBackup'])->name('backup');
-    Route::post('restore', [DatabaseController::class, 'restoreDatabase']);
+
 
 // Route::get('/controle',function(){
 // return view('controle');

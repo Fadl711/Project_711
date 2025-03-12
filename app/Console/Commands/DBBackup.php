@@ -7,40 +7,28 @@ use Carbon\Carbon;
 
 class DBBackup extends Command
 {
-    protected $signature = 'db:backup {path}';
+    protected $signature = 'db:backup';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'database backup ';
+    protected $description = 'Create a database backup';
 
-    /**
-     * Execute the console command.
-     */
     public function handle()
     {
-        $path = $this->argument('path');
+        // المسار المؤقت لحفظ النسخة الاحتياطية
+        $backupPath = storage_path('app/backups');
 
-        // تحقق من أن المسار ليس فارغًا
-        if (empty($path)) {
-            $this->error('The path cannot be empty.');
-            return;
+        // إنشاء المجلد إذا لم يكن موجودًا
+        if (!is_dir($backupPath)) {
+            mkdir($backupPath, 0755, true);
         }
 
-        $fileName = Carbon::now()->format('Y_m_d_H_i_s').".sql";
-        $backupPath = rtrim($path, '/'); // إزالة الشرطة المائلة الأخيرة إذا كانت موجودة
+        // اسم الملف بناءً على التاريخ والوقت الحالي
+        $fileName = Carbon::now()->format('Y_m_d_H_i_s') . ".sql";
+        $fullPath = $backupPath . '/' . $fileName;
 
-        // تحقق من أن المسار صالح
-        if (!is_dir($backupPath) && !mkdir($backupPath, 0755, true)) {
-            $this->error('Invalid path: ' . $backupPath);
-            return;
-        }
-
-        $command = "mysqldump --user=".env('DB_USERNAME')." --password=".env('DB_PASSWORD')." --host=".env('DB_HOST')." ".env("DB_DATABASE")." > ".$backupPath.'/'.$fileName;
+        // أمر mysqldump لإنشاء النسخة الاحتياطية
+        $command = "mysqldump --user=" . env('DB_USERNAME') . " --password=" . env('DB_PASSWORD') . " --host=" . env('DB_HOST') . " " . env("DB_DATABASE") . " > " . $fullPath;
         exec($command);
 
-        $this->info('Backup completed successfully.');
+        $this->info('Backup completed successfully. File saved at: ' . $fullPath);
     }
 }
