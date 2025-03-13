@@ -1,298 +1,194 @@
 @extends('layout')
 @section('conm')
-
 <x-navbar_accounts/>
 
-<h1 class="font-bold">شجرة الحسابات</h1>
-<br>
-<div dir="rtl" class="flex min-w-full border ">
-    <div dir="ltr" id="largeMainAccounts" class="w-[15%] shadow-md rounded-md">
-    <ul>
-      @auth
-        @foreach ($TypesAccounts as $largeAccount)
-            <li class="py-2 px-2 ">
-                <a href="#"
-                   class= "{{ Request::is(' ') ? 'border-b-2 text-[#0a0aeec6]' : 'border-b-0' }} border-[#0a0aeec6] leading-none rounded hover:bg-gray-50 large-main-account link-item"
-                   data-id="{{ $largeAccount['id'] }}">
-                   {{ $largeAccount['id'] }}  {{ $largeAccount['TypesAccountName'] }}
-                </a>
-            </li>
-        @endforeach
-        @endauth
-    </ul>
-  </div>
-  
-  
-  
-  <div class="w-[100%]  ">
-  <!-- عرض الحسابات الرئيسية -->
-  <div id="mainAccountsTable" style="display: none;">
-      <h3>الحسابات الرئيسية</h3>
-      <table class="table ">
-          <thead>
-              <tr>
-                  <th class="tagHt border-r">رقم الحساب</th>
-                  <th class="tagHt">اسم الحساب</th>
-                  <th class="tagHt">الرصيد مدين</th>
-                  <th class="tagHt">الرصيد دائن</th>
-                  <th class="tagHt">الهاتف</th>
-              </tr>
-          </thead>
-          <tbody id="mainAccountsTableBody">
-              <!-- سيتم تعبئة الحسابات الرئيسية هنا عبر JavaScript -->
-          </tbody>
-      </table>
-  </div>
-  
-  <!-- عرض الحسابات الفرعية -->
-  <div id="subAccountsTable" class=" flex-col" style="display: none;">
-    <h3>الحسابات الفرعية</h3>
-    <table class="table">
-        <thead>
-            <tr>
-                <th class="tagHt">رقم الحساب الفرعي</th>
-                <th class="tagHt">اسم الحساب الفرعي</th>
-                <th class="tagHt">الرصيد مدين</th>
-                <th class="tagHt">الرصيد دائن</th>
-            </tr>
-        </thead>
-        <tbody id="subAccountsTableBody">
-            <!-- سيتم تعبئة الحسابات الفرعية هنا عبر JavaScript -->
-        </tbody>
-    </table>
-  </div>
-  
-  </div>
-  </div>
+<div class="container mx-auto p-6" dir="rtl">
+    <h1 class="text-2xl font-bold mb-6 text-gray-800">شجرة الحسابات</h1>
+
+    <!-- Account Types Table with Fixed Height and Scroll -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+        <div class="max-h-[calc(100vh-200px)] overflow-y-auto">
+            <table class="min-w-full">
+                <tbody class="bg-white">
+                    @foreach (\App\Enum\AccountType::cases() as $type)
+                        <!-- Account Type Row -->
+                        <tr class="account-type-row hover:bg-gray-50 cursor-pointer transition-colors border-b sticky top-0 bg-white z-10" data-type="{{ $type->value }}">
+                            <td class="px-6 py-4" colspan="4">
+                                <div class="flex items-center">
+                                    <span class="w-4 h-4 rounded-sm mr-2" style="background-color: {{ match($type->value) {
+                                        1 => '#4ade80',  // أصول متداولة
+                                        2 => '#60a5fa',  // اصول ثابتة
+                                        3 => '#f472b6',  // الإتزامات/الخصوم
+                                        4 => '#fb923c',  // المصروفات
+                                        5 => '#a78bfa',  // الإيرادات
+                                    } }}"></span>
+                                    <span class="font-bold text-lg">{{ $type->label() }}</span>
+                                    <span class="text-sm text-gray-500 mr-4" id="count-type-{{ $type->value }}">(0)</span>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        <!-- Main Accounts Container -->
+                        <tr class="main-accounts-container hidden" id="main-accounts-{{ $type->value }}">
+                            <td colspan="4" class="p-0">
+                                <div class="border-r-4" style="border-color: {{ match($type->value) {
+                                    1 => '#4ade80',
+                                    2 => '#60a5fa',
+                                    3 => '#f472b6',
+                                    4 => '#fb923c',
+                                    5 => '#a78bfa',
+                                } }}">
+                                    <table class="min-w-full">
+                                        <tbody class="main-accounts-body">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
 <script>
-    $(document).ready(function() {
-        $('#search').on('keyup', function() {
-            var query = $(this).val();
+document.addEventListener('DOMContentLoaded', function() {
+    const accountTypeRows = document.querySelectorAll('.account-type-row');
+    let activeTypes = new Set();
+    let activeMainAccounts = new Set();
 
-            if (query === '') {
-                // إخفاء الجدول عندما يكون حقل البحث فارغًا
-                $('#results-table').addClass('hidden');
-                return;
-            }
-
-            $.ajax({
-                url: '{{ route("search.sub.accounts") }}',
-                type: 'GET',
-                data: { query: query },
-                success: function(data) {
-                    $('#results-body').empty();
-
-                    if (data.length > 0) {
-                        $('#results-table').removeClass('hidden'); // إظهار الجدول عند وجود نتائج
-                        $.each(data, function(index, account) {
+    accountTypeRows.forEach(row => {
+        row.addEventListener('click', async function() {
+            const type = this.dataset.type;
+            const mainAccountsContainer = document.getElementById(`main-accounts-${type}`);
+            
+            if (activeTypes.has(type)) {
+                mainAccountsContainer.classList.add('hidden');
+                activeTypes.delete(type);
+            } else {
+                mainAccountsContainer.classList.remove('hidden');
+                activeTypes.add(type);
+                
+                try {
+                    const response = await fetch(`/api/accounts/by-type/${type}`);
+                    const mainAccounts = await response.json();
+                    
+                    document.getElementById(`count-type-${type}`).textContent = `(${mainAccounts.length})`;
+                    
+                    const tbody = mainAccountsContainer.querySelector('.main-accounts-body');
+                    tbody.innerHTML = '';
+                    
+                    mainAccounts.forEach(account => {
+                        // Main Account Row
+                        const tr = document.createElement('tr');
+                        tr.className = 'main-account-row hover:bg-gray-50 cursor-pointer transition-colors border-b';
+                        tr.dataset.id = account.main_account_id;
+                        
+                        tr.innerHTML = `
+                            <td class="pr-16 py-3">
+                                <div class="flex items-center">
+                                    <span class="text-gray-800">${account.main_account_id} - ${account.account_name}</span>
+                                    <div class="mr-auto flex gap-4">
+                                        <span class="text-gray-600">مدين: ${account.debit_balance || 0}</span>
+                                        <span class="text-gray-600">دائن: ${account.credit_balance || 0}</span>
+                                    </div>
+                                </div>
+                            </td>
+                        `;
+                        
+                        tbody.appendChild(tr);
+                        
+                        // Sub Accounts Container
+                        const subAccountsContainer = document.createElement('tr');
+                        subAccountsContainer.className = 'sub-accounts-container hidden';
+                        subAccountsContainer.id = `sub-accounts-${account.main_account_id}`;
+                        
+                        subAccountsContainer.innerHTML = `
+                            <td class="p-0">
+                                <div class="border-r-2 border-gray-300 mr-16">
+                                    <table class="min-w-full">
+                                        <tbody class="sub-accounts-body">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </td>
+                        `;
+                        
+                        tbody.appendChild(subAccountsContainer);
+                        
+                        // Add click handler for main account
+                        tr.addEventListener('click', async function() {
+                            const mainId = this.dataset.id;
+                            const subContainer = document.getElementById(`sub-accounts-${mainId}`);
                             
-                            $('#results-body').append(
-                                '<tr>' +
-                                    '<td class="border border-gray-300 p-2">' + (index + 1) + '</td>' +
-                                        '<td class="border border-gray-300 p-2">' + account.sub_name + '</td>' +
-                                        '<td class="border border-gray-300 p-2">' + account.Main_id + '</td>' +
-                                        '<td class="border border-gray-300 p-2">' + account.sub_account_id + '</td>' +
-                                        '<td class="border border-gray-300 p-2">' + account.debtor_amount + '</td>' + // عرض المبلغ المدين
-                                        '<td class="border border-gray-300 p-2">' + account.creditor_amount + '</td>' + // عرض المبلغ الدائن
-                                   '</tr>'
-                            );
+                            if (activeMainAccounts.has(mainId)) {
+                                subContainer.classList.add('hidden');
+                                activeMainAccounts.delete(mainId);
+                            } else {
+                                subContainer.classList.remove('hidden');
+                                activeMainAccounts.add(mainId);
+                                
+                                try {
+                                    const response = await fetch(`/api/accounts/${mainId}/sub-accounts`);
+                                    const subAccounts = await response.json();
+                                    
+                                    const subBody = subContainer.querySelector('.sub-accounts-body');
+                                    subBody.innerHTML = '';
+                                    
+                                    subAccounts.forEach(sub => {
+                                        const subTr = document.createElement('tr');
+                                        subTr.className = 'hover:bg-gray-50 transition-colors border-b';
+                                        subTr.innerHTML = `
+                                            <td class="pr-24 py-3">
+                                                <div class="flex items-center">
+                                                    <span class="text-gray-800">${sub.sub_account_id} - ${sub.sub_name}</span>
+                                                    <div class="mr-auto flex gap-4">
+                                                        <span class="text-gray-600">مدين: ${sub.debtor_amount || 0}</span>
+                                                        <span class="text-gray-600">دائن: ${sub.creditor_amount || 0}</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        `;
+                                        subBody.appendChild(subTr);
+                                    });
+                                } catch (error) {
+                                    console.error('Error fetching sub accounts:', error);
+                                }
+                            }
                         });
-                    } else {
-                        $('#results-table').removeClass('hidden'); // إظهار الجدول حتى لو لم تكن هناك نتائج
-                        $('#results-body').append(
-                            '<tr>' +
-                                '<td colspan="4" class="border border-gray-300 p-2 text-center">No sub-accounts found</td>' +
-                            '</tr>'
-                        );
-                    }
+                    });
+                } catch (error) {
+                    console.error('Error fetching main accounts:', error);
                 }
-            });
+            }
         });
     });
-</script>
-    <br>
-
-
-
-    <input type="text" id="search" name="search" placeholder="Search for sub-accounts" class="border border-gray-300 p-2 rounded w-full mb-4">
-
-    <table id="results-table" class="min-w-full border-collapse border border-gray-300 hidden">
-        <thead class="bg-gray-200">
-            <tr>
-                <th class="border border-gray-300 p-2">#</th>
-                <th class="border border-gray-300 p-2">Account Name</th>
-                <th class="border border-gray-300 p-2">Account Number</th>
-                <th class="border border-gray-300 p-2">Parent ID</th>
-                <th class="border border-gray-300 p-2">المدين</th> <!-- المبلغ المدين لعام 2024 -->
-                <th class="border border-gray-300 p-2">الدائن</th> <!-- المبلغ الدائن لعام 2024 -->
-            </tr>
-        </thead>
-        <tbody id="results-body">
-            <!-- سيتم عرض النتائج هنا -->
-        </tbody>
-    </table>
-    <input type="text" value="" name="mainAccountInput" id="mainAccountInput">
-
-<script>
-  // الحصول على جميع العناصر التي تحمل الكلاس "link-item"
-  const links = document.querySelectorAll('.link-item');
-
-  links.forEach(link => {
-      link.addEventListener('click', function(event) {
-
-          event.preventDefault(); // لمنع الانتقال
-
-          // إزالة الكلاس "colored" من جميع الروابط
-          links.forEach(l => l.classList.remove('colored'));
-
-          // إضافة الكلاس "colored" للرابط الذي تم الضغط عليه
-          this.classList.add('colored');
-      });
-  });
+});
 </script>
 
 <style>
-  .colored {
+.account-type-row:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
 
-border-bottom:2px solid rgb(43, 12, 244);      color: #1b1bfdc6; /* يمكنك تغيير اللون كما تريد */
-  }
+/* Custom Scrollbar Styles */
+.overflow-y-auto::-webkit-scrollbar {
+    width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
 </style>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const largeMainAccountLinks = document.querySelectorAll('.large-main-account');
-
-        largeMainAccountLinks.forEach(link => {
-            link.addEventListener('click', function(event) {
-                event.preventDefault(); // منع الانتقال للرابط
-
-                const largeMainAccountId = this.getAttribute('data-id');
-                document.getElementById('mainAccountInput').value = largeMainAccountId;
-
-                // جلب الحسابات الرئيسية باستخدام AJAX
-                fetch(`/accounts/large-main-accounts/${largeMainAccountId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const mainAccountsTableBody = document.getElementById('mainAccountsTableBody');
-                        const mainAccountsTable = document.getElementById('mainAccountsTable');
-                        mainAccountsTableBody.innerHTML = ''; // تفريغ القائمة القديمة
-                        const subAccountsTable = document.getElementById('subAccountsTable');
-                        const subAccountsTableBody = document.getElementById('subAccountsTableBody');
-                        subAccountsTableBody.innerHTML = ''; //
-
-                        // عرض الحسابات الرئيسية في الجدول
-                        if (data.length > 0) {
-                            data.forEach(account => {
-                                const row = `
-                                    <tr>
-                                        <td>
-                                          <a href="#" class="main-account link-item text-blue-500 hover:underline"
-                                             data-id="${account.main_account_id}">${account.main_account_id}</a>
-                                        </td>
-                                        <td class="text-right tagTd">${account.account_name}</td>
-                                        <td class="text-right tagTd">${account.debit_balance || 0}</td>
-                                        <td class="text-right tagTd">${account.credit_balance || 0}</td>
-                                        <td class="text-right tagTd">${account.phone || 'غير متوفر'}</td>
-                                    </tr>
-                                `;
-                                mainAccountsTableBody.insertAdjacentHTML('beforeend', row);
-                            });
-                            mainAccountsTable.style.display = 'block'; // إظهار الجدول
-                        } else {
-                            mainAccountsTableBody.innerHTML = '<tr><td colspan="5">لا توجد حسابات رئيسية.</td></tr>';
-                        }
-
-                        // إضافة حدث النقر للحسابات الرئيسية لجلب الحسابات الفرعية
-                        const mainAccountLinks = document.querySelectorAll('.main-account');
-                        let currentIndex = 0; // المؤشر الحالي
-
-                        // تمييز الرابط الأول عند التحميل
-                        if (mainAccountLinks.length > 0) {
-                            highlightLink(mainAccountLinks[currentIndex]);
-                        }
-
-                        mainAccountLinks.forEach((link, index) => {
-                            link.addEventListener('click', function(event) {
-                                event.preventDefault();
-                                currentIndex = index; // تحديث المؤشر الحالي عند الضغط على الرابط
-
-                                // إزالة التنسيق من جميع الروابط
-                                mainAccountLinks.forEach(l => l.classList.remove('text-red-500', 'font-bold'));
-
-                                // إضافة الفئة "text-red-500" للرابط الذي تم النقر عليه لتغيير لونه
-                                this.classList.add('text-red-500', 'font-bold');
-                                const mainAccountId = this.getAttribute('data-id');
-                                document.getElementById('mainAccountInput').value = mainAccountId;
-
-                                // جلب الحسابات الفرعية باستخدام AJAX
-                                fetch(`/accounts/main-accounts/${mainAccountId}/sub-accounts`)
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        const subAccountsTableBody = document.getElementById('subAccountsTableBody');
-                                        subAccountsTableBody.innerHTML = ''; // تفريغ القائمة القديمة
-
-                                        // عرض الحسابات الفرعية في الجدول
-                                        if (data.length > 0) {
-                                            data.forEach(subAccount => {
-                                                const row = `
-                                                    <tr>
-                                                        <td class="text-right tagTd">${subAccount.sub_account_id}</td>
-                                                        <td class="text-right tagTd">${subAccount.sub_name}</td>
-                                                        <td class="text-right tagTd">${subAccount.debit_balance || 0}</td>
-                                                        <td class="text-right tagTd">${subAccount.credit_balance || 0}</td>
-                                                    </tr>
-                                                `;
-                                                subAccountsTableBody.insertAdjacentHTML('beforeend', row);
-                                            });
-                                            subAccountsTable.style.display = 'block'; // إظهار الجدول
-                                        } else {
-                                            subAccountsTableBody.innerHTML = '<tr><td colspan="4">لا توجد حسابات فرعية.</td></tr>';
-                                        }
-                                    })
-                                    .catch(error => console.error('Error fetching sub accounts:', error));
-                            });
-                        });
-
-                        // مستمع لأحداث لوحة المفاتيح
-                        document.addEventListener('keydown', function(event) {
-                            // زر السهم الأيمن (Right Arrow)
-                            if (event.key === 'ArrowRight' && currentIndex < mainAccountLinks.length - 1) {
-                                removeHighlight(mainAccountLinks[currentIndex]); // إزالة التمييز الحالي
-                                currentIndex++; // الانتقال إلى الرابط التالي
-                                highlightLink(mainAccountLinks[currentIndex]); // تمييز الرابط الجديد
-                                updateLinkId(mainAccountLinks[currentIndex]); // تحديث الـ data-id للرابط الجديد
-                            }
-
-                            // زر السهم الأيسر (Left Arrow)
-                            if (event.key === 'ArrowLeft' && currentIndex > 0) {
-                                removeHighlight(mainAccountLinks[currentIndex]); // إزالة التمييز الحالي
-                                currentIndex--; // العودة إلى الرابط السابق
-                                highlightLink(mainAccountLinks[currentIndex]); // تمييز الرابط الجديد
-                                updateLinkId(mainAccountLinks[currentIndex]); // تحديث الـ data-id للرابط السابق
-                            }
-                        });
-
-                        // دالة لتلوين الرابط
-                        function highlightLink(link) {
-                            link.classList.add('text-red-500', 'font-bold'); // إضافة تنسيق
-                            link.focus(); // التركيز على الرابط الحالي
-                        }
-
-                        // دالة لإزالة تلوين الرابط
-                        function removeHighlight(link) {
-                            link.classList.remove('text-red-500', 'font-bold'); // إزالة التنسيق
-                        }
-
-                        // دالة لتحديث قيمة الـ data-id
-                        function updateLinkId(link) {
-                            const actualId = link.getAttribute('data-id'); // الحصول على القيمة الحقيقية
-                            console.log(`Current data-id: ${actualId}`); // طباعة القيمة الحالية في الكونسول
-                        }
-
-                    })
-                    .catch(error => console.error('Error fetching main accounts:', error));
-            });
-        });
-    });
-</script>
 @endsection

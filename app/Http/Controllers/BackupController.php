@@ -37,10 +37,18 @@ class BackupController extends Controller
         return Response::download($latestFile, $fileName)->deleteFileAfterSend(true);
     }
 
-    public function backupDatabase()
+    public function backupDatabase(Request $request)
+
     {
+
         // التحقق مما إذا كان هناك access token في الجلسة
-        if (!session()->has('google_access_token')) {
+        logger('Backup Session Check:', [
+            'token' => $request->session()->get('google_access_token'),
+            'session_id' => $request->session()->getId()
+        ]);
+
+        if (!$request->session()->has('google_access_token')) {
+            logger('Missing Google Token in Backup');
             return redirect()->route('google.login');
         }
 

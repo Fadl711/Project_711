@@ -77,7 +77,7 @@ class UserPermissionController extends Controller
         try {
             $userId = $request->input('id');
             $permissions = UserPermission::where('User_id', $userId)->get();
-            
+
             return response()->json([
                 'permissions' => $permissions
             ]);
@@ -92,7 +92,7 @@ class UserPermissionController extends Controller
         try {
             $userId = $request->input('id');
             $user = User::find($userId);
-            
+
             if (!$user) {
                 return response()->json(['error' => 'المستخدم غير موجود'], 404);
             }
@@ -111,19 +111,19 @@ class UserPermissionController extends Controller
     {
         try {
             $permissionId = $request->input('permission_id');
-            
+
             if (!$permissionId) {
                 \Log::error('Permission ID not provided');
                 return response()->json(['success' => false, 'message' => 'معرف الصلاحية غير موجود'], 400);
             }
-            
+
             $permission = UserPermission::where('permission_id', $permissionId)->first();
-            
+
             if (!$permission) {
                 \Log::error('Permission not found with ID: ' . $permissionId);
                 return response()->json(['success' => false, 'message' => 'الصلاحية غير موجودة'], 404);
             }
-            
+
             $permission->delete();
             return response()->json(['success' => true, 'message' => 'تم حذف الصلاحية بنجاح']);
         } catch (\Exception $e) {
@@ -136,14 +136,14 @@ class UserPermissionController extends Controller
     {
         try {
             $userId = $request->input('user_id');
-            
+
             if (!$userId) {
                 return response()->json(['error' => 'معرف المستخدم مطلوب'], 400);
             }
 
             // استخدام معرف المستخدم المحدد بدلاً من المستخدم الحالي
             $permissions = UserPermission::where('User_id', $userId)->get();
-            
+
             return view('components.user-permissions-table', [
                 'permissions' => $permissions,
                 'userId' => $userId
@@ -199,7 +199,7 @@ class UserPermissionController extends Controller
     {
         try {
             $userId = $request->input('user_id');
-            
+
             // قائمة بجميع الصفحات المتاحة
             $pages = [
                 'الحسابات',
@@ -213,7 +213,8 @@ class UserPermissionController extends Controller
                 'سجلات الترحيل',
                 'التقارير',
                 'المردودات',
-                'الإعدادات'
+                'الإعدادات',
+                'الخصم والتحليل'
             ];
 
             foreach ($pages as $page) {
@@ -249,7 +250,7 @@ class UserPermissionController extends Controller
     {
         try {
             $userId = $request->input('user_id');
-            
+
             // حذف جميع الصلاحيات للمستخدم
             $deleted = UserPermission::where('User_id', $userId)->delete();
 

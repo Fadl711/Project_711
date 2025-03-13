@@ -36,6 +36,7 @@ return [
 
     'expire_on_close' => env('SESSION_EXPIRE_ON_CLOSE', true),
 
+
     /*
     |--------------------------------------------------------------------------
     | Session Encryption
@@ -170,7 +171,6 @@ return [
     */
 
     // 'secure' => env('SESSION_SECURE_COOKIE'),
-    'secure' => env('SESSION_SECURE_COOKIE', true),
 
 
 
@@ -201,9 +201,10 @@ return [
     | Supported: "lax", "strict", "none", null
     |
     */
+    'secure' => env('SESSION_SECURE_COOKIE', true),
+    'same_site' => 'none', // إذا كنت تستخدم HTTPS عبر نطاقات مختلفة
 
     // 'same_site' => env('SESSION_SAME_SITE', 'lax'),
-    'same_site' => 'strict',
     //خلاصة: الأفضل لنظام محاسبي
 // strict هو الأفضل لأنه يمنع إرسال الكوكيز خارج النطاق الأصلي، مما يعزز حماية النظام ضد الهجمات مثل CSRF والهجمات الأخرى المتعلقة بالكوكيز.
 

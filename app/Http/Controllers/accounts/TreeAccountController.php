@@ -12,65 +12,64 @@ use Illuminate\Contracts\View\View;
 
 class TreeAccountController extends Controller
 {
-    // //
-    // public function getMainAccounts($id)
-    // {
-    //     // جلب الحسابات الرئيسية بناءً على الحساب الرئيسي الكبير
-    //     $mainAccounts = MainAccount::where('large_main_account_id', $id)->get();
-
-    //     // إرجاع البيانات كـ JSON
-    //     return response()->json($mainAccounts);
-    // }
-
-    public function getMainAccountsByLargeAccountType($largeAccountType)
+    /**
+     * Get main accounts by their type (e.g., Current Assets, Fixed Assets, etc.)
+     */
+    public function getAccountsByType($type)
     {
-        // التحقق من أن الـ largeAccountType هو قيمة صحيحة من Enum
-        $largeAccountTypeEnum = AccountType::tryFrom($largeAccountType);
-
-        if (!$largeAccountTypeEnum) {
-            return response()->json([], 404); // إذا لم يكن الحساب الكبير موجود
+        // التحقق من صحة نوع الحساب
+        $accountType = AccountType::tryFrom((int)$type);
+        
+        if (!$accountType) {
+            return response()->json(['error' => 'نوع الحساب غير صالح'], 400);
         }
 
-        // افترض أن لديك الحقل large_account_type في جدول MainAccount
-        $mainAccounts = MainAccount::where('typeAccount', $largeAccountTypeEnum->value)->get();
+        // جلب الحسابات الرئيسية مع حساب الأرصدة
+        $mainAccounts = MainAccount::where('typeAccount', $accountType->value)
+            ->select('main_accounts.*')
+            ->selectRaw('COALESCE((
+                SELECT SUM(debtor_amount) 
+                FROM sub_accounts 
+                WHERE sub_accounts.Main_id = main_accounts.main_account_id
+            ), 0) as debit_balance')
+            ->selectRaw('COALESCE((
+                SELECT SUM(creditor_amount) 
+                FROM sub_accounts 
+                WHERE sub_accounts.Main_id = main_accounts.main_account_id
+            ), 0) as credit_balance')
+            ->get();
 
         return response()->json($mainAccounts);
     }
-    // لجلب الحسابات الفرعية بناءً على الحساب الرئيسي
-   
 
+    /**
+     * Get sub-accounts for a specific main account
+     */
+    public function getSubAccounts($mainAccountId)
+    {
+        $subAccounts = SubAccount::where('Main_id', $mainAccountId)
+            ->select(
+                'sub_account_id',
+                'sub_name',
+                'debtor_amount',
+                'creditor_amount'
+            )
+            ->get();
 
-
-    public function getMainAccounts(AccountType $type){
-
-        $AllAssetsMainAccount=MainAccount::where('typeAccount',$type->value)->get();
-        dd($AllAssetsMainAccount);
-       response()->json($AllAssetsMainAccount);;
+        return response()->json($subAccounts);
     }
-   
+
     public function searchSubAccounts(Request $request)
     {
-        // ->withSum(['daily_entries as total_debit' => function ($query) {
-        //     $query->whereYear('created_at', 2024);
-        // }], 'Amount_debit') // جمع المبالغ المدينة لعام 2024
-        // ->withSum(['daily_entries as total_credit' => function ($query) {
-        //     $query->whereYear('created_at', 2024);
-        // }], 'Amount_Credit') // جمع المبالغ الدائنة لعام 2024
-       
         $query = $request->input('query');
-
-        // استعلام لجلب الحسابات الفرعية مع جمع المبالغ المدينة والدائنة من جدول القيود اليومية لعام 2024
+        
         $subAccounts = SubAccount::where('sub_account_id', '!=', null)
-                                 ->where('sub_name', 'LIKE', "%{$query}%")
-                                 ->Orwhere('sub_account_id', 'LIKE', "%{$query}%") ->get();
+            ->where(function($q) use ($query) {
+                $q->where('sub_name', 'LIKE', "%{$query}%")
+                  ->orWhere('sub_account_id', 'LIKE', "%{$query}%");
+            })
+            ->get();
 
-        // إرجاع النتيجة كاستجابة JSON
-                    //  if ($subAccounts->isEmpty()) {
-                    //         return response()->json(['message' => 'No sub-accounts found'], 404);
-                    //     }
-   // إرجاع النتيجة كاستجابة JSON
-   return response()->json($subAccounts);
-                                                 
-                                                  
-}
+        return response()->json($subAccounts);
+    }
 }
