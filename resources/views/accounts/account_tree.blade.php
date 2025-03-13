@@ -27,7 +27,7 @@
                                 </div>
                             </td>
                         </tr>
-                        
+
                         <!-- Main Accounts Container -->
                         <tr class="main-accounts-container hidden" id="main-accounts-{{ $type->value }}">
                             <td colspan="4" class="p-0">
@@ -62,29 +62,30 @@ document.addEventListener('DOMContentLoaded', function() {
         row.addEventListener('click', async function() {
             const type = this.dataset.type;
             const mainAccountsContainer = document.getElementById(`main-accounts-${type}`);
-            
+
             if (activeTypes.has(type)) {
                 mainAccountsContainer.classList.add('hidden');
                 activeTypes.delete(type);
             } else {
                 mainAccountsContainer.classList.remove('hidden');
                 activeTypes.add(type);
-                
+
                 try {
-                    const response = await fetch(`/api/accounts/by-type/${type}`);
+                        const apiUrl = "{{ url('/api/accounts/by-type') }}";
+                     const response = await fetch(`${apiUrl}/${type}`);
                     const mainAccounts = await response.json();
-                    
+
                     document.getElementById(`count-type-${type}`).textContent = `(${mainAccounts.length})`;
-                    
+
                     const tbody = mainAccountsContainer.querySelector('.main-accounts-body');
                     tbody.innerHTML = '';
-                    
+
                     mainAccounts.forEach(account => {
                         // Main Account Row
                         const tr = document.createElement('tr');
                         tr.className = 'main-account-row hover:bg-gray-50 cursor-pointer transition-colors border-b';
                         tr.dataset.id = account.main_account_id;
-                        
+
                         tr.innerHTML = `
                             <td class="pr-16 py-3">
                                 <div class="flex items-center">
@@ -96,14 +97,14 @@ document.addEventListener('DOMContentLoaded', function() {
                                 </div>
                             </td>
                         `;
-                        
+
                         tbody.appendChild(tr);
-                        
+
                         // Sub Accounts Container
                         const subAccountsContainer = document.createElement('tr');
                         subAccountsContainer.className = 'sub-accounts-container hidden';
                         subAccountsContainer.id = `sub-accounts-${account.main_account_id}`;
-                        
+
                         subAccountsContainer.innerHTML = `
                             <td class="p-0">
                                 <div class="border-r-2 border-gray-300 mr-16">
@@ -114,28 +115,30 @@ document.addEventListener('DOMContentLoaded', function() {
                                 </div>
                             </td>
                         `;
-                        
+
                         tbody.appendChild(subAccountsContainer);
-                        
+
                         // Add click handler for main account
                         tr.addEventListener('click', async function() {
                             const mainId = this.dataset.id;
                             const subContainer = document.getElementById(`sub-accounts-${mainId}`);
-                            
+
                             if (activeMainAccounts.has(mainId)) {
                                 subContainer.classList.add('hidden');
                                 activeMainAccounts.delete(mainId);
                             } else {
                                 subContainer.classList.remove('hidden');
                                 activeMainAccounts.add(mainId);
-                                
+
                                 try {
-                                    const response = await fetch(`/api/accounts/${mainId}/sub-accounts`);
+                                    const apiUrl = "{{ url('/api/accounts') }}";
+
+                                    const response = await fetch(`${apiUrl}/${mainId}/sub-accounts`);
                                     const subAccounts = await response.json();
-                                    
+
                                     const subBody = subContainer.querySelector('.sub-accounts-body');
                                     subBody.innerHTML = '';
-                                    
+
                                     subAccounts.forEach(sub => {
                                         const subTr = document.createElement('tr');
                                         subTr.className = 'hover:bg-gray-50 transition-colors border-b';
