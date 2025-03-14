@@ -1,5 +1,5 @@
 <!-- تضمين مكتبة Chart.js في بداية الملف -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ asset('assets/chart.js/dist/chart.umd.js') }}"></script>
 
 @php
     $months = [
@@ -18,9 +18,28 @@
     ];
 @endphp
 
-<div class="container mx-auto p-4">
+<style>
+    @media print {
+        .chart-container {
+            width: 100% !important;
+            height: 250px !important;
+            page-break-inside: avoid;
+            margin-bottom: 20px;
+        }
+        canvas {
+            max-width: 100%;
+            height: auto !important;
+        }
+        .product-section {
+            page-break-inside: avoid;
+            margin-bottom: 30px;
+        }
+    }
+</style>
+
+<div class="container mx-auto p-0">
     @foreach($dataProducts as $index => $product)
-        <div class="mb-8 p-4 border rounded shadow">
+        <div class="product-section mb-6 p-4 rounded">
             <h2 class="text-xl font-bold mb-4 text-center">{{ $product['productName'] }}</h2>
             
             <!-- بيانات المبيعات -->
@@ -36,12 +55,12 @@
             </div>
 
             <!-- رسم بياني للمبيعات الشهرية -->
-            <div class="w-full h-64 mb-4">
+            <div class="chart-container w-full mb-4" style="height: 250px;">
                 <canvas id="monthlyChart{{ $index }}"></canvas>
             </div>
 
             <!-- رسم بياني للمبيعات السنوية -->
-            <div class="w-full h-64">
+            <div class="chart-container w-full" style="height: 250px;">
                 <canvas id="yearlyChart{{ $index }}"></canvas>
             </div>
         </div>
@@ -75,7 +94,7 @@
                     },
                     options: {
                         responsive: true,
-                        maintainAspectRatio: false,
+                        maintainAspectRatio: true,
                         scales: {
                             y: {
                                 beginAtZero: true
@@ -103,7 +122,7 @@
                     },
                     options: {
                         responsive: true,
-                        maintainAspectRatio: false,
+                        maintainAspectRatio: true,
                         scales: {
                             y: {
                                 beginAtZero: true

@@ -4,110 +4,112 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>              التقرير المخزن - 
-         {{-- {{ $Myanalysis }} --}}
-    </title>
+    <title>تقرير المبيعات</title>
     <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
     <style>
         body {
-      font-family: Arial, sans-serif; /* الخط الافتراضي */
-  }
-  .english {
-      font-family: 'Times New Roman', serif; /* الخط الإنجليزي */
-  }
-      /* تخصيص للطباعة */
-      @media print {
-          body {
-              width: 100%;
-              margin: 0;
-              padding: 0;
-          }
-          .print-container {
-              @apply w-full max-w-full mx-auto p-2;
-          }
-
-          .no-print {
-              display: none;
-          }
-      }
-
-  table {
-      table-layout: ; /* استخدم تخطيط ثابت */
-      width: 100%;
-  }
-
-  th, td {
-      border: 1px solid #000;
-      /* padding: 8px; */
-  }
-
- 
-
-  /* تحسين مظهر الجدول */
-  .header-section, .totals-section {
-      margin-top: 10px;
-      border: 2px solid #000;
-      border-radius: 8px;
-  }
-      
-  </style>
-</head>
-<body class="bg-white">
-    <div class=" print-container px-1 ">
-        <!-- العنوان -->
-        @isset($buss)
-        <div class="header   rounded-lg">
-               @include('includes.header2')
-
-      
-  </div>
-  <div class="text-center space-y-4">
-    <p class="font-extrabold text-lg">
-      {{-- التقرير  -  {{ $Myanalysis ??'' }} --}}
-       {{-- : --}}
-          {{-- {{ $accountingPeriod ?? ''}} --}}
-    </p>
-</div>
-
-
-@endisset
-{{-- @isset($dataProducts)
-    
-<x-sales-report/>
-@include('includes.header2')
-
-@endisset --}}
-@isset($dataProducts)
-@include('components.sales-report')
-@endisset
-</div>
-<div class="mt-4 no-print">
-    <button onclick="printAndClose()" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">طباعة</button>
-
-    <script>
-        function printAndClose() {
-            window.print(); // أمر الطباعة
-            setTimeout(() => {
-                window.close(); // الإغلاق بعد بدء الطباعة
-            }, 500); // فترة الانتظار نصف ثانية فقط
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: white;
         }
-    </script>
+        
+        .english {
+            font-family: 'Times New Roman', serif;
+        }
 
-    <button onclick="closeWindow()" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700">إلغاء الطباعة</button>
+        table {
+            width: 100%;
+        }
 
-    <script>
-        function closeWindow() {
-            if (window.history.length > 1) {
-                window.history.back(); // العودة للصفحة السابقة
-            } else {
-                window.close(); // الإغلاق إذا كانت الصفحة مفتوحة في نافذة جديدة
+        th, td {
+            border: 1px solid #000;
+        }
+
+        .header-section, .totals-section {
+            margin-top: 10px;
+            border: 2px solid #000;
+            border-radius: 8px;
+        }
+
+        @media print {
+            @page {
+                size: A4;
+                margin: 0;
+            }
+            
+            html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0 !important;
+                padding: 0 !important;
+                background-color: white;
+            }
+
+            .print-container {
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 1cm !important;
+                margin: 0 !important;
+                background-color: white;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            canvas {
+                max-width: 100% !important;
+                height: auto !important;
+            }
+
+            .chart-container {
+                width: 100% !important;
+                height: 250px !important;
+                page-break-inside: avoid;
+                margin-bottom: 1cm;
+                display: block;
+                background-color: white;
+            }
+
+            .product-section {
+                page-break-inside: avoid;
+                margin-bottom: 1cm;
+                break-inside: avoid;
+                background-color: white;
+            }
+
+            .header-section, .totals-section {
+                break-inside: avoid;
+            }
+
+            * {
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
         }
-    </script>
-</div>
-<Script>
-</Script>
+    </style>
+</head>
+<body>
+    <main class="print-container">
+        @isset($buss)
+            <div class="header rounded-lg">
+                @include('includes.header2')
+            </div>
+            <div class="text-center space-y-4">
+                <p class="font-extrabold text-lg">تقرير المبيعات</p>
+            </div>
+        @endisset
 
+        @isset($dataProducts)
+            @include('components.sales-report')
+        @endisset
+    </main>
+
+    <div class="mt-4 no-print">
+        <button onclick="window.print()" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">طباعة</button>
+        <button onclick="window.close()" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700">إغلاق</button>
+    </div>
 </body>
-
 </html>
