@@ -19,6 +19,7 @@ use App\Models\PaymentBond;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\UserPermission;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
@@ -34,6 +35,14 @@ class AppServiceProvider extends ServiceProvider
         \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::except([
             '*'
         ]);
+/*             'web' => [
+        \App\Http\Middleware\EncryptCookies::class,
+        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+        \Illuminate\Session\Middleware\StartSession::class, // تأكد من وجوده
+        \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        \App\Http\Middleware\VerifyCsrfToken::class,
+        \Illuminate\Routing\Middleware\SubstituteBindings::class,
+    ], */
     }
 
     /**
@@ -41,6 +50,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
         $users = DB::table('users')->get();
         Gate::define('update-post', function (User $user, Product $post) {
             // يُسمح بالتحديث إذا كان المستخدم لديه صلاحية "update-post"
