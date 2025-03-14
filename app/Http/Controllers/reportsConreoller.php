@@ -103,7 +103,7 @@ return $this->salesProfitReport($validated);
         }
         if( $validated['DisplayMethod']==="ShowAllProducts")
         {
-            $uniqueProducts = Product::all();
+            $uniqueProducts = Product::all()->take(10);
         }
         $sub_accountT4=null;
         $sub_accountT5=null;
@@ -118,10 +118,10 @@ $dailyTotals=[];
 
         foreach($uniqueProducts as $uniqueProduct )
         {
-            
+
             $query = Sale::where('accounting_period_id', $accountingPeriod->accounting_period_id)->where('transaction_type',4);
             $querys = Sale::where('accounting_period_id', $accountingPeriod->accounting_period_id)->where('transaction_type',5);
-           
+
             if( $validated['accountList']==="mainAccount")
             {
                 $query->where('Customer_id', $sub_accountT4);
@@ -130,17 +130,17 @@ $dailyTotals=[];
             $product_id=$validated['DisplayMethod']==="SelectedProduct"?$validated['product_id']:$uniqueProduct->product_id;
             $query->where('product_id', $product_id);
             $querys->where('product_id', $product_id);
-           
+
             $productName = Product::where('product_id', $product_id)->value('product_name');
             $totalsale = $query->get();
             $balancesSales = $query->get();
-         
+
              // تجميع المبيعات حسب الشهر
-             
+
              $monthlySales = $totalsale->groupBy(function($sale) {
                  return $sale->created_at->format('m'); // تجميع المبيعات حسب السنة والشهر
              });
-            
+
 
                  $dailyTotals = $monthlySales->map(function($sales, $month) {
                     return [
@@ -152,7 +152,7 @@ $dailyTotals=[];
                 return $sal->created_at->format('y'); // تجميع المبيعات حسب السنة والشهر
                 // تجميع المبيعات حسب السنة والشهر
              });
-            
+
 
                  $dailyTotal= $monthlySale->map(function($salee, $months) {
                     return [
@@ -162,8 +162,8 @@ $dailyTotals=[];
                 })->values();
 
              // تحويل المجموعة إلى مصفوفة مع إجمالي المبيعات لكل شهر
-           
-           
+
+
         $dataProducts[]=
         [
             'salesProfit4'=>$query->sum('total_profit'),
@@ -171,7 +171,7 @@ $dailyTotals=[];
             'salesProfit5'=>$querys->sum('total_profit'),
             'salesDiscount5'=>$querys->sum('discount'),
             'productName'=>$productName,
-           
+
             'dailyTotals'=>$dailyTotals ,
             'dailyTotal'=>$dailyTotal ,
 
@@ -182,10 +182,10 @@ $dailyTotals=[];
 
         }
 
-       
+
             // الحصول على جميع المبيعات الخاصة بالفترة المحاسبية
-           
-    
+
+
         // dd($dataProducts);
         // dd($salesDiscount);
 

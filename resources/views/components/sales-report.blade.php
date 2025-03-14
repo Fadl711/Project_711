@@ -1,169 +1,117 @@
+<!-- تضمين مكتبة Chart.js في بداية الملف -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
-@forelse ($dataProducts as $item)
-<div class="block max-w-sm   p-1 bg-white   text-sm   rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-    <p class="font-bold text-gray-700 dark:text-gray-400">{{$item['productName']}}</p>
-    </div>
-<div class=" w-[%100] py-4 px-1  bg-white border  text-center  border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 block">
-<div class=" w-[%100] py-4 px-1 gap-2    text-center   hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 flex">
+@php
+    $months = [
+        '01' => 'يناير',
+        '02' => 'فبراير',
+        '03' => 'مارس',
+        '04' => 'أبريل',
+        '05' => 'مايو',
+        '06' => 'يونيو',
+        '07' => 'يوليو',
+        '08' => 'أغسطس',
+        '09' => 'سبتمبر',
+        '10' => 'أكتوبر',
+        '11' => 'نوفمبر',
+        '12' => 'ديسمبر'
+    ];
+@endphp
 
-<div class="block max-w-sm  h-20 text-center text-sm  p-1 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-    <h5 class="font-bold   text-gray-900 dark:text-white">ارباح   المبيعات</h5>
-    <p class="font-bold text-gray-700 dark:text-gray-400">{{$item['salesProfit4']}}</p>
-    </div>
-<div class="block max-w-sm p-1 h-20 text-center text-sm bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-    <h5 class="  font-bold   text-gray-900 dark:text-white">ارباح مردود  المبيعات</h5>
-    <p class="font-bold text-gray-700 dark:text-gray-400">{{$item['salesProfit5']}}</p>
-    </div>
-<div class="block max-w-sm h-20  p-1 text-center text-sm bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-    <h5 class=" font-bold   dark:text-white">  خصم المبيعات </h5>
-    <p class="font-bold  text-red-500  dark:text-gray-400">{{$item['salesDiscount4']}}</p>
-    </div>
-<div class="block text-sm h-20 text-center max-w-sm p-1 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-    <h5 class="  font-bold  text-gray-900 dark:text-white">  خصم  مردودالمبيعات </h5>
-    <p class="font-bold text-green-500 dark:text-gray-400">{{$item['salesDiscount5']}}</p>
-    </div>
-    @php
-        $Discount=$item['salesDiscount4']-$item['salesDiscount5'];
-    @endphp
-    @php
-        $salesProfit=$item['salesProfit4']-$item['salesProfit5'];
-        $Profit=$salesProfit -$Discount;
-    @endphp
-    <div class="block max-w-sm p-1 h-20 text-center bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-        <h5 class=" text-sm font-bold  text-gray-900 dark:text-white"> صافي  خصم   </h5>
-        <p class="font-bold text-red-500 dark:text-gray-400">{{$Discount}}</p>
-    </div>
-<div class="block text-center max-w-sm p-1 h-20 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-    <h5 class="  font-bold  text-gray-900 dark:text-white"> صافي الأرباح </h5>
-    <p class="font-bold text-green-500 dark:text-gray-400">{{$Profit}}</p>
+<div class="container mx-auto p-4">
+    @foreach($dataProducts as $index => $product)
+        <div class="mb-8 p-4 border rounded shadow">
+            <h2 class="text-xl font-bold mb-4 text-center">{{ $product['productName'] }}</h2>
+            
+            <!-- بيانات المبيعات -->
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="p-3 bg-blue-100 rounded">
+                    <p>إجمالي الأرباح (مبيعات): {{ number_format($product['salesProfit4'] - $product['salesDiscount4'], 2) }}</p>
+                    <p>إجمالي الخصومات (مبيعات): {{ number_format($product['salesDiscount4'], 2) }}</p>
+                </div>
+                <div class="p-3 bg-green-100 rounded">
+                    <p>إجمالي الأرباح (مرتجع): {{ number_format($product['salesProfit5'] - $product['salesDiscount5'], 2) }}</p>
+                    <p>إجمالي الخصومات (مرتجع): {{ number_format($product['salesDiscount5'], 2) }}</p>
+                </div>
+            </div>
+
+            <!-- رسم بياني للمبيعات الشهرية -->
+            <div class="w-full h-64 mb-4">
+                <canvas id="monthlyChart{{ $index }}"></canvas>
+            </div>
+
+            <!-- رسم بياني للمبيعات السنوية -->
+            <div class="w-full h-64">
+                <canvas id="yearlyChart{{ $index }}"></canvas>
+            </div>
+        </div>
+    @endforeach
 </div>
-</div>
-<div class=" w-[%100]  px-1 gap-2    text-center   hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 flex">
-
-
-<div class="block text-center  p-1 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-   
-<canvas id="paymentChart" width="400" height="350"></canvas>
-
 
 <script>
-    const ctx = document.getElementById('paymentChart').getContext('2d');
+    // تعريف أسماء الأشهر
+    const months = {!! json_encode($months) !!};
 
     // تحويل البيانات من PHP إلى JavaScript
-    const dailyTotals = {!! json_encode($item['dailyTotals']) !!}; // استخدام json_encode لتحويل المصفوفة إلى JSON
-    
-    // إعداد الملصقات والقيم
-    const labels = dailyTotals.map(item => item.month); // استخراج الأيام
-    const data = dailyTotals.map(item => item.total); // استخراج الأرباح
+    const productsData = {!! json_encode($dataProducts) !!};
 
-    const paymentChart = new Chart(ctx, {
-        type: 'line', // أو 'bar' حسب نوع المخطط الذي تريده
-        data: {
-            labels: labels, // استخدام الملصقات
-            datasets: [{
-                label: 'الربح الشهري',
-                data: data, // استخدام القيم
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 2,
-                fill: false, // لملء المنطقة تحت الخط
-                
-            }]
-        },
-        options: {
-            plugins: {
-                datalabels: {
-                    color: '#36A2EB', // لون النص
-                    font: {
-                        weight: 'bold',
-                        size: 10,
+    // انتظر حتى يتم تحميل الصفحة بالكامل
+    window.addEventListener('load', function() {
+        productsData.forEach((product, index) => {
+            // إعداد المخطط الشهري
+            const monthlyCtx = document.getElementById('monthlyChart' + index);
+            if (monthlyCtx) {
+                new Chart(monthlyCtx, {
+                    type: 'line',
+                    data: {
+                        labels: product.dailyTotals.map(item => months[item.month] || item.month),
+                        datasets: [{
+                            label: 'المبيعات الشهرية',
+                            data: product.dailyTotals.map(item => item.total),
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
                     },
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: false,
-                        text: 'المبلغ'
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
                     }
-                },
-                x: {
-                    title: {
-                        display: false,
-                        text: 'الأشهر'
-                    }
-                }
+                });
             }
-        },
-        plugins: [ChartDataLabels] // إضافة البيانات كـ plugin
+
+            // إعداد المخطط السنوي
+            const yearlyCtx = document.getElementById('yearlyChart' + index);
+            if (yearlyCtx) {
+                new Chart(yearlyCtx, {
+                    type: 'line',
+                    data: {
+                        labels: product.dailyTotal.map(item => '20' + item.months),
+                        datasets: [{
+                            label: 'المبيعات السنوية',
+                            data: product.dailyTotal.map(item => item.totals),
+                            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 2,
+                            fill: false
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+        });
     });
 </script>
-</div>
-<div class="block text-center  p-1 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-   
-    <canvas id="paymentChart2" width="200" height="350"></canvas>
-
-
-<script>
-    const ct = document.getElementById('paymentChart2').getContext('2d');
-
-    // تحويل البيانات من PHP إلى JavaScript
-    const dailyTotal = {!! json_encode($item['dailyTotal']) !!}; // استخدام json_encode لتحويل المصفوفة إلى JSON
-    
-    // إعداد الملصقات والقيم
-    const labela = dailyTotal.map(item => item.months); // استخراج الأيام
-    const datas = dailyTotal.map(item => item.totals); // استخراج الأرباح
-
-    const paymentChart2 = new Chart(ct, {
-        type: 'line', // أو 'bar' حسب نوع المخطط الذي تريده
-        data: {
-            labels: labela, // استخدام الملصقات
-            datasets: [{
-                label: 'الربح السنوي',
-                data: datas, // استخدام القيم
-                backgroundColor: 'rgba(45, 100, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 2)',
-                borderWidth: 2,
-                fill: false, // لملء المنطقة تحت الخط
-                
-            }]
-        },
-        options: {
-            plugins: {
-                datalabels: {
-                    color: '#36A2EB', // لون النص
-                    font: {
-                        weight: 'bold',
-                        size: 10,
-                    },
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: false,
-                        text: 'المبلغ'
-                    }
-                },
-                x: {
-                    title: {
-                        display: false,
-                        text: 'الأشهر'
-                    }
-                }
-            }
-        },
-        plugins: [ChartDataLabels] // إضافة البيانات كـ plugin
-    });
-</script>
-</div>
-</div>
-    </div>
-
-    @empty
-    
-@endforelse
