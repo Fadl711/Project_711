@@ -229,10 +229,10 @@ public function destroy($id){
         return redirect()->back();
     }else{
         $mainAccount = MainAccount::find($id);
-
-
         // MainAccount::where('main_account_id',$id)->delete();
         // SubAccount::where('Main_id', $id)->delete();
+        // $mainAccount->delete();
+        //
 
         return redirect()->back();
 

@@ -38,10 +38,16 @@
 </style>
 
 <div class="container mx-auto p-0">
+    @if($CostmerName != "")
+    <h2 class="text-xl font-bold mb-4 text-center">{{ $CostmerName }}</h2>
+    @endif
+
+
+
     @foreach($dataProducts as $index => $product)
         <div class="product-section mb-6 p-4 rounded">
             <h2 class="text-xl font-bold mb-4 text-center">{{ $product['productName'] }}</h2>
-            
+
             <!-- بيانات المبيعات -->
             <div class="grid grid-cols-2 gap-4 mb-4">
                 <div class="p-3 bg-blue-100 rounded">
@@ -53,16 +59,19 @@
                     <p>إجمالي الخصومات (مرتجع): {{ number_format($product['salesDiscount5'], 2) }}</p>
                 </div>
             </div>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+
 
             <!-- رسم بياني للمبيعات الشهرية -->
-            <div class="chart-container w-full mb-4" style="height: 250px;">
+            <div class="chart-container w-full mb-4" style="height: 200px;">
                 <canvas id="monthlyChart{{ $index }}"></canvas>
             </div>
 
             <!-- رسم بياني للمبيعات السنوية -->
-            <div class="chart-container w-full" style="height: 250px;">
+            <div class="chart-container w-full" style="height: 200px;">
                 <canvas id="yearlyChart{{ $index }}"></canvas>
             </div>
+        </div>
         </div>
     @endforeach
 </div>

@@ -214,7 +214,7 @@
                     <span class="textNav">الإعدادات</span>
                     </a></li>
                     @endif
-                    @if(auth()->user()->hasPermission('تفعيل'))
+                    {{-- @if(auth()->user()->hasPermission('تفعيل')) --}}
                 <li class="hover:text-black">
                     <form action="{{route('Saleupdate')}} "  method="POST" >
                     <button type="submit" >
@@ -225,7 +225,7 @@
             </form>
                     {{-- </a> --}}
                 </li>
-                    @endif
+                    {{-- @endif --}}
 
         </ul>
     </div>

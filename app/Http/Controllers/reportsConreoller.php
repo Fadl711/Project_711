@@ -73,6 +73,7 @@ class reportsConreoller extends Controller
 ]);
 
 
+
 // dd($validated['accountList']);
 return $this->salesProfitReport($validated);
 
@@ -80,61 +81,57 @@ return $this->salesProfitReport($validated);
     }
 
     public function salesProfitReport($validated){
-        $class=1;
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
-        $balancesSale = Sale::where('transaction_type',4);
-        $SubAccountCostmers= SubAccount::where('AccountClass',$class)->get();
-        // $balances = Sale::selectRaw(
-        //     '
-        //     SUM(CASE WHEN sales.Customer_id = sub_accounts.sub_account_id  THEN sales.total_profit  ELSE 0 END) as total_profit4,
-        //     SUM(CASE WHEN sales.Customer_id = sub_accounts.sub_account_id  THEN sales.discount ELSE 0 END) as discount4,
-        //     SUM(CASE WHEN sales.Customer_id = sub_accounts.sub_account_id  THEN sales.total_profit  ELSE 0 END) as total_profit5,
-        //     SUM(CASE WHEN sales.Customer_id = sub_accounts.sub_account_id  THEN sales.discount ELSE 0 END) as discount5,
-
-        // ')
-        // ->join('sub_accounts', function ($join) {
-        //     $join->on('sales.Customer_id', '=', 'sub_accounts.sub_account_id');
-        // })
-        // ->where('sales.accounting_period_id', $accountingPeriod->accounting_period_id)
-        // ->get();
+        $SubAccountCostmers= SubAccount::where('sub_account_id',$validated['sub_account_id'])->first();
+       
         if( $validated['DisplayMethod']==="SelectedProduct")
         {
             $uniqueProducts = Product::where('product_id', $validated['product_id'])->get();
         }
         if( $validated['DisplayMethod']==="ShowAllProducts")
         {
-            $uniqueProducts = Product::all()->take(10);
+            $uniqueProducts = Product::all();
         }
         $sub_accountT4=null;
         $sub_accountT5=null;
+        $CostmerName="";
 
         if( $validated['accountList']==="mainAccount")
         {
             $sub_accountT4= $validated['sub_account_id'];
             $sub_accountT5=$validated['sub_account_id'];
+            $CostmerName = $SubAccountCostmers->sub_name;
+            $accountList=1;
+
+        }
+        else
+        {
+            $accountList=0;
+
         }
 $dataProducts=[];
 $dailyTotals=[];
 
         foreach($uniqueProducts as $uniqueProduct )
         {
-
-            $query = Sale::where('accounting_period_id', $accountingPeriod->accounting_period_id)->where('transaction_type',4);
-            $querys = Sale::where('accounting_period_id', $accountingPeriod->accounting_period_id)->where('transaction_type',5);
-
+            $product_id=$validated['DisplayMethod']==="SelectedProduct"?$validated['product_id']:$uniqueProduct->product_id;
             if( $validated['accountList']==="mainAccount")
             {
-                $query->where('Customer_id', $sub_accountT4);
-                $querys->where('Customer_id', $sub_accountT4);
-            }
-            $product_id=$validated['DisplayMethod']==="SelectedProduct"?$validated['product_id']:$uniqueProduct->product_id;
-            $query->where('product_id', $product_id);
-            $querys->where('product_id', $product_id);
+                $query = Sale::where('product_id', $product_id)->where('accounting_period_id', $accountingPeriod->accounting_period_id)->where('transaction_type',4)->where('Customer_id', $sub_accountT4);
+                $querys = Sale::where('product_id', $product_id)->where('accounting_period_id', $accountingPeriod->accounting_period_id)->where('transaction_type',5)->where('Customer_id', $sub_accountT4);
 
-            $productName = Product::where('product_id', $product_id)->value('product_name');
+            }
+else            {
+                $query = Sale::where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                ->where('product_id', $product_id)->where('transaction_type',4);
+            $querys = Sale::where('accounting_period_id', $accountingPeriod->accounting_period_id)
+            ->where('product_id', $product_id)->where('transaction_type',5);
+            }
+
+
+            // $productName = Product::where('product_id', $product_id)->value('product_name');
             $totalsale = $query->get();
             $balancesSales = $query->get();
-
              // تجميع المبيعات حسب الشهر
 
              $monthlySales = $totalsale->groupBy(function($sale) {
@@ -153,7 +150,6 @@ $dailyTotals=[];
                 // تجميع المبيعات حسب السنة والشهر
              });
 
-
                  $dailyTotal= $monthlySale->map(function($salee, $months) {
                     return [
                         'months' => $months,
@@ -162,40 +158,43 @@ $dailyTotals=[];
                 })->values();
 
              // تحويل المجموعة إلى مصفوفة مع إجمالي المبيعات لكل شهر
+             if( $validated['accountList']==="mainAccount")
+             {
+                if (!empty($dailyTotals) )
 
+                {
+                if (!empty($dailyTotal) )
 
+                {
+                    $dataProducts[]=
+        [
+            'salesProfit4'=>$query->sum('total_profit'),
+            'salesDiscount4'=>$query->sum('discount'),
+            'salesProfit5'=>$querys->sum('total_profit'),
+            'salesDiscount5'=>$querys->sum('discount'),
+            'productName'=>$uniqueProduct->product_name,
+            'dailyTotals'=>$dailyTotals ,
+            'dailyTotal'=>$dailyTotal ,
+        ];
+                } 
+             }
+             }
+             else{
         $dataProducts[]=
         [
             'salesProfit4'=>$query->sum('total_profit'),
             'salesDiscount4'=>$query->sum('discount'),
             'salesProfit5'=>$querys->sum('total_profit'),
             'salesDiscount5'=>$querys->sum('discount'),
-            'productName'=>$productName,
-
+            'productName'=>$uniqueProduct->product_name,
             'dailyTotals'=>$dailyTotals ,
             'dailyTotal'=>$dailyTotal ,
-
-
-
-
         ];
+    }
 
         }
 
-
-            // الحصول على جميع المبيعات الخاصة بالفترة المحاسبية
-
-
-        // dd($dataProducts);
-        // dd($salesDiscount);
-
-
-    // $saleQuantity4 = Sale::where('product_id', $product_id)
-    //     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-    //     ->where('transaction_type', 4)
-    //     ->sum('quantity');
-        // $Products=Product::all();
-        return view('salesReport.print',compact('dataProducts'));
+        return view('salesReport.print',compact('dataProducts','CostmerName'));
 
     }
 

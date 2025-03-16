@@ -32,7 +32,21 @@ protected $primaryKey = 'sub_account_id';
     {
         return $this->belongsTo(MainAccount::class, 'Main_id', 'main_account_id');
     }
+    public function sales()
+{
+    return $this->belongsTo(Sale::class, 'Customer_id', 'sub_account_id');
+}
+    public function Sale()
+    {
+        return $this->hasMany(Sale::class);
+    }
+  
+    public function Salesum($ability)
+    {
+        return $this->sales->sum($ability);
+    }
 
+  
 
     public function daily_entries()
 {
@@ -43,10 +57,7 @@ public function purchases()
 {
     return $this->belongsTo(Purchase::class, 'Supplier_id', 'sub_account_id');
 }
-public function sales()
-{
-    return $this->belongsTo(Sale::class, 'Customer_id');
-}
+
 public function purchase_invoices()
 {
     return $this->belongsTo(PurchaseInvoice::class, 'Supplier_id', 'sub_account_id');
