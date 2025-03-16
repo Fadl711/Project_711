@@ -101,13 +101,6 @@ return $this->salesProfitReport($validated);
             $sub_accountT4= $validated['sub_account_id'];
             $sub_accountT5=$validated['sub_account_id'];
             $CostmerName = $SubAccountCostmers->sub_name;
-            $accountList=1;
-
-        }
-        else
-        {
-            $accountList=0;
-
         }
 $dataProducts=[];
 $dailyTotals=[];
@@ -150,6 +143,7 @@ else            {
                 // تجميع المبيعات حسب السنة والشهر
              });
 
+
                  $dailyTotal= $monthlySale->map(function($salee, $months) {
                     return [
                         'months' => $months,
@@ -158,28 +152,8 @@ else            {
                 })->values();
 
              // تحويل المجموعة إلى مصفوفة مع إجمالي المبيعات لكل شهر
-             if( $validated['accountList']==="mainAccount")
-             {
-                if (!empty($dailyTotals) )
 
-                {
-                if (!empty($dailyTotal) )
 
-                {
-                    $dataProducts[]=
-        [
-            'salesProfit4'=>$query->sum('total_profit'),
-            'salesDiscount4'=>$query->sum('discount'),
-            'salesProfit5'=>$querys->sum('total_profit'),
-            'salesDiscount5'=>$querys->sum('discount'),
-            'productName'=>$uniqueProduct->product_name,
-            'dailyTotals'=>$dailyTotals ,
-            'dailyTotal'=>$dailyTotal ,
-        ];
-                } 
-             }
-             }
-             else{
         $dataProducts[]=
         [
             'salesProfit4'=>$query->sum('total_profit'),
@@ -189,8 +163,8 @@ else            {
             'productName'=>$uniqueProduct->product_name,
             'dailyTotals'=>$dailyTotals ,
             'dailyTotal'=>$dailyTotal ,
+           
         ];
-    }
 
         }
 
