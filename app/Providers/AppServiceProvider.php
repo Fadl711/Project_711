@@ -88,22 +88,23 @@ class AppServiceProvider extends ServiceProvider
                 if (isset($products)) {
                     View::share(['products' => $products]);
                 }
+                $accountClasses = AccountClass::cases();
+                $PaymentType = PaymentType::cases();
+                $transactionTypes = TransactionType::cases();
+                $AccountType = AccountType::cases();
+    
+                View::share([
+                    'accountClasses' => $accountClasses,
+                    'TypesAccounts' => $TypesAccountName,
+                    'AccountTypes' => $AccountType,
+                    'Deportattons' => $dataDeportattons,
+                    'PaymentType' => $PaymentType,
+                    'today' => Carbon::now()->toDateString(),
+                    'transactionTypes' => $transactionTypes,
+                ]);
             }
 
-            $accountClasses = AccountClass::cases();
-            $PaymentType = PaymentType::cases();
-            $transactionTypes = TransactionType::cases();
-            $AccountType = AccountType::cases();
 
-            View::share([
-                'accountClasses' => $accountClasses,
-                'TypesAccounts' => $TypesAccountName,
-                'AccountTypes' => $AccountType,
-                'Deportattons' => $dataDeportattons,
-                'PaymentType' => $PaymentType,
-                'today' => Carbon::now()->toDateString(),
-                'transactionTypes' => $transactionTypes,
-            ]);
 
             if (Schema::hasTable('default_customers')) {
                 $Default_customers = Default_customer::first();
