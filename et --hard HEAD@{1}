@@ -1,0 +1,128 @@
+[33m01e75942[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{0}: reset: moving to 4384c626986fb837bef8f59a120eb52d04930d2d^
+[33m6f77c965[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{1}: pull: Fast-forward
+[33m01e75942[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{2}: reset: moving to 4384c626986fb837bef8f59a120eb52d04930d2d^
+[33m6f77c965[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{3}: pull: Fast-forward
+[33m01e75942[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{4}: reset: moving to 4384c626986fb837bef8f59a120eb52d04930d2d^
+[33m6f77c965[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{5}: pull: Fast-forward
+[33m01e75942[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{6}: reset: moving to 4384c626986fb837bef8f59a120eb52d04930d2d^
+[33m01e75942[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{7}: reset: moving to 4384c626986fb837bef8f59a120eb52d04930d2d^
+[33m6f77c965[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{8}: commit: Fdf
+[33mce0bf2eb[m HEAD@{9}: commit: fdf
+[33m4384c626[m HEAD@{10}: commit: Fsf
+[33m01e75942[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{11}: commit: fsf
+[33m60b79dd0[m HEAD@{12}: commit: fdf
+[33m143ee8d5[m HEAD@{13}: commit: fsf
+[33mc600f86c[m HEAD@{14}: commit: FSf
+[33mb5e47c1a[m HEAD@{15}: pull: Fast-forward
+[33mfc4200eb[m HEAD@{16}: commit: chart
+[33m450b5575[m HEAD@{17}: commit: sfsf
+[33mceece06d[m HEAD@{18}: commit: Gdgg
+[33m3c8d8037[m HEAD@{19}: commit: faf
+[33m9ac96595[m HEAD@{20}: commit: Gdg
+[33m4df4db89[m HEAD@{21}: commit: Fsf
+[33m48620171[m HEAD@{22}: pull: Fast-forward
+[33m9d1ad3d4[m HEAD@{23}: commit: sff
+[33m71ef108c[m HEAD@{24}: reset: moving to HEAD
+[33m71ef108c[m HEAD@{25}: reset: moving to HEAD
+[33m71ef108c[m HEAD@{26}: reset: moving to HEAD
+[33m71ef108c[m HEAD@{27}: commit: Remove .env file from Git history
+[33m586594f0[m HEAD@{28}: commit: fd
+[33m49816b28[m HEAD@{29}: commit: Remove .env file from Git history
+[33m2f86e249[m HEAD@{30}: commit: faff
+[33m561492d0[m HEAD@{31}: pull: Fast-forward
+[33m936cb086[m HEAD@{32}: reset: moving to HEAD
+[33m936cb086[m HEAD@{33}: commit: fad
+[33m115f349f[m HEAD@{34}: pull: Fast-forward
+[33mef838eb9[m HEAD@{35}: commit: gdsg
+[33m489d9e9b[m HEAD@{36}: commit: gdsg
+[33m137b1522[m HEAD@{37}: pull: Fast-forward
+[33mefca3db0[m HEAD@{38}: checkout: moving from 99f659c679d7992f7a98544044dfd0efb9754a28 to main
+[33m99f659c6[m HEAD@{39}: checkout: moving from a55cc56c061f9e5e2fb0196dc6bd6be33c255c4f to 99f659c679d7992f7a98544044dfd0efb9754a28
+[33ma55cc56c[m HEAD@{40}: checkout: moving from 12e228fa2c9707ff3553a1ad4231a91b8094dccd to a55cc56c061f9e5e2fb0196dc6bd6be33c255c4f
+[33m12e228fa[m HEAD@{41}: checkout: moving from 86c315a1b7bcb9af4a786f76faeb82be076aeded to 12e228fa2c9707ff3553a1ad4231a91b8094dccd
+[33m86c315a1[m HEAD@{42}: checkout: moving from main to 86c315a1b7bcb9af4a786f76faeb82be076aeded
+[33mefca3db0[m HEAD@{43}: checkout: moving from 86c315a1b7bcb9af4a786f76faeb82be076aeded to main
+[33m86c315a1[m HEAD@{44}: checkout: moving from main to 86c315a1b7bcb9af4a786f76faeb82be076aeded
+[33mefca3db0[m HEAD@{45}: reset: moving to HEAD
+[33mefca3db0[m HEAD@{46}: pull: Fast-forward
+[33m86c315a1[m HEAD@{47}: commit: dadsd
+[33m12e228fa[m HEAD@{48}: commit: fasff
+[33ma55cc56c[m HEAD@{49}: checkout: moving from 99f659c679d7992f7a98544044dfd0efb9754a28 to main
+[33m99f659c6[m HEAD@{50}: checkout: moving from main to 99f659c679d7992f7a98544044dfd0efb9754a28
+[33ma55cc56c[m HEAD@{51}: checkout: moving from 79a2b7bf77d995c775cdcd2b43caed3626073bac to main
+[33m79a2b7bf[m HEAD@{52}: checkout: moving from 8722eec616160150bf8739e4dfa45c2c09026d4a to 79a2b7bf77d995c775cdcd2b43caed3626073bac
+[33m8722eec6[m HEAD@{53}: checkout: moving from e59f1889ea1631a8fd6cf9678dc897b9888fcf7b to 8722eec616160150bf8739e4dfa45c2c09026d4a
+[33me59f1889[m HEAD@{54}: checkout: moving from main to e59f1889ea1631a8fd6cf9678dc897b9888fcf7b
+[33ma55cc56c[m HEAD@{55}: checkout: moving from 99f659c679d7992f7a98544044dfd0efb9754a28 to main
+[33m99f659c6[m HEAD@{56}: checkout: moving from main to 99f659c679d7992f7a98544044dfd0efb9754a28
+[33ma55cc56c[m HEAD@{57}: pull: Fast-forward
+[33m41200444[m HEAD@{58}: commit: Currency_name7
+[33m8c9a88d6[m HEAD@{59}: commit: Currency_name3
+[33md587e572[m HEAD@{60}: pull --tags origin main: Merge made by the 'ort' strategy.
+[33mf5e00720[m HEAD@{61}: commit: Currency_name2
+[33m8722eec6[m HEAD@{62}: commit: Currency_name
+[33m79a2b7bf[m HEAD@{63}: pull: Fast-forward
+[33m62d955c6[m HEAD@{64}: commit: fd
+[33m735fccff[m HEAD@{65}: commit: fd
+[33m7b0b7522[m HEAD@{66}: commit: create Or Update Daily Entry7
+[33md4b9efed[m HEAD@{67}: commit: create Or Update Daily Entry6
+[33mf03e4e09[m HEAD@{68}: commit: create Or Update Daily Entry6
+[33mbb16fe21[m HEAD@{69}: commit: create Or Update Daily Entry5
+[33mb4c0d174[m HEAD@{70}: commit: create Or Update Daily Entry4
+[33md4240c26[m HEAD@{71}: commit: create Or Update Daily Entry3
+[33mc13e1581[m HEAD@{72}: commit: create Or Update Daily Entry2
+[33m85344e1e[m HEAD@{73}: commit: create Or Update Daily Entry1
+[33mdace3bc8[m HEAD@{74}: commit: create Or Update Daily Entry
+[33m11bf8dfc[m HEAD@{75}: commit: DailyEntrie2
+[33ma47383c6[m HEAD@{76}: commit: DailyEntrie
+[33me6b377ea[m HEAD@{77}: commit: invoicedesc6
+[33ma27c8c44[m HEAD@{78}: commit: invoicedesc
+[33m7283698d[m HEAD@{79}: commit: invoice sale1
+[33mfdf87425[m HEAD@{80}: pull: Fast-forward
+[33m6a81d608[m HEAD@{81}: commit: invoice sale13
+[33m6e6128bc[m HEAD@{82}: commit: invoice sale12
+[33m9089ee0b[m HEAD@{83}: commit: purchaseInvoices2
+[33mf0927e12[m HEAD@{84}: commit: purchaseInvoices
+[33m32d93bfb[m HEAD@{85}: commit: paymentBond7
+[33mbea1e2a3[m HEAD@{86}: commit: paymentBond6
+[33m07b9890d[m HEAD@{87}: commit: paymentBond5
+[33m792094f7[m HEAD@{88}: commit: paymentBond4
+[33mee7611e1[m HEAD@{89}: commit: paymentBond3
+[33me3000088[m HEAD@{90}: commit: paymentBond2
+[33m8f3ae071[m HEAD@{91}: commit: paymentBond1
+[33m7ad6c0c7[m HEAD@{92}: commit: paymentBond
+[33m743904a2[m HEAD@{93}: commit: invoice sale11
+[33mf3c72f75[m HEAD@{94}: commit: invoice sale10
+[33m47c0e257[m HEAD@{95}: commit: invoice sale9
+[33mcc4cc6f4[m HEAD@{96}: commit: invoice sale8
+[33m88f4787f[m HEAD@{97}: commit: invoice sale7
+[33m8ce36a55[m HEAD@{98}: commit: invoice sale6
+[33m002a9236[m HEAD@{99}: commit: invoice sale5
+[33m6b623bc8[m HEAD@{100}: commit: invoice sale4
+[33ma88fc8b5[m HEAD@{101}: commit: invoice sale3
+[33m262c0fc4[m HEAD@{102}: commit: invoice sale2
+[33m4033ddef[m HEAD@{103}: commit: invoice sale
+[33m29a0e626[m HEAD@{104}: commit: total_Profit3
+[33m1b6303ec[m HEAD@{105}: commit: total_Profit2
+[33mea79fd8e[m HEAD@{106}: pull --tags origin main: Merge made by the 'ort' strategy.
+[33m5d51a9db[m HEAD@{107}: commit: total_Profit
+[33m98252714[m HEAD@{108}: commit (merge): Transfer1
+[33mdcd67676[m HEAD@{109}: commit: Transfer
+[33m3c14f350[m HEAD@{110}: commit: Purchase
+[33m711c973c[m HEAD@{111}: commit (merge): sales_invoices1
+[33m30bfdd8e[m HEAD@{112}: commit: sales_invoices
+[33m880f1d3f[m HEAD@{113}: commit: Sela63
+[33m4bddbe66[m HEAD@{114}: commit: Sela65
+[33me7dd9604[m HEAD@{115}: commit: Sela7
+[33m6bda5a7b[m HEAD@{116}: commit: Sela6
+[33m8f31192c[m HEAD@{117}: commit: Sela5
+[33m04ebe2dd[m HEAD@{118}: commit: Sela3
+[33mfdc33dc1[m HEAD@{119}: commit: Sela2
+[33m7f27620a[m HEAD@{120}: commit (merge): Merge branch 'main' of https://github.com/Fadl711/jamal-711
+[33m9270304f[m HEAD@{121}: commit: UpdateInvoiceSales
+[33m727acdf5[m HEAD@{122}: pull: Fast-forward
+[33mc8ca3eb6[m HEAD@{123}: commit: Company_Logo2
+[33m04e9859e[m HEAD@{124}: commit: Company_Logo1
+[33ma94b720b[m HEAD@{125}: commit: Company_Logo
+[33m046f6d63[m HEAD@{126}: commit: Sela1
+[33mf9e091a9[m HEAD@{127}: commit (merge): Merge branch 'main' of https://github.com/Fadl71
