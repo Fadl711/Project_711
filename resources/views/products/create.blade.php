@@ -8,7 +8,7 @@
   </div>
   <div id="successAlert1"  class="hidden fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg" role="alert">
   </div>
-<form id="" action="{{route('products.store')}}" method="POST" class="border-b text-sm" >
+<form id="products"  method="POST" class="border-b text-sm" >
     @csrf
     
     <div class="grid grid-cols-2 gap-1 md:grid-cols-8 lg:grid-cols-8">
@@ -225,22 +225,20 @@
 
         // تأكد من استخدام $ لانتقاء العنصر
         const product_idUpdate = $('#producid').val();
-        const formData = new FormData($('form')[0]); // استخدام العنصر form مباشرة
         let url; // متغير لتخزين عنوان URL
         let type; // متغير لتخزين نوع الطلب
+        var formData = $('#products').serialize();
 
       
             // إذا لم يكن هناك معرف منتج، استخدم دالة الإنشاء
-            type = 'POST';
-            url = "{{ route('products.store') }}";
+         
       
 
         $.ajax({
-            type: type,
-            url: url,
-            data: formData,
-            processData: false,
-            contentType: false,
+          url: '{{ route("products.store") }}',
+          type: 'POST',
+          data: formData,
+         
             success: function(data) {
                 if (data.success) {
                     // إعادة تعيين الحقول
@@ -280,13 +278,14 @@ $(document).ready(function() {
       $('#Category').click(function(e) {
 
         e.preventDefault();
-        var formData = new FormData($('form')[0]);
+        var formData = $('#products').serialize();
+
         $.ajax({
-            type: 'POST',
-            url: "{{ route('Category.store') }}",
+          url: '{{ route("Category.store") }}',
+
+          type: 'POST',
             data: formData,
-            processData: false,
-            contentType: false,
+      
             success: function(data) {
                 if (data.success) {
                     // إعادة تعيين الحقول
