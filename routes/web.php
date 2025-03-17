@@ -83,10 +83,10 @@ Route::middleware(['auth', 'web'])->group(function () {
     Route::get('/backup/google', [BackupController::class, 'backupDatabase'])->name('backup.google');
 });
 
+Route::post('restore', [DatabaseController::class, 'restoreDatabase']);
+Route::get('/backup10', [BackupController::class, 'showForm'])->name('backup.form');
+Route::post('/backup1', [BackupController::class, 'createBackup'])->name('backup');
 Route::middleware(['auth'])->group(function () {
-    Route::get('/backup1', [BackupController::class, 'showForm'])->name('backup.form');
-    Route::post('/backup1', [BackupController::class, 'createBackup'])->name('backup');
-    Route::post('restore', [DatabaseController::class, 'restoreDatabase']);
     Route::get('/all-products/{id}/show', [ProductCoctroller::class, 'allProducts'])->name('all-products');
     Route::get('/all-products/{id}/print', [ProductCoctroller::class, 'print'])->name('report.print');
     Route::get('/products', [ProductCoctroller::class, 'index'])->name('products.index');
