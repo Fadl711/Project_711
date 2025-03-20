@@ -41,12 +41,12 @@ return new class extends Migration
             $table->unsignedTinyInteger('transaction_type')->comment('يحدد نوع المعاملة');
 
             $table->timestamps();
-            $table->foreign('warehouse_to_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
+/*             $table->foreign('warehouse_to_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
             $table->foreign('supplier_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
             $table->foreign('financial_account_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
             $table->foreign('Customer_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
             $table->foreign('User_id')->references('id')->on('users');
-            $table->foreign('Invoice_id')->references('sales_invoice_id')->on('sales_invoices');
+            $table->foreign('Invoice_id')->references('sales_invoice_id')->on('sales_invoices'); */
         });
         Schema::enableForeignKeyConstraints();
 
