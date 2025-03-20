@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\accounts;
+namespace App\Http\Controllers\Accounts;
 
 use App\Http\Controllers\Controller;
 use App\Models\AccountingPeriod;
