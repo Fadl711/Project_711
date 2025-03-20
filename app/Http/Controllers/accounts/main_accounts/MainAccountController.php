@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Validator;
 use function Laravel\Prompts\select;
 use function PHPUnit\Framework\isNull;
 
-class MainaccountController extends Controller
+class MainAccountController extends Controller
 
 {
 
