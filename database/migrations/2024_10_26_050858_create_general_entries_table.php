@@ -28,17 +28,17 @@ return new class extends Migration
            $table->integer('Invoice_id')->nullable();
            $table->text('description'); // الوصف أو البيان
            $table->date('entry_date'); // تاريخ القيد
-           $table->enum('status', ['مرحل', 'غير مرحل']);         
+           $table->enum('status', ['مرحل', 'غير مرحل']);
            $table->timestamps();
-           
-           $table->foreign('sub_id')->references('sub_account_id')->on('sub_accounts');
+
+/*            $table->foreign('sub_id')->references('sub_account_id')->on('sub_accounts');
            $table->foreign('Main_id')->references('main_account_id')->on('main_accounts');
            $table->foreign('User_id')->references('id')->on('users');
            $table->foreign('accounting_period_id')->references('accounting_period_id')->on('accounting_periods');
            $table->foreign('Daily_entry_id')->references('entrie_id')->on('daily_entries');
            $table->foreign('Daily_Page_id')->references('page_id')->on('general_journals');
-          $table->foreign('General_ledger_page_number_id')->references('general_ledge_id')->on('general_ledges');
-      
+          $table->foreign('General_ledger_page_number_id')->references('general_ledge_id')->on('general_ledges'); */
+
         });
     }
 

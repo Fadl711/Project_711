@@ -20,9 +20,9 @@ return new class extends Migration
             $table->integer('accounting_period_id')->unsigned(); // معرف فترة المحاسبة
             $table->timestamps(); // أعمدة created_at و updated_at
             // العلاقات
-            $table->foreign('StoreId')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
+/*             $table->foreign('StoreId')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
             $table->foreign('User_id')->references('id')->on('users');
-            $table->foreign('InventoryOfficerId')->references('id')->on('users');
+            $table->foreign('InventoryOfficerId')->references('id')->on('users'); */
         });
     }
 

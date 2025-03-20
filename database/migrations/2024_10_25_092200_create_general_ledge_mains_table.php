@@ -18,8 +18,8 @@ return new class extends Migration
             $table->integer('User_id')->unsigned();
             $table->timestamps();
             // $table->foreign('accounting_id')->references('accounting_period_id')->on('accounting_periods');
-            $table->foreign('User_id')->references('id')->on('users');
-            $table->foreign('Main_id')->references('main_account_id')->on('main_accounts');
+/*             $table->foreign('User_id')->references('id')->on('users');
+            $table->foreign('Main_id')->references('main_account_id')->on('main_accounts'); */
         });
     }
 

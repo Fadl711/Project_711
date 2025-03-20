@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('currency_symbol')->unique()->nullable();
             $table->decimal('exchange_rate',8,2)->unsigned()->nullable();
             $table->timestamps();
-            $table->foreign('Currency_id')->references('currency_id')->on('currencies');
-        });
+/*             $table->foreign('Currency_id')->references('currency_id')->on('currencies');
+ */        });
     }
 
     /**

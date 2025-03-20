@@ -38,18 +38,18 @@ return new class extends Migration
             $table->integer('Supplier_id')->unsigned()->nullable();
             $table->string('categorie_id')->nullable();
             $table->timestamps();
-            $table->foreign('Purchase_invoice_id')->references('Purchase_invoice_id')->on('purchase_invoices')
+/*             $table->foreign('Purchase_invoice_id')->references('Purchase_invoice_id')->on('purchase_invoices')
             ->onDelete('set null');
             $table->foreign('account_id')->references('sub_account_id')->on('sub_accounts')
             ->onDelete('set null');
             $table->foreign('warehouse_to_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
             $table->foreign('warehouse_from_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
             $table->foreign('Supplier_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
-        
 
-            $table->foreign('User_id')->references('id')->on('users');
-      
-       
+
+            $table->foreign('User_id')->references('id')->on('users'); */
+
+
         });
     }
 

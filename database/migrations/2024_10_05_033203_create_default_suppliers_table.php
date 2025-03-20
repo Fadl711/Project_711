@@ -22,8 +22,8 @@ return new class extends Migration
             $table->integer('User_id')->unsigned();
             $table->integer('Phone')->nullable();
             $table->timestamps();
-            $table->foreign('subaccount_id')->references('sub_account_id')->on('sub_accounts')->onDelete('cascade');
-            $table->foreign('User_id')->references('id')->on('users');
+/*             $table->foreign('subaccount_id')->references('sub_account_id')->on('sub_accounts')->onDelete('cascade');
+            $table->foreign('User_id')->references('id')->on('users'); */
         });
     }
 

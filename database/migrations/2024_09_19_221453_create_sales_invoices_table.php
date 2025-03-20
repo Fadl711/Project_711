@@ -56,7 +56,7 @@ return new class extends Migration
    // الطوابع الزمنية لإنشاء وتحديث السجلات
    $table->timestamps();
    // إنشاء علاقات المفاتيح الأجنبية
-   dump(collect(Schema::getTables())->pluck('size','name')->toArray());
+/*    dump(collect(Schema::getTables())->pluck('size','name')->toArray()); */
 /*    $table->foreign('Customer_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null')->comment('الربط مع جدول الحسابات الفرعية');
    $table->foreign('account_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
    $table->foreign('User_id')->references('id')->on('users')->comment('الربط مع جدول المستخدمين'); */
