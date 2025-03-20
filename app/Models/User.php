@@ -46,16 +46,16 @@ class User extends Authenticatable
         ];
     }
 
-   
+
     public function products()
     {
         return $this->hasMany(Product::class);
     }
 
-    
+
     public function permissions()
     {
-        return $this->hasMany(UserPermission::class);
+        return $this->hasMany(UserPermission::class,'User_id');
     }
     /**
      * التحقق من وجود صلاحية معينة.
