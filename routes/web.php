@@ -304,7 +304,7 @@ Route::middleware(['auth'])->group(function () {
 
 
     Route::get('/accounts/large-main-accounts/{largeAccountType}', [TreeAccountController::class, 'getMainAccountsByLargeAccountType'])->name('getMainAccountsByLargeAccountType');
-    Route::get('/main-accounts/{id}/sub-accounts', [MainAccountController::class, 'getSubAccounts'])->name('sub-accounts');
+    Route::get('/main-accounts/{id}/sub-accounts', [MainaccountController::class, 'getSubAccounts'])->name('sub-accounts');
     Route::get('/accounts', [AccountCoctroller::class, 'index'])->name('accounts.index');
     Route::get('/accounts/Main_Account/create-sub-account', [SubaccountController::class, 'create'])->name('Main_Account.create-sub-account');
     Route::get('/accounts/subAccount/allShow', [SubaccountController::class, 'allShow'])->name('subAccounts.allShow');
