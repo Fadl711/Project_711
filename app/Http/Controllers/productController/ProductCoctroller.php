@@ -567,6 +567,7 @@ if($Quantit=="QuantityCosts")
                 'message' => 'يجب عليك تحديد اسم المنتج.'
             ]);
         }
+        // dd($request->product_name);
     
         // تحويل الأرقام العربية إلى الإنجليزية
         $Quantity = $this->convertArabicNumbersToEnglish($request->input('Quantity'));
