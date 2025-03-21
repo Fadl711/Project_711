@@ -22,8 +22,8 @@ class Review_BudgetController extends Controller
        $balances = DailyEntrie::selectRaw(
         'sub_accounts.sub_account_id,
         sub_accounts.sub_name,
-        sub_accounts."Phone",  // استخدام علامات اقتباس مزدوجة إذا كان العمود بأحرف كبيرة
-        sub_accounts."typeAccount",  // استخدام علامات اقتباس مزدوجة إذا كان العمود بأحرف كبيرة
+        sub_accounts."Phone",
+        sub_accounts."typeAccount",
         SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id AND daily_entries."Currency_name" = \'ريال.يمني\' THEN daily_entries."Amount_debit" ELSE 0 END) as total_debit,
         SUM(CASE WHEN daily_entries.account_credit_id = sub_accounts.sub_account_id AND daily_entries."Currency_name" = \'ريال.يمني\' THEN daily_entries."Amount_Credit" ELSE 0 END) as total_credit,
         SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id AND daily_entries."Currency_name" = \'ريال سعودي\' THEN daily_entries."Amount_debit" ELSE 0 END) as total_debits,
@@ -36,7 +36,7 @@ class Review_BudgetController extends Controller
              ->orOn('daily_entries.account_credit_id', '=', 'sub_accounts.sub_account_id');
     })
     ->where('daily_entries.accounting_period_id', $accountingPeriod->accounting_period_id)
-    ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name', 'sub_accounts."Phone"','sub_accounts."typeAccount"')
+    ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name', 'sub_accounts."Phone"', 'sub_accounts."typeAccount"')
     ->get();
     $total_balance_YER =0;
     $total_balance_SAD = 0;
