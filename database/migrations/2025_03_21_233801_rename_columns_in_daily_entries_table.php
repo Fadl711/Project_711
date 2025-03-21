@@ -33,7 +33,6 @@ return new class extends Migration
         Schema::table('daily_entries', function (Blueprint $table) {
             $table->renameColumn('amount_debit', 'Amount_debit');
             $table->renameColumn('amount_credit', 'Amount_Credit');
-            $table->renameColumn('account_credit_id', 'account_Credit_id');
             $table->renameColumn('daily_page_id', 'Daily_page_id');
             $table->renameColumn('currency_name', 'Currency_name');
             $table->renameColumn('user_id', 'User_id');
