@@ -22,21 +22,20 @@ class Review_BudgetController extends Controller
        $balances = DailyEntrie::select(
         'sub_accounts.sub_account_id',
         'sub_accounts.sub_name',
-        'sub_accounts."Phone"',  // إذا كان العمود بأحرف صغيرة
-        'sub_accounts."typeAccount"',
-        DB::raw('SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id AND daily_entries.Currency_name = \'ريال.يمني\' THEN daily_entries.Amount_debit ELSE 0 END) as total_debit'),
-        DB::raw('SUM(CASE WHEN daily_entries.account_credit_id = sub_accounts.sub_account_id AND daily_entries.Currency_name = \'ريال.يمني\' THEN daily_entries.Amount_Credit ELSE 0 END) as total_credit'),
-        DB::raw('SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id AND daily_entries.Currency_name = \'ريال سعودي\' THEN daily_entries.Amount_debit ELSE 0 END) as total_debits'),
-        DB::raw('SUM(CASE WHEN daily_entries.account_credit_id = sub_accounts.sub_account_id AND daily_entries.Currency_name = \'ريال سعودي\' THEN daily_entries.Amount_Credit ELSE 0 END) as total_credits'),
-        DB::raw('SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id AND daily_entries.Currency_name = \'دولار امريكي\' THEN daily_entries.Amount_debit ELSE 0 END) as total_debitd'),
-        DB::raw('SUM(CASE WHEN daily_entries.account_credit_id = sub_accounts.sub_account_id AND daily_entries.Currency_name = \'دولار امريكي\' THEN daily_entries.Amount_Credit ELSE 0 END) as total_creditd')
+  
+        DB::raw('SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id AND daily_entries."Currency_name" = \'ريال.يمني\' THEN daily_entries."Amount_debit" ELSE 0 END) as total_debit'),
+        DB::raw('SUM(CASE WHEN daily_entries.account_credit_id = sub_accounts.sub_account_id AND daily_entries."Currency_name" = \'ريال.يمني\' THEN daily_entries."Amount_Credit" ELSE 0 END) as total_credit'),
+        DB::raw('SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id AND daily_entries."Currency_name" = \'ريال سعودي\' THEN daily_entries."Amount_debit" ELSE 0 END) as total_debits'),
+        DB::raw('SUM(CASE WHEN daily_entries.account_credit_id = sub_accounts.sub_account_id AND daily_entries."Currency_name" = \'ريال سعودي\' THEN daily_entries."Amount_Credit" ELSE 0 END) as total_credits'),
+        DB::raw('SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id AND daily_entries."Currency_name" = \'دولار امريكي\' THEN daily_entries."Amount_debit" ELSE 0 END) as total_debitd'),
+        DB::raw('SUM(CASE WHEN daily_entries.account_credit_id = sub_accounts.sub_account_id AND daily_entries."Currency_name" = \'دولار امريكي\' THEN daily_entries."Amount_Credit" ELSE 0 END) as total_creditd')
     )
     ->join('sub_accounts', function ($join) {
         $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')
              ->orOn('daily_entries.account_credit_id', '=', 'sub_accounts.sub_account_id');
     })
     ->where('daily_entries.accounting_period_id', $accountingPeriod->accounting_period_id)
-    ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name', 'sub_accounts."Phone"', 'sub_accounts."typeAccount"')
+    ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name',)
     ->get();
     $total_balance_YER =0;
     $total_balance_SAD = 0;
