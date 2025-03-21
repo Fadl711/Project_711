@@ -22,15 +22,15 @@ class Review_BudgetController extends Controller
        $balances = DailyEntrie::selectRaw(
         'sub_accounts.sub_account_id,
         sub_accounts.sub_name,
-        sub_accounts."Phone",
-        sub_accounts."typeAccount",
-        SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id AND daily_entries."Currency_name" = "ريال.يمني" THEN daily_entries.Amount_debit ELSE 0 END) as total_debit,
-        SUM(CASE WHEN daily_entries.account_credit_id = sub_accounts.sub_account_id AND daily_entries."Currency_name" = "ريال.يمني" THEN daily_entries.Amount_Credit ELSE 0 END) as total_credit,
-        SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id AND daily_entries."Currency_name" = "ريال سعودي" THEN daily_entries.Amount_debit ELSE 0 END) as total_debits,
-        SUM(CASE WHEN daily_entries.account_credit_id = sub_accounts.sub_account_id AND daily_entries."Currency_name" = "ريال سعودي" THEN daily_entries.Amount_Credit ELSE 0 END) as total_credits,
-        SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id AND daily_entries."Currency_name" = "دولار امريكي" THEN daily_entries.Amount_debit ELSE 0 END) as total_debitd,
-        SUM(CASE WHEN daily_entries.account_credit_id = sub_accounts.sub_account_id AND daily_entries."Currency_name" = "دولار امريكي"  THEN daily_entries.Amount_Credit ELSE 0 END) as total_creditd
-    ')
+        sub_accounts."Phone",  // استخدام علامات اقتباس مزدوجة إذا كان العمود بأحرف كبيرة
+        sub_accounts."typeAccount",  // استخدام علامات اقتباس مزدوجة إذا كان العمود بأحرف كبيرة
+        SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id AND daily_entries."Currency_name" = \'ريال.يمني\' THEN daily_entries."Amount_debit" ELSE 0 END) as total_debit,
+        SUM(CASE WHEN daily_entries.account_credit_id = sub_accounts.sub_account_id AND daily_entries."Currency_name" = \'ريال.يمني\' THEN daily_entries."Amount_Credit" ELSE 0 END) as total_credit,
+        SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id AND daily_entries."Currency_name" = \'ريال سعودي\' THEN daily_entries."Amount_debit" ELSE 0 END) as total_debits,
+        SUM(CASE WHEN daily_entries.account_credit_id = sub_accounts.sub_account_id AND daily_entries."Currency_name" = \'ريال سعودي\' THEN daily_entries."Amount_Credit" ELSE 0 END) as total_credits,
+        SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id AND daily_entries."Currency_name" = \'دولار امريكي\' THEN daily_entries."Amount_debit" ELSE 0 END) as total_debitd,
+        SUM(CASE WHEN daily_entries.account_credit_id = sub_accounts.sub_account_id AND daily_entries."Currency_name" = \'دولار امريكي\' THEN daily_entries."Amount_Credit" ELSE 0 END) as total_creditd'
+    )
     ->join('sub_accounts', function ($join) {
         $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')
              ->orOn('daily_entries.account_credit_id', '=', 'sub_accounts.sub_account_id');
@@ -85,22 +85,6 @@ class Review_BudgetController extends Controller
     ? $numberTransformer->toWords(abs($total_balance_USD)) . ' ' . $USD
     : 'القيمة غير صالحة';
 
-        $balances2 = DailyEntrie::selectRaw(
-            'sub_accounts.sub_account_id,
-            sub_accounts.sub_name,
-            sub_accounts.Phone,
-            sub_accounts.AccountClass,
-            sub_accounts.typeAccount,
-            SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_debit ELSE 0 END) as total_debit2,
-            SUM(CASE WHEN daily_entries.account_credit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_Credit ELSE 0 END) as total_credit2'
-        )
-        ->where('daily_entries.accounting_period_id', $accountingPeriod->accounting_period_id)
-        ->join('sub_accounts', function ($join) {
-            $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')
-                 ->orOn('daily_entries.account_credit_id', '=', 'sub_accounts.sub_account_id');
-        })->where('sub_accounts.typeAccount',3)
-        ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name', 'sub_accounts.Phone')
-        ->get();
 
  $SumDebtor_amount2 =0;
         $SumCredit_amount2 =0;
@@ -149,7 +133,6 @@ class Review_BudgetController extends Controller
             'balances',
             'SumDebtor_amount',
             'SumCredit_amount' ,
-            'balances2',
             'SumDebtor_amount2',
             'SumCredit_amount2',
 
