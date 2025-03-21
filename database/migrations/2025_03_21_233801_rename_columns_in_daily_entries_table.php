@@ -16,7 +16,6 @@ return new class extends Migration
             // تغيير أسماء الأعمدة من أحرف كبيرة إلى أحرف صغيرة
             $table->renameColumn('Amount_debit', 'amount_debit');
             $table->renameColumn('Amount_Credit', 'amount_credit');
-            $table->renameColumn('Amount_Credit', 'amount_credit');
             $table->renameColumn('Daily_page_id', 'daily_page_id');
             $table->renameColumn('Currency_name', 'currency_name');
             $table->renameColumn('User_id', 'user_id');
