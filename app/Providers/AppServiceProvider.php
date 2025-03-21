@@ -70,14 +70,14 @@ class AppServiceProvider extends ServiceProvider
             if (Schema::hasTable('main_accounts') && Schema::hasTable('sub_accounts')) {
                 $mainAccount_Warehouse = MainAccount::where('AccountClass', AccountClass::STORE->value)->first();
                 if ($mainAccount_Warehouse) {
-                    $subAccount = SubAccount::where('Main_id', $mainAccount_Warehouse->main_account_id)->get();
+                    $subAccount = SubAccount::where('main_id', $mainAccount_Warehouse->main_account_id)->get();
                     if (isset($subAccount)) {
                         View::share(['Warehouse' => $subAccount]);
                     }
                 }
 
                 $mainAccount_Supplier = MainAccount::where('AccountClass', AccountClass::SUPPLIER->value)->first();
-                $subAccountSupplierid = SubAccount::where('AccountClass', AccountClass::SUPPLIER->value)->get();
+                $subAccountSupplierid = SubAccount::where('account_class', AccountClass::SUPPLIER->value)->get();
                 if (isset($subAccountSupplierid)) {
                     View::share(['subAccountSupplierid' => $subAccountSupplierid]);
                 }

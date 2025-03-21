@@ -99,7 +99,7 @@
                             $total_credits_USD=0;
                         @endphp
                         @foreach ($balances as $index => $balance)
-                        @if (in_array($balance['typeAccount'], [1,2,5]))
+                        @if (in_array($balance['type_account'], [1,2,5]))
                             {{-- @dd($balance['typeAccount']) --}}
                    
                             <tr class="hover:bg-gray-50">
@@ -333,7 +333,7 @@
                         $total_credits_USD=0;
                     @endphp
                     @foreach ($balances as $index => $balance)
-                    @if (in_array($balance['typeAccount'], [3]))
+                    @if (in_array($balance['type_account'], [3]))
                
                         <tr class="hover:bg-gray-50">
                             <td class="text-right">{{ $index + 1 }}</td>
