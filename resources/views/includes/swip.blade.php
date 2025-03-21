@@ -204,7 +204,6 @@
                     </a>
                 </li>
                     @endif
-
                     @if(auth()->user()->hasPermission('الإعدادات'))
                 <li class="hover:text-black">
                     <a class="NavTagA" href="{{route('settings.index')}}">
@@ -218,7 +217,6 @@
                 <li class="hover:text-black">
                     <form action="{{route('Saleupdate')}} "  method="POST" >
                     <button type="submit" >
-                    {{-- <a class="NavTagA" href="{{route('Saleupdate')}}"> --}}
                    
                     <span class="textNav">تفعيل الخصومات</span>
                 </button>
@@ -230,5 +228,7 @@
         </ul>
     </div>
 </div>
+
+
 </div>
 
