@@ -22,7 +22,7 @@ class Review_BudgetController extends Controller
        $balances = DailyEntrie::selectRaw(
         'sub_accounts.sub_account_id,
         sub_accounts.sub_name,
-        sub_accounts.Phone,
+        sub_accounts."Phone",
         sub_accounts.typeAccount,
         SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id AND daily_entries.Currency_name = "ريال.يمني" THEN daily_entries.Amount_debit ELSE 0 END) as total_debit,
         SUM(CASE WHEN daily_entries.account_credit_id = sub_accounts.sub_account_id AND daily_entries.Currency_name = "ريال.يمني" THEN daily_entries.Amount_Credit ELSE 0 END) as total_credit,
