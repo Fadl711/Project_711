@@ -26,11 +26,11 @@ protected $primaryKey = 'sub_account_id';
     ];
     public function user()
     {
-        return $this->belongsTo(User::class, 'User_id', 'id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
     public function mainAccount()
     {
-        return $this->belongsTo(MainAccount::class, 'Main_id', 'main_account_id');
+        return $this->belongsTo(MainAccount::class, 'main_id', 'main_account_id');
     }
     public function sales()
 {
@@ -80,11 +80,11 @@ public function dailyEntriesDebit()
 // علاقة hasMany بين الحساب الفرعي وقيود اليومية كدائن
 public function dailyEntriesCredit()
 {
-    return $this->hasMany(DailyEntrie::class, 'account_Credit_id', 'sub_account_id');
+    return $this->hasMany(DailyEntrie::class, 'account_credit_id', 'sub_account_id');
 }
 public function dailyEntries()
 {
-    return $this->hasMany(DailyEntrie::class, 'account_Credit_id', 'sub_account_id');
+    return $this->hasMany(DailyEntrie::class, 'account_credit_id', 'sub_account_id');
 }
 
 
@@ -95,7 +95,7 @@ public function debitEntries()
 
     public function creditEntries()
     {
-        return $this->hasMany(DailyEntrie::class, 'account_Credit_id', 'sub_account_id');
+        return $this->hasMany(DailyEntrie::class, 'account_credit_id', 'sub_account_id');
     }
 
 }
