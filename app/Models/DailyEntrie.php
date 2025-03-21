@@ -55,7 +55,7 @@ class DailyEntrie extends Model
   // علاقة مع جدول sub_accounts - الحساب الدائن
   public function creditAccount()
   {
-      return $this->belongsTo(SubAccount::class, 'account_Credit_id', 'sub_account_id');
+      return $this->belongsTo(SubAccount::class, 'account_credit_id', 'sub_account_id');
   }
 
 

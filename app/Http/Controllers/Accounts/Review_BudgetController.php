@@ -25,15 +25,15 @@ class Review_BudgetController extends Controller
         sub_accounts.Phone,
         sub_accounts.typeAccount,
         SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id AND daily_entries.Currency_name = "ريال.يمني" THEN daily_entries.Amount_debit ELSE 0 END) as total_debit,
-        SUM(CASE WHEN daily_entries.account_Credit_id = sub_accounts.sub_account_id AND daily_entries.Currency_name = "ريال.يمني" THEN daily_entries.Amount_Credit ELSE 0 END) as total_credit,
+        SUM(CASE WHEN daily_entries.account_credit_id = sub_accounts.sub_account_id AND daily_entries.Currency_name = "ريال.يمني" THEN daily_entries.Amount_Credit ELSE 0 END) as total_credit,
         SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id AND daily_entries.Currency_name = "ريال سعودي" THEN daily_entries.Amount_debit ELSE 0 END) as total_debits,
-        SUM(CASE WHEN daily_entries.account_Credit_id = sub_accounts.sub_account_id AND daily_entries.Currency_name = "ريال سعودي" THEN daily_entries.Amount_Credit ELSE 0 END) as total_credits,
+        SUM(CASE WHEN daily_entries.account_credit_id = sub_accounts.sub_account_id AND daily_entries.Currency_name = "ريال سعودي" THEN daily_entries.Amount_Credit ELSE 0 END) as total_credits,
         SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id AND daily_entries.Currency_name = "دولار امريكي" THEN daily_entries.Amount_debit ELSE 0 END) as total_debitd,
-        SUM(CASE WHEN daily_entries.account_Credit_id = sub_accounts.sub_account_id AND daily_entries.Currency_name = "دولار امريكي"  THEN daily_entries.Amount_Credit ELSE 0 END) as total_creditd
+        SUM(CASE WHEN daily_entries.account_credit_id = sub_accounts.sub_account_id AND daily_entries.Currency_name = "دولار امريكي"  THEN daily_entries.Amount_Credit ELSE 0 END) as total_creditd
     ')
     ->join('sub_accounts', function ($join) {
         $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')
-             ->orOn('daily_entries.account_Credit_id', '=', 'sub_accounts.sub_account_id');
+             ->orOn('daily_entries.account_credit_id', '=', 'sub_accounts.sub_account_id');
     })
     ->where('daily_entries.accounting_period_id', $accountingPeriod->accounting_period_id)
     ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name', 'sub_accounts.Phone','typeAccount')
@@ -92,12 +92,12 @@ class Review_BudgetController extends Controller
             sub_accounts.AccountClass,
             sub_accounts.typeAccount,
             SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_debit ELSE 0 END) as total_debit2,
-            SUM(CASE WHEN daily_entries.account_Credit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_Credit ELSE 0 END) as total_credit2'
+            SUM(CASE WHEN daily_entries.account_credit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_Credit ELSE 0 END) as total_credit2'
         )
         ->where('daily_entries.accounting_period_id', $accountingPeriod->accounting_period_id)
         ->join('sub_accounts', function ($join) {
             $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')
-                 ->orOn('daily_entries.account_Credit_id', '=', 'sub_accounts.sub_account_id');
+                 ->orOn('daily_entries.account_credit_id', '=', 'sub_accounts.sub_account_id');
         })->where('sub_accounts.typeAccount',3)
         ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name', 'sub_accounts.Phone')
         ->get();
@@ -116,7 +116,7 @@ class Review_BudgetController extends Controller
                ->sum('Amount_debit')
                ;
                $total_credit2=DailyEntrie::where('accounting_period_id', $accountingPeriod->accounting_period_id)
-               ->where('account_Credit_id',$balanc2->sub_account_id)
+               ->where('account_credit_id',$balanc2->sub_account_id)
                ->sum('Amount_Credit');
 
            $Sum_amount = ($total_debit2 ?? 0) - ($total_credit2 ?? 0);
