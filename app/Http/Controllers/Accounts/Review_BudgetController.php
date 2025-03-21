@@ -25,13 +25,13 @@ class Review_BudgetController extends Controller
         sub_accounts.sub_name,
         sub_accounts.phone,
         sub_accounts.type_account,
-      SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id AND daily_entries.currency_name = "ريال.يمني" THEN daily_entries.amount_debit ELSE 0 END) as total_debit,
-        SUM(CASE WHEN daily_entries.account_credit_id = sub_accounts.sub_account_id AND daily_entries.currency_name = "ريال.يمني" THEN daily_entries.amount_credit ELSE 0 END) as total_credit,
-        SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id AND daily_entries.currency_name = "ريال سعودي" THEN daily_entries.amount_debit ELSE 0 END) as total_debits,
-        SUM(CASE WHEN daily_entries.account_credit_id = sub_accounts.sub_account_id AND daily_entries.currency_name = "ريال سعودي" THEN daily_entries.amount_credit ELSE 0 END) as total_credits,
-        SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id AND daily_entries.currency_name = "دولار امريكي" THEN daily_entries.amount_debit ELSE 0 END) as total_debitd,
-        SUM(CASE WHEN daily_entries.account_credit_id = sub_accounts.sub_account_id AND daily_entries.currency_name = "دولار امريكي"  THEN daily_entries.amount_credit ELSE 0 END) as total_creditd
-    ')
+      SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id AND daily_entries.currency_name = \'ريال.يمني\' THEN daily_entries."amount_debit" ELSE 0 END) as total_debit,
+    SUM(CASE WHEN daily_entries.account_credit_id = sub_accounts.sub_account_id AND daily_entries.currency_name = \'ريال.يمني\' THEN daily_entries."amount_credit" ELSE 0 END) as total_credit,
+    SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id AND daily_entries.currency_name = \'ريال سعودي\' THEN daily_entries."amount_debit" ELSE 0 END) as total_debits,
+    SUM(CASE WHEN daily_entries.account_credit_id = sub_accounts.sub_account_id AND daily_entries.currency_name = \'ريال سعودي\' THEN daily_entries."amount_credit" ELSE 0 END) as total_credits,
+    SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id AND daily_entries.currency_name = \'دولار امريكي\' THEN daily_entries."amount_debit" ELSE 0 END) as total_debitd,
+    SUM(CASE WHEN daily_entries.account_credit_id = sub_accounts.sub_account_id AND daily_entries.currency_name = \'دولار امريكي\' THEN daily_entries."amount_credit" ELSE 0 END) as total_creditd'
+)
     ->join('sub_accounts', function ($join) {
         $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')
              ->orOn('daily_entries.account_credit_id', '=', 'sub_accounts.sub_account_id');
