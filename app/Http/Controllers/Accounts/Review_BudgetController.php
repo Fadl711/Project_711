@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\accounts;
+namespace App\Http\Controllers\Accounts;
 
 use App\Http\Controllers\Controller;
 use App\Models\AccountingPeriod;
@@ -14,7 +14,7 @@ use NumberToWords\NumberToWords;
 
 class Review_BudgetController extends Controller
 {
-   
+
     public function review_budget($year)
     {
        // استرجاع الفترة المحاسبية المفتوحة
@@ -59,7 +59,7 @@ class Review_BudgetController extends Controller
         $SumDebtor_amount = 0;
         $SumCredit_amount = 0;
         $total_debits_SAD = 0;
-        $total_credits_SAD = 0;     
+        $total_credits_SAD = 0;
         $YER="ريال.يمني";
         $SAD="ريال سعودي";
         $USD="دولار امريكي";
@@ -73,15 +73,15 @@ class Review_BudgetController extends Controller
     $SumAmount = abs($SumDebtor_amount - $SumCredit_amount);
    $numberToWords = new NumberToWords();
     $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
-    $priceInWordsYER=is_numeric($total_balance_YER) 
+    $priceInWordsYER=is_numeric($total_balance_YER)
     ? $numberTransformer->toWords(abs( $total_balance_YER)) .' '.$YER
     : 'القيمة غير صالحة';
     $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
-    $priceInWordsSAD=is_numeric($total_balance_SAD) 
+    $priceInWordsSAD=is_numeric($total_balance_SAD)
     ? $numberTransformer->toWords(abs($total_balance_SAD)) . ' ' . $SAD
     : 'القيمة غير صالحة';
     $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
-    $priceInWordsUSD=is_numeric($total_balance_USD) 
+    $priceInWordsUSD=is_numeric($total_balance_USD)
     ? $numberTransformer->toWords(abs($total_balance_USD)) . ' ' . $USD
     : 'القيمة غير صالحة';
 
@@ -118,9 +118,9 @@ class Review_BudgetController extends Controller
                $total_credit2=DailyEntrie::where('accounting_period_id', $accountingPeriod->accounting_period_id)
                ->where('account_Credit_id',$balanc2->sub_account_id)
                ->sum('Amount_Credit');
-   
+
            $Sum_amount = ($total_debit2 ?? 0) - ($total_credit2 ?? 0);
-           
+
            if ($Sum_amount !== 0) {
                if ($Sum_amount > 0) {
                    $SumDebtor_amount2 += $Sum_amount;
@@ -141,13 +141,13 @@ class Review_BudgetController extends Controller
 
 
 // dd($debit_YER);
-       
+
         // تمرير البيانات إلى العرض
         return view('accounts.review-budget', compact(
             'accountingPeriod',
-         
+
             'balances',
-            'SumDebtor_amount', 
+            'SumDebtor_amount',
             'SumCredit_amount' ,
             'balances2',
             'SumDebtor_amount2',
@@ -159,11 +159,11 @@ class Review_BudgetController extends Controller
             'priceInWordsSAD',
             'startDate',
             'endDate',
-            'debit_YER' ,  
+            'debit_YER' ,
             'credit_YER',
-            'debits_SAD' , 
+            'debits_SAD' ,
             'credits_SAD' ,
-            'debitd_USD' , 
+            'debitd_USD' ,
             'credits_USD' ,
             'total_balance_YER',
             'total_balance_SAD',
@@ -173,6 +173,6 @@ class Review_BudgetController extends Controller
             'USD',
 ));
     }
-    
-    
+
+
     }

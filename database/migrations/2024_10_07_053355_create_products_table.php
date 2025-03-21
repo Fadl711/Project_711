@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->increments('product_id')->unsigned();
             $table->bigInteger('Barcode')->unsigned()->nullable(); // إضافة العمود Barcode
-            $table->unique('Barcode'); 
+            $table->unique('Barcode');
             $table->string('product_name')->unique();
             $table->integer('Quantity')->nullable();
             $table->double('Purchase_price')->nullable()->unsigned();;
@@ -31,11 +31,11 @@ return new class extends Migration
              $table->integer('User_id')->unsigned();
             $table->integer('Categorie_id')->unsigned()->nullable();
             $table->timestamps();
-            $table->foreign('Categorie_id')->references('categorie_id')->on('categories');
+/*             $table->foreign('Categorie_id')->references('categorie_id')->on('categories');
             $table->foreign('warehouse_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
             $table->foreign('supplier_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
             $table->foreign('User_id')->references('id')->on('users');
-            $table->foreign('currency_id')->references('currency_id')->on('currencies');
+            $table->foreign('currency_id')->references('currency_id')->on('currencies'); */
         });
     }
 

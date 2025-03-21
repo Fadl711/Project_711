@@ -23,12 +23,12 @@ return new class extends Migration
             $table->string('Phone')->nullable(); // رقم الهاتف (أفضل أن يكون من نوع string بدلاً من integer)
             $table->integer('AccountClass')->unsigned(); // فئة الحساب
             $table->integer('typeAccount')->unsigned(); // نوع الحساب
-        
+
             $table->timestamps();
-        
+
             // العلاقات الأجنبية
-            $table->foreign('Main_id')->references('main_account_id')->on('main_accounts')->onDelete('cascade');
-            $table->foreign('User_id')->references('id')->on('users');
+/*             $table->foreign('Main_id')->references('main_account_id')->on('main_accounts')->onDelete('cascade');
+            $table->foreign('User_id')->references('id')->on('users'); */
            });
     }
 

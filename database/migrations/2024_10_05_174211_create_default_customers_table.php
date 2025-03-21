@@ -16,9 +16,9 @@ return new class extends Migration
             $table->integer('subaccount_id')->unsigned()->nullable();
             $table->integer('warehouse_id')->unsigned()->nullable();
             $table->integer('financial_account_id')->unsigned()->nullable();
-            $table->foreign('subaccount_id')->references('sub_account_id')->on('sub_accounts')->onDelete('cascade');
+/*             $table->foreign('subaccount_id')->references('sub_account_id')->on('sub_accounts')->onDelete('cascade');
             $table->foreign('warehouse_id')->references('sub_account_id')->on('sub_accounts')->onDelete('cascade');
-            $table->foreign('financial_account_id')->references('sub_account_id')->on('sub_accounts')->onDelete('cascade');
+            $table->foreign('financial_account_id')->references('sub_account_id')->on('sub_accounts')->onDelete('cascade'); */
             $table->timestamps();
 
         });

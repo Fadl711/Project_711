@@ -17,8 +17,8 @@ return new class extends Migration
             $table->integer('SubAccount_id')->unsigned();
             $table->timestamps();
 
-            $table->foreign('SubAccount_id')->references('sub_account_id')->on('sub_accounts');
-        });
+/*             $table->foreign('SubAccount_id')->references('sub_account_id')->on('sub_accounts');
+ */        });
     }
 
     /**

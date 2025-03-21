@@ -28,7 +28,7 @@ return new class extends Migration
      // إضافة عمود "الخصم" (اختياري حسب احتياجك)
      $table->decimal('discount', 15, 2)->default(0)->comment('قيمة الخصم الممنوح');
      // إضافة عمود "الإجمالي الصافي بعد الخصم"
-     $table->decimal('net_total_after_discount', 15, 2)->default(0)->comment('الإجمالي الصافي بعد الخصم'); 
+     $table->decimal('net_total_after_discount', 15, 2)->default(0)->comment('الإجمالي الصافي بعد الخصم');
 
    // عمود ID المستخدم
    $table->integer('User_id')->unsigned()->comment('معرف المستخدم الذي قام بإنشاء الفاتورة');
@@ -55,16 +55,16 @@ return new class extends Migration
    $table->integer('accounting_period_id')->unsigned()->comment('معرف الفترة المحاسبية');
    // الطوابع الزمنية لإنشاء وتحديث السجلات
    $table->timestamps();
-   
    // إنشاء علاقات المفاتيح الأجنبية
-   $table->foreign('Customer_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null')->comment('الربط مع جدول الحسابات الفرعية');
+/*    dump(collect(Schema::getTables())->pluck('size','name')->toArray()); */
+/*    $table->foreign('Customer_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null')->comment('الربط مع جدول الحسابات الفرعية');
    $table->foreign('account_id')->references('sub_account_id')->on('sub_accounts')->onDelete('set null');
-   $table->foreign('User_id')->references('id')->on('users')->comment('الربط مع جدول المستخدمين');
+   $table->foreign('User_id')->references('id')->on('users')->comment('الربط مع جدول المستخدمين'); */
 });
 Schema::enableForeignKeyConstraints();
 
     }
-    
+
 
     /**
      * Reverse the migrations.

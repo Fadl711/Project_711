@@ -6,6 +6,7 @@ use App\Models\Currency;
 use App\Models\MainAccount;
 use App\Models\SubAccount;
 use App\Models\User;
+use App\Models\UserPermission;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -31,7 +32,7 @@ class DatabaseSeeder extends Seeder
             'main_account_id' => 1,
             'Nature_account' => 'مدين',
             'AccountClass' => 4,
-            'account_name' => ' خصوم وحقوق الملكيه ' , 
+            'account_name' => ' خصوم وحقوق الملكيه ' ,
             'typeAccount' => 3,
             'Type_migration' => 2,
             'User_id' => 1,
@@ -53,5 +54,31 @@ class DatabaseSeeder extends Seeder
             'typeAccount'=>3,
             'User_id' => 1,
         ]);
+        $pages = [
+            'الحسابات',
+            'القيود',
+            'السندات',
+            'المبيعات',
+            'الفواتير المبيعات',
+            'المشتريات',
+            'الفواتير المشتريات',
+            'المنتجات',
+            'سجلات الترحيل',
+            'التقارير',
+            'المردودات',
+            'الإعدادات',
+            'الخصم والتحليل'
+        ];
+        foreach($pages as $page){
+
+            UserPermission::create([
+                'Authority_Name'=>$page,
+                'Readability'=>true,
+                'Writing_ability'=>true,
+                'Ability_modify'=>true,
+                'Deletion_authority'=>true,
+                'User_id'=>1,
+            ]);
+        }
     }
 }
