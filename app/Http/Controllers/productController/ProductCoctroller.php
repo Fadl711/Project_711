@@ -577,7 +577,8 @@ if($Quantit=="QuantityCosts")
         $Special_discount = $this->convertArabicNumbersToEnglish($request->input('Special_discount'));
         $Quantityprice = $this->convertArabicNumbersToEnglish($request->input('Quantityprice'));
         $product_idUpdate = $this->convertArabicNumbersToEnglish($request->input('producid'));
-    
+        $product_idUpdate = intval($product_idUpdate);
+
         if (!$product_idUpdate) {
             $productname = Product::where('product_name', $request->product_name)->first();
             if ($productname) {
