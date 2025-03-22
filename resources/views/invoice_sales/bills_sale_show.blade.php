@@ -15,7 +15,7 @@
                 padding: 0;
             }
             .print-container {
-                @apply w-full max-w-full mx-auto p-4;
+                @apply w-full max-w-full mx-auto;
             }
 
             .no-print {
@@ -32,7 +32,12 @@
         th, td {
             border: 1px solid #000;
         }
-
+        .mr2 {
+            margin-top: -20px !important;
+        }
+        .mr3 {
+            margin-bottom: -20px !important;
+        }
         .header-section, .totals-section {
             margin-top: 16px;
             border: 2px solid #000;
@@ -41,12 +46,12 @@
     </style>
 </head>
 <body class="bg-white">
-    <div class=" mx-auto print-container">
+    <div class=" mx-5 print-container ">
         <!-- العنوان -->
         @include('includes.header2')
 
 
-        <header class="flex justify-between items-center border-b-2 border-gray-800  text-sm">
+        <header class="flex justify-between items-center border-b-2 border-gray-800  text-sm mr3 ">
             <div>
                 <div>
                     <div class="flex">
@@ -74,11 +79,11 @@
             </div>
             <div>
                 <div class="inline-flex items-center text-center w-full ">
-                 
+
                    <span  class="px-4   font-bold  bg-white  border  border-l-0.5 rounded-s-lg border-black  ">فاتورة :
                     {{$transaction_type??null}}</span>
                    <span class="px-8 font-bold  text-blue-700  bg-white border border-black  border-l-0.5 rounded-e-lg  c">({{$payment_type}})</span>
-             
+
 
                 </div>
             </div>
@@ -108,7 +113,7 @@
         </header>
 
         <!-- جدول المنتجات -->
-        <table class="w-full  text-sm">
+        <table class="w-full  text-sm ">
             <thead>
                 <tr class="bg-[#1749fd15] ">
                     <th class="px-2 text-right">م</th>
@@ -184,7 +189,7 @@
             </tbody>
 
         </table>
-        <div class="flex justify-start">
+        <div class="flex justify-start mr2">
             <table class=" text-sm mx-auto">
                     <thead class=" ">
                         <tr class="bg-blue-100 ">
@@ -205,7 +210,7 @@
                         <tr class="bg-blue-100">
 
                             @if($sum1>0)
-  <th class="px-2 text-left w-[30%] border-0  bg-white"></th>                          
+  <th class="px-2 text-left w-[30%] border-0  bg-white"></th>
                               <th class="px-2 text-left w-[20%]">رصيد سابق</th>
                             <th class="px-2 text-right">
                                 @if(isset( $sum1) &&   $sum1> 0)
@@ -231,7 +236,7 @@
                             @php
                           $Sum_amount ;
                         @endphp
-                          <th class="px-2 text-left w-[30%] border-0  bg-white"></th>                          
+                          <th class="px-2 text-left w-[30%] border-0  bg-white"></th>
 
                             <th class="px-2 text-left w-[20%]">الجمالي رصيد</th>
 
@@ -247,7 +252,7 @@
         </table>
     </div>
         @if($note)
-        
+
         <br>
         <div class="rounded-md border p-4 py-2 align-text-bottom-2 border-gray-800">
             <div class="flex justify-between">
@@ -263,7 +268,7 @@
 
         @endif
         <!-- الإجماليات -->
-        <div class="totals- bg-gray-100 p-4">
+        <div class="totals- bg-gray-100 px-4 py-2">
             <div class="flex justify-between ">
                 <div>
                     <p class=" text-sm" dir="ltr">................ توقيع المستلم</p>

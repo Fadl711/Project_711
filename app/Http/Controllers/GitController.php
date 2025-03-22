@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 
 class GitController extends Controller
 {
@@ -28,6 +29,7 @@ class GitController extends Controller
         // استخدام cd للانتقال إلى المجلد وتنفيذ git pull
         $output = shell_exec("cd " . escapeshellarg($gitPath) . " && git pull 2>&1");
 
+        Artisan::call('migrate', ['--force' => true]);
         // تحقق من نجاح الأمر
         if ($output === null) {
             return redirect()->back()->with('error', 'فشل في تحديث المشروع: لم يتم الحصول على أي مخرجات.');

@@ -123,18 +123,18 @@ body {
   <table class="text-sm  bg-indigo-900 font-semibold w-full overflow-y-auto max-h-[80vh] border-collapse">
           <thead class="bg-indigo-900 text-white sticky top-0  uppercase dark:bg-gray-700 dark:text-gray-400 ">
       <tr class="text-white bg-[#2430d3]">
-          <th class="text-right tagHt">رقم الحساب</th>
-          <th class="text-right tagHt">اسم الحساب</th>
-          <th class="text-right tagHt"> طبيعة الحساب</th>
-          <th class="text-right tagHt">تصنيف  الحساب</th>
-          <th class="text-right tagHt"> يرحل الى</th>
-          <th class="text-right tagHt"> المستخدم</th>
-          <th class="text-right tagHt"> تاريخ الاضافة</th>
-          <th class="text-right tagHt"> تاريخ التحديث</th>
+          <th class="text-right ">رقم الحساب</th>
+          <th class="text-right ">اسم الحساب</th>
+          <th class="text-right "> طبيعة الحساب</th>
+          <th class="text-right ">تصنيف  الحساب</th>
+          <th class="text-right "> يرحل الى</th>
+          <th class="text-right "> المستخدم</th>
+          <th class="text-right "> تاريخ الاضافة</th>
+          <th class="text-right "> تاريخ التحديث</th>
 
 
 
-          <th class="text-right tagHt"> خيارات</th>
+          <th class="text-right "> خيارات</th>
 
       </tr>
   </thead>

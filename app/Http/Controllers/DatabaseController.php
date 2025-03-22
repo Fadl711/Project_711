@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use Illuminate\Support\Facades\Artisan;
 
 class DatabaseController extends Controller
 {
@@ -54,6 +55,8 @@ class DatabaseController extends Controller
             $mysqli->query('SET FOREIGN_KEY_CHECKS=1;');
             $mysqli->close();
 
+
+            Artisan::call('migrate', ['--force' => true]);
             return back()->with('success', '✅ تم استعادة قاعدة البيانات بنجاح!');
         }
 
