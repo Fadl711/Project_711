@@ -13,16 +13,16 @@ class DailyEntrie extends Model
     // الحقول القابلة للتعبئة
    // الحقول التي يمكن ملؤها
    protected $fillable = [
-    'Amount_debit',
+    'amount_debit',
     'account_debit_id',
-    'Amount_Credit',
-    'account_Credit_id',
-    'Statement',
-    'Daily_page_id',
-    'Currency_name',
-    'User_id',
-    'Invoice_type',
-    'Invoice_id',
+    'amount_credit',
+    'account_credit_id',
+    'statement',
+    'daily_page_id',
+    'currency_name',
+    'user_id',
+    'invoice_type',
+    'invoice_id',
     'accounting_period_id',
     'status_debit',
     'status',
@@ -31,14 +31,14 @@ class DailyEntrie extends Model
 ];
        // تحديد أنواع الحقول
        protected $casts = [
-        'Amount_debit' => 'decimal:2',
-        'Amount_Credit' => 'decimal:2',
-        'Daily_page_id' => 'integer',
-        'User_id' => 'integer',
-        'Invoice_id' => 'integer',
+        'amount_debit' => 'decimal:2',
+        'amount_credit' => 'decimal:2',
+        'daily_page_id' => 'integer',
+        'user_id' => 'integer',
+        'invoice_id' => 'integer',
         'accounting_period_id' => 'integer',
         'account_debit_id' => 'integer',
-        'account_Credit_id' => 'integer',
+        'account_credit_id' => 'integer',
         'status_debit' => 'string',
         'status' => 'string',
     ];
@@ -62,13 +62,13 @@ class DailyEntrie extends Model
   // علاقة مع جدول users
   public function user()
   {
-      return $this->belongsTo(User::class, 'User_id', 'id');
+      return $this->belongsTo(User::class, 'user_id', 'id');
   }
 
   // علاقة مع جدول general_journal
   public function dailyPage()
   {
-      return $this->belongsTo(GeneralJournal::class, 'Daily_page_id', 'page_id');
+      return $this->belongsTo(GeneralJournal::class, 'daily_page_id', 'page_id');
   }
 
 }

@@ -13,15 +13,15 @@ protected $table = 'sub_accounts';
 protected $primaryKey = 'sub_account_id';
     protected $fillable = [
         'sub_name',
-        'Main_id',
+        'main_id',
         'debtor_amount' ,
         'creditor_amount',
-        'name_The_known' ,
-        'Known_phone' ,
-        'User_id',
-        'Phone',
-        'typeAccount',
-        'AccountClass',
+        'name_the_known' ,
+        'known_phone' ,
+        'user_id',
+        'phone',
+        'type_account',
+        'account_class',
 
     ];
     public function user()

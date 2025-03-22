@@ -86,12 +86,12 @@ body {
 
                 $resultDebit1 = $suba->where('sub_account_id', $eai->account_debit_id)->first();
                 $resultDebit = $resultDebit1
-                    ? $mainc->where('main_account_id', $resultDebit1->Main_id)->first()
+                    ? $mainc->where('main_account_id', $resultDebit1->main_id)->first()
                     : 'تم الحذف';
 
-                $resultCredit1 = $suba->where('sub_account_id', $eai->account_Credit_id)->first();
+                $resultCredit1 = $suba->where('sub_account_id', $eai->account_credit_id)->first();
                 $resultCredit = $resultCredit1
-                    ? $mainc->where('main_account_id', $resultCredit1->Main_id)->first()
+                    ? $mainc->where('main_account_id', $resultCredit1->main_id)->first()
                     : 'تم الحذف';
             @endphp
             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200"
@@ -101,12 +101,12 @@ body {
                         <td class=" text-right bg-gray-300 border">
                             {{ $resultDebit1->sub_name ?? ''}}
                         </td>                    
-                              <td class="border text-right bg-gray-300 ">{{ $eai->Amount_debit }} </td>
+                              <td class="border text-right bg-gray-300 ">{{ $eai->amount_debit }} </td>
                         <td class=" text-right  bg-red-400 border ">
                             {{ $resultCredit1->sub_name ?? '' }}
-                        </td>                        <td class="border text-right bg-red-400">{{ $eai->Amount_Credit }} </td>
-                        <td class="border text-right ">{{ $eai->Statement }}/رقم المستند<span class=" bg-red-400 px-1 rounded-md">{{ $eai->Invoice_id }}</span></td>
-                    </td>                        <td class="border text-right bg-red-400">{{ $eai->Currency_name }} </td>
+                        </td>                        <td class="border text-right bg-red-400">{{ $eai->amount_credit }} </td>
+                        <td class="border text-right ">{{ $eai->statement }}/رقم المستند<span class=" bg-red-400 px-1 rounded-md">{{ $eai->Invoice_id }}</span></td>
+                    </td>                        <td class="border text-right bg-red-400">{{ $eai->currency_name }} </td>
                         <td class="border text-right">{{ $eai->created_at->format('Y-m-d') }}</td>
                         <td class="border text-right">{{ $eai->updated_at }}</td>
                         <td class="border text-right">

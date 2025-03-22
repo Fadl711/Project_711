@@ -36,9 +36,9 @@ return new class extends Migration
             $table->renameColumn('daily_page_id', 'Daily_page_id');
             $table->renameColumn('currency_name', 'Currency_name');
             $table->renameColumn('user_id', 'User_id');
-            $table->renameColumn('invoice_type', 'Invoice_type');
+            $table->renameColumn('user_id', 'Invoice_type');
             $table->renameColumn('invoice_id', 'Invoice_id');    
-            $table->renameColumn('Statement', 'statement');
+            $table->renameColumn('statement', 'Statement');
 
             });
     }

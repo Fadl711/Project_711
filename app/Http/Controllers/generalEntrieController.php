@@ -24,7 +24,7 @@ class generalEntrieController extends Controller
         
         $daily_entries_notFuond=[];
         foreach ($generalentries as $generalentry) {
-    $daily_entries = DailyEntrie::where('entrie_id',$generalentry->Daily_entry_id )->first();
+    $daily_entries = DailyEntrie::where('entrie_id',$generalentry->daily_entry_id )->first();
     
     // if (!$daily_entries)
     //  {

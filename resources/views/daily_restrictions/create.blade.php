@@ -24,7 +24,7 @@
 <label for="" class="labelSale">{{$item->label()}}</label>
 <input type="radio" name="payment_type" class="input-field "
 value="{{$item->value}}"
-{{ isset($DailyEntrie->Invoice_type) && $DailyEntrie->Invoice_type == $item->value ? 'checked' : ($index === 0 ? 'checked' : '') }}
+{{ isset($DailyEntrie->invoice_type) && $DailyEntrie->invoice_type == $item->value ? 'checked' : ($index === 0 ? 'checked' : '') }}
 required>
 </div>
 @endforeach
@@ -51,8 +51,8 @@ required>
                 <label for="Invoice_id" class="block font-medium  ">  رقم المستند</label>
                 <select name="Invoice_id" dir="ltr" class=" select2 inputSale  " id="Invoice_id">
                     <option value="" selected>اختر  رقم المستند</option>
-                    @isset($DailyEntrie->Invoice_id)
-                    <option value="{{$DailyEntrie->Invoice_id}}" selected > {{$DailyEntrie->Invoice_id}} </option>
+                    @isset($DailyEntrie->invoice_id)
+                    <option value="{{$DailyEntrie->invoice_id}}" selected > {{$DailyEntrie->invoice_id}} </option>
                     @endisset
             </select>
                     </select>
@@ -70,7 +70,7 @@ required>
                      <option value="" selected>اختر الحساب</option>
 
                       @foreach ($main as $mainAccount)
-                           <option @selected($mainAccount->main_account_id == $sub_account_debit->Main_id) value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
+                           <option @selected($mainAccount->main_account_id == $sub_account_debit->main_id) value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
                       @endforeach
                       @endisset
                         @isset($mainAccounts)
@@ -103,7 +103,7 @@ required>
                         @isset($main)
 
                             @foreach ($main as $mainAccount)
-                                <option @selected($mainAccount->main_account_id == $sub_account_Credit->Main_id) value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
+                                <option @selected($mainAccount->main_account_id == $sub_account_Credit->main_id) value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
                             @endforeach
                         @endisset
 
@@ -116,8 +116,8 @@ required>
                 <div class=" ">
                     <label for="sub_account_Credit_id" class="block font-medium ">حساب الدائن/الفرعي</label>
                     <select name="sub_account_Credit_id"  step="0.01" id="sub_account_Credit_id" class="block w-full select2 p-2 border rounded-md inputSale">
-                        @isset($DailyEntrie->account_Credit_id)
-                        <option value="{{$DailyEntrie->account_Credit_id}}" selected > {{$sub_account_Credit->sub_name}} </option>
+                        @isset($DailyEntrie->account_credit_id)
+                        <option value="{{$DailyEntrie->account_credit_id}}" selected > {{$sub_account_Credit->sub_name}} </option>
                         @endisset
                        </select>
                 </div>
@@ -132,7 +132,7 @@ required>
             <label for="Amount_debit" class="block font-medium mb-2">المبلغ المدين</label>
             <input name="Amount_debit" id="Amount_debit" type="text" class="inputSale input-field"
             placeholder="أدخل المبلغ"
-            value="{{ !empty($DailyEntrie->Amount_debit) ? number_format($DailyEntrie->Amount_debit, 0, '.', ',') : (!empty($DailyEntrie->Amount_Credit) ? number_format($DailyEntrie->Amount_Credit, 0, '.', ',') : '') }}"
+            value="{{ !empty($DailyEntrie->amount_debit) ? number_format($DailyEntrie->amount_debit, 0, '.', ',') : (!empty($DailyEntrie->Amount_Credit) ? number_format($DailyEntrie->Amount_Credit, 0, '.', ',') : '') }}"
             required>
      
      
@@ -173,8 +173,8 @@ required>
         <div class="">
             <label for="Statement" class="block font-medium mb-2">البيان</label>
             <textarea name="Statement" id="Statement" class="block w-full border rounded-md p-2" rows="4" placeholder="أدخل البيان هنا..." onblur="this.value = this.value.trim();">
-                @isset($DailyEntrie->Statement)
-                    {{ $DailyEntrie->Statement }}
+                @isset($DailyEntrie->statement)
+                    {{ $DailyEntrie->statement }}
                 @endisset
             </textarea>
         </div>

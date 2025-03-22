@@ -27,7 +27,7 @@ class MainAccount extends Model
 
         public function subAccounts()
         {
-            return $this->hasMany(SubAccount::class, 'Main_id', 'main_account_id');
+            return $this->hasMany(SubAccount::class, 'main_id', 'main_account_id');
         }
         public function user()
         {

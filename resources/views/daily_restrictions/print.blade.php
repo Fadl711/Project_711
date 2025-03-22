@@ -15,7 +15,7 @@
     <div class="p-3  bg-gray-100 border-black  h-16 my-1 text-right font-bold space-y-2 ">
 
         <p >رقم القيد : {{$daily->entrie_id}}</p>
-        <p >رقم المرجع : {{$daily->Daily_page_id}}</p>
+        <p >رقم المرجع : {{$daily->daily_page_id}}</p>
     </div>
     <div class="p-3 w-52 bg-gray-100 border-black   h-16 my-1 text-center text-2xl font-bold underline underline-offset-8">
 
@@ -26,7 +26,7 @@
 
             <p > تاريخ القيد : {{ \Carbon\Carbon::now()->format('Y/m/d') }}</p>
             <p >  المبلغ </p>
-            <p id="maont2" class="bg-white h-10 font-bold text-lg pt-2">{{$daily->Amount_debit ? number_format($daily->Amount_debit) : number_format($daily->Amount_Credit)}} <span class="pb-1  font-normal">ر.ي </span></p>
+            <p id="maont2" class="bg-white h-10 font-bold text-lg pt-2">{{$daily->amount_debit ? number_format($daily->amount_debit) : number_format($daily->amount_credit)}} <span class="pb-1  font-normal">{{$daily->currency_name}}</span></p>
         </div>
     </div>
 </div>
@@ -37,7 +37,7 @@
         $debitSubName = null; // تهيئة المتغير
 
         foreach ($resultDebit1 as $key) {
-            $resultDebit = $mainc->where('main_account_id', $key->Main_id)->first(); // البحث عن الحساب الرئيسي
+            $resultDebit = $mainc->where('main_account_id', $key->main_id)->first(); // البحث عن الحساب الرئيسي
             if ($resultDebit && $key->sub_name != $resultDebit->account_name) {
                 $debitSubName = $key->sub_name; // تعيين اسم الحساب الفرعي
                 break;
@@ -47,11 +47,11 @@
         // التحقق من وجود قيمة للحساب الفرعي
         $debitSubName = $debitSubName ?? 'اسم الحساب غير موجود'; // تعيين قيمة افتراضية إذا لم يتم العثور على الحساب
 
-        $resultCredit1 = $suba->where('sub_account_id', $daily->account_Credit_id); // البحث عن الحساب الدائن
+        $resultCredit1 = $suba->where('sub_account_id', $daily->account_credit_id); // البحث عن الحساب الدائن
         $creditSubName = null; // تهيئة المتغير
 
         foreach ($resultCredit1 as $key) {
-            $resultCredit = $mainc->where('main_account_id', $key->Main_id)->first(); // البحث عن الحساب الرئيسي
+            $resultCredit = $mainc->where('main_account_id', $key->main_id)->first(); // البحث عن الحساب الرئيسي
             if ($resultCredit && $key->sub_name != $resultCredit->account_name) {
                 $creditSubName = $key->sub_name; // تعيين اسم الحساب الفرعي
                 break;
@@ -78,16 +78,16 @@
                 <tr class="text-right">
                     <td class="py-2 px-2 border-black border-2">1</td>
                     <td class="py-2 px-2 border-black border-2">{{ $debitSubName }}</td>
-                    <td class="py-2 px-2 border-black border-2">{{number_format($daily->Amount_debit)}}</td>
+                    <td class="py-2 px-2 border-black border-2">{{number_format($daily->amount_debit)}}</td>
                     <td class="py-2 px-2 border-black border-2">0</td>
-                    <td class="py-2 px-2 ">{{$daily->Statement}}</td>
+                    <td class="py-2 px-2 ">{{$daily->statement}}</td>
 
                 </tr>
                 <tr class="text-right">
                     <td class="py-2 px-2 border-black border-2">2</td>
                     <td class="py-2 px-2 border-black border-2">{{ $creditSubName }}</td>
                     <td class="py-2 px-2 border-black border-2">0</td>
-                    <td class="py-2 px-2 border-black border-2">{{number_format($daily->Amount_Credit)}}</td>
+                    <td class="py-2 px-2 border-black border-2">{{number_format($daily->amount_credit)}}</td>
                     <td class="py-2 px-2 "> </td>
                 </tr>
             </tbody>

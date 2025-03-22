@@ -30,12 +30,12 @@ class TreeAccountController extends Controller
             ->selectRaw('COALESCE((
                 SELECT SUM(debtor_amount) 
                 FROM sub_accounts 
-                WHERE sub_accounts.Main_id = main_accounts.main_account_id
+                WHERE sub_accounts.main_id = main_accounts.main_account_id
             ), 0) as debit_balance')
             ->selectRaw('COALESCE((
                 SELECT SUM(creditor_amount) 
                 FROM sub_accounts 
-                WHERE sub_accounts.Main_id = main_accounts.main_account_id
+                WHERE sub_accounts.main_id = main_accounts.main_account_id
             ), 0) as credit_balance')
             ->get();
 
@@ -47,7 +47,7 @@ class TreeAccountController extends Controller
      */
     public function getSubAccounts($mainAccountId)
     {
-        $subAccounts = SubAccount::where('Main_id', $mainAccountId)
+        $subAccounts = SubAccount::where('main_id', $mainAccountId)
             ->select(
                 'sub_account_id',
                 'sub_name',

@@ -39,14 +39,14 @@ class SubaccountsController extends Controller
         $debtor=$this->convertArabicToEnglish($debtor1);
         $Main_id= $request->Main_id;
         $sub_name= $request->sub_name;
-        $DataSubAccount= SubAccount::create(['Main_id' =>$Main_id, // Assuming $post is a collection of MainAccount models//+
+        $DataSubAccount= SubAccount::create(['main_id' =>$Main_id, // Assuming $post is a collection of MainAccount models//+
         'sub_name' => $sub_name,//+
-        'User_id' => $User_id,//+
+        'user_id' => $User_id,//+
         'debtor' => $debtor,//+
         'creditor' => $creditor,//+
-        'Phone' => $Phone1,//+
-        'name_The_known' => $name_The_known,//+
-        'Known_phone' => $Known_phone]);
+        'phone' => $Phone1,//+
+        'name_the_known' => $name_The_known,//+
+        'known_phone' => $Known_phone]);
 
            return  response()->json(['message'=>'تمت العملية بنجاح' ,'post'=>$DataSubAccount ]);
 

@@ -105,10 +105,10 @@ return view('accounts.Main_Account.create',
                 'Type_migration' => $Type_migration,
                 'AccountClass'=>$request->input('AccountClass')
         ]);
-        SubAccount::where('Main_id', $id)
+        SubAccount::where('main_id', $id)
     ->update([
-        'AccountClass'=>$request->input('AccountClass'),
-        'typeAccount' => $request->typeAccount,
+        'account_class'=>$request->input('AccountClass'),
+        'type_account' => $request->typeAccount,
      ]);
 
             return back();
@@ -139,29 +139,29 @@ return view('accounts.Main_Account.create',
             $creditor_amount = $this->convertArabicToEnglish($creditor_amount1);
             $debtor_amount = $this->convertArabicToEnglish($debtor_amount1);
 
-            $account_names_exist = SubAccount::where('Main_id', $Main_id)->pluck('sub_name');
+            $account_names_exist = SubAccount::where('main_id', $Main_id)->pluck('sub_name');
             if ($account_names_exist->contains($sub_name)) {
                 return response()->json(['success' => false, 'message' => 'يوجد نفس هذا الاسم من قبل']);
             }
     // إعداد البيانات التي ترغب في استخدامها في عملية البحث أو الإنشاء
 $dataSubAccountData = [
-    'Main_id' => $Main_id,
+    'main_id' => $Main_id,
     'sub_name' => $sub_name,
-    'User_id' => $User_id,
-    'AccountClass' => $TypeSubAccount->AccountClass,
-    'typeAccount' => $TypeSubAccount->typeAccount,
+    'user_id' => $User_id,
+    'account_class' => $TypeSubAccount->AccountClass,
+    'type_account' => $TypeSubAccount->typeAccount,
     'debtor_amount' => $debtor_amount ?: 0,
     'creditor_amount' => $creditor_amount ?: 0,
-    'Phone' => $Phone1 ?: null,
-    'name_The_known' => $name_The_known ?: null,
-    'Known_phone' => $Known_phone ?: null,
+    'phone' => $Phone1 ?: null,
+    'name_the_known' => $name_The_known ?: null,
+    'known_phone' => $Known_phone ?: null,
 ];
 
 // استخدام firstOrCreate لإنشاء الكائن إذا لم يكن موجودًا
 $DataSubAccount = SubAccount::firstOrCreate(
     [
         'sub_name' => $sub_name, // حقل فريد للبحث
-        'Main_id' => $Main_id,   // حقل فريد آخر إذا كان موجودًا
+        'main_id' => $Main_id,   // حقل فريد آخر إذا كان موجودًا
     ],
     $dataSubAccountData // القيم التي سيتم استخدامها لإنشاء السجل إذا لم يكن موجودًا
 );
@@ -182,18 +182,18 @@ if ($DataSubAccount->debtor_amount!=0 || $DataSubAccount->creditor_amount!=0) {
         }
 
     $dailyEntry = DailyEntrie::create([
-        'Amount_debit' => $DataSubAccount->debtor_amount  ?: 0,
+        'amount_debit' => $DataSubAccount->debtor_amount  ?: 0,
         'account_debit_id' => $DSubAccount->sub_account_id ,
-        'Amount_Credit' => $DataSubAccount->creditor_amount  ?: 0,
-        'account_Credit_id' => $DSubAccount->sub_account_id ,
-        'Statement' =>$request->Statement?? 'إدخال رصيد افتتاحي',
-        'Daily_page_id' =>$dailyPage->page_id,
-        'Currency_name' => $request->Currency,
+        'amount_credit' => $DataSubAccount->creditor_amount  ?: 0,
+        'account_credit_id' => $DSubAccount->sub_account_id ,
+        'statement' =>$request->Statement?? 'إدخال رصيد افتتاحي',
+        'daily_page_id' =>$dailyPage->page_id,
+        'currency_name' => $request->Currency,
         'exchange_rate' => $request->exchange_rate,
-        'User_id' =>$User_id ,
-        'Invoice_type' =>1,
+        'user_id' =>$User_id ,
+        'invoice_type' =>1,
         'accounting_period_id' =>$accountingPeriod->accounting_period_id,
-        'Invoice_id' => $DSubAccount->sub_account_id ,
+        'invoice_id' => $DSubAccount->sub_account_id ,
         'daily_entries_type' =>'رصيد افتتاحي',
         'status_debit' => 'غير مرحل',
         'status' => 'غير مرحل',
@@ -214,7 +214,7 @@ return response()->json(['success'=>true,'message' => 'تم حفظ  بنجاح']
 public function getSubAccounts(Request $request , $id)
 
 {
-    $subAccounts = SubAccount::where('Main_id', $id)->get();
+    $subAccounts = SubAccount::where('main_id', $id)->get();
 
 
     // إرجاع النتائج بصيغة JSON لاستخدامها في Select2

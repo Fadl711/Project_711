@@ -82,14 +82,14 @@ class SubaccountController extends Controller
         $sub_name= $request->sub_name;
 
         $DataSubAccount=new SubAccount();
-           $DataSubAccount->Main_id=$Main_id;
+           $DataSubAccount->main_id=$Main_id;
            $DataSubAccount->sub_name=$sub_name;
-           $DataSubAccount->User_id= $User_id;
+           $DataSubAccount->user_id= $User_id;
            $DataSubAccount->debtor = !empty($debtor) ? $debtor :0;
            $DataSubAccount-> creditor= !empty($creditor ) ? $creditor :0;
-           $DataSubAccount->Phone = !empty ($Phone1 ) ?$Phone1 :null ;
-           $DataSubAccount-> name_The_known=$name_The_known  ?$name_The_known :null ;
-           $DataSubAccount->Known_phone = $Known_phone  ?$Known_phone :null ;
+           $DataSubAccount->phone = !empty ($Phone1 ) ?$Phone1 :null ;
+           $DataSubAccount-> name_the_known=$name_The_known  ?$name_The_known :null ;
+           $DataSubAccount->known_phone = $Known_phone  ?$Known_phone :null ;
        $DataSubAccount->save();
     }
         $post=MainAccount::all();
@@ -102,7 +102,7 @@ class SubaccountController extends Controller
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
         $transaction_type="رصيد افتتاحي";
         
-        $Getentrie_id = DailyEntrie::where('Invoice_id',$SubAccount->sub_account_id)
+        $Getentrie_id = DailyEntrie::where('invoice_id',$SubAccount->sub_account_id)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->where('daily_entries_type',$transaction_type)
             ->first();
@@ -117,14 +117,14 @@ class SubaccountController extends Controller
         $TypeSubAccount = MainAccount::where('main_account_id',$request->Main_id)->first();
         SubAccount::where('sub_account_id',$request->sub_id)->update([
             'sub_name'=>$request->sub_name,
-            'Main_id'=>$request->Main_id,
-            'AccountClass' => $TypeSubAccount->AccountClass,
-            'typeAccount' => $TypeSubAccount->typeAccount,
-            'User_id'=>$request->User_id,
+            'main_id'=>$request->Main_id,
+            'account_class' => $TypeSubAccount->AccountClass,
+            'type_account' => $TypeSubAccount->typeAccount,
+            'user_id'=>$request->User_id,
             'debtor_amount'=>$request->debtor_amount ?? 0,
             'creditor_amount'=>$request->creditor_amount?? 0,
-            'Phone' =>$request->Phone ,
-            'name_The_known' =>$request->name_The_known ,
+            'phone' =>$request->Phone ,
+            'name_the_known' =>$request->name_The_known ,
 
         ]);
         $SubAccount = SubAccount::where('sub_account_id', $request->sub_id)->first();
@@ -134,7 +134,7 @@ class SubaccountController extends Controller
 
 $transaction_type="رصيد افتتاحي";
 
-        $Getentrie_id = DailyEntrie::where('Invoice_id',$SubAccount->sub_account_id)
+        $Getentrie_id = DailyEntrie::where('invoice_id',$SubAccount->sub_account_id)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->where('daily_entries_type',$transaction_type)->first();
         $today = Carbon::now()->toDateString();
@@ -144,16 +144,16 @@ $transaction_type="رصيد افتتاحي";
     if($Getentrie_id )
     {
         // dd($request->Currency_name);
-        $Getentrie = DailyEntrie::where('Invoice_id',$SubAccount->sub_account_id)
+        $Getentrie = DailyEntrie::where('invoice_id',$SubAccount->sub_account_id)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->where('daily_entries_type',$transaction_type)
         ->where('entrie_id',$Getentrie_id->entrie_id)
         ->update([
-        'Amount_debit' => $SubAccount->debtor_amount??0,
-        'Amount_Credit' => $SubAccount->creditor_amount??0,
-        'Currency_name' => $request->Currency_name,
+        'amount_debit' => $SubAccount->debtor_amount??0,
+        'amount_credit' => $SubAccount->creditor_amount??0,
+        'currency_name' => $request->Currency_name,
         'exchange_rate' => $request->exchange_rate,
-        'Statement' =>$request->Statement?? 'إدخال رصيد افتتاحي',
+        'statement' =>$request->Statement?? 'إدخال رصيد افتتاحي',
     ]);
     return redirect()->route('subAccounts.allShow');
    }
@@ -165,18 +165,18 @@ $transaction_type="رصيد افتتاحي";
            ]);
        }
     $dailyEntry = DailyEntrie::create([
-        'Amount_debit' => $SubAccount->debtor_amount  ?: 0,
+        'amount_debit' => $SubAccount->debtor_amount  ?: 0,
         'account_debit_id' => $SubAccount->sub_account_id ,
-        'Amount_Credit' => $SubAccount->creditor_amount  ?: 0,
-        'account_Credit_id' => $SubAccount->sub_account_id ,
-        'Statement' => $request->Statement??'إدخال رصيد افتتاحي',
-        'Daily_page_id' =>$dailyPage->page_id,
-        'Currency_name' => $request->Currency,
+        'amount_credit' => $SubAccount->creditor_amount  ?: 0,
+        'account_credit_id' => $SubAccount->sub_account_id ,
+        'statement' => $request->Statement??'إدخال رصيد افتتاحي',
+        'daily_page_id' =>$dailyPage->page_id,
+        'currency_name' => $request->Currency,
         'exchange_rate' => $request->exchange_rate,
-        'User_id' =>$request->User_id,
-        'Invoice_type' =>1,
+        'user_id' =>$request->User_id,
+        'invoice_type' =>1,
         'accounting_period_id' =>$accountingPeriod->accounting_period_id,
-        'Invoice_id' => $SubAccount->sub_account_id ,
+        'invoice_id' => $SubAccount->sub_account_id ,
         'daily_entries_type' =>'رصيد افتتاحي',
         'status_debit' => 'غير مرحل',
         'status' => 'غير مرحل',
@@ -204,7 +204,7 @@ $transaction_type="رصيد افتتاحي";
             // إعداد بيانات الإدخالات اليومية
             $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
 
-            $Getentrie_id = DailyEntrie::where('Invoice_id',$id)
+            $Getentrie_id = DailyEntrie::where('invoice_id',$id)
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->where('daily_entries_type',$transaction_type)
             ->value('entrie_id');
@@ -262,7 +262,7 @@ $transaction_type="رصيد افتتاحي";
                             '<td class="tagTd">' . $SubAccount->mainAccount->accountTypeLabel() . '</td>' .
                             '<td class="tagTd">' . $SubAccount->debtor_amount . '</td>' .
                             '<td class="tagTd">' . $SubAccount->creditor_amount . '</td>' .
-                            '<td class="tagTd">' . $SubAccount->User_id . '</td>' .
+                            '<td class="tagTd">' . $SubAccount->user_id . '</td>' .
                         '<td class="tagTd">' . $SubAccount->created_at . '</td>' .
                         '<td class="tagTd">' . $SubAccount->updated_at . '</td>' .
                         '<td class="text-right tagTd">' .
@@ -297,7 +297,7 @@ $transaction_type="رصيد افتتاحي";
                         '<td class="tagTd">' . $SubAccount->mainAccount->accountTypeLabel() . '</td>' .
                         '<td class="tagTd">' . $SubAccount->debtor_amount . '</td>' .
                         '<td class="tagTd">' . $SubAccount->creditor_amount . '</td>' .
-                        '<td class="tagTd">' . $SubAccount->User_id . '</td>' .
+                        '<td class="tagTd">' . $SubAccount->user_id . '</td>' .
                         '<td class="tagTd">' . $SubAccount->created_at . '</td>' .
                         '<td class="tagTd">' . $SubAccount->updated_at . '</td>' .
                         '<td class="text-right tagTd">' .

@@ -137,18 +137,18 @@ $dailyEntrie = DailyEntrie::updateOrCreate(
         
     ],
     [
-        'Invoice_id'=>$Invoice_id??null,
-        'Daily_page_id' => $dailyPage->page_id ??$dailyPageId->Daily_page_id,
+        'invoice_id'=>$Invoice_id??null,
+        'daily_page_id' => $dailyPage->page_id ??$dailyPageId->daily_page_id,
         'daily_entries_type' =>$invoice_type ?? $Payment_type,
         'account_debit_id' => $validated['sub_account_debit_id'],
-        'Amount_Credit' => $Amount_debit,
-        'Amount_debit' =>  $Amount_debit ,
-        'account_Credit_id' => $validated['sub_account_Credit_id'],
+        'amount_credit' => $Amount_debit,
+        'amount_debit' =>  $Amount_debit ,
+        'account_credit_id' => $validated['sub_account_Credit_id'],
         'exchange_rate' => $validated['exchange_rate'],
-        'Statement' => $validated['Statement']  ?? "قيد يومي",
-        'Invoice_type' => $request->payment_type ,
-        'Currency_name' => $validated['Currency_name'],
-        'User_id' =>$validated['User_id'],
+        'statement' => $validated['Statement']  ?? "قيد يومي",
+        'invoice_type' => $request->payment_type ,
+        'currency_name' => $validated['Currency_name'],
+        'user_id' =>$validated['User_id'],
         'status_debit' => 'غير مرحل',
         'status' => 'غير مرحل',
     ]
@@ -239,7 +239,7 @@ public function stor(Request $request){
             abort(403, 'غير مصرح لك بعرض القيد.');
         }
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
-        $eail=DailyEntrie::where('Daily_page_id',$id)
+        $eail=DailyEntrie::where('daily_page_id',$id)
         ->where('accounting_period_id',$accountingPeriod->accounting_period_id)
         ->paginate(20);
         $mainc=MainAccount::all();
@@ -276,8 +276,8 @@ public function stor(Request $request){
 }
         $main=MainAccount::all();
         $Debitsub_account_id=SubAccount::where('sub_account_id',$DailyEntrie->account_debit_id)->first();
-        $Creditsub_account_id=SubAccount::where('sub_account_id',$DailyEntrie->account_Credit_id)->first();
-        $currs=Currency::where('currency_name',$DailyEntrie->Currency_name)->first();
+        $Creditsub_account_id=SubAccount::where('sub_account_id',$DailyEntrie->account_credit_id)->first();
+        $currs=Currency::where('currency_name',$DailyEntrie->currency_name)->first();
         // الحصول على تاريخ اليوم
         $today = Carbon::now()->toDateString(); // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
         $dailyPage = GeneralJournal::whereDate('created_at',$today)->first(); // البحث عن الصفحة
@@ -311,7 +311,7 @@ public function stor(Request $request){
         $generalEntrieaccount_debit_id = GeneralEntrie::where([
             'Daily_entry_id' => $DailyEntrie->entrie_id,
             'accounting_period_id' => $DailyEntrie->accounting_period_id,
-            'sub_id' => $DailyEntrie->account_Credit_id,
+            'sub_id' => $DailyEntrie->account_credit_id,
         ])->delete();
         $DailyEntrie->delete();
 
@@ -369,7 +369,7 @@ public function stor(Request $request){
                         $resultDebit1=null;
                         $resultDebit1=$suba->where('sub_account_id',$product->account_debit_id);
                         foreach ($resultDebit1 as $key) {
-                            $resultDebit=$mainc->where('main_account_id',$key->Main_id)->first();
+                            $resultDebit=$mainc->where('main_account_id',$key->main_id)->first();
                             if ($key->sub_name!=$resultDebit->account_name)
                             {
                                 $resultDebit1=$key;
@@ -378,9 +378,9 @@ public function stor(Request $request){
                         }
                         $resultCredit=null;
                         $resultCredit1=null;
-                        $resultCredit1=$suba->where('sub_account_id',$product->account_Credit_id);
+                        $resultCredit1=$suba->where('sub_account_id',$product->account_credit_id);
                         foreach ($resultCredit1 as $key) {
-                            $resultCredit=$mainc->where('main_account_id',$key->Main_id)->first();
+                            $resultCredit=$mainc->where('main_account_id',$key->main_id)->first();
                             if ($key->sub_name!=$resultCredit->account_name)
                             {
                                 $resultCredit1=$key;
@@ -391,10 +391,10 @@ public function stor(Request $request){
                         '<td class="border text-right">'.$product->entrie_id.'</td>'.
                             '<td class="border text-right">'.$product->daily_entries_type.'</td>'.
                             '<td class="border text-right">'.'('.$resultDebit->account_name.')'.'-'.'('.$resultDebit1->sub_name.')'.'</td>'.
-                        '<td class="border text-right">'.$product->Amount_debit.'</td>'.
+                        '<td class="border text-right">'.$product->amount_debit.'</td>'.
                         '<td class="border text-right">'.'('.$resultCredit->account_name.')'.'-'.'('.$resultCredit1->sub_name.')'.'</td>'.
-                        '<td class="border text-right">'.$product->Amount_Credit.'</td>'.
-                        '<td class="border text-right">'.$product->Statement.'</td>'.
+                        '<td class="border text-right">'.$product->amount_credit.'</td>'.
+                        '<td class="border text-right">'.$product->statement.'</td>'.
                         '<td class="border text-right">'.$product->created_at.'</td>'.
                         '<td class="border text-right">'.$product->updated_at.'</td>'.
                         '<td class="border text-right">'.
@@ -431,7 +431,7 @@ public function stor(Request $request){
                 }
             }else {
 
-                $products= DailyEntrie::where('Daily_page_id',$Daily_page_id)->paginate(20);
+                $products= DailyEntrie::where('daily_page_id',$Daily_page_id)->paginate(20);
                 // إذا كان الحقل فارغًا، أرجع جميع المنتجات
                 foreach ($products as $product) {
 
@@ -439,7 +439,7 @@ public function stor(Request $request){
                     $resultDebit1=null;
                     $resultDebit1=$suba->where('sub_account_id',$product->account_debit_id);
                     foreach ($resultDebit1 as $key) {
-                        $resultDebit=$mainc->where('main_account_id',$key->Main_id)->first();
+                        $resultDebit=$mainc->where('main_account_id',$key->main_id)->first();
                         if ($key->sub_name!=$resultDebit->account_name) {
                             $resultDebit1=$key;
                             break;
@@ -448,9 +448,9 @@ public function stor(Request $request){
                     }
                     $resultCredit=null;
                     $resultCredit1=null;
-                    $resultCredit1=$suba->where('sub_account_id',$product->account_Credit_id);
+                    $resultCredit1=$suba->where('sub_account_id',$product->account_credit_id);
                     foreach ($resultCredit1 as $key) {
-                        $resultCredit=$mainc->where('main_account_id',$key->Main_id)->first();
+                        $resultCredit=$mainc->where('main_account_id',$key->main_id)->first();
                         if ($key->sub_name!=$resultCredit->account_name) {
                             $resultCredit1=$key;
                             break;
@@ -462,10 +462,10 @@ public function stor(Request $request){
                     '<td class="border text-right">'.$product->entrie_id.'</td>'.
                     '<td class="border text-right">'.$product->daily_entries_type.'</td>'.
                     '<td class="border text-right">'.'('.$resultDebit->account_name.')'.'-'.'('.$resultDebit1->sub_name.')'.'</td>'.
-                    '<td class="border text-right">'.$product->Amount_debit.'</td>'.
+                    '<td class="border text-right">'.$product->amount_debit.'</td>'.
                     '<td class="border text-right">'.'('.$resultCredit->account_name.')'.'-'.'('.$resultCredit1->sub_name.')'.'</td>'.
-                    '<td class="border text-right">'.$product->Amount_Credit.'</td>'.
-                    '<td class="border text-right">'.$product->Statement.'</td>'.
+                    '<td class="border text-right">'.$product->amount_credit.'</td>'.
+                    '<td class="border text-right">'.$product->statement.'</td>'.
                     '<td class="border text-right">'.$product->created_at.'</td>'.
                     '<td class="border text-right">'.$product->updated_at.'</td>'.
                     '<td class="border text-right">'.
