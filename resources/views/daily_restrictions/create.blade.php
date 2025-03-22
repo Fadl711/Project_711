@@ -132,7 +132,7 @@ required>
             <label for="Amount_debit" class="block font-medium mb-2">المبلغ المدين</label>
             <input name="Amount_debit" id="Amount_debit" type="text" class="inputSale input-field"
             placeholder="أدخل المبلغ"
-            value="{{ !empty($DailyEntrie->amount_debit) ? number_format($DailyEntrie->amount_debit, 0, '.', ',') : (!empty($DailyEntrie->Amount_Credit) ? number_format($DailyEntrie->Amount_Credit, 0, '.', ',') : '') }}"
+            value="{{ !empty($DailyEntrie->amount_debit) ? number_format($DailyEntrie->amount_debit, 0, '.', ',') : (!empty($DailyEntrie->amount_credit) ? number_format($DailyEntrie->amount_credit, 0, '.', ',') : '') }}"
             required>
      
      

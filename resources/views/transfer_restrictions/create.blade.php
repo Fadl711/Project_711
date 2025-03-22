@@ -167,7 +167,7 @@
 
                         <td class="py-1 border text-right">{{ $entry->entrie_id }}</td>
                         <td class="py-1 border text-right">{{ $debitAccounts[$entry->account_debit_id] ?? 'غير موجود' }}</td>
-                        <td class="py-1 border text-right">{{ $entry->Amount_debit }}</td>
+                        <td class="py-1 border text-right">{{ $entry->amount_debit }}</td>
                         <td class="py-1 border text-right">
                         <form id="ajaxForm" method="POST" >
                             @csrf
@@ -178,22 +178,22 @@
                             <button id="saveButton" name="saveButton" type="button" class="bg-yellow-500 text-white px-4 py-1 rounded" value="{{ $entry->entrie_id }}">{{ $entry->status_debit }}</button>
                         </form>
                     </td>
-                        <td class="py-1 border text-right">{{ $creditAccounts[$entry->account_Credit_id] ?? 'غير موجود' }}</td>
-                        <td class="py-1 border text-right">{{ $entry->Amount_Credit }}</td>
+                        <td class="py-1 border text-right">{{ $creditAccounts[$entry->account_credit_id] ?? 'غير موجود' }}</td>
+                        <td class="py-1 border text-right">{{ $entry->amount_credit }}</td>
                         <td class="py-1 border text-right">
                             <form id="ajaxForm" method="POST">
                                 @csrf
                                 <input type="hidden" name="entrie_id" id="entrie_id" value="{{ $entry->entrie_id }}">
-                                <input type="hidden" name="account_Credit_id" id="account_Credit_id" value="{{ $entry->account_Credit_id }}">
+                                <input type="hidden" name="account_Credit_id" id="account_Credit_id" value="{{ $entry->account_credit_id }}">
                                 <input type="hidden" name="status" id="status" value="{{ $entry->status }}">
 
                                 <button id="saveButton" name="saveButton" type="button" class="bg-yellow-500 text-white px-4 py-1 rounded" value="{{ $entry->entrie_id }}">{{ $entry->status }}</button>
                             </form>
                         </td>
-                        <td class="py-1 border text-right">{{ $entry->Statement }}</td>
-                        <td class="py-1 border text-right">{{ $entry->Daily_page_id }}</td>
+                        <td class="py-1 border text-right">{{ $entry->statement }}</td>
+                        <td class="py-1 border text-right">{{ $entry->daily_page_id }}</td>
                         <td class="py-1 border text-right">{{ $entry->created_at }}</td>
-                        <td class="py-1 border text-right">{{ $entry->User_id }}</td>
+                        <td class="py-1 border text-right">{{ $entry->user_id }}</td>
                     </tr>
                     @endforeach
                 @endif

@@ -117,7 +117,7 @@ class LocksFinancialPeriodsController extends Controller
                 ]);
             }
             // معالجة الحسابات الفرعية
-            $subAccounts = SubAccount::whereIn('typeAccount', [1, 2, 3])->get();
+            $subAccounts = SubAccount::whereIn('type_account', [1, 2, 3])->get();
             $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
 
             GeneralJournal::create(['accounting_period_id' => $accountingPeriod->accounting_period_id]);
@@ -142,33 +142,33 @@ class LocksFinancialPeriodsController extends Controller
                 if ($sub != 0) 
                 {
                     DailyEntrie::create([
-                        'Amount_debit' =>max(0, -$sub) ,
+                        'amount_debit' =>max(0, -$sub) ,
                         'account_debit_id' => $subAccount->sub_account_id,
-                        'Amount_Credit' =>max(0, $sub) ,
-                        'account_Credit_id' => $subAccount->sub_account_id,
-                        'Statement' => 'رصيد باقي/ يتم اقفال الحساب  وترحيل المبلغ المتبقي لسنة الجديدة ',
-                        'Daily_page_id' => $dailyPage->page_id,
-                        'Currency_name' => 'ريال.يمني',
-                        'User_id' => auth()->id(),
-                        'Invoice_type' => 1,
+                        'amount_credit' =>max(0, $sub) ,
+                        'account_credit_id' => $subAccount->sub_account_id,
+                        'statement' => 'رصيد باقي/ يتم اقفال الحساب  وترحيل المبلغ المتبقي لسنة الجديدة ',
+                        'daily_page_id' => $dailyPage->page_id,
+                        'currency_name' => 'ريال.يمني',
+                        'user_id' => auth()->id(),
+                        'invoice_type' => 1,
                         'accounting_period_id' => $id,
-                        'Invoice_id' => $subAccount->sub_account_id,
+                        'invoice_id' => $subAccount->sub_account_id,
                         'daily_entries_type' => 'رصيد مرحل',
                     
                     ]);
                     
                     DailyEntrie::create([
-                        'Amount_debit' => max(0, $sub),
+                        'amount_debit' => max(0, $sub),
                         'account_debit_id' => $subAccount->sub_account_id,
-                        'Amount_Credit' => max(0, -$sub),
-                        'account_Credit_id' => $subAccount->sub_account_id,
-                        'Statement' => 'رصيد افتتاحي',
-                        'Daily_page_id' => $dailyPage->page_id,
-                        'Currency_name' => 'ريال.يمني',
-                        'User_id' => auth()->id(),
-                        'Invoice_type' => 1,
+                        'amount_credit' => max(0, -$sub),
+                        'account_credit_id' => $subAccount->sub_account_id,
+                        'statement' => 'رصيد افتتاحي',
+                        'daily_page_id' => $dailyPage->page_id,
+                        'currency_name' => 'ريال.يمني',
+                        'user_id' => auth()->id(),
+                        'invoice_type' => 1,
                         'accounting_period_id' => $accountingPeriod->accounting_period_id,
-                        'Invoice_id' => $subAccount->sub_account_id,
+                        'invoice_id' => $subAccount->sub_account_id,
                         'daily_entries_type' => 'رصيد افتتاحي',
                         'status_debit' => 'غير مرحل',
                         'status' => 'غير مرحل',
@@ -178,33 +178,33 @@ class LocksFinancialPeriodsController extends Controller
                 if ($subSAD != 0) 
                 {
                     DailyEntrie::create([
-                        'Amount_debit' =>max(0, -$subSAD) ,
+                        'amount_debit' =>max(0, -$subSAD) ,
                         'account_debit_id' => $subAccount->sub_account_id,
-                        'Amount_Credit' =>max(0, $subSAD) ,
-                        'account_Credit_id' => $subAccount->sub_account_id,
-                        'Statement' => 'رصيد باقي/ يتم اقفال الحساب  وترحيل المبلغ المتبقي لسنة الجديدة ',
-                        'Daily_page_id' => $dailyPage->page_id,
-                        'Currency_name' => 'ريال سعودي',
-                        'User_id' => auth()->id(),
-                        'Invoice_type' => 1,
+                        'amount_credit' =>max(0, $subSAD) ,
+                        'account_credit_id' => $subAccount->sub_account_id,
+                        'statement' => 'رصيد باقي/ يتم اقفال الحساب  وترحيل المبلغ المتبقي لسنة الجديدة ',
+                        'daily_page_id' => $dailyPage->page_id,
+                        'currency_name' => 'ريال سعودي',
+                        'user_id' => auth()->id(),
+                        'invoice_type' => 1,
                         'accounting_period_id' => $id,
-                        'Invoice_id' => $subAccount->sub_account_id,
+                        'invoice_id' => $subAccount->sub_account_id,
                         'daily_entries_type' => 'رصيد مرحل',
                     
                     ]);
                     
                     DailyEntrie::create([
-                        'Amount_debit' => max(0, $subSAD),
+                        'amount_debit' => max(0, $subSAD),
                         'account_debit_id' => $subAccount->sub_account_id,
-                        'Amount_Credit' => max(0, -$subSAD),
-                        'account_Credit_id' => $subAccount->sub_account_id,
-                        'Statement' => 'رصيد افتتاحي',
-                        'Daily_page_id' => $dailyPage->page_id,
-                        'Currency_name' => 'ريال سعودي',
-                        'User_id' => auth()->id(),
-                        'Invoice_type' => 1,
+                        'amount_credit' => max(0, -$subSAD),
+                        'account_credit_id' => $subAccount->sub_account_id,
+                        'statement' => 'رصيد افتتاحي',
+                        'daily_page_id' => $dailyPage->page_id,
+                        'currency_name' => 'ريال سعودي',
+                        'user_id' => auth()->id(),
+                        'invoice_type' => 1,
                         'accounting_period_id' => $accountingPeriod->accounting_period_id,
-                        'Invoice_id' => $subAccount->sub_account_id,
+                        'invoice_id' => $subAccount->sub_account_id,
                         'daily_entries_type' => 'رصيد افتتاحي',
                         'status_debit' => 'غير مرحل',
                         'status' => 'غير مرحل',
@@ -214,33 +214,33 @@ class LocksFinancialPeriodsController extends Controller
                 if ($subUSD != 0) 
                 {
                     DailyEntrie::create([
-                        'Amount_debit' =>max(0, -$subUSD) ,
+                        'amount_debit' =>max(0, -$subUSD) ,
                         'account_debit_id' => $subAccount->sub_account_id,
-                        'Amount_Credit' =>max(0, $subUSD) ,
-                        'account_Credit_id' => $subAccount->sub_account_id,
-                        'Statement' => 'رصيد باقي/ يتم اقفال الحساب  وترحيل المبلغ المتبقي لسنة الجديدة ',
-                        'Daily_page_id' => $dailyPage->page_id,
-                        'Currency_name' => 'دولار امريكي',
-                        'User_id' => auth()->id(),
-                        'Invoice_type' => 1,
+                        'amount_credit' =>max(0, $subUSD) ,
+                        'account_credit_id' => $subAccount->sub_account_id,
+                        'statement' => 'رصيد باقي/ يتم اقفال الحساب  وترحيل المبلغ المتبقي لسنة الجديدة ',
+                        'daily_page_id' => $dailyPage->page_id,
+                        'currency_name' => 'دولار امريكي',
+                        'user_id' => auth()->id(),
+                        'invoice_type' => 1,
                         'accounting_period_id' => $id,
-                        'Invoice_id' => $subAccount->sub_account_id,
+                        'invoice_id' => $subAccount->sub_account_id,
                         'daily_entries_type' => 'رصيد مرحل',
                     
                     ]);
                     
                     DailyEntrie::create([
-                        'Amount_debit' => max(0, $subUSD),
+                        'amount_debit' => max(0, $subUSD),
                         'account_debit_id' => $subAccount->sub_account_id,
-                        'Amount_Credit' => max(0, -$subUSD),
-                        'account_Credit_id' => $subAccount->sub_account_id,
-                        'Statement' => 'رصيد افتتاحي',
-                        'Daily_page_id' => $dailyPage->page_id,
-                        'Currency_name' => 'دولار امريكي',
-                        'User_id' => auth()->id(),
-                        'Invoice_type' => 1,
+                        'amount_credit' => max(0, -$subUSD),
+                        'account_credit_id' => $subAccount->sub_account_id,
+                        'statement' => 'رصيد افتتاحي',
+                        'daily_page_id' => $dailyPage->page_id,
+                        'currency_name' => 'دولار امريكي',
+                        'user_id' => auth()->id(),
+                        'invoice_type' => 1,
                         'accounting_period_id' => $accountingPeriod->accounting_period_id,
-                        'Invoice_id' => $subAccount->sub_account_id,
+                        'invoice_id' => $subAccount->sub_account_id,
                         'daily_entries_type' => 'رصيد افتتاحي',
                         'status_debit' => 'غير مرحل',
                         'status' => 'غير مرحل',
@@ -268,7 +268,7 @@ class LocksFinancialPeriodsController extends Controller
         // تعيين معرّف الفترة المحاسبية
         $accountingPeriod = AccountingPeriod::where('accounting_period_id', $id)->firstOrFail();
         $accountingPeriodOprn = AccountingPeriod::where('is_closed', false)->firstOrFail();
-        $warehouses = SubAccount::where('AccountClass', 3)->get();
+        $warehouses = SubAccount::where('account_class', 3)->get();
 
         foreach ($warehouses as $warehouse) {
             $warehouse_to_id = $warehouse->sub_account_id;

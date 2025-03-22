@@ -18,21 +18,21 @@ class default_customerController extends Controller
         $customers =MainAccount::where('AccountClass', AccountClass::CUSTOMER->value)->first();
         if($customers){
 
-            $supplirx = SubAccount::where('Main_id', $customers->main_account_id)->get();
+            $supplirx = SubAccount::where('main_id', $customers->main_account_id)->get();
         }else{
             $supplirx=null;
         }
 
         $warehouse =MainAccount::where('AccountClass', AccountClass::STORE->value)->first();
         if($warehouse){
-            $warehouse1 = SubAccount::where('Main_id', $warehouse->main_account_id)->get();
+            $warehouse1 = SubAccount::where('main_id', $warehouse->main_account_id)->get();
         }else{
             $warehouse1=null;
         }
 
         $box =MainAccount::where('AccountClass', AccountClass::BOX->value)->first();
         if($box){
-            $box1 = SubAccount::where('Main_id', $box->main_account_id)->get();
+            $box1 = SubAccount::where('main_id', $box->main_account_id)->get();
         }else{
             $box1=null;
         }

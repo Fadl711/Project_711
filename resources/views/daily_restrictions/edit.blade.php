@@ -45,9 +45,9 @@
                       @foreach ($mainAccounts as $mainAccount)
                       @foreach ($SubAccounts as $item)
                       @if ($eail->account_debit_id==$item->sub_account_id)
-                      @if ($item->Main_id==$mainAccount->main_account_id)
+                      @if ($item->main_id==$mainAccount->main_account_id)
                       <option
-                      @selected($mainAccount->where('main_account_id',$item->Main_id)->first()->account_name) value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
+                      @selected($mainAccount->where('main_account_id',$item->main_id)->first()->account_name) value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
                       @endif
 
                       @endif
@@ -89,10 +89,10 @@
                         <option value="" selected>اختر الحساب</option>
                         @foreach ($mainAccounts as $mainAccount)
                         @foreach ($SubAccounts as $item)
-                        @if ($eail->account_Credit_id==$item->sub_account_id)
-                        @if ($item->Main_id==$mainAccount->main_account_id)
+                        @if ($eail->account_credit_id==$item->sub_account_id)
+                        @if ($item->main_id==$mainAccount->main_account_id)
                         <option
-                        @selected($mainAccount->where('main_account_id',$item->Main_id)->first()->account_name) value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
+                        @selected($mainAccount->where('main_account_id',$item->main_id)->first()->account_name) value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
                         @endif
 
                         @endif
@@ -111,7 +111,7 @@
                         <!-- سيتم تعبئة الخيارات بناءً على الحساب الرئيسي المحدد -->
 
                         @foreach ($SubAccounts as $item)
-                        <option @selected($eail->account_Credit_id==$item['sub_account_id']) value="{{$item['sub_account_id']}}">{{$item->sub_name}}-{{$item->sub_account_id}}</option>
+                        <option @selected($eail->account_credit_id==$item['sub_account_id']) value="{{$item['sub_account_id']}}">{{$item->sub_name}}-{{$item->sub_account_id}}</option>
 
                         @endforeach
                     </select>
@@ -126,7 +126,7 @@
 
           <div>
             <label for="Amount_debit" class="block font-medium mb-2">المبلغ المدين</label>
-            <input name="Amount_debit" type="number" step="0.01" class=" inputSale " placeholder="أدخل المبلغ" value="{{$eail->Amount_debit}}" required>
+            <input name="Amount_debit" type="number" step="0.01" class=" inputSale " placeholder="أدخل المبلغ" value="{{$eail->amount_debit}}" required>
         </div>
 
 
@@ -138,7 +138,7 @@
 
                   @foreach ($curr as $cur)
                   <option @isset($cu)
-                  @selected($eail->Currency_name==$cur->currency_name)
+                  @selected($eail->currency_name==$cur->currency_name)
                   @endisset
                   value="{{$cur->currency_name}}">{{$cur->currency_name}}</option>
                    @endforeach
@@ -148,7 +148,7 @@
         </div>
             <div class="">
                 <label for="Statement" class="block font-medium mb-2">البيان</label>
-                <textarea name="Statement" id="Statement" class="block w-full p-2 border rounded-md inputSale" placeholder="أدخل البيان" rows="4" required>{{$eail->Statement}}</textarea>
+                <textarea name="Statement" id="Statement" class="block w-full p-2 border rounded-md inputSale" placeholder="أدخل البيان" rows="4" required>{{$eail->statement}}</textarea>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-2 gap-4">
 

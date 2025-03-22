@@ -56,7 +56,7 @@ $paymentBond = ExchangeBond::updateOrCreate(
         'payment_type' => $request->payment_type,
         'accounting_period_id' => $accountingPeriod->accounting_period_id,
         'Currency_id' => $request->Currency,
-        'Amount_debit' => $request->Amount_debit,
+        'amount_debit' => $request->Amount_debit,
         'transaction_type' => 'سند صرف',
         'Statement' => $request->Statement ?? "سند صرف",
         'User_id' => $request->User_id,
@@ -79,7 +79,7 @@ if (!$paymentBond->wasRecentlyCreated && !$paymentBond->wasChanged()) {
         }
 
 
-        $Getentrie_id = DailyEntrie::where('Invoice_id', $paymentBond->payment_bond_id)
+        $Getentrie_id = DailyEntrie::where('invoice_id', $paymentBond->payment_bond_id)
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->where('daily_entries_type',$paymentBond->transaction_type)
             ->value('entrie_id');
@@ -92,16 +92,16 @@ if (!$paymentBond->wasRecentlyCreated && !$paymentBond->wasChanged()) {
             ],
             [
                 'daily_entries_type' => $paymentBond->transaction_type,
-                'Invoice_id' => $paymentBond->payment_bond_id,
+                'invoice_id' => $paymentBond->payment_bond_id,
                 'account_debit_id' => $paymentBond->Debit_sub_account_id,
-                'Amount_Credit' => $paymentBond->Amount_debit ?: 0,
-                'Amount_debit' => $paymentBond->Amount_debit ?: 0,
-                'account_Credit_id' => $paymentBond->Credit_sub_account_id,
-                'Statement' =>  $paymentBond->Statement,
-                'Daily_page_id' => $dailyPage->page_id,
-                'Invoice_type' =>$paymentBond->payment_type,
-                'Currency_name' => 'ر',
-                'User_id' => auth()->user()->id,
+                'amount_credit' => $paymentBond->Amount_debit ?: 0,
+                'amount_debit' => $paymentBond->Amount_debit ?: 0,
+                'account_credit_id' => $paymentBond->Credit_sub_account_id,
+                'statement' =>  $paymentBond->Statement,
+                'daily_page_id' => $dailyPage->page_id,
+                'invoice_type' =>$paymentBond->payment_type,
+                'currency_name' => 'ر',
+                'user_id' => auth()->user()->id,
                 'status_debit' => 'غير مرحل',
                 'status' => 'غير مرحل',
             ]
@@ -229,13 +229,13 @@ public function getPaymentBond(Request $request, $filterType)
         ]);
         DailyEntrie::where('updated_at',$PaymentBond->updated_at)->update([
             'account_debit_id'=>$request['DepositAccount'],
-            'Amount_debit'=>$request['Amount_debit'],
-            'account_Credit_id'=>$request['CreditAmount'],
-            'Amount_Credit'=>$request['Amount_debit'],
-            'Statement'=> $request['Statement'],
-            'Currency_name'=>$Currency,
-            'Daily_page_id'=>$dailyPage->page_id,
-            'User_id'=>$request['User_id'],
+            'amount_debit'=>$request['Amount_debit'],
+            'account_credit_id'=>$request['CreditAmount'],
+            'amount_credit'=>$request['Amount_debit'],
+            'statement'=> $request['Statement'],
+            'currency_name'=>$Currency,
+            'daily_page_id'=>$dailyPage->page_id,
+            'user_id'=>$request['User_id'],
         ]);
 
         return redirect()->route('all_exchange_bonds');

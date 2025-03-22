@@ -114,7 +114,7 @@
                     <div class="flex mt-2 gap-5">
                         <div class="font-extrabold">{{ __('رقم ') }}  {{ $AccountClassName  ?? __('غير متوفر') }}:</div>
                         <div>{{ $customer->sub_account_id ?? $customer->main_account_id ?? __('غير متوفر') }}</div>
-                        <div>{{ $customer->sub_name ??$customer->account_name?? __('غير متوفر') }}/{{ $customer->name_The_known ?? __(' ') }}</div>
+                        <div>{{ $customer->sub_name ??$customer->account_name?? __('غير متوفر') }}/{{ $customer->name_the_known ?? __(' ') }}</div>
                     </div>
                 </div>
             </div>
@@ -163,7 +163,7 @@
                 @isset($entriesTotally)
                 <td class=" text-center"><div class="flex mt-2 gap-5">
                     <div class="font-extrabold">{{ __('كشف حساب كلي للمبالغ المدينة والمبالغ الدائنة ') }}  {{  __('لحساب ').__(' '). $AccountClassName ??''}}:
-                        {{ $customer->sub_name ??$customer->account_name?? __('غير متوفر') }}/{{ $customer->name_The_known ?? __(' ') }}
+                        {{ $customer->sub_name ??$customer->account_name?? __('غير متوفر') }}/{{ $customer->name_the_known ?? __(' ') }}
                     </div>
                 </div>
             </td>
@@ -174,21 +174,20 @@
                     @foreach ($entries as $entrie)
                         <tr class="">
                             @php
-                        if ($entrie->Invoice_type==2) {
+                        if ($entrie->invoice_type==2) {
                             $Invoice_type  = "آجل"   ;
 
                                          }
-                                         if ($entrie->Invoice_type==1) {
+                                         if ($entrie->invoice_type==1) {
                             $Invoice_type  = "نقدآ"   ;
 
                                          }
-                                         if ($entrie->Invoice_type==3) {
+                                         if ($entrie->invoice_type==3) {
                             $Invoice_type  = "تحويل بنكي"   ;
 
                                          }
-                                         if ($entrie->Invoice_type==4) {
+                                         if ($entrie->invoice_type==4) {
                             $Invoice_type  = "شيك"   ;
-
                                          }
                                          if ($entrie->daily_entries_type == "رصيد افتتاحي") {
         $Invoice_type = "";
@@ -201,19 +200,19 @@
                             <td class=" text-right  "style="width: 120px; " >
                                 {{ $entrie->created_at ? $entrie->created_at->format('Y-m-d') : __('غير متوفر') }}
                             </td>
-                            <td class=" text-right  " style="width: 130px; {{ $cellColor }} " >{{ $entrie->daily_entries_type }} {{ $Invoice_type  ?? ""}}</td>
-                            <td class=" text-center " style="width: 100px; ">{{ $entrie->Invoice_id ?? ''}}</td>
+                            <td class=" text-right  " style="width: 130px; {{ $cellColor }} " >{{ $entrie->daily_entries_type }} {{ $invoice_type  ?? ""}}</td>
+                            <td class=" text-center " style="width: 100px; ">{{ $entrie->invoice_id ?? ''}}</td>
                             <td class=" text-right "    style="width: 300px; {{ $cellColor }}">
-                             <span id="Statement" class="">
-                                <span   class="text-red-500"> 
+                             <span  class="">
+                                <span id="Statement"   class="text-red-500"> 
                                     @if ( $entrie->daily_entries_type!="رصيد افتتاحي")
                                       من ح/</span>
                                 {{$entrie->debitAccount->sub_name }}
-                                <span class="text-green-500">الى ح/</span>
+                                <span id="Statement" class="text-green-500">الى ح/</span>
                                 {{$entrie->creditAccount->sub_name }}
                                 @endif
                             </span>
-                                <span id="Statement2" class="bg-slate-100 rounded px-1">  {{ $entrie->Statement }}</span>
+                                <span id="Statement2" class="bg-slate-100 rounded px-1">  {{ $entrie->statement }}</span>
                               
                             </td>
                             <td class=" text-center " style="width: 90px; ">{{ $entrie->entrie_id }}</td>
@@ -225,7 +224,7 @@
                                             </td>
                                             
 
-                                                <td class=" text-center " style="width: 100px; ">{{ $entrie->Currency_name ?? ''}}</td>
+                                                <td class=" text-center " style="width: 100px; ">{{ $entrie->currency_name ?? ''}}</td>
                         </tr>
                     @endforeach
                 @endisset

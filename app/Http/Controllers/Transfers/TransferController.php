@@ -108,7 +108,7 @@ class TransferController extends Controller
     
         // جلب أسماء الحسابات الفرعية المدينة والدائنة
         $debitAccounts = $this->getAccountNames($entries->pluck('account_debit_id')->unique());
-        $creditAccounts = $this->getAccountNames($entries->pluck('account_Credit_id')->unique());
+        $creditAccounts = $this->getAccountNames($entries->pluck('account_credit_id')->unique());
        $subAccount= SubAccount::find($subAccountId);
         // تمرير البيانات إلى العرض
         return back()->with([
@@ -124,7 +124,7 @@ class TransferController extends Controller
     private function fetchDailyEntries($accountingPeriodId, $subAccounts, $TypeRestrictions, $date)
     {
         $query = DB::table('daily_entries')
-        ->select('entrie_id', 'Amount_debit', 'Amount_Credit', 'account_debit_id', 'account_Credit_id', 'Statement', 'Daily_page_id', 'User_id', 'status', 'status_debit', 'created_at')
+        ->select('entrie_id', 'amount_debit', 'amount_credit', 'account_debit_id', 'account_credit_id', 'statement', 'daily_page_id', 'user_id', 'status', 'status_debit', 'created_at')
         ->where('accounting_period_id', $accountingPeriodId);
     
     // إضافة الحسابات الفرعية إلى الاستعلام
@@ -132,12 +132,12 @@ class TransferController extends Controller
         $subAccountIds = $subAccounts->pluck('sub_account_id')->toArray(); // تحويل إلى مصفوفة
         $query->where(function($subQuery) use ($subAccountIds) {
             $subQuery->where('account_debit_id', $subAccountIds)
-                     ->orWhere('account_Credit_id', $subAccountIds);
+                     ->orWhere('account_credit_id', $subAccountIds);
         });
     } else {
         $query->where(function ($subQuery) use ($subAccounts) {
             $subQuery->where('account_debit_id', $subAccounts->sub_account_id)
-                     ->orWhere('account_Credit_id', $subAccounts->sub_account_id);
+                     ->orWhere('account_credit_id', $subAccounts->sub_account_id);
         });
     }
     
@@ -182,7 +182,7 @@ class TransferController extends Controller
     {
         if ($subAccountId === 'all') {
             // جلب كل الحسابات الفرعية المرتبطة بالحساب الرئيسي كـ مجموعة
-            return SubAccount::where('Main_id', $mainAccountId)->get();
+            return SubAccount::where('main_id', $mainAccountId)->get();
         } elseif ($subAccountId >= 1) {
             // جلب الحساب الفرعي المحدد كـ كائن واحد
             return SubAccount::where('sub_account_id', $subAccountId)->first();  // استخدام first() لجلب كائن فردي
@@ -193,13 +193,13 @@ private function fetchEntries($subAccountIdsCollection, $date, $TypeRestrictions
 {
     $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
     $query = DB::table('daily_entries')
-        ->select('entrie_id', 'Amount_debit', 'Amount_Credit', 'account_debit_id', 'account_Credit_id', 'Statement', 'Daily_page_id', 'User_id', 'status','status_debit', 'created_at')
+        ->select('entrie_id', 'amount_debit', 'amount_credit', 'account_debit_id', 'account_credit_id', 'statement', 'daily_page_id', 'user_id', 'status','status_debit', 'created_at')
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id);
     // إضافة الحسابات الفرعية في الاستعلام
     if ($subAccountIdsCollection) {
         $query->where(function ($subQuery) use ($subAccountIdsCollection) {
             $subQuery->whereIn('account_debit_id', $subAccountIdsCollection->pluck('sub_account_id'))
-                     ->orWhereIn('account_Credit_id', $subAccountIdsCollection->pluck('sub_account_id'));
+                     ->orWhereIn('account_credit_id', $subAccountIdsCollection->pluck('sub_account_id'));
         });
     }
     // احصل على جميع الإدخالات أولاً
@@ -222,7 +222,7 @@ private function prepareResponse($entries, $mainAccount = null, $date, $TypeRest
 {
     // جلب معرفات الحسابات المدينة والدائنة
     $debitAccountIds = $entries->pluck('account_debit_id')->unique();
-    $creditAccountIds = $entries->pluck('account_Credit_id')->unique();
+    $creditAccountIds = $entries->pluck('account_credit_id')->unique();
     // جلب أسماء الحسابات الفرعية المدينة والدائنة
     $debitAccounts = DB::table('sub_accounts')
         ->whereIn('sub_account_id', $debitAccountIds)

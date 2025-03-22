@@ -54,7 +54,7 @@ class reportsConreoller extends Controller
     }
     public function salesReport_create(){
         $class=1;
-        $SubAccountCostmers= SubAccount::where('AccountClass',1)->get();
+        $SubAccountCostmers= SubAccount::where('account_class',1)->get();
 
         $Products=Product::all();
         return view('salesReport.create',compact('SubAccountCostmers','Products'));

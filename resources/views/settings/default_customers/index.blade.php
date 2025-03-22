@@ -42,7 +42,7 @@
                 @if ($SubAccount->sub_account_id==$Default_customers->subaccount_id)
                 <tr>
                     <td class="py-2 px-4 border-b">{{ $SubAccount->sub_name }}{{$Default_customers->subaccount_id}}</td>
-                    <td class="py-2 px-4 border-b">{{ $SubAccount->Phone }}</td>
+                    <td class="py-2 px-4 border-b">{{ $SubAccount->phone }}</td>
                     <td class="py-2 px-4 border-b">
                         <form action="{{ route('default_customers.destroy', $Default_customers->subaccount_id) }}" method="POST" class="inline">
                             @csrf
@@ -103,7 +103,7 @@
                 @if ($SubAccount->sub_account_id==$Default_customers->warehouse_id)
                 <tr>
                     <td class="py-2 px-4 border-b">{{ $SubAccount->sub_name }}</td>
-                    <td class="py-2 px-4 border-b">{{ $SubAccount->Phone }}</td>
+                    <td class="py-2 px-4 border-b">{{ $SubAccount->phone }}</td>
                     <td class="py-2 px-4 border-b">
                         <form action="{{ route('default_warehouse.destroy', $Default_customers->warehouse_id) }}" method="POST" class="inline">
                             @csrf
@@ -164,7 +164,7 @@
                 @if ($SubAccount->sub_account_id==$Default_customers->financial_account_id)
                 <tr>
                     <td class="py-2 px-4 border-b">{{ $SubAccount->sub_name }}</td>
-                    <td class="py-2 px-4 border-b">{{ $SubAccount->Phone }}</td>
+                    <td class="py-2 px-4 border-b">{{ $SubAccount->phone }}</td>
                     <td class="py-2 px-4 border-b">
                         <form action="{{ route('default_financial.destroy', $Default_customers->financial_account_id) }}" method="POST" class="inline">
                             @csrf

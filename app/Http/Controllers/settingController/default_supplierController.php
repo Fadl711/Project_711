@@ -30,7 +30,7 @@ class default_supplierController extends Controller
         $suppliers = MainAccount::where('AccountClass', AccountClass::SUPPLIER->value)->first();
 if ($suppliers) {
     // الحصول على SubAccount بناءً على main_account_id
-    $supplirx = SubAccount::where('Main_id', $suppliers->main_account_id)->get();
+    $supplirx = SubAccount::where('main_id', $suppliers->main_account_id)->get();
     
     // dd($supplirx);
     return view('settings.default_suppliers.create',[ 'supplirx'=>$supplirx]);

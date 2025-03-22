@@ -39,7 +39,7 @@ class SubaccountsController extends Controller
         $debtor=$this->convertArabicToEnglish($debtor1);
         $Main_id= $request->Main_id;
         $sub_name= $request->sub_name;
-        $DataSubAccount= SubAccount::create(['main_id' =>$Main_id, // Assuming $post is a collection of MainAccount models//+
+        $DataSubAccount= SubAccount::create(['main_id' =>$Main_id, 
         'sub_name' => $sub_name,//+
         'user_id' => $User_id,//+
         'debtor' => $debtor,//+

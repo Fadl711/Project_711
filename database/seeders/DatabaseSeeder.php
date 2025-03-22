@@ -32,7 +32,7 @@ class DatabaseSeeder extends Seeder
             'main_account_id' => 1,
             'Nature_account' => 'مدين',
             'AccountClass' => 4,
-            'account_name' => ' خصوم وحقوق الملكيه ' ,
+            'account_name' => '  حقوق الملكيه ' ,
             'typeAccount' => 3,
             'Type_migration' => 2,
             'User_id' => 1,
@@ -41,18 +41,18 @@ class DatabaseSeeder extends Seeder
         SubAccount::create([
             'sub_account_id'=>1,
             'sub_name'=>'راس المال',
-            'Main_id'=>1,
-            'AccountClass'=>4,
-            'typeAccount'=>3,
-            'User_id' => 1,
+            'main_id'=>1,
+            'account_class'=>4,
+            'type_account'=>3,
+            'user_id' => 1,
         ]);
         SubAccount::create([
             'sub_account_id'=>2,
             'sub_name'=>'الارباح والخسائر',
-            'Main_id'=>1,
-            'AccountClass'=>4,
-            'typeAccount'=>3,
-            'User_id' => 1,
+            'main_id'=>1,
+            'account_class'=>4,
+            'type_account'=>3,
+            'user_id' => 1,
         ]);
         $pages = [
             'الحسابات',
@@ -65,8 +65,13 @@ class DatabaseSeeder extends Seeder
             'المنتجات',
             'سجلات الترحيل',
             'التقارير',
-            'المردودات',
+            'النسخ الاحتياطي',
+            'تحديث النظام',
+            'الإعدادات الافتراضية',
             'الإعدادات',
+            'قيد الارباح',
+            'العملات',
+            'ادارت المستخدمين',
             'الخصم والتحليل'
         ];
         foreach($pages as $page){

@@ -85,7 +85,7 @@
             <div class="flex mt-2 gap-5">
                 <div class="font-extrabold">{{ __('رقم ') }}  {{ $AccountClassName ?? __('') }}</div>
                 <div>{{ $customerMain->sub_account_id ?? $customerMain->main_account_id ?? __('') }}</div>
-                <div>{{ $customerMain->sub_name ?? $customerMain->account_name ?? __('') }}/{{ $customer->name_The_known ?? __('') }}</div>
+                <div>{{ $customerMain->sub_name ?? $customerMain->account_name ?? __('') }}/{{ $customer->name_the_known ?? __('') }}</div>
             </div>
             <div class="flex mt-2">
                 <div class="font-extrabold">{{ __('العملة') }} :</div>
@@ -150,8 +150,10 @@
                     $total_credit_YER=0;
                     $total_debitd_USD=0;
                     $total_credits_USD=0;
+                    $balanceAttuy=[];
                 @endphp
                 @foreach ($balances as $index => $balance)
+
                     <tr class="hover:bg-gray-50">
                         <td class="text-right">{{ $index + 1 }}</td>
                         <td class=" text-right">{{ $balance['sub_name'] }}</td>

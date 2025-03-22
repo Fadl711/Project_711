@@ -31,17 +31,17 @@ class CustomerCoctroller extends Controller
         $balances = DailyEntrie::selectRaw(
             'sub_accounts.sub_account_id,
      sub_accounts.sub_name,
-     sub_accounts.Phone,
-     SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_debit ELSE 0 END) as total_debit,
-     SUM(CASE WHEN daily_entries.account_credit_id = sub_accounts.sub_account_id THEN daily_entries.Amount_Credit ELSE 0 END) as total_credit',
+     sub_accounts.phone,
+     SUM(CASE WHEN daily_entries.account_debit_id = sub_accounts.sub_account_id THEN daily_entries.amount_debit ELSE 0 END) as total_debit,
+     SUM(CASE WHEN daily_entries.account_credit_id = sub_accounts.sub_account_id THEN daily_entries.amount_credit ELSE 0 END) as total_credit',
         )
             ->where('daily_entries.accounting_period_id', $accountingPeriod->accounting_period_id)
 
             ->join('sub_accounts', function ($join) {
                 $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')->orOn('daily_entries.account_credit_id', '=', 'sub_accounts.sub_account_id');
             })
-            ->where('sub_accounts.AccountClass', 1) // إضافة شرط AccountClass = 1
-            ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name', 'sub_accounts.Phone')
+            ->where('sub_accounts.account_class', 1) // إضافة شرط AccountClass = 1
+            ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name', 'sub_accounts.phone')
             ->get();
 
         // معالجة البيانات لإضافة الفارق ونوعه
@@ -120,7 +120,7 @@ class CustomerCoctroller extends Controller
 
             if ($validated['accountlistradio'] === 'mainAccount') {
                 $query->whereExists(function ($query) use ($id) {
-                    $query->select(DB::raw(0))->from('main_accounts')->whereRaw('sub_accounts.Main_id = main_accounts.main_account_id')->where('main_accounts.main_account_id', $id);
+                    $query->select(DB::raw(0))->from('main_accounts')->whereRaw('sub_accounts.main_id = main_accounts.main_account_id')->where('main_accounts.main_account_id', $id);
                 });
             } elseif ($validated['accountlistradio'] === 'subAccount') {
                 $query->where('sub_accounts.sub_account_id', $id);
@@ -191,7 +191,7 @@ class CustomerCoctroller extends Controller
                 $balances = GeneralEntrie::selectRaw(
                     'sub_accounts.sub_account_id,
             sub_accounts.sub_name,
-            sub_accounts.Phone,
+            sub_accounts.phone,
             SUM(CASE WHEN general_entries.entry_type = "debit" THEN general_entries.amount ELSE 0 END) as total_debit,
             SUM(CASE WHEN general_entries.entry_type = "credit" THEN general_entries.amount ELSE 0 END) as total_credit',
                 )
@@ -201,7 +201,7 @@ class CustomerCoctroller extends Controller
                     })
                     ->where('sub_accounts.sub_account_id', $customerMain->sub_account_id)
 
-                    ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name', 'sub_accounts.Phone')
+                    ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name', 'sub_accounts.phone')
                     ->get();
                 $accountClasses = [
                     1 => 'العميل',
@@ -210,15 +210,15 @@ class CustomerCoctroller extends Controller
                     4 => 'الحساب',
                     5 => 'الصندوق',
                 ];
-                $AccountClassName = $accountClasses[$customerMain->AccountClass] ?? 'غير معروف';
+                $AccountClassName = $accountClasses[$customerMain->account_class] ?? 'غير معروف';
             }
             if ($validated['accountlistradio'] === 'mainAccount') {
-                $SubAccounts = SubAccount::where('Main_id', $id)->get();
+                $SubAccounts = SubAccount::where('main_id', $id)->get();
                 $customerMain = MainAccount::where('main_account_id', $id)->first();
                 $balances = GeneralEntrie::selectRaw(
                     'sub_accounts.sub_account_id,
             sub_accounts.sub_name,
-            sub_accounts.Phone,
+            sub_accounts.phone,
             SUM(CASE WHEN general_entries.entry_type = "debit" THEN general_entries.amount ELSE 0 END) as total_debit,
             SUM(CASE WHEN general_entries.entry_type = "credit" THEN general_entries.amount ELSE 0 END) as total_credit',
                 )
@@ -226,9 +226,9 @@ class CustomerCoctroller extends Controller
                     ->join('sub_accounts', function ($join) {
                         $join->on('general_entries.sub_id', '=', 'sub_accounts.sub_account_id');
                     })
-                    ->where('sub_accounts.Main_id', $customerMain->main_account_id)
+                    ->where('sub_accounts.main_id', $customerMain->main_account_id)
 
-                    ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name', 'sub_accounts.Phone')
+                    ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name', 'sub_accounts.phone')
                     ->get();
                 $accountClasses = [
                     1 => 'العملاء',
@@ -236,7 +236,7 @@ class CustomerCoctroller extends Controller
                     3 => 'المخازن',
                     5 => 'الصناديق',
                 ];
-                $AccountClassName = $accountClasses[$customerMain->AccountClass] ?? 'غير معروف';
+                $AccountClassName = $accountClasses[$customerMain->account_class] ?? 'غير معروف';
             }
 
             // dd(  $balances);
@@ -391,6 +391,8 @@ class CustomerCoctroller extends Controller
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
         $UserName = User::where('id', auth()->user()->id)
             ->pluck('name')
+            // dd(1);
+
             ->first();
         if ($validated['list'] == 'FullDisclosureOfAccounts') {
             $SubAccounts = SubAccount::all();
@@ -435,7 +437,7 @@ class CustomerCoctroller extends Controller
                     ->join('sub_accounts', function ($join) {
                         $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')->orOn('daily_entries.account_credit_id', '=', 'sub_accounts.sub_account_id');
                     })
-                    ->where('sub_accounts.Main_id', $idaccounn)
+                    ->where('sub_accounts.main_id', $idaccounn)
                     ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name', 'sub_accounts.phone')
                     ->get();
                 $accountClasses = [
@@ -445,7 +447,7 @@ class CustomerCoctroller extends Controller
                     4 => 'الحساب:',
                     5 => 'حساب المخازن:',
                 ];
-                $AccountClassName = $accountClasses[$customerMainAccount->AccountClass ?? ''] . ' ' . $customerMainAccount->main_account_id . ' ' . $customerMainAccount->Account_name ?? 'غير معروف';
+                $AccountClassName = $accountClasses[$customerMainAccount->account_class ?? ''] . ' ' . $customerMainAccount->main_account_id . ' ' . $customerMainAccount->Account_name ?? 'غير معروف';
                 $Myanalysis = 'نهائي للحساب الرئسي قبل الترحيل';
             }
             if ($validated['accountlistradio'] === 'subAccount') {
@@ -477,7 +479,7 @@ class CustomerCoctroller extends Controller
                     4 => 'الحساب:',
                     5 => 'الحساب:',
                 ];
-                $AccountClassName = $accountClasses[$customer->AccountClass ?? ''] . ' ' . $customer->sub_account_id . ' ' . $customer->sub_name ?? 'غير معروف';
+                $AccountClassName = $accountClasses[$customer->account_class ?? ''] . ' ' . $customer->sub_account_id . ' ' . $customer->sub_name ?? 'غير معروف';
                 $Myanalysis = 'نهائي للحساب الفرعي قبل الترحيل';
             }
         }
@@ -535,10 +537,11 @@ class CustomerCoctroller extends Controller
         $UserName = User::where('id', auth()->user()->id)
             ->pluck('name')
             ->first();
+
         if ($validated['list'] == 'FullDisclosureOfSubAccounts') {
             if ($validated['accountlistradio'] === 'mainAccount') {
                 $customerMainAccount = MainAccount::where('main_account_id', $id)->first();
-                $SubAccounts = SubAccount::where('Main_id', $customerMainAccount->main_account_id)->get();
+                $SubAccounts = SubAccount::where('main_id', $customerMainAccount->main_account_id)->get();
                 $idaccounn = $customerMainAccount->main_account_id;
                 $balances = DailyEntrie::selectRaw(
                     'sub_accounts.sub_account_id,
@@ -551,7 +554,7 @@ class CustomerCoctroller extends Controller
                     ->join('sub_accounts', function ($join) {
                         $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')->orOn('daily_entries.account_credit_id', '=', 'sub_accounts.sub_account_id');
                     })
-                    ->where('sub_accounts.Main_id', $idaccounn)
+                    ->where('sub_accounts.main_id', $idaccounn)
                     ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name', 'sub_accounts.phone')
                     ->get();
             }
@@ -648,6 +651,7 @@ class CustomerCoctroller extends Controller
     public function showStatementMainAccountTotally($validated, $id)
     {
         $Myanalysis = 'كلي';
+
         try {
             // التحقق من الحساب الرئيسي
             $customer = MainAccount::where('main_account_id', $id)->first();
@@ -1005,7 +1009,6 @@ class CustomerCoctroller extends Controller
     public function getDailyEntriesMainAccountMyanalysis($validated, $id)
     {
         $Myanalysis = 'تحليلي';
-        // dd($entries);
         $UserName = User::where('id', auth()->user()->id)
             ->pluck('name')
             ->first();
@@ -1037,7 +1040,7 @@ class CustomerCoctroller extends Controller
             ->join('sub_accounts', function ($join) {
                 $join->on('daily_entries.account_debit_id', '=', 'sub_accounts.sub_account_id')->orOn('daily_entries.account_credit_id', '=', 'sub_accounts.sub_account_id');
             })
-            ->join('main_accounts', 'sub_accounts.Main_id', '=', 'main_accounts.main_account_id')
+            ->join('main_accounts', 'sub_accounts.main_id', '=', 'main_accounts.main_account_id')
             ->where('main_accounts.main_account_id', $id)
             ->groupBy(
                 'daily_entries.account_debit_id',
@@ -1053,6 +1056,8 @@ class CustomerCoctroller extends Controller
             );
         $startDate = null;
         $endDate = null;
+        $query->where('daily_entries.accounting_period_id', $accountingPeriod->accounting_period_id);
+
         // تخصيص الفترة الزمنية بناءً على المدخلات
         switch ($validated['listradio'] ?? '') {
             case '1': //
@@ -1191,20 +1196,20 @@ class CustomerCoctroller extends Controller
             return response()->json(['success' => false, 'message' => 'لا يوجد حساب رئيسي للعميل']);
         }
 
-        $account_names_exist = SubAccount::where('Main_id', $mainAccount->main_account_id)->pluck('sub_name');
+        $account_names_exist = SubAccount::where('main_id', $mainAccount->main_account_id)->pluck('sub_name');
         if ($account_names_exist->contains($sub_name)) {
             return response()->json(['success' => false, 'message' => 'يوجد نفس هذا الاسم من قبل']);
         }
         $DataSubAccount = new SubAccount();
-        $DataSubAccount->Main_id = $mainAccount->main_account_id;
+        $DataSubAccount->main_id = $mainAccount->main_account_id;
         $DataSubAccount->sub_name = $sub_name;
-        $DataSubAccount->AccountClass = $mainAccount->AccountClass;
-        $DataSubAccount->typeAccount = $mainAccount->typeAccount;
-        $DataSubAccount->User_id = $User_id;
+        $DataSubAccount->account_class = $mainAccount->AccountClass;
+        $DataSubAccount->type_account = $mainAccount->typeAccount;
+        $DataSubAccount->user_id = $User_id;
         $DataSubAccount->debtor_amount = !empty($debtor_amount) ? $debtor_amount : 0;
         $DataSubAccount->creditor_amount = !empty($creditor_amount) ? $creditor_amount : 0;
-        $DataSubAccount->Phone = $Phone1;
-        $DataSubAccount->name_The_known = $request->name_The_known ?? null;
+        $DataSubAccount->phone = $Phone1;
+        $DataSubAccount->name_the_known = $request->name_The_known ?? null;
         $DataSubAccount->Known_phone = null;
         $DataSubAccount->save();
         $DSubAccount = SubAccount::where('sub_account_id', $DataSubAccount->sub_account_id)->first();
@@ -1237,13 +1242,13 @@ class CustomerCoctroller extends Controller
                 ],
                 [
                     'account_debit_id' => $account_debit_id,
-                    'Amount_Credit' => $DSubAccount->creditor_amount ?: 0,
-                    'Amount_debit' => $DSubAccount->debtor_amount ?: 0,
+                    'amount_credit' => $DSubAccount->creditor_amount ?: 0,
+                    'amount_debit' => $DSubAccount->debtor_amount ?: 0,
                     'account_credit_id' => $account_credit_id,
-                    'Statement' => 'فاتورة ' . ' ' . 'رصيد افتتاحي',
-                    'Daily_page_id' => $dailyPage->page_id,
+                    'statement' => 'فاتورة ' . ' ' . 'رصيد افتتاحي',
+                    'daily_page_id' => $dailyPage->page_id,
                     'Invoice_type' => 5,
-                    'Currency_name' => 'ر',
+                    'currency_name' => 'ر',
                     'User_id' => auth()->user()->id,
                     'status_debit' => 'غير مرحل',
                     'status' => 'غير مرحل',

@@ -33,9 +33,9 @@
                 <td class="py-2 px-4 border-b text-center">{{$MainAccount->main_account_id}}</td>
                 <td class="py-2 px-4 border-b text-center"> {{$MainAccount->account_name}} </td>
                 @foreach ($SubAccounts as $SubAccount)
-                @if ($SubAccount->where('Main_id',$MainAccount->main_account_id)->get())
-                <td class="py-2 px-4 border-b text-center">{{$SubAccount->where('Main_id',$MainAccount->main_account_id)->sum('debtor_amount')}}</td>
-                <td class="py-2 px-4 border-b text-center">{{$SubAccount->where('Main_id',$MainAccount->main_account_id)->sum('creditor_amount')}}</</td>
+                @if ($SubAccount->where('main_id',$MainAccount->main_account_id)->get())
+                <td class="py-2 px-4 border-b text-center">{{$SubAccount->where('main_id',$MainAccount->main_account_id)->sum('debtor_amount')}}</td>
+                <td class="py-2 px-4 border-b text-center">{{$SubAccount->where('main_id',$MainAccount->main_account_id)->sum('creditor_amount')}}</</td>
                 @break
                 @endif
                 @endforeach

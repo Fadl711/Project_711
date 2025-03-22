@@ -105,7 +105,7 @@ body {
                         <td class=" text-right  bg-red-400 border ">
                             {{ $resultCredit1->sub_name ?? '' }}
                         </td>                        <td class="border text-right bg-red-400">{{ $eai->amount_credit }} </td>
-                        <td class="border text-right ">{{ $eai->statement }}/رقم المستند<span class=" bg-red-400 px-1 rounded-md">{{ $eai->Invoice_id }}</span></td>
+                        <td class="border text-right ">{{ $eai->statement }}/رقم المستند<span class=" bg-red-400 px-1 rounded-md">{{ $eai->invoice_id }}</span></td>
                     </td>                        <td class="border text-right bg-red-400">{{ $eai->currency_name }} </td>
                         <td class="border text-right">{{ $eai->created_at->format('Y-m-d') }}</td>
                         <td class="border text-right">{{ $eai->updated_at }}</td>

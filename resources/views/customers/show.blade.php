@@ -22,7 +22,7 @@
                 <tr class="hover:bg-gray-50">
                     <td class="px-4 py-2 border border-gray-300">{{ $index + 1 }}</td>
                     <td class="px-4 py-2 border border-gray-300">{{ $balance->sub_name }}</td>
-                    <td class="px-4 py-2 border border-gray-300">{{ $balance->Phone }}</td>
+                    <td class="px-4 py-2 border border-gray-300">{{ $balance->phone }}</td>
                     <td class="px-4 py-2 border border-gray-300">{{ number_format($balance->total_debit, 2) }}</td>
                     <td class="px-4 py-2 border border-gray-300">{{ number_format($balance->total_credit, 2) }}</td>
                     <td class="px-4 py-2 border border-gray-300">{{ number_format(abs($balance->difference), 2) }}</td>

@@ -58,17 +58,17 @@
 
         <div class="mb-2">
             <label for="Phone" class="labelSale">رقم التلفون الحساب</label>
-            <input name="Phone" class="inputSale input-field english-numbers" id="Phone" type="number" autocomplete="off" placeholder="0" value="{{ $account->Phone }}"/>
+            <input name="Phone" class="inputSale input-field english-numbers" id="Phone" type="number" autocomplete="off" placeholder="0" value="{{ $account->phone }}"/>
         </div>
 
         <div class="mb-2">
             <label for="name_The_known" class="labelSale">اسم/ معرف العميل</label>
-            <input type="text" name="name_The_known" id="name_The_known" placeholder="" class="input-field inputSale" value="{{ $account->name_The_known }}"/>
+            <input type="text" name="name_The_known" id="name_The_known" placeholder="" class="input-field inputSale" value="{{ $account->name_the_known }}"/>
         </div>
 
         <div class="mb-2">
             <label for="Known_phone" class="labelSale">رقم تلفون/ معرف العميل</label>
-            <input type="number" autocomplete="off" name="Known_phone" id="Known_phone" class="inputSale input-field english-numbers" value="{{ $account->Known_phone }}"/>
+            <input type="number" autocomplete="off" name="Known_phone" id="Known_phone" class="inputSale input-field english-numbers" value="{{ $account->known_phone }}"/>
         </div>
     </div>
 {{--

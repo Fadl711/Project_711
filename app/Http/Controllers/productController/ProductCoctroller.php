@@ -315,7 +315,7 @@ if($Quantit=="Incomplete")
     {
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
         $warehouseName = SubAccount::where('sub_account_id', $warehouse_to_id)->value('sub_name');
-        $Suppliers = SubAccount::where('AccountClass',2)->get();
+        $Suppliers = SubAccount::where('account_class',2)->get();
         if($Quantit=="QuantityCostsSupplier")
         {
             $Myanalysis="الكمية والتكاليف حسب حركة الموردين من تاريخ ";

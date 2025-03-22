@@ -61,7 +61,11 @@
             <td>{{ $entry['id'] }}</td>
 <td>{{ $entry['subAccount'] ? $entry['subAccount']->sub_name : 'غير محدد' }}/{{ $entry['entry_type'] }}</td>
             {{-- <td>{{ $entry['Main_id'] }}</td> --}}
-            <td>{{ $entry['Daily_entry_id'] }}</td>
+            <td>
+                <a href="{{ route('restrictions.show', $entry['Daily_entry_id'] ) }}" class="text-sm py-2 leading-none rounded-md hover:bg-gray-100">
+                   {{ $entry['Daily_entry_id'] }}
+                </a>
+            </td>
             <td>{{ $entry['Daily_Page_id'] }}</td>
             {{-- <td>{{ $entry['User_id'] ? $entry['User_id']->name : 'غير محدد' }}</td> --}}
             {{-- <td>{{ $entry['General_ledger_page_number_id'] }}</td> --}}
@@ -74,17 +78,18 @@
             <td>{{ $entry['description'] }}</td>
             <td>{{ $entry['entry_date'] }}</td>
             <td class=" text-center" >
-                @if ( $entry['entrie_id'])
+                @isset($entry['entrie_id'])
+                    
                 <div class="">
                     <span class="  items-center  w-6 h-6 bg-green-200 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-green-900">
                         <svg class="w-3 h-3 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
                         </svg>
-                     {{   $entry['entrie_id']}}
+                     {{$entry['entrie_id']}}
                     </span>
                     </div>
-                @endif
-                @if (! $entry['entrie_id'])
+                    @endisset
+                    @if (!$entry['entrie_id'])
                 <div id="tooltip-default" >
                     <svg class="w-3 h-3 text-red-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>

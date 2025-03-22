@@ -25,26 +25,26 @@
                 <label class="labelSale" for="Main_id">الحساب الرئيسي</label>
                 <select dir="ltr" class="input-field select2 inputSale" id="Main_id" name="Main_id">
                     @forelse($MainAccounts as $MainAccount)
-                    <option @selected($SubAccount->Main_id==$MainAccount['main_account_id']) value="{{$MainAccount['main_account_id']}}">{{$MainAccount['account_name']}}</option>
+                    <option @selected($SubAccount->main_id==$MainAccount['main_account_id']) value="{{$MainAccount['main_account_id']}}">{{$MainAccount['account_name']}}</option>
                     @empty
                     @endforelse
                 </select>
             </div>
             <div class="mb-2">
                 <label class="labelSale" for="debtor_amount">رصيد افتتاحي مدين (اخذ)</label>
-                <input value="{{$Getentrie_id->Amount_debit ??0 }}" name="debtor_amount" class="inputSale input-field" id="debtor_amount" type="number" placeholder="0"/>
+                <input value="{{$Getentrie_id->amount_debit ??0 }}" name="debtor_amount" class="inputSale input-field" id="debtor_amount" type="number" placeholder="0"/>
             </div>
             <div class="mb-2">
                 <label class="labelSale" for="creditor_amount">رصيد افتتاحي دائن (عاطي)</label>
-                <input value="{{$Getentrie_id->Amount_Credit  ??0}}" name="creditor_amount" class="inputSale input-field" id="creditor_amount" type="number" placeholder="0"/>
+                <input value="{{$Getentrie_id->amount_credit  ??0}}" name="creditor_amount" class="inputSale input-field" id="creditor_amount" type="number" placeholder="0"/>
             </div>
             <div class="mb-2">
                 <label for="Phone" class="labelSale">رقم التلفون</label>
-                <input type="number" value="{{$SubAccount->Phone ?? null}}" name="Phone" id="Phone" class="input-field inputSale" />
+                <input type="number" value="{{$SubAccount->phone ?? null}}" name="Phone" id="Phone" class="input-field inputSale" />
             </div>
             <div class="mb-2">
                 <label for="name_The_known" class="labelSale">العنوان</label>
-                <input type="text" name="name_The_known" id="name_The_known" value="{{$SubAccount->name_The_known ?? null}}" class="input-field inputSale" />
+                <input type="text" name="name_The_known" id="name_The_known" value="{{$SubAccount->name_the_known ?? null}}" class="input-field inputSale" />
             </div>
             <div class="text-center">
                 <label for="date" class="text-center">التاريخ</label>
@@ -79,7 +79,7 @@
                     @foreach ($currs as $cur)
                         <option 
                             @isset($Getentrie_id)
-                                @selected($cur->currency_name == $Getentrie_id->Currency_name)
+                                @selected($cur->currency_name == $Getentrie_id->currency_name)
                                 value="{{ $cur->currency_name }}"
                             @endisset
                             value="{{ $cur->currency_name }}">
@@ -106,7 +106,7 @@
                         id="Statement"
                         rows="3"
                     >
-                    {{$Getentrie_id->Statement ??'' }}
+                    {{$Getentrie_id->statement ??'' }}
                 </textarea>
                            </div>
             <div class="mb-2">

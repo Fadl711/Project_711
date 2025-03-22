@@ -224,7 +224,7 @@ class PurchaseController extends Controller
         }
         // التحقق من فئة الحساب
         $subAccount = SubAccount::where('sub_account_id', $purchaseInvoice->account_id)->first();
-        if ($transactionType == 3 && $subAccount->AccountClass != 3) {
+        if ($transactionType == 3 && $subAccount->account_class != 3) {
             return response()->json([
                 'success' => false,
                 'message' => $transactionType == 3 
@@ -471,19 +471,19 @@ public function print($id)
         $UserName = 'اسم غير موجود';
     }
         $SubName = SubAccount::all();
-    if($SubAccount->AccountClass===1)
+    if($SubAccount->account_class===1)
     {
         $AccountClassName="العميل";
     }
-    if($SubAccount->AccountClass===2)
+    if($SubAccount->account_class===2)
     {
         $AccountClassName="المورد";
     }
-    if($SubAccount->AccountClass===3)
+    if($SubAccount->account_class===3)
     {
         $AccountClassName="المخزن";
     }
-    if($SubAccount->AccountClass===4)
+    if($SubAccount->account_class===4)
     {
         $AccountClassName="الحساب";
     }

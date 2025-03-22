@@ -97,7 +97,7 @@ class AccountCoctroller extends Controller
                 //     throw new \Exception("تم ترحيل هذا القيد مسبقاً كـ مدين .");
                 // }
 
-                $this->processEntry($request->account_debit_id, null, $entry->entrie_id, $entry->Amount_debit, $entry->Amount_Credit, $entry, $request->account_Credit_id);
+                $this->processEntry($request->account_debit_id, null, $entry->entrie_id, $entry->amount_debit, $entry->amount_credit, $entry, $request->account_Credit_id);
             }
 
             // معالجة القيد الدائن
@@ -113,7 +113,7 @@ class AccountCoctroller extends Controller
 
                 // }
 
-                $this->processEntry(null, $request->account_Credit_id, $entry->entrie_id, $entry->Amount_debit, $entry->Amount_Credit, $entry, $request->account_debit_id);
+                $this->processEntry(null, $request->account_Credit_id, $entry->entrie_id, $entry->amount_debit, $entry->amount_credit, $entry, $request->account_debit_id);
             }
 
             return response()->json(['success' => 'تم ترحيل القيد بنجاح!']);
@@ -147,7 +147,7 @@ class AccountCoctroller extends Controller
         }
         $descriptionText = '';
         // جلب الحسابات الفرعية والرئيسية
-        $Main_id = $subAccount->Main_id;
+        $Main_id = $subAccount->main_id;
         $mainAccount = MainAccount::where('main_account_id', $Main_id)->first();
         // تحديد الوصف بناءً على تصنيف الحساب
       
@@ -200,16 +200,16 @@ class AccountCoctroller extends Controller
             [
                 'sub_id' => $accountId,
                 'General_ledger_page_number_id' => $generalLedge->general_ledge_id ?? null,
-                'Daily_Page_id' => $entry->Daily_page_id,
+                'Daily_Page_id' => $entry->daily_page_id,
                 'entry_date' => $entry->created_at,
                 'Main_id' => $mainAccount->main_account_id,
-                'typeAccount' => $subAccount->typeAccount ??0,
+                'typeAccount' => $subAccount->type_account ??0,
                 'amount' => $amount ?? 0,
-                'description' => $descriptionCommint  . ' ' . $subAccount->sub_name??' ' . '-' . $entry->Statement ?? ' ',
+                'description' => $descriptionCommint  . ' ' . $subAccount->sub_name??' ' . '-' . $entry->statement ?? ' ',
                 'status' => 'غير مرحل',
-                'Invoice_type' => $entry->Invoice_type,
-                'Invoice_id' => $entry->Invoice_id ?? null,
-                'Currency_name' => $entry->Currency_name ?? '',
+                'Invoice_type' => $entry->invoice_type,
+                'Invoice_id' => $entry->invoice_id ?? null,
+                'Currency_name' => $entry->currency_name ?? '',
                 'exchange_rate' => $entry->exchange_rate ?? 1,
 
                 'User_id' => auth()->id(),
@@ -241,10 +241,10 @@ class AccountCoctroller extends Controller
             $Creditid=null;
             foreach ($entries as $entry) {
                 if ($entry->account_debit_id) {
-                    $this->processEntry($entry->account_debit_id , $Creditid, $entry->entrie_id, $entry->Amount_debit, $entry->Amount_Credit, $entry, $entry->account_Credit_id);
+                    $this->processEntry($entry->account_debit_id , $Creditid, $entry->entrie_id, $entry->amount_debit, $entry->amount_credit, $entry, $entry->account_credit_id);
                 }
-                if ($entry->account_Credit_id) {
-                    $this->processEntry($debitid, $entry->account_Credit_id, $entry->entrie_id, $entry->Amount_debit, $entry->Amount_Credit, $entry, $entry->account_debit_id);
+                if ($entry->account_credit_id) {
+                    $this->processEntry($debitid, $entry->account_credit_id, $entry->entrie_id, $entry->amount_debit, $entry->amount_credit, $entry, $entry->account_debit_id);
                 }
             }
             return response()->json(['success' => 'تم ترحيل جميع القيود بنجاح!']);
@@ -268,13 +268,13 @@ class AccountCoctroller extends Controller
                 // جلب جميع القيود اليومية المرتبطة بالحسابات الفرعية في الفترة المحاسبية المفتوحة
                 $entries = DailyEntrie::where('accounting_period_id', $accountingPeriod->accounting_period_id)
                     ->where(function ($query) use ($subAccountIds) {
-                        $query->whereIn('account_debit_id', $subAccountIds)->orWhereIn('account_Credit_id', $subAccountIds);
+                        $query->whereIn('account_debit_id', $subAccountIds)->orWhereIn('account_credit_id', $subAccountIds);
                     })
                     ->get();
             } elseif ($subAccount >= 1) {
                 $entries = DailyEntrie::where('accounting_period_id', $accountingPeriod->accounting_period_id)
                     ->where(function ($query) use ($subAccount) {
-                        $query->where('account_debit_id', $subAccount)->orWhere('account_Credit_id', $subAccount);
+                        $query->where('account_debit_id', $subAccount)->orWhere('account_credit_id', $subAccount);
                     })
                     ->get();
 
@@ -285,23 +285,23 @@ class AccountCoctroller extends Controller
             if ($entries->isEmpty()) {
                 return response()->json(['error' => 'لا توجد قيود غير مرحل لترحيلها.'], 404);
             }
-            // $entry->Amount_Credit
+            // $entry->amount_credit
 
             foreach ($entries as $entry) {
                 // التحقق من توفر $subAccountIds لتجنب الخطأ
                 $hasDebit = isset($subAccountIds) && $subAccountIds->contains($entry->account_debit_id);
-                $hasCredit = isset($subAccountIds) && $subAccountIds->contains($entry->account_Credit_id);
+                $hasCredit = isset($subAccountIds) && $subAccountIds->contains($entry->account_credit_id);
                 
 
                 if ($hasDebit || $hasCredit) {
                     if ($hasDebit) {
                         $account = $entry->account_debit_id;
                     } elseif ($hasCredit) {
-                        $account = $entry->account_Credit_id;
+                        $account = $entry->account_credit_id;
                     } else {
                         $account = null;
                     } // يتم ترحيل القيد لمرة واحدة بغض النظر عن م
-                    $this->processEntry($hasDebit ? $entry->account_debit_id : null, $hasCredit ? $entry->account_Credit_id : null, $entry->entrie_id, $hasDebit ? $entry->Amount_Credit : null, $hasCredit ? $entry->Amount_Credit : null, $entry, $account);
+                    $this->processEntry($hasDebit ? $entry->account_debit_id : null, $hasCredit ? $entry->account_credit_id : null, $entry->entrie_id, $hasDebit ? $entry->amount_debit : null, $hasCredit ? $entry->amount_credit : null, $entry, $account);
                 }
             }
             return redirect()->back(['success' => 'تم ترحيل جميع القيود بنجاح!']);

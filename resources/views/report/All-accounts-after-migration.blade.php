@@ -85,7 +85,7 @@
             <div class="flex mt-2 gap-5">
                 <div class="font-extrabold">{{ __('رقم ') }}  {{ $AccountClassName ?? __(' ') }}:</div>
                 <div>{{ $customerMain->sub_account_id ?? $customerMain->main_account_id ?? __(' ') }}</div>
-                <div>{{ $customerMain->sub_name ?? $customerMain->account_name ?? __(' ') }}/{{ $customer->name_The_known ?? __(' ') }}</div>
+                <div>{{ $customerMain->sub_name ?? $customerMain->account_name ?? __(' ') }}/{{ $customer->name_the_known ?? __(' ') }}</div>
             </div>
             <div class="flex mt-2">
                 <div class="font-extrabold">{{ __('العملة') }} :</div>
@@ -111,7 +111,7 @@
                         <td class="px-4 text-center">{{ $index + 1 }}</td>
                         <td class="px-4 text-right">{{ $balance['sub_name'] }}</td>
                         <td class="px-4 text-center">{{ $balance['sub_account_id'] }}</td>
-                        <td class="px-4 text-center">{{ $balance['Phone'] ?? 0 }}</td>
+                        <td class="px-4 text-center">{{ $balance['phone'] ?? 0 }}</td>
                         @php
                             $totalDebit=0;
                             $totalCredit=0;

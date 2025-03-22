@@ -165,7 +165,7 @@ class InvoicePurchaseController extends Controller
             $generalEntrieaccount_debit_id = GeneralEntrie::where([
                 'Daily_entry_id' => $Getentrie_id->entrie_id,
                 'accounting_period_id' => $Getentrie_id->accounting_period_id,
-                'sub_id' => $Getentrie_id->account_Credit_id,
+                'sub_id' => $Getentrie_id->account_credit_id,
             ])->delete();
             }
             if($Getentrie_id->entrie_id )
@@ -320,7 +320,7 @@ public function getpurchasesByInvoiceArrowLeft(Request $request)
     $sales = Purchase::where('Purchase_invoice_id', $PurchaseInvoice->purchase_invoice_id)
     ->get();
     $SubAccount = SubAccount::where('sub_account_id', $PurchaseInvoice->Supplier_id)->first();
-        $Suppliers=SubAccount::where('AccountClass',2)->where('sub_account_id','!=', $SubAccount->sub_account_id)
+        $Suppliers=SubAccount::where('account_class',2)->where('sub_account_id','!=', $SubAccount->sub_account_id)
         ->get();
         $Supplier_name=$SubAccount->sub_name;
         $Supplier_id=$SubAccount->sub_account_id; 
@@ -381,7 +381,7 @@ public function getpurchasesByInvoiceArrowRight(Request $request)
         return response()->json(['message' => 'لا توجد مبيعات مرتبطة بهذه الفاتورة.']);
      }
      $SubAccount = SubAccount::where('sub_account_id', $PurchaseInvoice->Supplier_id)->first();
-        $Suppliers=SubAccount::where('AccountClass',2)->where('sub_account_id','!=', $SubAccount->sub_account_id)
+        $Suppliers=SubAccount::where('account_class',2)->where('sub_account_id','!=', $SubAccount->sub_account_id)
         ->get();
         $Supplier_name=$SubAccount->sub_name;
         $Supplier_id=$SubAccount->sub_account_id; 

@@ -11,7 +11,7 @@
         </div>
         <div class="mb-4">
             <label for="Phone" class="block text-gray-700">الهاتف</label>
-            <input type="text" name="Phone" id="Phone" value="{{ $supplier->Phone }}" class="mt-1 block w-full border border-gray-300 rounded p-2" required>
+            <input type="text" name="Phone" id="Phone" value="{{ $supplier->phone }}" class="mt-1 block w-full border border-gray-300 rounded p-2" required>
         </div>
         <div class="mb-4">
             <label for="subaccount_id" class="block text-gray-700">معرف الحساب الفرعي</label>

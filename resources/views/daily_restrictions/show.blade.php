@@ -21,7 +21,7 @@
 
                 <p > تاريخ القيد : {{ \Carbon\Carbon::now()->format('Y/m/d') }}</p>
                 <p >  المبلغ </p>
-                <p id="maont2" class="bg-white h-10 font-bold text-lg pt-2">{{$daily->amount_debit ? number_format($daily->Amount_debit) : number_format($daily->amount_credit)}} <span class="pb-1  font-normal">{{$daily->currency_name}} </span></p>
+                <p id="maont2" class="bg-white h-10 font-bold text-lg pt-2">{{$daily->amount_debit ? number_format($daily->amount_debit) : number_format($daily->amount_credit)}} <span class="pb-1  font-normal">{{$daily->currency_name}} </span></p>
             </div>
         </div>
     </div>

@@ -90,13 +90,13 @@ DB::table('payment_bonds')
         if (!$dailyPage || !$dailyPage->page_id) {
             return response()->json(['success' => false, 'message' =>'فشل في إنشاء صفحة يومية']);
         }
-        $Getentrie_id = DailyEntrie::where('Invoice_id', $paymentBond->payment_bond_id)
+        $Getentrie_id = DailyEntrie::where('invoice_id', $paymentBond->payment_bond_id)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->whereIn('daily_entries_type', ['سند صرف', 'سند قبض'])
         ->first();
     
     $entrie_id = $Getentrie_id->entrie_id ?? null;
-    $daily_page_id = $Getentrie_id->Daily_page_id ?? $dailyPage->page_id;
+    $daily_page_id = $Getentrie_id->daily_page_id ?? $dailyPage->page_id;
   $DailyEntrie=  DailyEntrie::updateOrCreate(
         [
             'entrie_id' => $entrie_id,
@@ -104,17 +104,17 @@ DB::table('payment_bonds')
         ],
         [
             'daily_entries_type' => $paymentBond->transaction_type,
-            'Invoice_id' => $paymentBond->payment_bond_id,
+            'invoice_id' => $paymentBond->payment_bond_id,
             'account_debit_id' => $paymentBond->Debit_sub_account_id,
-            'Amount_Credit' => $Amount_debit ?: 0,
-            'Amount_debit' => $Amount_debit ?: 0,
-            'account_Credit_id' => $paymentBond->Credit_sub_account_id,
-            'Statement' => $paymentBond->Statement,
-            'Daily_page_id' => $daily_page_id,
-            'Invoice_type' => $paymentBond->payment_type,
-            'Currency_name' => $curre->currency_name,
+            'amount_credit' => $Amount_debit ?: 0,
+            'amount_debit' => $Amount_debit ?: 0,
+            'account_credit_id' => $paymentBond->Credit_sub_account_id,
+            'statement' => $paymentBond->Statement,
+            'daily_page_id' => $daily_page_id,
+            'invoice_type' => $paymentBond->payment_type,
+            'currency_name' => $curre->currency_name,
             'exchange_rate' => $paymentBond->exchange_rate,
-            'User_id' => auth()->user()->id,
+            'user_id' => auth()->user()->id,
             'status_debit' => 'غير مرحل',
             'status' => 'غير مرحل',
         ]
@@ -185,7 +185,7 @@ DB::table('payment_bonds')
             try {
                 // حذف سند الدفع
                 // التحقق من وجود قيود يومية مرتبطة
-                $DailyEntrie = DailyEntrie::where('Invoice_id', $paymentBond->payment_bond_id)
+                $DailyEntrie = DailyEntrie::where('invoice_id', $paymentBond->payment_bond_id)
                     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
                     ->where('daily_entries_type', $paymentBond->transaction_type)
                     ->first();
@@ -198,7 +198,7 @@ DB::table('payment_bonds')
                     $generalEntrieaccount_debit_id = GeneralEntrie::where([
                         'Daily_entry_id' => $DailyEntrie->entrie_id,
                         'accounting_period_id' => $DailyEntrie->accounting_period_id,
-                        'sub_id' => $DailyEntrie->account_Credit_id,
+                        'sub_id' => $DailyEntrie->account_credit_id,
                     ])->delete();
                     $DailyEntrie->delete();
                     $paymentBond->delete();

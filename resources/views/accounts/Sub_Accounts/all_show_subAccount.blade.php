@@ -81,18 +81,18 @@ body {
                 @php
                     $accountClass = 0;
             
-                    if ($SubAccount->typeAccount == 1) {
+                    if ($SubAccount->type_account == 1) {
                         $accountClass = 110; // سيتم تطبيق هذا فقط إذا كان typeAccount == 1
-                    } elseif ($SubAccount->typeAccount == 2) {
-                        $accountClass = 1110;
-                    } elseif ($SubAccount->typeAccount == 3) {
-                        $accountClass = 1120;
+                    } elseif ($SubAccount->type_account == 2) {
+                        $accountClass = 110;
+                    } elseif ($SubAccount->type_account == 3) {
+                        $accountClass = 120;
                     }
-                    elseif ($SubAccount->typeAccount == 4) {
-                        $accountClass = 1130;
+                    elseif ($SubAccount->type_account == 4) {
+                        $accountClass = 130;
                     }
-                    elseif ($SubAccount->typeAccount == 5) {
-                        $accountClass = 1140;
+                    elseif ($SubAccount->type_account == 5) {
+                        $accountClass = 140;
                     }
                 @endphp
             

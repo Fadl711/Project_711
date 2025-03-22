@@ -123,7 +123,7 @@
                 //     ? $mainc->where('main_account_id', $resultDebit1->Main_id)->first()
                 //     : 'تم الحذف';
 
-                // $resultCredit1 = $suba->where('sub_account_id', $eai->account_Credit_id)->first();
+                // $resultCredit1 = $suba->where('sub_account_id', $eai->account_credit_id)->first();
                 // $resultCredit = $resultCredit1
                 //     ? $mainc->where('main_account_id', $resultCredit1->Main_id)->first()
                 //     : 'تم الحذف';
@@ -135,14 +135,14 @@
                         <td class=" text-right  border">
                             {{ $eai->debitAccount->sub_name ?? ''}}
                         </td>                    
-                              <td class="border text-right  ">{{ $eai->Amount_debit }} </td>
+                              <td class="border text-right  ">{{ $eai->amount_debit }} </td>
                         <td class=" text-right">
                             {{ $eai->creditAccount->sub_name  ?? $eai->account_debit_id}}
 
-                        </td>                        <td class="border text-right">{{ $eai->Amount_Credit }} </td>
-                        <td class="border text-right ">{{ $eai->Statement }}/رقم المستند<span class=" bg-red-400 px-1 rounded-md">{{ $eai->Invoice_id }}</span></td>
+                        </td>                        <td class="border text-right">{{ $eai->amount_credit }} </td>
+                        <td class="border text-right ">{{ $eai->statement }}/رقم المستند<span class=" bg-red-400 px-1 rounded-md">{{ $eai->invoice_id }}</span></td>
                     </td>                        <td class="border text-right">
-                        {{ $eai->Currency_name }} </td>
+                        {{ $eai->currency_name }} </td>
                         <td class="border text-right">{{ $eai->created_at->format('Y-m-d') }}</td>
                         <td class="border text-right">{{ $eai->updated_at }}</td>
                         <td class="border text-right">
@@ -152,8 +152,8 @@
                                    <span class="text-danger">غير مرحل</span>
                            @endif
                         </td>
-                        <td class="border text-right">{{ $eai->user->name ?? $eai->account_Credit_id }}</td>
-                        <td class="border text-right">{{ $eai->Daily_page_id }}</td>
+                        <td class="border text-right">{{ $eai->user->name ?? $eai->account_credit_id }}</td>
+                        <td class="border text-right">{{ $eai->daily_page_id }}</td>
                         <td class="border text-right flex  no-print">
                             <a href="{{ route('restrictions.show', $eai->entrie_id) }}" class="text-sm py-2 leading-none rounded-md hover:bg-gray-100">
                                 <svg class="w-6 h-6 text-[#2430d3]" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">

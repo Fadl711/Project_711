@@ -24,7 +24,7 @@ class generalEntrieController extends Controller
         
         $daily_entries_notFuond=[];
         foreach ($generalentries as $generalentry) {
-    $daily_entries = DailyEntrie::where('entrie_id',$generalentry->daily_entry_id )->first();
+    $daily_entries = DailyEntrie::where('entrie_id',$generalentry->Daily_entry_id )->first();
     
     // if (!$daily_entries)
     //  {
@@ -73,7 +73,7 @@ class generalEntrieController extends Controller
         'entry_type'=>($generalentry->entry_type=='debit'?'مدين':' دائن'),
         'amount'=>$generalentry->amount,
         'Currency_name'=>$generalentry->Currency_name,
-        'Invoice_type'=>  $daily_entries->daily_entries_type." ". $paymenttype ,
+        'Invoice_type'=>  $generalentry->daily_entries_type." ". $paymenttype ,
         
         'Invoice_id'=>$generalentry->Invoice_id,
         'description'=>$generalentry->description,

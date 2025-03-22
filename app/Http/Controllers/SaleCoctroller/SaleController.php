@@ -29,8 +29,8 @@ class SaleController extends Controller
 {
     //
     public function create(){
-        $customers=SubAccount::where('AccountClass',1)->get();
-        $financialt=SubAccount::where('AccountClass',5)->get();
+        $customers=SubAccount::where('account_class',1)->get();
+        $financialt=SubAccount::where('account_class',5)->get();
         $DefaultCustomer  = Default_customer::where('id',1)->first();
         $financial_account = Default_customer::where('id',1)->pluck('financial_account_id')->first();
         $Currency_name=Currency::all();
@@ -275,7 +275,7 @@ DB::table('sales')
                     $note='';
                 }
                 $Getentrieid= $Getentrie_id->entrie_id ?? null;
-                $daily_page_id = $Getentrie_id->Daily_page_id ?? $dailyPage->page_id;
+                $daily_page_id = $Getentrie_id->daily_page_id ?? $dailyPage->page_id;
          $transactiontype=   TransactionType::fromValue($saleInvoice->transaction_type)?->label();// إنشاء أو تحديث الإدخالات اليومية
          $curre=Currency::where('currency_id',$saleInvoice->currency_id)->first(); 
 
@@ -283,20 +283,20 @@ DB::table('sales')
                 [
                     'entrie_id'=> $Getentrieid,
                     'accounting_period_id' => $accountingPeriod->accounting_period_id,
-                    'Invoice_id' => $saleInvoice->sales_invoice_id,
+                    'invoice_id' => $saleInvoice->sales_invoice_id,
                 ],
                 [
                     'daily_entries_type' =>$transactiontype,
-                    'account_Credit_id' => $account_Credit,
+                    'account_credit_id' => $account_Credit,
                     'created_at' => $saleInvoice->created_at,
                     'account_debit_id' => $account_debit , 
-                    'Amount_Credit' => $amountCredit ?: 0,
-                    'Amount_debit' => $amountDebit ?: 0,
-                    'Statement' => $commint." ".$transactiontype." ".PaymentType::tryFrom($saleInvoice->payment_type)?->label().$note ,
-                    'Daily_page_id' => $daily_page_id ?? $dailyPage->page_id,
-                    'Invoice_type' => $saleInvoice->payment_type,
-                    'Currency_name' =>  $curre->currency_name,
-                    'User_id' =>auth()->user()->id,
+                    'amount_credit' => $amountCredit ?: 0,
+                    'amount_debit' => $amountDebit ?: 0,
+                    'statement' => $commint." ".$transactiontype." ".PaymentType::tryFrom($saleInvoice->payment_type)?->label().$note ,
+                    'daily_page_id' => $daily_page_id ?? $dailyPage->page_id,
+                    'invoice_type' => $saleInvoice->payment_type,
+                    'currency_name' =>  $curre->currency_name,
+                    'user_id' =>auth()->user()->id,
                     'status_debit' => 'غير مرحل',
                     'status' => 'غير مرحل',
                 ]);
@@ -386,15 +386,15 @@ public function SaleInvoiceupdate($saleInvoice, $accountingPeriod)
 
     // $transactiontype = TransactionType::fromValue($saleInvoice->transaction_type)?->label();
     $accountCredit = SubAccount::where('sub_account_id', 2)->first();
-    $entrie_id = DailyEntrie::where('Invoice_id', $saleInvoice->sales_invoice_id)
+    $entrie_id = DailyEntrie::where('invoice_id', $saleInvoice->sales_invoice_id)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->whereIn('daily_entries_type', ["مردود مبيعات", "مبيعات"])
-        ->where('account_Credit_id', '!=', $accountCredit->sub_account_id)
+        ->where('account_credit_id', '!=', $accountCredit->sub_account_id)
         ->first();
-        $entrieid = DailyEntrie::where('Invoice_id', $saleInvoice->sales_invoice_id)
+        $entrieid = DailyEntrie::where('invoice_id', $saleInvoice->sales_invoice_id)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->whereIn('daily_entries_type',["مردود مبيعات", "مبيعات"])
-        ->where('account_Credit_id', $accountCredit->sub_account_id)
+        ->where('account_credit_id', $accountCredit->sub_account_id)
         ->first();
         if (in_array($saleInvoice->transaction_type, [4, 5]))
  {
@@ -494,7 +494,7 @@ public function deleteInvoice($id)
         }
         $invoice->delete();
         // البحث عن السجل المرتبط في DailyEntrie
-        $GetentrieIds = DailyEntrie::where('Invoice_id', $id)
+        $GetentrieIds = DailyEntrie::where('invoice_id', $id)
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->where('daily_entries_type', $transactiontype)
             ->get();
@@ -510,7 +510,7 @@ public function deleteInvoice($id)
             $generalEntrieaccount_debit_id = GeneralEntrie::where([
                 'Daily_entry_id' => $GetentrieId->entrie_id,
                 'accounting_period_id' => $GetentrieId->accounting_period_id,
-                'sub_id' => $GetentrieId->account_Credit_id,
+                'sub_id' => $GetentrieId->account_credit_id,
             ])->delete();
         // التحقق مما إذا كان السجل موجودًا قبل الحذف
         if ($GetentrieId)
@@ -666,15 +666,15 @@ public function Invoiceupdate($saleInvoice, $accountingPeriod)
     if ($saleInvoice->sales()->exists())
     {
 
-    $entrie_id = DailyEntrie::where('Invoice_id', $saleInvoice->sales_invoice_id)
+    $entrie_id = DailyEntrie::where('invoice_id', $saleInvoice->sales_invoice_id)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->where('daily_entries_type', $transactiontype)
-        ->where('account_Credit_id', '!=', $accountCredit->sub_account_id)
+        ->where('account_credit_id', '!=', $accountCredit->sub_account_id)
         ->first();
-        $entrieid = DailyEntrie::where('Invoice_id', $saleInvoice->sales_invoice_id)
+        $entrieid = DailyEntrie::where('invoice_id', $saleInvoice->sales_invoice_id)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
         ->where('daily_entries_type', $transactiontype)
-        ->where('account_Credit_id', $accountCredit->sub_account_id)
+        ->where('account_credit_id', $accountCredit->sub_account_id)
         ->first();
     // إنشاء أو تحديث الإدخالات اليومية
     $this->createOrUpdateDailyEntry($saleInvoice, $accountingPeriod, $account_Credit, $account_debit, $entrie_id, $amountDeditTotal ??0, $amountCreditTotal??0);
@@ -711,7 +711,7 @@ public function getSalesByInvoiceArrowLeft(Request $request)
         $total_Profit=$Profits-$discount;
         $SubAccount = SubAccount::where('sub_account_id', $SaleInvoice->Customer_id)->first();
 
-        $customers=SubAccount::where('AccountClass',1)->
+        $customers=SubAccount::where('account_class',1)->
         where('sub_account_id','!=', $SaleInvoice->Customer_id)
         ->get();
 
@@ -791,7 +791,7 @@ public function getSalesByInvoiceArrowRight(Request $request)
         ->sum('total_Profit');
         $total_Profit=$Profits-$discount;
         $SubAccount = SubAccount::where('sub_account_id', $SaleInvoice->Customer_id)->first();
-        $customers=SubAccount::where('AccountClass',1)->
+        $customers=SubAccount::where('account_class',1)->
         where('sub_account_id','!=', $SaleInvoice->Customer_id)
         ->get();
         $Customer_name=$SubAccount->sub_name;
