@@ -85,11 +85,11 @@ return [
 
      'pgsql' => [
     'driver' => 'pgsql',
-    'host' => env('DB_HOST_PGSQL', 'ep-wild-hall-a10da78e.aws-ap-southeast-1.pg.laravel.cloud'),
-    'port' => env('DB_PORT_PGSQL', '5432'),
-    'database' => env('DB_DATABASE_PGSQL', 'main'),
-    'username' => env('DB_USERNAME_PGSQL', 'laravel'),
-    'password' => env('DB_PASSWORD_PGSQL', 'npg_Q0tpsTS2bFgM'),
+    'host' => env('DB_HOST_PGSQL', ''),
+    'port' => env('DB_PORT_PGSQL', ''),
+    'database' => env('DB_DATABASE_PGSQL', ''),
+    'username' => env('DB_USERNAME_PGSQL', ''),
+    'password' => env('DB_PASSWORD_PGSQL', ''),
     'charset' => 'utf8',
     'prefix' => '',
     'schema' => 'public',

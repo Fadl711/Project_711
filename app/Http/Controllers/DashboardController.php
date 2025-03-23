@@ -70,8 +70,8 @@ class DashboardController extends Controller
         }
 
         return view('dashboard', [
-            'dailyTotals' => $dailyTotals ?? [],
-            'monthlyTotals' => $monthlyTotals ?? [],
+            'dailyTotals' => $dailyTotals ?? null,
+            'monthlyTotals' => $monthlyTotals ??null,
         ]);
     }
 }
