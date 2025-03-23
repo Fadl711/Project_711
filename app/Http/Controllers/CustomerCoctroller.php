@@ -192,7 +192,7 @@ class CustomerCoctroller extends Controller
                     'sub_accounts.sub_account_id,
             sub_accounts.sub_name,
             sub_accounts.phone,
-            SUM(CASE WHEN general_entries.entry_type = \'debit"\'THEN general_entries.amount ELSE 0 END) as total_debit,
+            SUM(CASE WHEN general_entries.entry_type = \'debit\'THEN general_entries.amount ELSE 0 END) as total_debit,
             SUM(CASE WHEN general_entries.entry_type = \'credit\' THEN general_entries.amount ELSE 0 END) as total_credit',
                 )
                     ->where('general_entries.accounting_period_id', $accountingPeriod->accounting_period_id) // تأكد من أن هذا العمود صحيح
