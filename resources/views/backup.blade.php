@@ -5,6 +5,11 @@
         {{ session('success') }}
     </div>
 @endif
+@if(session('error'))
+    <div id="success-message" class="bg-green-500 text-white p-4 rounded-md mb-4 text-center">
+        {{ session('error') }}
+    </div>
+@endif
 <div class="container mx-auto px-4 py-8 max-w-4xl">
         <!-- نسخ احتياطي -->
         <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
