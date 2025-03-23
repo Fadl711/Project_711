@@ -71,11 +71,11 @@ class DatabaseController extends Controller
             $sqlContent = preg_replace("/,\s*''\s*,/", ", NULL,", $sqlContent);
 
             // 🔹 إعدادات قاعدة البيانات
-            $host = env('DB_HOST');
-            $username = env('DB_USERNAME');
-            $password = env('DB_PASSWORD');
-            $database = env('DB_DATABASE');
-            $port = env('DB_PORT');
+            $host = 'ep-wild-hall-a10da78e.aws-ap-southeast-1.pg.laravel.cloud';
+            $username = 'laravel';
+            $password = 'npg_Q0tpsTS2bFgM';
+            $database = 'main';
+            $port = '5432';
 
             // 🔹 الاتصال بقاعدة البيانات باستخدام pg_connect
             $connectionString = "host={$host} port={$port} dbname={$database} user={$username} password={$password}";
