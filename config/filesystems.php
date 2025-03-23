@@ -36,12 +36,16 @@ return [
             'throw' => false,
         ],
 
-        'public' => [
-            'driver' => 'local',
-            'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+        'r2' => [
+            'driver' => 's3',
+            'key' => '59067630ef050e2f22dc246f0c8980c2',
+            'secret' => 'fb75fe9f4420fecbae5165cfda4e155fbd34578caa23fea7ad5290ac5b60cfa7',
+            'region' => 'auto',
+            'bucket' => 'fls-9e7cef47-c292-47de-b247-693cb4aebc20',
+            'endpoint' => 'https://367be3a2035528943240074d0096e0cd.r2.cloudflarestorage.com',
+            'use_path_style_endpoint' => true,
+            'url' => 'https://fls-9e7cef47-c292-47de-b247-693cb4aebc20.laravel.cloud',
             'visibility' => 'public',
-            'throw' => false,
         ],
 
         's3' => [

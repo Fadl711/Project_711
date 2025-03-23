@@ -92,7 +92,7 @@ class AppServiceProvider extends ServiceProvider
                 $PaymentType = PaymentType::cases();
                 $transactionTypes = TransactionType::cases();
                 $AccountType = AccountType::cases();
-    
+
                 View::share([
                     'accountClasses' => $accountClasses,
                     'TypesAccounts' => $TypesAccountName,
@@ -122,7 +122,7 @@ class AppServiceProvider extends ServiceProvider
                 }
             }
 
-            if (Schema::hasTable('business_data') && Schema::hasTable('currency_settings') && 
+            if (Schema::hasTable('business_data') && Schema::hasTable('currency_settings') &&
                 Schema::hasTable('payment_bonds') && Schema::hasTable('currencies')) {
                 $buss = BusinessData::first();
                 $cu = CurrencySetting::first();

@@ -44,7 +44,7 @@
                  <option value="سند صرف">سند صرف</option>
                 </select>
             </div>
-         
+
             <div class="text-center">
                 <label for="date" class="text-center">التاريخ</label>
                 <input
@@ -87,25 +87,25 @@
                        <div class="text-center">
     <label for="exchange_rate" class="text-center">سعر الصرف</label>
 
-    <input 
-        id="exchange_rate" 
-        class="inputSale" 
+    <input
+        id="exchange_rate"
+        class="inputSale"
         type="number"
         name="exchange_rate"
         value="{{ isset($ExchangeBond->exchange_rate) ? $ExchangeBond->exchange_rate : 1.00 }}">
 </div>
                        <div class="">
                         <label for="Amount_debit" class="text-center">المبلغ</label>
-                        <input 
-                            name="Amount_debit" 
-                            id="Amount_debit" 
-                            type="text" 
+                        <input
+                            name="Amount_debit"
+                            id="Amount_debit"
+                            type="text"
                             @isset($ExchangeBond->Amount_debit)
-                                value="{{ number_format($ExchangeBond->Amount_debit, 2, '.', ',') }}"  
-                            @endisset 
-                            class="inputSale px-1" 
-                            placeholder="0" 
-                            required 
+                                value="{{ number_format($ExchangeBond->Amount_debit, 2, '.', ',') }}"
+                            @endisset
+                            class="inputSale px-1"
+                            placeholder="0"
+                            required
                             onblur="formatCurrency(this)">
                     </div>
                 </div>
@@ -225,14 +225,14 @@
     if (parts.length > 2) {
         value = parts[0] + '.' + parts.slice(1).join('');
     }
-    
+
     // إضافة الفاصلة بعد كل ثلاثة أرقام (فصل الآلاف)
     if (value) {
         let [integer, decimal] = value.split('.');
         integer = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ","); // إضافة الفواصل بين الآلاف
         value = decimal ? integer + '.' + decimal : integer; // إعادة تركيب الرقم
     }
-    
+
     // تعيين القيمة المعدلة للحقل
     $(this).val(value);
     });
@@ -243,7 +243,7 @@
 
     // التحقق من وجود قيمة في الحساب الرئيسي
     if (mainAccountId) {
-        
+
         // طلب AJAX لجلب الحسابات الفرعية بناءً على الحساب الرئيسي
         $.ajax({
             url: "{{ url('/main-accounts/') }}/" + mainAccountId + "/sub-accounts", // استخدام القيم الديناميكية
@@ -269,7 +269,7 @@
 });
       // تفعيل Select2
       $('.select2').select2();
-      
+
       $('#AccountReceivable').focus();
 
           $('#AccountReceivable').on('change', function() {
@@ -310,8 +310,8 @@ $(document).ready(function() {
 
     $('#submitButton').click(function(event) {
         event.preventDefault();
-        const DepositAccount=  $('#DepositAccount').val(); 
-      const CreditAmount=  $('#CreditAmount').val(); 
+        const DepositAccount=  $('#DepositAccount').val();
+      const CreditAmount=  $('#CreditAmount').val();
       let Amount_debit = $('#Amount_debit').val();
       Amount_debit = Amount_debit.replace(/,/g, ''); // إزالة جميع الفواصل
         $('#Amount_debit').val(Amount_debit);
@@ -338,13 +338,13 @@ $(document).ready(function() {
             $('#CreditAmount').select2('open');
           }
         }
-          
-         
+
+
         // جمع بيانات النموذج
         var formData = $('#Receip').serialize();
         if(Amount_debit>0 && CreditAmount && DepositAccount)
         {
-          
+
         // إرسال الطلب باستخدام AJAX
         $.ajax({
             url: '{{ route("Receip.store") }}',

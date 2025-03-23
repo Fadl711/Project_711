@@ -14,11 +14,11 @@
             </li> --}}
 
 
-        <div class=" container relative  ">
+
 {{--             <button onclick='window.location.replace("/home");'>رجوع</button>
  --}}
     @yield('restrictions')
-</div>
+
 
 <script>
 
