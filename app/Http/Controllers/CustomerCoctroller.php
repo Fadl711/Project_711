@@ -300,12 +300,12 @@ class CustomerCoctroller extends Controller
                 'sub_accounts.sub_account_id,
         sub_accounts.sub_name,
         sub_accounts.phone,
-                    SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'debit\' AND  general_entries.Currency_name  = "ريال.يمني"  THEN   general_entries.amount ELSE 0  END) as total_debit,
-            SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'credit\' AND general_entries.Currency_name = "ريال.يمني" THEN   general_entries.amount ELSE 0 END) as total_credit,
-            SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'debit\' AND general_entries.Currency_name  = "ريال سعودي" THEN general_entries.amount ELSE 0 END) as total_debits,
-            SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'credit\' AND general_entries.Currency_name = "ريال سعودي" THEN  general_entries.amount ELSE 0 END) as total_credits,
-            SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'debit\' AND general_entries.Currency_name = "دولار امريكي" THEN general_entries.amount ELSE 0 END) as total_debitd,
-            SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'credit\' AND general_entries.Currency_name = "دولار امريكي" THEN general_entries.amount ELSE 0 END) as total_creditd
+            SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'debit\' AND  general_entries.Currency_name  = \'ريال.يمني\'  THEN   general_entries.amount ELSE 0  END) as total_debit,
+            SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'credit\' AND general_entries.Currency_name = \'ريال.يمني\' THEN   general_entries.amount ELSE 0 END) as total_credit,
+            SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'debit\' AND general_entries.Currency_name  = \'ريال سعودي\' THEN general_entries.amount ELSE 0 END) as total_debits,
+            SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'credit\' AND general_entries.Currency_name = \'ريال سعودي\' THEN  general_entries.amount ELSE 0 END) as total_credits,
+            SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'debit\' AND general_entries.Currency_name = \'دولار امريكي\' THEN general_entries.amount ELSE 0 END) as total_debitd,
+            SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'credit\' AND general_entries.Currency_name = \'دولار امريكي\' THEN general_entries.amount ELSE 0 END) as total_creditd
 
    ',
             )
