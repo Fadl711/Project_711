@@ -1,5 +1,11 @@
 @extends('layout')
 @section('conm')
+<link rel="preload" href="https://fonts.bunny.net/figtree/files/figtree-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+    body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+</style>
 @if (session('success'))
 <div id="success-message" class="alert alert-success">
     {{ session('success') }}
@@ -43,6 +49,19 @@ window.onload = function() {
             <button type="submit" class="btn btn-danger text-white">تحديث المسارات</button>
         </form>
     </div>
+    <div class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+        <form action="{{ route('sync') }}" method="POST">
+            @csrf
+            <button  type="submit" class="btn btn-danger text-white" >رفع البيانات </button>
+
+        </form>
+    </div>
+    {{-- <div class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+        <form action="{{ route('run_migration') }}" method="POST">
+            @csrf
+            <button  type="submit" class="btn  btn-success">تشغيل الترحيل</button>
+        </form>
+    </div> --}}
     {{-- <div class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
         <form action="{{ route('run_migration') }}" method="POST">
             @csrf

@@ -44,9 +44,15 @@
                                         <option value="المنتجات">المنتجات</option>
                                         <option value="سجلات الترحيل">سجلات الترحيل</option>
                                         <option value="التقارير">التقارير</option>
-                                        <option value="المردودات">المردودات</option>
+                                        {{-- <option value="المردودات">المردودات</option> --}}
                                         <option value="الإعدادات">الإعدادات</option>
                                         <option value="الخصم والتحليل">الخصم والتحليل</option>
+                                        <option value="ادارت المستخدمين">ادارت المستخدمين </option>
+                                        <option value="تحديث النظام">تحديث النظام  </option>
+                                        <option value="النسخ الاحتياطي">النسخ الاحتياطي  </option>
+                                        <option value="العملات">العملات  </option>
+                                        <option value="قيد الارباح">قيد الارباح  </option>
+                                        <option value="الإعدادات الافتراضية"> الإعدادات الافتراضية  </option>
                                     </select>
                                 </div>
                             </div>

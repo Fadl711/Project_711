@@ -51,6 +51,7 @@ use App\Http\Controllers\settingController\default_supplierController;
 
 use App\Http\Controllers\settingController\WarehouseController;
 use App\Http\Controllers\SmsController;
+use App\Http\Controllers\SyncController;
 use App\Http\Controllers\Transfers\TransferController;
 use App\Http\Controllers\UserPermissionController;
 use App\Http\Controllers\UsersController\UsersController;
@@ -79,6 +80,8 @@ Route::middleware('web')->group(function () {
     Route::get('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
 });
 
+
+Route::post('/sync', [SyncController::class, 'sync'])->name('sync');
 Route::middleware(['auth', 'web'])->group(function () {
     Route::get('/backup/google', [BackupController::class, 'backupDatabase'])->name('backup.google');
 });
