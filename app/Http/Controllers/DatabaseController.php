@@ -64,53 +64,25 @@ class DatabaseController extends Controller
             $path = $file->getRealPath();
             $sqlContent = file_get_contents($path);
 
-            // 🔹 استبدال جميع القيم الفارغة '' بـ NULL أو 0 في عمود user_id
-            $sqlContent = preg_replace("/VALUES\s*\(\s*''\s*,/", "VALUES (NULL,", $sqlContent);
-            $sqlContent = preg_replace("/,\s*''\s*\)/", ", NULL)", $sqlContent);
-            $sqlContent = preg_replace("/\(\s*''\s*,/", "(NULL,", $sqlContent);
-            $sqlContent = preg_replace("/,\s*''\s*,/", ", NULL,", $sqlContent);
+            // 🔹 Remove LOCK TABLES and UNLOCK TABLES
+            $sqlContent = preg_replace('/LOCK TABLES .*?;/is', '', $sqlContent);
+            $sqlContent = preg_replace('/UNLOCK TABLES;/is', '', $sqlContent);
 
-            // 🔹 إعدادات قاعدة البيانات
-            $host = 'ep-wild-hall-a10da78e.aws-ap-southeast-1.pg.laravel.cloud';
-            $username = 'laravel';
-            $password = 'npg_Q0tpsTS2bFgM';
-            $database = 'main';
-            $port = '5432';
+            // 🔹 Replace empty strings '' with NULL in user_id column
+            $sqlContent = preg_replace("/\b''\b/", "NULL", $sqlContent);
 
-            // 🔹 الاتصال بقاعدة البيانات باستخدام pg_connect
-            $connectionString = "host={$host} port={$port} dbname={$database} user={$username} password={$password}";
-            $pgConnection = pg_connect($connectionString);
-
-            if (!$pgConnection) {
-                return back()->with('error', '❌ فشل الاتصال بقاعدة البيانات.');
+            try {
+                // 🔹 Execute the entire SQL content at once
+                DB::unprepared($sqlContent);
+            } catch (\Exception $e) {
+                return back()->with('error', '❌ SQL execution error: ' . $e->getMessage());
             }
 
-            // 🔹 تنفيذ جميع استعلامات SQL دفعة واحدة
-            $queries = explode(';', $sqlContent); // تقسيم المحتوى إلى استعلامات منفصلة
-
-            foreach ($queries as $query) {
-                $query = trim($query);
-                if (!empty($query)) {
-                    $result = pg_query($pgConnection,
-                        $query
-                    );
-                    if (!$result) {
-                        $error = pg_last_error($pgConnection);
-                        pg_close($pgConnection);
-                        return back()->with('error', '❌ خطأ في تنفيذ SQL: ' . $error);
-                    }
-                }
-            }
-
-            // 🔹 إغلاق الاتصال
-            pg_close($pgConnection);
-
-            // 🔹 تشغيل migrations
+            // 🔹 Run migrations to ensure schema compatibility
             Artisan::call('migrate', ['--force' => true]);
 
-            return back()->with('success', '✅ تم استعادة قاعدة البيانات بنجاح!');
+            return back()->with('success', '✅ Database restored successfully!');
         }
-
         return back()->with('error', '❌ لم يتم العثور على الملف!');
     }
 }
