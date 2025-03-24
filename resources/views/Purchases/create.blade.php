@@ -72,10 +72,10 @@
                     <div >
                         <label for="main_account_debit_id" class="  labelSale">  حساب التصدير  </label>
                        <select name="main_account_debit_id" id="main_account_debit_id" dir="ltr" class="input-field  select2 inputSale" required >
-                          @isset($MainAccounts)
+                          @isset($main_accounts)
                         <option value="" selected>اختر الحساب</option>
-                         @foreach ($MainAccounts as $mainAccount)
-                              <option value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
+                         @foreach ($main_accounts as $mainAccount)
+                              <option value="{{$mainAccount->main_account_id}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
                          @endforeach
                          @endisset 
                        </select>

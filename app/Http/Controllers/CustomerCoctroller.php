@@ -185,20 +185,27 @@ class CustomerCoctroller extends Controller
         if ($validated['list'] == 'Disclosure_of_all_sub_accounts_after_migration') {
             $customerMain = '';
             $AccountClassName = 'الحساب';
-            if ($validated['accountlistradio'] === 'subAccount') {
+            if ($validated['accountlistradio'] === 'subAccount') 
+            {
+                                // dd(5);
+
                 $SubAccounts = SubAccount::where('sub_account_id', $id)->get();
                 $customerMain = SubAccount::where('sub_account_id', $id)->first();
                 $balances = GeneralEntrie::selectRaw(
                     'sub_accounts.sub_account_id,
                     sub_accounts.sub_name,
-                    SUM(CASE WHEN general_entries.entry_type = \'debit\' THEN general_entries.amount ELSE 0 END) as total_debit,
-                    SUM(CASE WHEN general_entries.entry_type = \'credit\' THEN general_entries.amount ELSE 0 END) as total_credit'
+   SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'debit\' AND general_entries.currency_name = \'ريال.يمني\' THEN general_entries.amount ELSE 0 END) as total_debit,
+                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'credit\' AND general_entries.currency_name = \'ريال.يمني\' THEN general_entries.amount ELSE 0 END) as total_credit,
+                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'debit\' AND general_entries.currency_name = \'ريال سعودي\' THEN general_entries.amount ELSE 0 END) as total_debits,
+                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'credit\' AND general_entries.currency_name = \'ريال سعودي\' THEN general_entries.amount ELSE 0 END) as total_credits,
+                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'debit\' AND general_entries.currency_name = \'دولار امريكي\' THEN general_entries.amount ELSE 0 END) as total_debitd,
+                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'credit\' AND general_entries.currency_name = \'دولار امريكي\' THEN general_entries.amount ELSE 0 END) as total_creditd'
                 )
                 ->where('general_entries.accounting_period_id', $accountingPeriod->accounting_period_id)
                 ->join('sub_accounts', function ($join) {
                     $join->on('general_entries.sub_id', '=', 'sub_accounts.sub_account_id');
                 })
-                ->where('sub_accounts.main_id', $customerMain->main_account_id)
+                ->where('sub_accounts.sub_account_id', $id)
                 ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name')
                 ->get();
                 $accountClasses = [
@@ -216,14 +223,18 @@ class CustomerCoctroller extends Controller
                 $balances = GeneralEntrie::selectRaw(
                     'sub_accounts.sub_account_id,
                     sub_accounts.sub_name,
-                    SUM(CASE WHEN general_entries.entry_type = \'debit\' THEN general_entries.amount ELSE 0 END) as total_debit,
-                    SUM(CASE WHEN general_entries.entry_type = \'credit\' THEN general_entries.amount ELSE 0 END) as total_credit'
+                 SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'debit\' AND general_entries.currency_name = \'ريال.يمني\' THEN general_entries.amount ELSE 0 END) as total_debit,
+                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'credit\' AND general_entries.currency_name = \'ريال.يمني\' THEN general_entries.amount ELSE 0 END) as total_credit,
+                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'debit\' AND general_entries.currency_name = \'ريال سعودي\' THEN general_entries.amount ELSE 0 END) as total_debits,
+                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'credit\' AND general_entries.currency_name = \'ريال سعودي\' THEN general_entries.amount ELSE 0 END) as total_credits,
+                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'debit\' AND general_entries.currency_name = \'دولار امريكي\' THEN general_entries.amount ELSE 0 END) as total_debitd,
+                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'credit\' AND general_entries.currency_name = \'دولار امريكي\' THEN general_entries.amount ELSE 0 END) as total_creditd'
                 )
                 ->where('general_entries.accounting_period_id', $accountingPeriod->accounting_period_id)
                 ->join('sub_accounts', function ($join) {
                     $join->on('general_entries.sub_id', '=', 'sub_accounts.sub_account_id');
                 })
-                ->where('sub_accounts.main_id', $customerMain->main_account_id)
+                ->where('sub_accounts.main_id', $id)
                 ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name')
                 ->get();
                 $accountClasses = [
@@ -233,83 +244,8 @@ class CustomerCoctroller extends Controller
                     5 => 'الصناديق',
                 ];
                 $AccountClassName = $accountClasses[$customerMain->account_class] ?? 'غير معروف';
-            }
-
-            // dd(  $balances);
-
-            $SumDebtor_amount = 0;
-            $SumCredit_amount = 0;
-
-            foreach ($SubAccounts as $balance) {
-                $customerMainAccount = SubAccount::where('sub_account_id', $balance->sub_account_id)->first();
-
-                $total_debit = GeneralEntrie::where('sub_id', $customerMainAccount->sub_account_id)->where('entry_type', 'debit')->where('accounting_period_id', $accountingPeriod->accounting_period_id)->sum('amount');
-
-                $total_credit = GeneralEntrie::where('sub_id', $customerMainAccount->sub_account_id)->where('entry_type', 'credit')->where('accounting_period_id', $accountingPeriod->accounting_period_id)->sum('amount');
-                $Sum_amount = ($total_debit ?? 0) - ($total_credit ?? 0);
-
-                if ($Sum_amount !== 0) {
-                    if ($Sum_amount > 0) {
-                        $SumDebtor_amount += $Sum_amount;
-                        $SumDebtoramount = $Sum_amount;
-                        $SumCreditamount = 0;
-                    }
-                    if ($Sum_amount < 0) {
-                        $SumCredit_amount += $Sum_amount;
-                        $SumCreditamount = $Sum_amount;
-                        $SumDebtoramount = 0;
-                    }
-                }
-            }
-        }
-        $startDate = $accountingPeriod->created_at?->format('Y-m-d') ?? 'غير متوفر';
-        $endDate = now()->toDateString();
-        // معالجة البيانات لإضافة الفارق ونوع
-        $Sale_priceSum = $SumDebtor_amount - abs($SumCredit_amount);
-        $SumAmount = abs($SumDebtor_amount - $SumCredit_amount);
-        $numberToWords = new NumberToWords();
-        $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
-        $priceInWords = is_numeric($Sale_priceSum) ? $numberTransformer->toWords($SumDebtor_amount - abs($SumCredit_amount)) . ' ' . $currencysettings : 'القيمة غير صالحة';
-        $Myanalysis = ' نهائي لكل الحسابات بعد ترحيل';
-
-        return view('report.All-accounts-after-migration', [
-            'balances' => $balances,
-            'SumDebtor_amount' => $SumDebtor_amount,
-            'SumCredit_amount' => $SumCredit_amount,
-            'Myanalysis' => $Myanalysis,
-            'currencysettings' => $currencysettings,
-            'UserName' => $UserName,
-            'accountingPeriod' => $accountingPeriod,
-            'priceInWords' => $priceInWords,
-            'startDate' => $startDate,
-            'endDate' => $endDate,
-            'customerMain' => $customerMain,
-            'AccountClassName' => $AccountClassName,
-            'Sale_priceSum' => $Sale_priceSum,
-        ])->render();
-    }
-    public function Full_disclosure_of_accounts_after_migration($validated, $id)
-    {
-        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
-        if ($validated['list'] == 'Full_disclosure_of_accounts_after_migration') {
-            $balances = GeneralEntrie::selectRaw(
-                'sub_accounts.sub_account_id,
-                sub_accounts.sub_name,
-                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'debit\' AND general_entries.currency_name = \'ريال.يمني\' THEN general_entries.amount ELSE 0 END) as total_debit,
-                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'credit\' AND general_entries.currency_name = \'ريال.يمني\' THEN general_entries.amount ELSE 0 END) as total_credit,
-                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'debit\' AND general_entries.currency_name = \'ريال سعودي\' THEN general_entries.amount ELSE 0 END) as total_debits,
-                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'credit\' AND general_entries.currency_name = \'ريال سعودي\' THEN general_entries.amount ELSE 0 END) as total_credits,
-                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'debit\' AND general_entries.currency_name = \'دولار امريكي\' THEN general_entries.amount ELSE 0 END) as total_debitd,
-                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'credit\' AND general_entries.currency_name = \'دولار امريكي\' THEN general_entries.amount ELSE 0 END) as total_creditd'
-            )
-            ->where('general_entries.accounting_period_id', $accountingPeriod->accounting_period_id)
-            ->join('sub_accounts', function ($join) {
-                $join->on('general_entries.sub_id', '=', 'sub_accounts.sub_account_id');
-            })
-            ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name')
-            ->get();
-
-            $SubAccounts = SubAccount::all();
+            } 
+             $SubAccounts = SubAccount::all();
             $idCurr = 1;
             // تأكد من تعيين المتغير قبل استخدامه
             $curre = CurrencySetting::where('currency_settings_id', $idCurr)->first();
@@ -358,7 +294,85 @@ class CustomerCoctroller extends Controller
                 $priceInWordsSAD = is_numeric($total_balance_SAD) ? $numberTransformer->toWords(abs($total_balance_SAD)) . ' ' . $SAD : 'القيمة غير صالحة';
                 $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
                 $priceInWordsUSD = is_numeric($total_balance_USD) ? $numberTransformer->toWords(abs($total_balance_USD)) . ' ' . $USD : 'القيمة غير صالحة';
-                $AccountClassName = ' كل الحسابات ';
+
+$Myanalysis = ' نهائي بعد ترحيل';
+return view('report.Final-full-disclosure', compact('Myanalysis', 'balances', 'AccountClassName', 'UserName', 'accountingPeriod', 'priceInWordsYER', 'priceInWordsUSD', 'priceInWordsSAD', 'startDate', 'endDate', 'debit_YER', 'credit_YER', 'debits_SAD', 'credits_SAD', 'debitd_USD', 'credits_USD', 'total_balance_YER', 'total_balance_SAD', 'total_balance_USD', 'YER', 'SAD', 'USD'));
+
+
+
+       
+    }
+    public function Full_disclosure_of_accounts_after_migration($validated, $id)
+    {
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+        if ($validated['list'] == 'Full_disclosure_of_accounts_after_migration') {
+            $balances = GeneralEntrie::selectRaw(
+                'sub_accounts.sub_account_id,
+                sub_accounts.sub_name,
+                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'debit\' AND general_entries.currency_name = \'ريال.يمني\' THEN general_entries.amount ELSE 0 END) as total_debit,
+                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'credit\' AND general_entries.currency_name = \'ريال.يمني\' THEN general_entries.amount ELSE 0 END) as total_credit,
+                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'debit\' AND general_entries.currency_name = \'ريال سعودي\' THEN general_entries.amount ELSE 0 END) as total_debits,
+                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'credit\' AND general_entries.currency_name = \'ريال سعودي\' THEN general_entries.amount ELSE 0 END) as total_credits,
+                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'debit\' AND general_entries.currency_name = \'دولار امريكي\' THEN general_entries.amount ELSE 0 END) as total_debitd,
+                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'credit\' AND general_entries.currency_name = \'دولار امريكي\' THEN general_entries.amount ELSE 0 END) as total_creditd'
+            )
+            ->where('general_entries.accounting_period_id', $accountingPeriod->accounting_period_id)
+            ->join('sub_accounts', function ($join) {
+                $join->on('general_entries.sub_id', '=', 'sub_accounts.sub_account_id');
+            })
+            ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name')
+            ->get();
+            $AccountClassName = ' كل الحسابات ';
+            
+                        $SubAccounts = SubAccount::all();
+                        $idCurr = 1;
+                        // تأكد من تعيين المتغير قبل استخدامه
+                        $curre = CurrencySetting::where('currency_settings_id', $idCurr)->first();
+                        $currencysettings = $curre->currency_name ?? 'ريال يمني';
+                        $UserName = User::where('id', auth()->user()->id)
+                            ->pluck('name')
+                            ->first();
+            
+                            $total_balance_YER = 0;
+                            $total_balance_SAD = 0;
+                            $total_balance_USD = 0;
+                            $debit_YER = 0;
+                            $credit_YER = 0;
+                            $debits_SAD = 0;
+                            $credits_SAD = 0;
+                            $debitd_USD = 0;
+                            $credits_USD = 0;
+                            foreach ($balances as $balance) {
+                                $debitd_USD += $balance->total_debitd;
+                                $credits_USD += $balance->total_creditd;
+                                $debit_YER += $balance->total_debit;
+                                $credit_YER += $balance->total_credit;
+                                $debits_SAD += $balance->total_debits;
+                                $credits_SAD += $balance->total_credits;
+                            }
+                            }
+                            $SumDebtor_amount = 0;
+                            $SumCredit_amount = 0;
+                            $total_debits_SAD = 0;
+                            $total_credits_SAD = 0;
+                            $YER = 'ريال.يمني';
+                            $SAD = 'ريال سعودي';
+                            $USD = 'دولار امريكي';
+                            $total_balance_YER = $debit_YER - $credit_YER;
+                            $total_balance_SAD = $debits_SAD - $credits_SAD;
+                            $total_balance_USD = $debitd_USD - $credits_USD;
+                            $startDate = $accountingPeriod->created_at->format('Y-m-d') ?? 'غير متوفر';
+                            $endDate = now()->toDateString();
+                            // معالجة البيانات لإضافة الفارق ونوع
+                            $Sale_priceSum = $SumDebtor_amount - abs($SumCredit_amount);
+                            $SumAmount = abs($SumDebtor_amount - $SumCredit_amount);
+                            $numberToWords = new NumberToWords();
+                            $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
+                            $priceInWordsYER = is_numeric($total_balance_YER) ? $numberTransformer->toWords(abs($total_balance_YER)) . ' ' . $YER : 'القيمة غير صالحة';
+                            $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
+                            $priceInWordsSAD = is_numeric($total_balance_SAD) ? $numberTransformer->toWords(abs($total_balance_SAD)) . ' ' . $SAD : 'القيمة غير صالحة';
+                            $numberTransformer = $numberToWords->getNumberTransformer('ar'); // اللغة العربية
+                            $priceInWordsUSD = is_numeric($total_balance_USD) ? $numberTransformer->toWords(abs($total_balance_USD)) . ' ' . $USD : 'القيمة غير صالحة';
 
         $Myanalysis = ' نهائي لكل الحسابات بعد ترحيل';
         return view('report.Final-full-disclosure', compact('Myanalysis', 'balances', 'AccountClassName', 'UserName', 'accountingPeriod', 'priceInWordsYER', 'priceInWordsUSD', 'priceInWordsSAD', 'startDate', 'endDate', 'debit_YER', 'credit_YER', 'debits_SAD', 'credits_SAD', 'debitd_USD', 'credits_USD', 'total_balance_YER', 'total_balance_SAD', 'total_balance_USD', 'YER', 'SAD', 'USD'));

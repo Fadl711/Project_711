@@ -43,9 +43,11 @@ class PurchaseController extends Controller
         $Currency_name=Currency::all();
     
             $allSubAccounts = SubAccount::all();
+            $main_accounts = MainAccount::all();
                 return view('Purchases.create',
                  ['AllSubAccounts'=>$allSubAccounts,
                 'Currency_name'=>$Currency_name,
+                'main_accounts'=>$main_accounts,
             ]);
         return view('Purchases.create');
     }
