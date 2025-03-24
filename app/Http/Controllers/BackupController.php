@@ -25,7 +25,7 @@ class BackupController extends Controller
             $username = env('DB_USERNAME');
             $password = env('DB_PASSWORD');
             $backupPath = storage_path('app/backups/');
-            $filename = 'backup-' . Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
+            $filename = 'backup-' . auth()->user()->name  . Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
 
             // تأكد من أن المجلد موجود
             if (!File::exists($backupPath)) {
@@ -59,7 +59,7 @@ class BackupController extends Controller
             $port = env('DB_PORT');
 
             // اسم الملف
-            $filename = 'backup-' . Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
+            $filename = 'backup-'.auth()->user()->name . Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
 
             // مسار مؤقت على الخادم لحفظ النسخة الاحتياطية قبل الرفع
             $tempBackupPath = '/tmp/' . $filename; // يتم استخدام مجلد /tmp على الخادم

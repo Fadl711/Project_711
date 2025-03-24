@@ -60,28 +60,68 @@ class DatabaseController extends Controller
             return back()->with('success', '✅ تم استعادة قاعدة البيانات بنجاح!');
         } */
         if ($request->hasFile('database_file')) {
-            $file = $request->file('database_file');
-            $path = $file->getRealPath();
-            $sqlContent = file_get_contents($path);
-
-            // 🔹 Remove LOCK TABLES and UNLOCK TABLES
-            $sqlContent = preg_replace('/LOCK TABLES .*?;/is', '', $sqlContent);
-            $sqlContent = preg_replace('/UNLOCK TABLES;/is', '', $sqlContent);
-
-            // 🔹 Replace empty strings '' with NULL in user_id column
-            $sqlContent = preg_replace("/\b''\b/", "NULL", $sqlContent);
-
             try {
-                // 🔹 Execute the entire SQL content at once
-                DB::unprepared($sqlContent);
+                $file = $request->file('database_file');
+                $path = $file->getRealPath();
+
+                $fp = fopen($path, 'r');
+                $sql = '';
+                $queryCount = 0;
+
+                while (!feof($fp)) {
+                    $line = fgets($fp);
+
+                    // تجاهل الأسطر غير الضرورية
+                    if (trim($line) === '' || preg_match('/^(--|\/\*)/', trim($line))) {
+                        continue;
+                    }
+
+                    $sql .= $line;
+
+                    // اكتشاف نهاية الاستعلام
+                    if (preg_match('/;\s*$/', $line)) {
+                        // تحويل syntax MySQL إلى PostgreSQL
+                        $processedSql = preg_replace([
+                            '/\bLOCK TABLES\b.*?;/is',
+                            '/\bUNLOCK TABLES\b/i',
+                            '/\bAUTO_INCREMENT\b/i',
+                            '/ENGINE=InnoDB/i',
+                            '/`/'
+                        ], [
+                            '',
+                            '',
+                            'SERIAL PRIMARY KEY',
+                            '',
+                            '"'
+                        ], $sql);
+
+                        // إصلاح خاصية IF EXISTS في PostgreSQL
+                        $processedSql = str_replace('IF EXISTS', '', $processedSql);
+                        $processedSql = str_replace('DROP TABLE', 'DROP TABLE IF EXISTS', $processedSql);
+
+                        // تجاهل الاستعلامات الفارغة
+                        if (empty(trim($processedSql))) {
+                            $sql = '';
+                            continue;
+                        }
+
+                        try {
+                            DB::connection('pgsql')->unprepared($processedSql);
+                            $queryCount++;
+                        } catch (\Exception $e) {
+                            fclose($fp);
+                            return back()->with('error', '❌ فشل في الاستعلام #' . $queryCount . ': ' . $e->getMessage());
+                        }
+
+                        $sql = '';
+                    }
+                }
+
+                fclose($fp);
+                return back()->with('success', '✅ تم تنفيذ ' . $queryCount . ' استعلام بنجاح!');
             } catch (\Exception $e) {
-                return back()->with('error', '❌ SQL execution error: ' . $e->getMessage());
+                return back()->with('error', '❌ خطأ غير متوقع: ' . $e->getMessage());
             }
-
-            // 🔹 Run migrations to ensure schema compatibility
-            Artisan::call('migrate', ['--force' => true]);
-
-            return back()->with('success', '✅ Database restored successfully!');
         }
         return back()->with('error', '❌ لم يتم العثور على الملف!');
     }
