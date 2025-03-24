@@ -503,12 +503,12 @@ public function deleteInvoice($id)
 
 
             $generalEntrieaccount_debit_id = GeneralEntrie::where([
-                'Daily_entry_id' => $GetentrieId->entrie_id,
+                'daily_entry_id' => $GetentrieId->entrie_id,
                 'accounting_period_id' => $GetentrieId->accounting_period_id,
                 'sub_id' => $GetentrieId->account_debit_id,
             ])->delete();
             $generalEntrieaccount_debit_id = GeneralEntrie::where([
-                'Daily_entry_id' => $GetentrieId->entrie_id,
+                'daily_entry_id' => $GetentrieId->entrie_id,
                 'accounting_period_id' => $GetentrieId->accounting_period_id,
                 'sub_id' => $GetentrieId->account_credit_id,
             ])->delete();

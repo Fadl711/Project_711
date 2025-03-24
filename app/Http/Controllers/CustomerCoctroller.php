@@ -215,18 +215,17 @@ class CustomerCoctroller extends Controller
                 $customerMain = MainAccount::where('main_account_id', $id)->first();
                 $balances = GeneralEntrie::selectRaw(
                     'sub_accounts.sub_account_id,
-            sub_accounts.sub_name,
-            SUM(CASE WHEN general_entries.entry_type = debit THEN general_entries.amount ELSE 0 END) as total_debit,
-            SUM(CASE WHEN general_entries.entry_type = credit THEN general_entries.amount ELSE 0 END) as total_credit',
+                    sub_accounts.sub_name,
+                    SUM(CASE WHEN general_entries.entry_type = \'debit\' THEN general_entries.amount ELSE 0 END) as total_debit,
+                    SUM(CASE WHEN general_entries.entry_type = \'credit\' THEN general_entries.amount ELSE 0 END) as total_credit'
                 )
-                    ->where('general_entries.accounting_period_id', $accountingPeriod->accounting_period_id) // تأكد من أن هذا العمود صحيح
-                    ->join('sub_accounts', function ($join) {
-                        $join->on('general_entries.sub_id', '=', 'sub_accounts.sub_account_id');
-                    })
-                    ->where('sub_accounts.main_id', $customerMain->main_account_id)
-
-                    ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name')
-                    ->get();
+                ->where('general_entries.accounting_period_id', $accountingPeriod->accounting_period_id)
+                ->join('sub_accounts', function ($join) {
+                    $join->on('general_entries.sub_id', '=', 'sub_accounts.sub_account_id');
+                })
+                ->where('sub_accounts.main_id', $customerMain->main_account_id)
+                ->groupBy('sub_accounts.sub_account_id', 'sub_accounts.sub_name')
+                ->get();
                 $accountClasses = [
                     1 => 'العملاء',
                     2 => 'الموردين',
@@ -296,12 +295,12 @@ class CustomerCoctroller extends Controller
             $balances = GeneralEntrie::selectRaw(
                 'sub_accounts.sub_account_id,
                 sub_accounts.sub_name,
-                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'debit\' AND general_entries.Currency_name = \'ريال.يمني\' THEN general_entries.amount ELSE 0 END) as total_debit,
-                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'credit\' AND general_entries.Currency_name = \'ريال.يمني\' THEN general_entries.amount ELSE 0 END) as total_credit,
-                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'debit\' AND general_entries.Currency_name = \'ريال سعودي\' THEN general_entries.amount ELSE 0 END) as total_debits,
-                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'credit\' AND general_entries.Currency_name = \'ريال سعودي\' THEN general_entries.amount ELSE 0 END) as total_credits,
-                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'debit\' AND general_entries.Currency_name = \'دولار امريكي\' THEN general_entries.amount ELSE 0 END) as total_debitd,
-                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'credit\' AND general_entries.Currency_name = \'دولار امريكي\' THEN general_entries.amount ELSE 0 END) as total_creditd'
+                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'debit\' AND general_entries.currency_name = \'ريال.يمني\' THEN general_entries.amount ELSE 0 END) as total_debit,
+                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'credit\' AND general_entries.currency_name = \'ريال.يمني\' THEN general_entries.amount ELSE 0 END) as total_credit,
+                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'debit\' AND general_entries.currency_name = \'ريال سعودي\' THEN general_entries.amount ELSE 0 END) as total_debits,
+                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'credit\' AND general_entries.currency_name = \'ريال سعودي\' THEN general_entries.amount ELSE 0 END) as total_credits,
+                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'debit\' AND general_entries.currency_name = \'دولار امريكي\' THEN general_entries.amount ELSE 0 END) as total_debitd,
+                SUM(CASE WHEN general_entries.sub_id = sub_accounts.sub_account_id AND general_entries.entry_type = \'credit\' AND general_entries.currency_name = \'دولار امريكي\' THEN general_entries.amount ELSE 0 END) as total_creditd'
             )
             ->where('general_entries.accounting_period_id', $accountingPeriod->accounting_period_id)
             ->join('sub_accounts', function ($join) {

@@ -194,25 +194,25 @@ class AccountCoctroller extends Controller
         $generalEntry = GeneralEntrie::updateOrCreate(
             [
                 'accounting_period_id' => $accountingPeriod->accounting_period_id,
-                'Daily_entry_id' => $entry->entrie_id,
+                'daily_entry_id' => $entry->entrie_id,
                 'entry_type' => $entryType,
             ],
             [
                 'sub_id' => $accountId,
-                'General_ledger_page_number_id' => $generalLedge->general_ledge_id ?? null,
-                'Daily_Page_id' => $entry->daily_page_id,
+                'general_ledger_page_number_id' => $generalLedge->general_ledge_id ?? null,
+                'daily_Page_id' => $entry->daily_page_id,
                 'entry_date' => $entry->created_at,
-                'Main_id' => $mainAccount->main_account_id,
-                'typeAccount' => $subAccount->type_account ??0,
+                'main_id' => $mainAccount->main_account_id,
+                'type_account' => $subAccount->type_account ??0,
                 'amount' => $amount ?? 0,
                 'description' => $descriptionCommint  . ' ' . $subAccount->sub_name??' ' . '-' . $entry->statement ?? ' ',
                 'status' => 'غير مرحل',
-                'Invoice_type' => $entry->invoice_type,
-                'Invoice_id' => $entry->invoice_id ?? null,
-                'Currency_name' => $entry->currency_name ?? '',
+                'invoice_type' => $entry->invoice_type,
+                'invoice_id' => $entry->invoice_id ?? null,
+                'currency_name' => $entry->currency_name ?? '',
                 'exchange_rate' => $entry->exchange_rate ?? 1,
 
-                'User_id' => auth()->id(),
+                'user_id' => auth()->id(),
             ],
         );
 

@@ -158,12 +158,12 @@ class InvoicePurchaseController extends Controller
             if($Getentrie_id->entrie_id )
             {
             $generalEntrieaccount_debit_id = GeneralEntrie::where([
-                'Daily_entry_id' => $Getentrie_id->entrie_id,
+                'daily_entry_id' => $Getentrie_id->entrie_id,
                 'accounting_period_id' => $Getentrie_id->accounting_period_id,
                 'sub_id' => $Getentrie_id->account_debit_id,
             ])->delete();
             $generalEntrieaccount_debit_id = GeneralEntrie::where([
-                'Daily_entry_id' => $Getentrie_id->entrie_id,
+                'daily_entry_id' => $Getentrie_id->entrie_id,
                 'accounting_period_id' => $Getentrie_id->accounting_period_id,
                 'sub_id' => $Getentrie_id->account_credit_id,
             ])->delete();

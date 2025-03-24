@@ -21,7 +21,7 @@ return new class extends Migration
          {
 
 
-                $p->Currency_name = "ريال.يمني";
+                $p->currency_name = "ريال.يمني";
                 $p->save();
         }
     }

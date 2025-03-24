@@ -191,12 +191,12 @@ DB::table('payment_bonds')
                     ->first();
    
                     $generalEntrieaccount_debit_id = GeneralEntrie::where([
-                        'Daily_entry_id' => $DailyEntrie->entrie_id,
+                        'daily_entry_id' => $DailyEntrie->entrie_id,
                         'accounting_period_id' => $DailyEntrie->accounting_period_id,
                         'sub_id' => $DailyEntrie->account_debit_id,
                     ])->delete();
                     $generalEntrieaccount_debit_id = GeneralEntrie::where([
-                        'Daily_entry_id' => $DailyEntrie->entrie_id,
+                        'daily_entry_id' => $DailyEntrie->entrie_id,
                         'accounting_period_id' => $DailyEntrie->accounting_period_id,
                         'sub_id' => $DailyEntrie->account_credit_id,
                     ])->delete();

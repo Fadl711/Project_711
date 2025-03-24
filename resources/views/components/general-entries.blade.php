@@ -62,19 +62,19 @@
 <td>{{ $entry['subAccount'] ? $entry['subAccount']->sub_name : 'غير محدد' }}/{{ $entry['entry_type'] }}</td>
             {{-- <td>{{ $entry['Main_id'] }}</td> --}}
             <td>
-                <a href="{{ route('restrictions.show', $entry['Daily_entry_id'] ) }}" class="text-sm py-2 leading-none rounded-md hover:bg-gray-100">
-                   {{ $entry['Daily_entry_id'] }}
+                <a href="{{ route('restrictions.show', $entry['daily_entry_id'] ) }}" class="text-sm py-2 leading-none rounded-md hover:bg-gray-100">
+                   {{ $entry['daily_entry_id'] }}
                 </a>
             </td>
-            <td>{{ $entry['Daily_Page_id'] }}</td>
-            {{-- <td>{{ $entry['User_id'] ? $entry['User_id']->name : 'غير محدد' }}</td> --}}
-            {{-- <td>{{ $entry['General_ledger_page_number_id'] }}</td> --}}
+            <td>{{ $entry['daily_Page_id'] }}</td>
+            {{-- <td>{{ $entry['user_id'] ? $entry['User_id']->name : 'غير محدد' }}</td> --}}
+            {{-- <td>{{ $entry['general_ledger_page_number_id'] }}</td> --}}
             <td>{{ $entry['accounting_period_id'] }}</td>
             {{-- <td>{{ $entry['entry_type'] }}</td> --}}
             <td>{{ $entry['amount'] }}</td>
-            <td>{{ $entry['Currency_name'] }}</td>
-            <td>{{ $entry['Invoice_type'] }}</td>
-            <td>{{ $entry['Invoice_id'] }}</td>
+            <td>{{ $entry['currency_name'] }}</td>
+            <td>{{ $entry['invoice_type'] }}</td>
+            <td>{{ $entry['invoice_id'] }}</td>
             <td>{{ $entry['description'] }}</td>
             <td>{{ $entry['entry_date'] }}</td>
             <td class=" text-center" >

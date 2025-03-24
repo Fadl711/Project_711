@@ -21,11 +21,11 @@ class GeneralEntrie extends Model
     // تحديد الحقول التي يمكن ملؤها (Mass Assignable)
     protected $fillable = [
         'sub_id',
-        'Main_id',
-        'Daily_entry_id',
-        'Daily_Page_id',
-        'User_id',
-        'General_ledger_page_number_id',
+        'main_id',
+        'daily_entry_id',
+        'daily_Page_id',
+        'user_id',
+        'general_ledger_page_number_id',
         'accounting_period_id',
         'entry_type',
         'amount',
@@ -34,10 +34,10 @@ class GeneralEntrie extends Model
         'description',
         'entry_date',
         'status',
-        'typeAccount',
-        'Invoice_type',
-        'Invoice_id',
-        'Currency_name',
+        'type_account',
+        'invoice_type',
+        'invoice_id',
+        'currency_name',
     ];
     public function generalEntries() {
         return $this->belongsTo(SubAccount::class, 'sub_id'); // أو حسب ما يناسب
@@ -56,11 +56,11 @@ class GeneralEntrie extends Model
     }
     public function Daily_entryId()
     {
-        return $this->belongsTo(DailyEntrie::class, 'Daily_entry_id', 'entrie_id');
+        return $this->belongsTo(DailyEntrie::class, 'daily_entry_id', 'entrie_id');
     }
     public function DailyEntry()
     {
-        return $this->belongsTo(DailyEntrie::class, 'Daily_entry_id');
+        return $this->belongsTo(DailyEntrie::class, 'daily_entry_id');
     }
     public function getTransactionTypeLabelAttribute()
     {

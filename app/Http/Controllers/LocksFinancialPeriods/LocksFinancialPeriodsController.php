@@ -37,19 +37,19 @@ class LocksFinancialPeriodsController extends Controller
         $RevenueDebit = GeneralEntrie::where('typeAccount', 5)
             ->where('accounting_period_id', $id)
             ->where('entry_type', $debit)
-            ->where('Main_id', '!=', $subAccounts->main_account_id)
+            ->where('main_id', '!=', $subAccounts->main_account_id)
             ->sum('amount');
         $RevenueCredit = GeneralEntrie::where('typeAccount', 5)
             ->where('accounting_period_id', $id)
             ->where('entry_type', $credit)
-            ->where('Main_id', '!=', $subAccounts->main_account_id)
+            ->where('main_id', '!=', $subAccounts->main_account_id)
             ->sum('amount');
         $Revenue = $RevenueDebit - $RevenueCredit;
         //---------------------------------------------------------
 
         // اجمالي  البيع -------------------------------
         $RevenueSales = GeneralEntrie::where('entry_type', $credit)
-            ->where('Main_id', $subAccounts->main_account_id)
+            ->where('main_id', $subAccounts->main_account_id)
             ->where('accounting_period_id', $id)
             ->sum('amount');
         //---------------------------------------------------------
@@ -57,7 +57,7 @@ class LocksFinancialPeriodsController extends Controller
         // اجمالي  اشراء-------------------------------
         $RevenuePurchase = GeneralEntrie::where('entry_type', $debit)
             ->where('accounting_period_id', $id)
-            ->where('Main_id', $subAccounts->main_account_id)
+            ->where('main_id', $subAccounts->main_account_id)
             ->sum('amount');
 
         //---------------------------------------------------------
@@ -71,12 +71,12 @@ class LocksFinancialPeriodsController extends Controller
         $ExpensesDebit = GeneralEntrie::where('typeAccount', 4)
             ->where('accounting_period_id', $id)
             ->where('entry_type', $debit)
-            ->where('Main_id', '!=', $subAccounts->main_account_id)
+            ->where('main_id', '!=', $subAccounts->main_account_id)
             ->sum('amount');
         $ExpensesCredit = GeneralEntrie::where('typeAccount', 4)
             ->where('accounting_period_id', $id)
             ->where('entry_type', $credit)
-            ->where('Main_id', '!=', $subAccounts->main_account_id)
+            ->where('main_id', '!=', $subAccounts->main_account_id)
             ->sum('amount');
         //---------------------------------------------------------
         $totalRevenue = $Revenue + $RevenueSales + ($QuantityInventory ?? 0); //اجمالي الإيرادات
@@ -126,14 +126,14 @@ class LocksFinancialPeriodsController extends Controller
 
             foreach ($subAccounts as $subAccount) {
                 // حساب المبالغ المدين والدائن
-                $amountDebit = $queryGet->where('sub_id', $subAccount->sub_account_id)->where('entry_type', 'debit')->where('accounting_period_id', $id)->where('Currency_name','ريال.يمني')->sum('amount');
-                $amountCredit = $queryGet->where('sub_id', $subAccount->sub_account_id)->where('entry_type', 'credit')->where('accounting_period_id', $id)->where('Currency_name','ريال.يمني')->sum('amount');
+                $amountDebit = $queryGet->where('sub_id', $subAccount->sub_account_id)->where('entry_type', 'debit')->where('accounting_period_id', $id)->where('currency_name','ريال.يمني')->sum('amount');
+                $amountCredit = $queryGet->where('sub_id', $subAccount->sub_account_id)->where('entry_type', 'credit')->where('accounting_period_id', $id)->where('currency_name','ريال.يمني')->sum('amount');
 
-                $debits_SAD = $queryGet->where('sub_id', $subAccount->sub_account_id)->where('entry_type', 'debit')->where('accounting_period_id', $id)->where('Currency_name','ريال سعودي')->sum('amount');
-                $credits_SAD = $queryGet->where('sub_id', $subAccount->sub_account_id)->where('entry_type', 'credit')->where('accounting_period_id', $id)->where('Currency_name','ريال سعودي')->sum('amount');
+                $debits_SAD = $queryGet->where('sub_id', $subAccount->sub_account_id)->where('entry_type', 'debit')->where('accounting_period_id', $id)->where('currency_name','ريال سعودي')->sum('amount');
+                $credits_SAD = $queryGet->where('sub_id', $subAccount->sub_account_id)->where('entry_type', 'credit')->where('accounting_period_id', $id)->where('currency_name','ريال سعودي')->sum('amount');
 
-                $debitd_USD = $queryGet->where('sub_id', $subAccount->sub_account_id)->where('entry_type', 'debit')->where('accounting_period_id', $id)->where('Currency_name','دولار امريكي')->sum('amount');
-                $credits_USD = $queryGet->where('sub_id', $subAccount->sub_account_id)->where('entry_type', 'credit')->where('accounting_period_id', $id)->where('Currency_name','دولار امريكي')->sum('amount');
+                $debitd_USD = $queryGet->where('sub_id', $subAccount->sub_account_id)->where('entry_type', 'debit')->where('accounting_period_id', $id)->where('currency_name','دولار امريكي')->sum('amount');
+                $credits_USD = $queryGet->where('sub_id', $subAccount->sub_account_id)->where('entry_type', 'credit')->where('accounting_period_id', $id)->where('currency_name','دولار امريكي')->sum('amount');
                 $sub = $amountDebit - $amountCredit;
                 $subSAD = $debits_SAD - $credits_SAD;
                 $subUSD = $debitd_USD - $credits_USD;

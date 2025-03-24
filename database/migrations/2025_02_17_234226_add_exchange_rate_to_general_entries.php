@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('general_entries', function (Blueprint $table) {
             // إضافة عمود سعر الصرف
-            $table->decimal('exchange_rate', 10, 3)->default(1.000)->after('Currency_name')->comment('سعر الصرف للعملة عند القيد');
+            $table->decimal('exchange_rate', 10, 3)->default(1.000)->after('currency_name')->comment('سعر الصرف للعملة عند القيد');
 
         });
     }

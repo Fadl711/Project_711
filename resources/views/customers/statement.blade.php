@@ -193,26 +193,47 @@
         $Invoice_type = "";
         $cellColor = ($entrie->total_debit > 0) ? 'color: red;' : ''; // إذا كانت القيمة أكبر من 0 اجعل اللون أحمر
     } else {
-        $cellColor = ''; // استخدم اللون الافتراضي إذا لم يكن "رصيد افتتاحي"
+        $cellColor='';
     }
+    // استخدم اللون الافتراضي إذا لم يكن "رصيد افتتاحي"
+                         $cell_color2 = ''; 
+                         $statement_t="";
+                         $accuont_name="";
+                         $acc_to="";
+                             if($entrie->total_debit>0)
+                             {
+                                 $statement_t= "عليكم";
+                                 $acc_to="الى ح/";
+                                 $accuont_name=$entrie->creditAccount->sub_name;
+                                 $cell_color2= 'color: red;';
+                                 
+                                }
+                                if($entrie->total_credit > 0)
+                                {
+                                    $statement_t= "لكم";
+                                    $acc_to="من ح/";
+                                    $cell_color2='color:green-500;';
+                                    
+                                 
+                                 $accuont_name= $entrie->debitAccount->sub_name;
 
-                        @endphp
+                             }
+                         @endphp
                             <td class=" text-right  "style="width: 120px; " >
                                 {{ $entrie->created_at ? $entrie->created_at->format('Y-m-d') : __('غير متوفر') }}
                             </td>
                             <td class=" text-right  " style="width: 130px; {{ $cellColor }} " >{{ $entrie->daily_entries_type }} {{ $invoice_type  ?? ""}}</td>
                             <td class=" text-center " style="width: 100px; ">{{ $entrie->invoice_id ?? ''}}</td>
                             <td class=" text-right "    style="width: 300px; {{ $cellColor }}">
-                             <span  class="">
-                                <span id="Statement"   class="text-red-500"> 
+                                <span > 
+                                    <span id="Statement" style="{{ $cell_color2 }}">
                                     @if ( $entrie->daily_entries_type!="رصيد افتتاحي")
-                                      من ح/</span>
-                                {{$entrie->debitAccount->sub_name }}
-                                <span id="Statement" class="text-green-500">الى ح/</span>
-                                {{$entrie->creditAccount->sub_name }}
+                                   {{  $acc_to}} {{$accuont_name}}
+                              
                                 @endif
                             </span>
-                                <span id="Statement2" class="bg-slate-100 rounded px-1">  {{ $entrie->statement }}</span>
+                       
+                                <span id="Statement2" class="bg-slate-100 rounded px-1">{{$statement_t}} {{" "}} {{ $entrie->statement }}</span>
                               
                             </td>
                             <td class=" text-center " style="width: 90px; ">{{ $entrie->entrie_id }}</td>
