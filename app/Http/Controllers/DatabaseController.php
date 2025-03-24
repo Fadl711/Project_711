@@ -86,22 +86,34 @@ class DatabaseController extends Controller
                 return back()->with('success', '✅ Database restored successfully!');
             }
             return back()->with('error', '❌ لم يتم العثور على الملف!');
-
-
         } else {
             if ($request->hasFile('database_file')) {
                 try {
-                    $file = $request->file('database_file');
-                    $path = $file->getRealPath();
-                    $sqlContent = file_get_contents($path);
+                    // 1. زيادة الحدود الزمنية
+                    set_time_limit(3600); // 60 دقيقة
+                    ini_set('memory_limit', '2048M');
 
-                    // استبدال القيم الفارغة بـ NULL
+                    // 2. التحقق من حجم الملف
+                    $file = $request->file('database_file');
+                    if ($file->getSize() > 1024 * 1024 * 500) { // 500MB
+                        return back()->with('error', '❌ حجم الملف يتجاوز الحد المسموح');
+                    }
+
+                    // 3. معالجة الملف بشكل تدفقي
+                    $stream = fopen($file->getRealPath(), 'r');
+                    $sqlContent = '';
+                    while (!feof($stream)) {
+                        $sqlContent .= fgets($stream);
+                    }
+                    fclose($stream);
+
+                    // 4. تحسين استبدال القيم الفارغة
                     $sqlContent = preg_replace([
-                        "/\b''\b/",
-                        "/VALUES\s*\(\s*''\s*,/",
-                        "/,\s*''\s*\)/",
-                        "/\(\s*''\s*,/",
-                        "/,\s*''\s*,/"
+                        "/\b''\b(?=(?:[^\"']*[\"'][^\"']*[\"'])*[^\"']*$)/",
+                        "/VALUES\s*\(\s*''\s*,/i",
+                        "/,\s*''\s*\)/i",
+                        "/\(\s*''\s*,/i",
+                        "/,\s*''\s*,/i"
                     ], [
                         'NULL',
                         'VALUES (NULL,',
@@ -110,39 +122,63 @@ class DatabaseController extends Controller
                         ', NULL,'
                     ], $sqlContent);
 
-                    // إعدادات اتصال PostgreSQL
-                    $connection = [
-                        'host' => env('DB_HOST'),
-                        'port' => env('DB_PORT', '5432'),
-                        'dbname' => env('DB_DATABASE'),
-                        'user' => env('DB_USERNAME'),
-                        'password' => env('DB_PASSWORD')
-                    ];
-
-                    // إنشاء اتصال PDO
+                    // 5. إعداد اتصال PDO مع مهلات موسعة
                     $pdo = new \PDO(
-                        "pgsql:" . http_build_query($connection, '', ';'),
-                        null,
-                        null,
+                        "pgsql:host=" . env('DB_HOST') . ";port=" . env('DB_PORT', 5432) . ";dbname=" . env('DB_DATABASE'),
+                        env('DB_USERNAME'),
+                        env('DB_PASSWORD'),
                         [
                             \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-                            \PDO::ATTR_EMULATE_PREPARES => false
+                            \PDO::ATTR_TIMEOUT => 3600, // 60 دقيقة
+                            \PDO::ATTR_PERSISTENT => false
                         ]
                     );
 
-                    // بدء المعاملة وتأجيل القيود
+                    // 6. تقسيم استعلامات ذكية
+                    $queries = [];
+                    $delimiter = ';';
+                    $buffer = '';
+                    $inString = false;
+                    $stringChar = '';
+
+                    foreach (str_split($sqlContent) as $char) {
+                        if ($char === "'" || $char === '"') {
+                            if (!$inString) {
+                                $inString = true;
+                                $stringChar = $char;
+                            } elseif ($char === $stringChar) {
+                                $inString = false;
+                            }
+                        }
+
+                        if ($char === $delimiter && !$inString) {
+                            $queries[] = $buffer;
+                            $buffer = '';
+                        } else {
+                            $buffer .= $char;
+                        }
+                    }
+                    $pdo->exec('SET synchronous_commit TO OFF');
+                    $pdo->exec('SET maintenance_work_mem TO \'256MB\'');
+                    // 7. تنفيذ الاستعلامات مع تسجيل الأخطاء
                     $pdo->beginTransaction();
                     $pdo->exec('SET CONSTRAINTS ALL DEFERRED');
 
-                    // تنفيذ الاستعلامات بشكل منفصل
-                    $queries = explode(';', $sqlContent);
-                    foreach ($queries as $query) {
-                        if (!empty(trim($query))) {
-                            $pdo->exec($query);
+                    foreach ($queries as $index => $query) {
+                        $query = trim($query);
+                        if (!empty($query)) {
+                            try {
+                                $pdo->exec($query);
+                            } catch (\PDOException $e) {
+                                Log::error("فشل الاستعلام #$index: " . $e->getMessage());
+                                Log::debug("محتوى الاستعلام: " . $query);
+                                throw $e;
+                            }
                         }
                     }
-
+                    // بعد التنفيذ
                     $pdo->commit();
+                    $pdo->exec('VACUUM ANALYZE');
 
                     Artisan::call('migrate', ['--force' => true]);
                     return back()->with('success', '✅ تمت الاستعادة بنجاح!');
