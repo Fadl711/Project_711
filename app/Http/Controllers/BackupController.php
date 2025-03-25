@@ -19,66 +19,82 @@ class BackupController extends Controller
 
     public function createBackup()
     {
-        $database = env('DB_DATABASE');
-        $username = env('DB_USERNAME');
-        $password = env('DB_PASSWORD');
-        $filename = 'backup-' . auth()->user()->name . Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
-    
-        if (app()->environment('local')) {
-            // Local environment - MySQL backup
+        try {
+            $database = env('DB_DATABASE');
+            $username = env('DB_USERNAME');
+            $password = env('DB_PASSWORD');
+            $filename = 'backup-' . auth()->user()->name . '-' . Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
             $backupPath = storage_path('app/backups/');
     
-            // Ensure directory exists
+            // Ensure backup directory exists
             if (!File::exists($backupPath)) {
                 File::makeDirectory($backupPath, 0755, true);
             }
     
-            // Use mysqldump to create backup
-            $command = "mysqldump --user={$username} --password={$password} --host=localhost {$database} > {$backupPath}{$filename}";
-            exec($command, $output, $returnVar);
+            if (app()->environment('local')) {
+                // MySQL Backup for local environment
+                $command = "mysqldump --user={$username} --password={$password} --host=localhost {$database} > {$backupPath}{$filename} 2>&1";
+                exec($command, $output, $returnVar);
     
-            if ($returnVar !== 0 || !File::exists($backupPath . $filename)) {
-                return response()->json(['error' => 'فشل إنشاء النسخة الاحتياطية.'], 500);
+                if ($returnVar !== 0) {
+                    \Log::error('MySQL Backup Failed', ['output' => $output]);
+                    return response()->json(['error' => 'فشل إنشاء النسخة الاحتياطية: ' . implode("\n", $output)], 500);
+                }
+    
+                if (!File::exists($backupPath . $filename)) {
+                    return response()->json(['error' => 'تم تنفيذ الأمر ولكن الملف غير موجود'], 500);
+                }
+    
+                return Response::download($backupPath . $filename, $filename)->deleteFileAfterSend(true);
+                
+            } else {
+                // PostgreSQL Backup for production
+                $host = env('DB_HOST');
+                $port = env('DB_PORT');
+                $tempBackupPath = $backupPath . $filename;
+    
+                // First check if pg_dump exists
+                exec('which pg_dump', $whichOutput, $whichReturn);
+                if ($whichReturn !== 0) {
+                    return back()->with(['error' => 'أداة pg_dump غير مثبتة على الخادم']);
+                }
+    
+                $command = "PGPASSWORD='{$password}' pg_dump -U {$username} -h {$host} -p {$port} -d {$database} -f {$tempBackupPath} 2>&1";
+                exec($command, $output, $returnVar);
+    
+                if ($returnVar !== 0) {
+                    \Log::error('PostgreSQL Backup Failed', ['output' => $output]);
+                    return back()->with(['error' => 'فشل إنشاء النسخة الاحتياطية: ' . implode("\n", $output)]);
+                }
+    
+                if (!File::exists($tempBackupPath)) {
+                    return back()->with(['error' => 'تم تنفيذ الأمر ولكن الملف غير موجود']);
+                }
+    
+                // Upload to R2
+                try {
+                    Storage::disk('r2')->put('backups/' . $filename, file_get_contents($tempBackupPath));
+                    
+                    if (!Storage::disk('r2')->exists('backups/' . $filename)) {
+                        throw new \Exception('فشل التحقق من وجود الملف بعد الرفع');
+                    }
+    
+                    File::delete($tempBackupPath);
+    
+                    $downloadUrl = Storage::disk('r2')->url('backups/' . $filename);
+                    return redirect($downloadUrl);
+    
+                } catch (\Exception $e) {
+                    \Log::error('R2 Upload Failed', ['error' => $e->getMessage()]);
+                    return back()->with(['error' => 'فشل رفع النسخة الاحتياطية: ' . $e->getMessage()]);
+                }
             }
     
-            // Return file for download
-            return Response::download($backupPath . $filename, $filename)->deleteFileAfterSend(true);
-        } else {
-            // Production environment - PostgreSQL backup
-            $host = env('DB_HOST');
-            $port = env('DB_PORT');
-    
-            // Temporary path on server
-            $tempBackupPath = storage_path('app/backups/' . $filename);
-    
-            // Ensure directory exists
-            if (!File::exists(dirname($tempBackupPath))) {
-                File::makeDirectory(dirname($tempBackupPath), 0755, true);
-            }
-    
-            // Use pg_dump to create backup
-            $command = "PGPASSWORD='{$password}' pg_dump -U {$username} -h {$host} -p {$port} -d {$database} > {$tempBackupPath}";
-            exec($command, $output, $returnVar);
-    
-            // Check if command succeeded
-            if ($returnVar !== 0 || !File::exists($tempBackupPath)) {
-                return back()->with(['error' => 'فشل إنشاء النسخة الاحتياطية.']);
-            }
-    
-            // Upload to R2 disk
-            Storage::disk('r2')->put('backups/' . $filename, file_get_contents($tempBackupPath));
-    
-            // Check if upload succeeded
-            if (!Storage::disk('r2')->exists('backups/' . $filename)) {
-                return back()->with(['error' => 'فشل رفع النسخة الاحتياطية إلى R2.']);
-            }
-    
-            // Delete temporary file
-            File::delete($tempBackupPath);
-    
-            // Return download URL
-            $downloadUrl = Storage::disk('r2')->url('backups/' . $filename);
-            return redirect($downloadUrl);
+        } catch (\Exception $e) {
+            \Log::error('Backup Process Failed', ['error' => $e->getMessage()]);
+            return app()->environment('local') 
+                ? response()->json(['error' => 'خطأ غير متوقع: ' . $e->getMessage()], 500)
+                : back()->with(['error' => 'خطأ غير متوقع: ' . $e->getMessage()]);
         }
     }
 
