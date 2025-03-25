@@ -19,80 +19,67 @@ class BackupController extends Controller
 
     public function createBackup()
     {
-
+        $database = env('DB_DATABASE');
+        $username = env('DB_USERNAME');
+        $password = env('DB_PASSWORD');
+        $filename = 'backup-' . auth()->user()->name . Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
+    
         if (app()->environment('local')) {
-            $database = env('DB_DATABASE');
-            $username = env('DB_USERNAME');
-            $password = env('DB_PASSWORD');
+            // Local environment - MySQL backup
             $backupPath = storage_path('app/backups/');
-            $filename = 'backup-' . auth()->user()->name  . Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
-
-            // تأكد من أن المجلد موجود
+    
+            // Ensure directory exists
             if (!File::exists($backupPath)) {
                 File::makeDirectory($backupPath, 0755, true);
             }
-
-            // استخدام mysqldump لإنشاء النسخة الاحتياطية
+    
+            // Use mysqldump to create backup
             $command = "mysqldump --user={$username} --password={$password} --host=localhost {$database} > {$backupPath}{$filename}";
-            exec($command, $output);
-
-            // التحقق من نجاح النسخ الاحتياطي
-
-            // الحصول على أحدث ملف تم إنشاؤه
-            $files = glob($backupPath . '/*.sql');
-            if (empty($files)) {
+            exec($command, $output, $returnVar);
+    
+            if ($returnVar !== 0 || !File::exists($backupPath . $filename)) {
                 return response()->json(['error' => 'فشل إنشاء النسخة الاحتياطية.'], 500);
             }
-
-            // أحدث ملف
-            $latestFile = end($files);
-
-            // اسم الملف مع التاريخ
-
-            // إرجاع الملف للتنزيل
-            return Response::download($latestFile, $filename)->deleteFileAfterSend(true);
+    
+            // Return file for download
+            return Response::download($backupPath . $filename, $filename)->deleteFileAfterSend(true);
         } else {
-            $database = env('DB_DATABASE');
-            $username = env('DB_USERNAME');
-            $password = env('DB_PASSWORD');
+            // Production environment - PostgreSQL backup
             $host = env('DB_HOST');
             $port = env('DB_PORT');
-
-            // اسم الملف
-            $filename = 'backup-'.auth()->user()->name . Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
-
-            // مسار مؤقت على الخادم لحفظ النسخة الاحتياطية قبل الرفع
-            $tempBackupPath = '/tmp/' . $filename; // يتم استخدام مجلد /tmp على الخادم
-
-            // استخدام pg_dump لإنشاء النسخة الاحتياطية
+    
+            // Temporary path on server
+            $tempBackupPath = storage_path('app/backups/' . $filename);
+    
+            // Ensure directory exists
+            if (!File::exists(dirname($tempBackupPath))) {
+                File::makeDirectory(dirname($tempBackupPath), 0755, true);
+            }
+    
+            // Use pg_dump to create backup
             $command = "PGPASSWORD='{$password}' pg_dump -U {$username} -h {$host} -p {$port} -d {$database} > {$tempBackupPath}";
             exec($command, $output, $returnVar);
-
-            // التحقق من نجاح الأمر
+    
+            // Check if command succeeded
             if ($returnVar !== 0 || !File::exists($tempBackupPath)) {
                 return back()->with(['error' => 'فشل إنشاء النسخة الاحتياطية.']);
             }
-
-            // رفع الملف إلى Disk R2
+    
+            // Upload to R2 disk
             Storage::disk('r2')->put('backups/' . $filename, file_get_contents($tempBackupPath));
-
-            // التحقق من أن الملف تم رفعه بنجاح
+    
+            // Check if upload succeeded
             if (!Storage::disk('r2')->exists('backups/' . $filename)) {
                 return back()->with(['error' => 'فشل رفع النسخة الاحتياطية إلى R2.']);
             }
-
-            // حذف الملف المؤقت بعد الرفع
+    
+            // Delete temporary file
             File::delete($tempBackupPath);
-
-            // رابط التنزيل من Disk R2
+    
+            // Return download URL
             $downloadUrl = Storage::disk('r2')->url('backups/' . $filename);
-
-            // إعادة توجيه المستخدم إلى رابط التنزيل
             return redirect($downloadUrl);
         }
-
-
-
     }
 
     public function backupDatabase(Request $request)
