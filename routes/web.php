@@ -82,6 +82,7 @@ Route::middleware('web')->group(function () {
 
 
 Route::post('/sync', [SyncController::class, 'sync'])->name('sync');
+Route::post('/sales/import', [SyncController::class, 'import'])->name('sales.import');
 Route::middleware(['auth', 'web'])->group(function () {
     Route::get('/backup/google', [BackupController::class, 'backupDatabase'])->name('backup.google');
 });

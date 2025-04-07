@@ -28,7 +28,7 @@
                     <div class="flex">
                         <label for="" class="labelSale">{{ $item->label() }}</label>
                         <input type="radio" name="payment_type" class="input-field " value="{{ $item->value }}"
-                            {{ isset($DailyEntrie->invoice_type) && $DailyEntrie->invoice_type == $item->value ? 'checked' : ($index === 0 ? 'checked' : '') }}
+                            {{isset($DailyEntrie->invoice_type) && $DailyEntrie->invoice_type == $item->value ? 'checked' : ($index === 0 ? 'checked' : '') }}
                             required>
                     </div>
                 @endforeach
@@ -38,8 +38,8 @@
                 <div class="space-y-4 grid grid-cols-2 md:grid-cols-2 gap-4">
                 <div>
                     <label for="Invoice_type" class="block text-gray-700 font-medium mb-3">نوع المستند</label>
-                    <select name="Invoice_type" dir="rtl"
-                        class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sel">
+                    <select id="Invoice_type" name="Invoice_type" dir="rtl"
+                        class="select2 w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sel">
                         <option value="" selected>اختر نوع المستند</option>
                         @foreach ($transactionTypes as $transactionType)
                             <option value="{{ $transactionType->value }}"
@@ -53,8 +53,8 @@
                 </div>
                 <div>
                     <label for="Invoice_id" class="block text-gray-700 font-medium ">رقم المستند</label>
-                    <select name="Invoice_id" dir="rtl"
-                        class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sel">
+                    <select id="Invoice_id" name="Invoice_id" dir="rtl"
+                        class="select2 w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sel">
                         <option value="" selected>اختر رقم المستند</option>
                         @isset($DailyEntrie->invoice_id)
                             <option value="{{$DailyEntrie->invoice_id}}" selected>{{$DailyEntrie->invoice_id}}</option>

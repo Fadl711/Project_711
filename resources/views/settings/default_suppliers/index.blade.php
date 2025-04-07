@@ -49,13 +49,39 @@ window.onload = function() {
             <button type="submit" class="btn btn-danger text-white">تحديث المسارات</button>
         </form>
     </div>
-    <div class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
+    {{-- <div class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
         <form action="{{ route('sync') }}" method="POST">
             @csrf
             <button  type="submit" class="btn btn-danger text-white" >رفع البيانات </button>
-
         </form>
-    </div>
+    </div> --}}
+{{-- 
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>استيراد بيانات المبيعات</h2>
+            </div>
+            <div class="card-body">
+                @if(session('success'))
+                    <div class="alert alert-success">{{ session('success') }}</div>
+                @endif
+                
+                @if(session('error'))
+                    <div class="alert alert-danger">{{ session('error') }}</div>
+                @endif
+    
+                <form action="{{ route('sales.import') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="form-group mb-3">
+                        <label for="file">اختر ملف CSV:</label>
+                        <input type="file" name="file" class="form-control" required accept=".csv">
+                        <small class="text-muted">يجب أن يحتوي الملف على العناوين الصحيحة في السطر الأول</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary">استيراد البيانات</button>
+                </form>
+            </div>
+        </div>
+    </div> --}}
     {{-- <div class="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded">
         <form action="{{ route('run_migration') }}" method="POST">
             @csrf

@@ -12,11 +12,11 @@ class SyncController extends Controller
 {
     public function sync()
     {
-        // $host = getenv('DB_HOST') ?: 'ep-wild-hall-a10da78e.aws-ap-southeast-1.pg.laravel.cloud';
-        // $dbname = getenv('DB_NAME') ?: 'main';
-        // $port = getenv('DB_PORT') ?: 5432;
-        // $username = getenv('DB_USER') ?: 'laravel';
-        // $password = getenv('DB_PASS') ?: 'npg_Q0tpsTS2bFgM';
+        // $host = getenv('DB_HOST_PGSQL') ?: 'ep-wild-hall-a10da78e.aws-ap-southeast-1.pg.laravel.cloud';
+        // $dbname = getenv('DB_DATABASE_PGSQL') ?: 'main';
+        // $port = getenv('DB_PORT_PGSQL') ?: 5432;
+        // $username = getenv('DB_USERNAME_PGSQL') ?: 'laravel';
+        // $password = getenv('DB_PASSWORD_PGSQL') ?: 'npg_Q0tpsTS2bFgM';
         
         // try {
         //     $dsn = "pgsql:host={$host};dbname={$dbname};port={$port}";
