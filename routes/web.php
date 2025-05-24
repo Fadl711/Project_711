@@ -191,8 +191,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/store/storeUp', function(){
            $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
 
-      $dailyEntries = DailyEntrie::where('accounting_period_id', $accountingPeriod->accounting_period_id)
-        ->where('daily_entries_type','سند صرف');
+     
     $numberToWords = new NumberToWords();
     $numberTransformer = $numberToWords->getNumberTransformer('ar');
    // 3. جلب جميع العملات والحسابات مرة واحدة
