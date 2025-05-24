@@ -58,8 +58,8 @@
         </select>
 
         <button
-            class="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            تحديث البيانات
+            class="response-payment bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            استرجع سندات الصرف البيانات
         </button>
     </div>
 
@@ -127,6 +127,31 @@
                 $.ajax({
                     url: url,
                     method: 'GET',
+
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    },
+                    success: function(data) {
+                        container.empty();
+                        if (data.PaymentInvoices.length > 0) {
+                            data.PaymentInvoices.forEach((PaymentBond) => {
+                                container.append(renderInvoiceCard(PaymentBond));
+                            });
+                        } else {
+                            container.append(
+                                '<p class="text-center text-gray-500">لا توجد فواتير لعرضها.</p>');
+                        }
+                    },
+                    error: function(error) {
+                        console.error('Error fetching invoices:', error.responseText);
+                    }
+                });
+            }
+            function fetchInvoice(url, container) {
+                $.ajax({
+                    url: url,
+                    method: 'POST',
 
                     headers: {
                         'Content-Type': 'application/json',
@@ -284,6 +309,23 @@
 
                 fetchInvoices(url, displayContainer);
             });
+             $(document).on('click', '.response-payment', function() {
+                                const url = "{{ url('/store/storeUp') }}";
+
+                //   $.ajax({
+                //     url: url,
+                //     method: 'post',
+                //     // المعاملات الأخرى...
+                // });
+                displayContainer.removeClass("hidden");
+
+                fetchInvoice(url, displayContainer);
+            // });
+
+                  });
+
+
+
         });
     </script>
 @endsection

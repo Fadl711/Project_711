@@ -12,10 +12,14 @@ use App\Models\GeneralJournal;
 use App\Models\MainAccount;
 use App\Models\PaymentBond;
 use App\Models\SubAccount;
+use App\Models\UserPermission;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use NumberToWords\NumberToWords;
+use SebastianBergmann\Environment\Console;
+
+use function PHPSTORM_META\map;
 
 class ReceipController extends Controller
 {
@@ -33,8 +37,22 @@ class ReceipController extends Controller
 
         return floatval(str_replace(',', '', $value)); // إزالة الفواصل وتحويل إلى float
     }
+ public function storeUp(){
+
+    // استرجاع سندات الصرف المحذوفه
  
+
+
+
+ }
     public function store(Request $request){
+         $user = auth()->id();
+        $AuthorityName = "السندات";
+        $us = UserPermission::where('User_id', $user)
+            ->where('Authority_Name', $AuthorityName)
+            ->first();
+        if (optional($us)->Writing_ability == 1) {
+
       // تحويل إلى عدد عشري
             $Amount_debit = $this->removeCommas($request->Amount_debit);
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
@@ -127,10 +145,12 @@ DB::table('payment_bonds')
 // $ss=$DailyEntrie->Amount_debit*$DailyEntrie->exchange_rate;
 // dd($ss);
 
+
     return response()->json([
         'success' => 'تم بنجاح',
         'payment_bond_id' => $paymentBond->payment_bond_id ?? $payment_bond_id
     ]);
+        }
 
     }
     public function show($id){
@@ -139,6 +159,12 @@ DB::table('payment_bonds')
         return view('bonds.receipt_bonds.show',compact('PaymentBond'));
     }
         public function edit($id){
+                 $user = auth()->id();
+        $AuthorityName = "السندات";
+        $us = UserPermission::where('User_id', $user)
+            ->where('Authority_Name', $AuthorityName)
+            ->first();
+        if (optional($us)->Ability_modify == 1) {
             $ExchangeBond=PaymentBond::where('payment_bond_id',$id)->first();
             $mainAccount=MainAccount::all();
             $SubAccounts=SubAccount::all();
@@ -161,10 +187,23 @@ DB::table('payment_bonds')
                 'submitButton' => 'تعديل السند',
             ]);  
 
+        }  
+        else{
+             return response()->json([
+                    'status' => 'error',
+                    'message' => 'لا توجد  لديك صلاحيه.',
+                ], 400);
+        }
         }
    
         public function destroy($id)
         {
+                      $user = auth()->id();
+        $AuthorityName = "السندات";
+        $us = UserPermission::where('User_id', $user)
+            ->where('Authority_Name', $AuthorityName)
+            ->first();
+        if (optional($us)->Deletion_authority == 1) {
             $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
             if (!$accountingPeriod) {
                 return response()->json([
@@ -172,7 +211,6 @@ DB::table('payment_bonds')
                     'message' => 'لا توجد فترة محاسبية مفتوحة.',
                 ], 400);
             }
-        
             // الحصول على سند الدفع
             $paymentBond = PaymentBond::find($id);
             if (!$paymentBond) {
@@ -216,6 +254,13 @@ DB::table('payment_bonds')
                 return response()->json([
                     'status' => 'error',
                     'message' => 'حدث خطأ أثناء الحذف. يرجى المحاولة لاحقًا.',
+                ], 500);
+            }
+            }
+            else{
+                 return response()->json([
+                    'status' => 'error',
+                    'message' => 'لايوجد لديك صلاحية',
                 ], 500);
             }
         }

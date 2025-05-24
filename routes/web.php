@@ -1,6 +1,7 @@
 <?php
 
 use App\Enum\AccountType;
+use App\Enum\PaymentType;
 use App\Http\Controllers\CustomerCoctroller;
 use App\Http\Controllers\HomeCoctroller;
 use App\Http\Controllers\AccountCoctroller;
@@ -58,16 +59,21 @@ use App\Http\Controllers\UsersController\UsersController;
 use App\Livewire\Counter;
 use App\Livewire\GeneralEntrieComponent;
 use App\Models\AccountingPeriod;
+use App\Models\Currency;
+use App\Models\DailyEntrie;
 use App\Models\DefaultSupplier;
 use App\Models\GeneralEntrie;
 use App\Models\MainAccount;
+use App\Models\PaymentBond;
 use App\Models\PurchaseInvoice;
 use App\Models\Sale;
 use App\Models\SaleInvoice;
+use App\Models\SubAccount;
 use Carbon\Carbon;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
+use NumberToWords\NumberToWords;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -182,6 +188,73 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/api/Receip-invoices/{filterType}', [ReceipController::class, 'getPaymentBond']);
     Route::get('/api/Receip-invoices', [ReceipController::class, 'searchInvoices']);
+    Route::post('/store/storeUp', function(){
+           $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+
+      $dailyEntries = DailyEntrie::where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        ->where('daily_entries_type','سند صرف');
+    $numberToWords = new NumberToWords();
+    $numberTransformer = $numberToWords->getNumberTransformer('ar');
+   // 3. جلب جميع العملات والحسابات مرة واحدة
+$currencies = Currency::all()->keyBy('currency_name');
+$subAccounts = SubAccount::all()->keyBy('sub_account_id');
+
+// 4. معالجة البيانات باستخدام chunk
+$paymentInvoices = [];
+
+DailyEntrie::where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        // ->where('daily_entries_type','سند قبض')
+        ->where('daily_entries_type','سند صرف')
+    ->chunk(50, function ($entries) use (&$paymentInvoices, $numberTransformer, $currencies, $subAccounts) {
+        // dd($entries);
+
+        foreach ($entries as $entry) {
+        
+                $Main_debit_account_id=SubAccount::where('sub_account_id', $entry->account_debit_id)->first();
+                $Main_Credit_account_id=SubAccount::where('sub_account_id', $entry->account_credit_id)->first();
+    $currs=Currency::where('currency_name',$entry->currency_name)->first();
+
+            $paymentBond = PaymentBond::updateOrCreate(
+                ['payment_bond_id' => $entry->invoice_id],
+                [
+                    'accounting_period_id' => $entry->accounting_period_id,
+                    'Main_debit_account_id' => $Main_debit_account_id->main_id,
+                    'Debit_sub_account_id' => $entry->account_debit_id,
+                    'Main_Credit_account_id' =>  $Main_Credit_account_id->main_id,
+                    'Credit_sub_account_id' => $entry->account_credit_id,
+                    'payment_type' => $entry->invoice_type,
+                    'Currency_id' => $currs->currency_id ?? null,
+                    'exchange_rate' => $entry->exchange_rate ?? 1,
+                    'Amount_debit' => $entry->amount_credit,
+                    'transaction_type' => $entry->daily_entries_type,
+                    'Statement' => $entry->statement,
+                    'User_id' => $entry->user_id,
+                ]
+            );
+
+            $paymentInvoices[] = [
+                'payment_bond_id' => $paymentBond->payment_bond_id,
+                'formatted_date' => $paymentBond->formatted_date,
+                'sub_name_debit' => optional($paymentBond->debitSubAccount)->sub_name ?? 'غير معروف',
+               'sub_name_credit' => optional($paymentBond->creditSubAccount)->sub_name ,
+                'payment_type' => PaymentType::tryFrom($paymentBond->payment_type)?->label() ?? 'غير معروف',
+                'transaction_type' => $paymentBond->transaction_type ?? 'غير متاح',
+                'amount_debit' => number_format($paymentBond->Amount_debit, 2),
+                'result' => is_numeric($paymentBond->Amount_debit) 
+                            ? $numberTransformer->toWords($paymentBond->Amount_debit) . ' ' . ($currency->currency_name ?? '')
+                            : 'القيمة غير صالحة',
+                'statement' => $paymentBond->Statement ?? 'غير متاح',
+                'user_name' => optional($entry->user)->name ?? 'غير معروف',
+                'updated_at' => optional($paymentBond->updated_at)->format('Y-m-d') ?? 'غير متاح',
+                'view_url' => route('receip.show', $paymentBond->payment_bond_id),
+                'edit_url' => route('receip.edit', $paymentBond->payment_bond_id),
+                'destroy_url' => route('receip_destroy.destroy', $paymentBond->payment_bond_id),
+            ];
+        }
+    });
+
+return response()->json(['PaymentInvoices' => $paymentInvoices], 200);
+    });
 
     Route::get('/bonds', [BondController::class, 'bonds'])->name('bonds.index');
     Route::get('/Receip/create', [ReceipController::class, 'create'])->name('Receip.create');

@@ -170,6 +170,7 @@
 
                     }
                 @endphp
+                   @if ($discount>0)
                 <tr class="bg-[#1749fd15]  ">
                     <th colspan="{{$x}}" class="font-bold text-right px-2 "> </th>
                     @if ($discount>0)
@@ -184,6 +185,7 @@
                     @endif
                     <th class=" text-red-500 px-2">{{ number_format($Sale_CostSum )}}</th>
                 </tr>
+                @endif
 
                 @endisset
             </tbody>
