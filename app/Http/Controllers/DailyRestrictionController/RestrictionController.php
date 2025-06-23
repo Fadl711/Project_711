@@ -6,6 +6,7 @@ use App\Enum\TransactionType;
 use App\Http\Controllers\Controller;
 use App\Models\AccountingPeriod;
 use App\Models\Currency;
+use App\Models\CurrencyConversion;
 use App\Models\DailyEntrie;
 use App\Models\ExchangeBond;
 use App\Models\GeneralEntrie;
@@ -156,6 +157,141 @@ $dailyEntrie = DailyEntrie::updateOrCreate(
 
         return response()->json(['success' => 'تم حفظ القيد بنجاح','entrie_id'=>$dailyEntrie->entrie_id]);
     }
+      public function storeCurrency(Request $request)
+    {
+        // dd(5);
+          $user = Auth::user();
+        if (! $user->canWrite('القيود')) 
+        {
+            // return response()->json(['success'=>false,'errorMessage' => 'غير مصرح لك.']);
+
+            abort(403, 'غير مصرح لك.');
+        }
+
+         $currentConditions = CurrencyConversion::create([
+                'user_id'=>$user->id,
+            ]);
+         $Amount_debit = $this->removeCommas($request->Amount_debit);
+         $Amount_credit = $this->removeCommas($request->Amount_credit);
+        $dailyPageId=DailyEntrie::where('entrie_id',$request->entrie_id)->first();
+  
+            // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
+        $today = Carbon::now()->toDateString();
+        $dailyPage = GeneralJournal::whereDate('created_at', $today)->latest()->first();
+
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+
+        // إذا كنت بحاجة لإنشاء سجل جديد في حال عدم وجود سجلات على الإطلاق
+        if (!$dailyPage) {
+            $dailyPage = GeneralJournal::create([
+                'accounting_period_id'=>$accountingPeriod->accounting_period_id,
+            ]);
+        }
+        
+        if ($dailyPageId) {
+            if (! $user->canModify('القيود')) {
+                return response()->json(['success'=>false,'errorMessage' => 'غير مصرح لك.']);
+    
+                abort(403, 'غير مصرح لك.');
+            }
+            if($dailyPageId->daily_entries_type=="رصيد افتتاحي" )
+            {
+                return response()->json(['success'=>false,'errorMessage' => 'لا يمكنك تعديل الرصيد الافتتاحي من هنا يمكنك التعديل علية من صفحة الحسابات الفرعية']);
+            }
+            if($dailyPageId->daily_entries_type =="سند صرف" || $dailyPageId->daily_entries_type =="سند قبض" || $dailyPageId->daily_entries_type =="قيد يومي")
+{
+    return response()->json(['success'=>false,'errorMessage' => 'لا يمكنك تعديل من هنا']);
+
+}
+
+        }
+
+        $dataDebit = $request->validate([
+            'sub_account_debit_id' => 'required|integer',
+            'Amount_debit' => 'required',
+            'Statement' => 'nullable|string',
+            'Currency_name' =>  'nullable|string', // تأكد من استخدام الاسم الصحيح هنا
+            'User_id' => 'required|integer',
+            'exchange_rate' => 'required',
+        ]);
+        $dataCredit = $request->validate([
+            'sub_account_debit_id' => 'required|integer',
+            'Amount_credit' => 'required',
+            'Statement' => 'nullable|string',
+            'Currency_name_credit' =>  'nullable|string', // تأكد من استخدام الاسم الصحيح هنا
+            'User_id' => 'required|integer',
+            'exchange_rate_credit' => 'required',
+        ]);
+        $Amountcredit=$Amount_credit;
+        $Amountdebit=$Amount_debit;
+        $this->storeConversion($dataDebit,$Amount_debit,$Amount_credit=0 ,$dailyPage ,$dailyPageId,$request  ,$currentConditions);
+        $this->storeConversion($dataCredit, $Amount_debit=0 ,$Amount_credit=$Amountcredit ,$dailyPage ,$dailyPageId,$request ,$currentConditions);
+        return response()->json(['success' => 'تم حفظ القيد بنجاح']);
+
+
+    }
+      public function storeConversion($validated,$Amount_debit,$Amount_credit,$dailyPage ,$dailyPageId,$request,$currentConditions)
+    {
+           $user = Auth::user();
+        if (! $user->canWrite('القيود')) {
+            // return response()->json(['success'=>false,'errorMessage' => 'غير مصرح لك.']);
+
+            abort(403, 'غير مصرح لك.');
+        }
+        
+       
+        // التأكد من عدم اختيار حسابين فرعيين متماثلين
+      
+        // if(!$dailyPageId)
+      
+
+        // حفظ القيد اليومي
+        // $dailyEntrie = new DailyEntrie();
+        if ($request->Invoice_type) {
+            $transactionType = TransactionType::fromValue($request->Invoice_type);
+            if ($transactionType) {
+                $invoice_type = $transactionType->label(); // جلب التسمية النصية
+            } else {
+
+                throw new InvalidArgumentException('نوع الفاتورة غير معروف.');
+            }
+        }
+                $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+
+       // تحديد النوع الافتراضي
+$defaultPaymentType = 'تحويل عملة';
+$Invoice_id = null;
+$Payment_type = $defaultPaymentType;
+
+
+
+
+// // إنشاء القيد اليومي
+$dailyEntrie = DailyEntrie::updateOrCreate(
+    [
+        'entrie_id'=>$request->entrie_id ,
+        'accounting_period_id' => $accountingPeriod->accounting_period_id,
+        
+    ],
+    [
+        'invoice_id'=>$currentConditions->id,
+        'daily_page_id' => $dailyPage->page_id ??$dailyPageId->daily_page_id,
+        'daily_entries_type' =>$invoice_type ?? $Payment_type,
+        'account_debit_id' => $validated['sub_account_debit_id'],
+        'amount_credit' => $Amount_credit,
+        'amount_debit' =>  $Amount_debit ,
+        'account_credit_id' => $validated['sub_account_debit_id'],
+        'exchange_rate' => $validated['exchange_rate']?? $validated['exchange_rate_credit'],
+        'statement' => $validated['Statement']  ?? "قيد يومي",
+        'invoice_type' =>  null,
+        'currency_name' => $validated['Currency_name'] ??$validated['Currency_name_credit'],
+        'user_id' =>$validated['User_id'],
+        'status_debit' => 'غير مرحل',
+        'status' => 'غير مرحل',
+    ]
+);
+
+    }
     public function saveAndPrint(Request $request)
     {
 
@@ -207,6 +343,22 @@ public function stor(Request $request){
         $today = Carbon::now()->toDateString(); // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
         $dailyPage = GeneralJournal::whereDate('created_at', $today)->first(); // البحث عن الصفحة
         return view('daily_restrictions.create',compact('curr','dailyPage'),['mainAccounts'=> $mainAccount,$dailyPage]);
+    }
+    public function createCurrency(){
+        $user = Auth::user();
+        if (! $user->hasPermission('القيود')) {
+            abort(403, 'غير مصرح لك بعرض الصفحة.');
+        }
+        if (! $user->canWrite('القيود')) {
+            abort(403, 'غير مصرح لك  .');
+        }
+       
+        $mainAccount=MainAccount::all();
+        $curr=Currency::all();
+        // الحصول على تاريخ اليوم
+        $today = Carbon::now()->toDateString(); // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
+        $dailyPage = GeneralJournal::whereDate('created_at', $today)->first(); // البحث عن الصفحة
+        return view('daily_restrictions.create-currency',compact('curr','dailyPage'),['mainAccounts'=> $mainAccount,$dailyPage]);
     }
 
     public function index()
@@ -301,9 +453,12 @@ public function stor(Request $request){
             abort(403, 'غير مصرح لك.');
         }
         $DailyEntrie=DailyEntrie::where('entrie_id',$id)->first();
-        PaymentBond::where(['transaction_type'=>$DailyEntrie->daily_entries_type,
-        ])->delete();
-        $generalEntrieaccount_debit_id = GeneralEntrie::where([
+     $payment_bond=   PaymentBond::where(['transaction_type'=>$DailyEntrie->daily_entries_type,
+        ])->first();
+        if($payment_bond){
+
+            $payment_bond ->delete();
+             $generalEntrieaccount_debit_id = GeneralEntrie::where([
             'daily_entry_id' => $DailyEntrie->entrie_id,
             'accounting_period_id' => $DailyEntrie->accounting_period_id,
             'sub_id' => $DailyEntrie->account_debit_id,
@@ -315,7 +470,14 @@ public function stor(Request $request){
         ])->delete();
         $DailyEntrie->delete();
 
-        return response()->json(['success' =>true,'message'=> 'تم   حذف القيد بنجاح!']);
+        }
+        else{
+
+            return response()->json(['success' =>true,'message'=> 'لم يتم   حذف  !']);
+        }
+       
+
+        return response()->json(['success' =>true,'message'=> ' تم   حذف القيد بنجاح!']);
 
     }
     public function show($id)

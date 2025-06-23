@@ -300,11 +300,11 @@
                     `${baseUrl}/${filterType}?transactionType=${transactionType}&fromDate=${FromDate}&toDate=${ToDate}`;
 
                 // استخدام url في طلب AJAX
-                $.ajax({
-                    url: url,
-                    method: 'GET',
-                    // المعاملات الأخرى...
-                });
+                // $.ajax({
+                //     url: url,
+                //     method: 'GET',
+                //     // المعاملات الأخرى...
+                // });
                 displayContainer.removeClass("hidden");
 
                 fetchInvoices(url, displayContainer);

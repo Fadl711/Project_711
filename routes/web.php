@@ -72,6 +72,7 @@ use App\Models\SubAccount;
 use Carbon\Carbon;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use NumberToWords\NumberToWords;
 
@@ -202,7 +203,6 @@ $subAccounts = SubAccount::all()->keyBy('sub_account_id');
 $paymentInvoices = [];
 
 DailyEntrie::where('accounting_period_id', $accountingPeriod->accounting_period_id)
-        // ->where('daily_entries_type','سند قبض')
         ->where('daily_entries_type','سند صرف')
     ->chunk(50, function ($entries) use (&$paymentInvoices, $numberTransformer, $currencies, $subAccounts) {
         // dd($entries);
@@ -213,7 +213,7 @@ DailyEntrie::where('accounting_period_id', $accountingPeriod->accounting_period_
                 $Main_Credit_account_id=SubAccount::where('sub_account_id', $entry->account_credit_id)->first();
     $currs=Currency::where('currency_name',$entry->currency_name)->first();
 
-            $paymentBond = PaymentBond::updateOrCreate(
+           $paymentBond=  PaymentBond::updateOrCreate(
                 ['payment_bond_id' => $entry->invoice_id],
                 [
                     'accounting_period_id' => $entry->accounting_period_id,
@@ -228,27 +228,13 @@ DailyEntrie::where('accounting_period_id', $accountingPeriod->accounting_period_
                     'transaction_type' => $entry->daily_entries_type,
                     'Statement' => $entry->statement,
                     'User_id' => $entry->user_id,
+                     'created_at' => $entry->created_at,
+                    'updated_at' => $entry->updated_at,
                 ]
             );
+ 
 
-            $paymentInvoices[] = [
-                'payment_bond_id' => $paymentBond->payment_bond_id,
-                'formatted_date' => $paymentBond->formatted_date,
-                'sub_name_debit' => optional($paymentBond->debitSubAccount)->sub_name ?? 'غير معروف',
-               'sub_name_credit' => optional($paymentBond->creditSubAccount)->sub_name ,
-                'payment_type' => PaymentType::tryFrom($paymentBond->payment_type)?->label() ?? 'غير معروف',
-                'transaction_type' => $paymentBond->transaction_type ?? 'غير متاح',
-                'amount_debit' => number_format($paymentBond->Amount_debit, 2),
-                'result' => is_numeric($paymentBond->Amount_debit) 
-                            ? $numberTransformer->toWords($paymentBond->Amount_debit) . ' ' . ($currency->currency_name ?? '')
-                            : 'القيمة غير صالحة',
-                'statement' => $paymentBond->Statement ?? 'غير متاح',
-                'user_name' => optional($entry->user)->name ?? 'غير معروف',
-                'updated_at' => optional($paymentBond->updated_at)->format('Y-m-d') ?? 'غير متاح',
-                'view_url' => route('receip.show', $paymentBond->payment_bond_id),
-                'edit_url' => route('receip.edit', $paymentBond->payment_bond_id),
-                'destroy_url' => route('receip_destroy.destroy', $paymentBond->payment_bond_id),
-            ];
+           
         }
     });
 
@@ -277,6 +263,7 @@ return response()->json(['PaymentInvoices' => $paymentInvoices], 200);
     // Route::post('/exchange/stor', [ReceipController::class, 'stor'])->name('exchange.stor');
 
     Route::get('/restrictions/create', [RestrictionController::class, 'create'])->name('restrictions.create');
+    Route::get('/restrictions/create/Currency', [RestrictionController::class, 'createCurrency'])->name('restrictions.createCurrency');
     Route::get('/restrictions/index', [RestrictionController::class, 'index'])->name('restrictions.index');
     Route::get('/restrictions/all_restrictions_show/{id}', [RestrictionController::class, 'all_restrictions_show'])->name('all_restrictions_show');
     Route::get('/restrictions/all_restrictions_show_1', [RestrictionController::class, 'all_restrictions_show_1'])->name('all_restrictions_show_1');
@@ -284,6 +271,7 @@ return response()->json(['PaymentInvoices' => $paymentInvoices], 200);
     Route::get('/restrictions/{id}', [RestrictionController::class, 'show'])->name('restrictions.show');
     Route::get('/restrictions/{id}/print', [RestrictionController::class, 'print'])->name('restrictions.print');
     Route::post('/daily_restrictions/store', [RestrictionController::class, 'store'])->name('daily_restrictions.store');
+    Route::post('/daily_restrictions/storeCurrency', [RestrictionController::class, 'storeCurrency'])->name('daily_restrictions.storeCurrency');
     Route::post('/daily_restrictions/saveAndPrint', [RestrictionController::class, 'saveAndPrint'])->name('daily_restrictions.saveAndPrint');
     Route::post('/daily_restrictions/stor', [RestrictionController::class, 'stor'])->name('daily_restrictions.stor');
     Route::put('/daily_restrictions/{id}', [RestrictionController::class, 'update'])->name('daily_restrictions.update');

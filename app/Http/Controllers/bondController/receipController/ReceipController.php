@@ -31,6 +31,7 @@ class ReceipController extends Controller
         $dailyPage = GeneralJournal::whereDate('created_at', $today)->first(); // البحث عن الصفحة
         return view('bonds.receipt_bonds.create',compact('curr','dailyPage'),['mainAccounts'=> $mainAccount,$dailyPage]);
     }
+   
     private function removeCommas($value)
     {
                 return floatval(str_replace(',', '', $value)); // إزالة الفواصل وتحويل إلى float
@@ -196,74 +197,82 @@ DB::table('payment_bonds')
         }
         }
    
-        public function destroy($id)
-        {
-                      $user = auth()->id();
-        $AuthorityName = "السندات";
-        $us = UserPermission::where('User_id', $user)
-            ->where('Authority_Name', $AuthorityName)
-            ->first();
-        if (optional($us)->Deletion_authority == 1) {
-            $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
-            if (!$accountingPeriod) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'لا توجد فترة محاسبية مفتوحة.',
-                ], 400);
-            }
-            // الحصول على سند الدفع
-            $paymentBond = PaymentBond::find($id);
-            if (!$paymentBond) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'سند الدفع غير موجود.',
-                ], 404);
-            }
+      public function destroy($id)
+{
+    $user = auth()->id();
+    $AuthorityName = "السندات";
+    $us = UserPermission::where('User_id', $user)
+        ->where('Authority_Name', $AuthorityName)
+        ->first();
         
-            try {
-                // حذف سند الدفع
-                // التحقق من وجود قيود يومية مرتبطة
-                $DailyEntrie = DailyEntrie::where('invoice_id', $paymentBond->payment_bond_id)
-                    ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-                    ->where('daily_entries_type', $paymentBond->transaction_type)
-                    ->first();
-   
-                    $generalEntrieaccount_debit_id = GeneralEntrie::where([
-                        'daily_entry_id' => $DailyEntrie->entrie_id,
-                        'accounting_period_id' => $DailyEntrie->accounting_period_id,
-                        'sub_id' => $DailyEntrie->account_debit_id,
-                    ])->delete();
-                    $generalEntrieaccount_debit_id = GeneralEntrie::where([
-                        'daily_entry_id' => $DailyEntrie->entrie_id,
-                        'accounting_period_id' => $DailyEntrie->accounting_period_id,
-                        'sub_id' => $DailyEntrie->account_credit_id,
-                    ])->delete();
-                    $DailyEntrie->delete();
-                    $paymentBond->delete();
-
-        
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'تم حذف سند الدفع والقيود المرتبطة بنجاح.',
-                ], 200);
-        
-            } catch (\Exception $e) {
-                // تسجيل الخطأ لمراجعة لاحقًا
-                \Log::error('Error deleting payment bond: ' . $e->getMessage());
-        
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'حدث خطأ أثناء الحذف. يرجى المحاولة لاحقًا.',
-                ], 500);
-            }
-            }
-            else{
-                 return response()->json([
-                    'status' => 'error',
-                    'message' => 'لايوجد لديك صلاحية',
-                ], 500);
-            }
+    if (optional($us)->Deletion_authority == 1) {
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+        if (!$accountingPeriod) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'لا توجد فترة محاسبية مفتوحة.',
+            ], 400);
         }
+        
+        // الحصول على سند الدفع
+        $paymentBond = PaymentBond::find($id);
+        
+        if (!$paymentBond) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'سند الدفع غير موجود.',
+            ], 404);
+        }
+    
+        try {
+            // التحقق من وجود قيود يومية مرتبطة
+            $DailyEntrie = DailyEntrie::where('invoice_id', $paymentBond->payment_bond_id)
+                ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                ->where('daily_entries_type', $paymentBond->transaction_type)
+                ->first();
+
+            if ($DailyEntrie) {
+                // حذف General Entries المرتبطة
+                GeneralEntrie::where([
+                    'daily_entry_id' => $DailyEntrie->entrie_id,
+                    'accounting_period_id' => $DailyEntrie->accounting_period_id,
+                    'sub_id' => $DailyEntrie->account_debit_id,
+                ])->delete();
+                
+                GeneralEntrie::where([
+                    'daily_entry_id' => $DailyEntrie->entrie_id,
+                    'accounting_period_id' => $DailyEntrie->accounting_period_id,
+                    'sub_id' => $DailyEntrie->account_credit_id,
+                ])->delete();
+                
+                // حذف Daily Entry
+                $DailyEntrie->delete();
+            }
+            
+            // حذف سند الدفع
+            $paymentBond->delete();
+    
+            return response()->json([
+                'status' => 'success',
+                'message' => 'تم حذف سند الدفع والقيود المرتبطة بنجاح.',
+            ], 200);
+    
+        } catch (\Exception $e) {
+            // تسجيل الخطأ لمراجعة لاحقًا
+            \Log::error('Error deleting payment bond: ' . $e->getMessage());
+    
+            return response()->json([
+                'status' => 'error',
+                'message' => 'حدث خطأ أثناء الحذف. يرجى المحاولة لاحقًا.',
+            ], 500);
+        }
+    } else {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'لا يوجد لديك صلاحية',
+        ], 403); // 403 Forbidden أكثر ملاءمة لحالات عدم الصلاحية
+    }
+}
         
         
 public function print($id){

@@ -1,6 +1,6 @@
 <nav class="w-full px-2 py-1">
-    <ul class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2
-               container mx-auto relative shadow-md
+    <ul class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2
+               container mx-auto relative shadow rounded
                bg-gradient-to-t from-indigo-900 to-indigo-600
                 text-right">
 
@@ -25,7 +25,16 @@
                 القيود
             </a>
         </li>
-
+ <li class="text-center lg:text-right">
+            <a href="{{ route('restrictions.createCurrency') }}"
+               class="block py-3 px-4 text-white hover:bg-indigo-700
+                      transition-colors duration-200 
+                      text-sm md:text-base
+                      {{ Route::is('restrictions.createCurrency') ? 'border-b-2 font-bold' : 'border-b-0' }}
+                      border-white">
+                 قيود العملات
+            </a>
+        </li>
         <li class="text-center lg:text-right">
             <a href="{{ route('transfer_restrictions.create') }}"
                class="block py-3 px-4 text-white hover:bg-indigo-700
@@ -36,6 +45,7 @@
                 ترحيل القيود
             </a>
         </li>
+       
 
         <li class="text-center lg:text-right">
             <a href="{{ route('general_entries.show') }}"

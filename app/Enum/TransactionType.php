@@ -10,6 +10,10 @@ enum TransactionType: int
     case SALE = 4;
     case RETURN_SALE = 5;
     case SHOW_PRICE = 6;
+    case BUY_CURRENCY = 7;
+    case SELL_CURRENCY = 8;
+    case CURRENCY_CONVeERSION = 9;
+
 
     public function label(): string
     {
@@ -20,7 +24,12 @@ enum TransactionType: int
             self::SALE => 'مبيعات',
             self::RETURN_SALE => 'مردود مبيعات',
             self::SHOW_PRICE => 'عرض سعر',
+            self::BUY_CURRENCY => 'شراء عمله',
+            self::SELL_CURRENCY => 'بيع عمله',
+            self::CURRENCY_CONVeERSION => 'تحويل عمله',
+            
         };
+
     }
     public static function fromValue(int $value): ?self
     {
