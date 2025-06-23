@@ -607,12 +607,17 @@ class InvoiceSaleController extends Controller
 
     public function print(Request $request, $id)
     {
-
         $validated = $request->validate([
 
             'analysis' => 'required|numeric',
+            'size' => 'required|numeric',
         ]);
-        // dd( $validated['analysis']);
+
+        if ($validated['size'] == 1) {
+            $urlprint = 'invoice_sales.bills_sale_show_small';
+        } else {
+            $urlprint = 'invoice_sales.bills_sale_show';
+        }
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
 
         $DataPurchaseInvoice = SaleInvoice::where('sales_invoice_id', $id)->first();
@@ -696,7 +701,7 @@ class InvoiceSaleController extends Controller
         // Analytical-sales-invoice
         if (optional($us)->Readability == 1) {
             if ($validated['analysis'] == 1) {
-                return view('invoice_sales.bills_sale_show', [
+                return view($urlprint, [
                     'DataPurchaseInvoice' => $DataPurchaseInvoice,
                     'DataSale' => $DataSale,
                     'SubAccounts' => $SubAccount,
