@@ -41,7 +41,9 @@
                 المدين
                  <div>
                     <label for="Invoice_type" class="block text-gray-700 font-medium mb-3">نوع العملية</label>
-                    <select id="Invoice_type" name="Invoice_type" dir="rtl"
+                    <select id="Invoice_type" name="Invoice_type"
+                    required
+                     dir="rtl"
                         class="select2 w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sel">
                         <option value="" selected>اختر نوع العملية</option>
                         @foreach ($transactionTypes as $transactionType)
