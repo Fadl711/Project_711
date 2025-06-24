@@ -205,9 +205,8 @@
             <table class=" text-sm mx-auto">
                 <thead class=" ">
                     <tr class="bg-blue-100 ">
-                        <th class="px-2 text-left w-[30%] border-0  bg-white">
-                        </th>
-                        <th class="px-2 text-left w-[20%] ">
+                       
+                        <th class="px-2 text-left  ">
                             <p class="font-">المبلغ المستحق</p>
                         </th>
                         <th class="px-2 text-right ">
@@ -246,7 +245,7 @@
                             @php
                                 $Sum_amount;
                             @endphp
-                            <th class="px-2 text-left w-[30%] border-0  bg-white"></th>
+                            <th class="px-2 text-left w-[100%] border-0  bg-white"></th>
 
                             <th class="px-2 text-left w-[20%]">الجمالي رصيد</th>
 
