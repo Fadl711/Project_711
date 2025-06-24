@@ -167,13 +167,23 @@ $dailyEntrie = DailyEntrie::updateOrCreate(
 
             abort(403, 'غير مصرح لك.');
         }
-
-         $currentConditions = CurrencyConversion::create([
+        if(!$request->Conversion_id)
+        {
+             $currentCondition = CurrencyConversion::create([
                 'user_id'=>$user->id,
             ]);
+            $currentConditions=$currentCondition->id;
+
+        }
+        else{
+            $currentConditions=$request->Conversion_id;
+
+        }
+
+        
          $Amount_debit = $this->removeCommas($request->Amount_debit);
          $Amount_credit = $this->removeCommas($request->Amount_credit);
-        $dailyPageId=DailyEntrie::where('entrie_id',$request->entrie_id)->first();
+
   
             // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
         $today = Carbon::now()->toDateString();
@@ -182,32 +192,17 @@ $dailyEntrie = DailyEntrie::updateOrCreate(
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
 
         // إذا كنت بحاجة لإنشاء سجل جديد في حال عدم وجود سجلات على الإطلاق
-        if (!$dailyPage) {
+        if (!$dailyPage  ) {
             $dailyPage = GeneralJournal::create([
                 'accounting_period_id'=>$accountingPeriod->accounting_period_id,
             ]);
         }
         
-        if ($dailyPageId) {
-            if (! $user->canModify('القيود')) {
-                return response()->json(['success'=>false,'errorMessage' => 'غير مصرح لك.']);
-    
-                abort(403, 'غير مصرح لك.');
-            }
-            if($dailyPageId->daily_entries_type=="رصيد افتتاحي" )
-            {
-                return response()->json(['success'=>false,'errorMessage' => 'لا يمكنك تعديل الرصيد الافتتاحي من هنا يمكنك التعديل علية من صفحة الحسابات الفرعية']);
-            }
-            if($dailyPageId->daily_entries_type =="سند صرف" || $dailyPageId->daily_entries_type =="سند قبض" || $dailyPageId->daily_entries_type =="قيد يومي")
-{
-    return response()->json(['success'=>false,'errorMessage' => 'لا يمكنك تعديل من هنا']);
-
-}
-
-        }
+       
 
         $dataDebit = $request->validate([
             'sub_account_debit_id' => 'required|integer',
+             'entrie_id_debit' => 'nullable|integer',
             'Amount_debit' => 'required',
             'Statement' => 'nullable|string',
             'Currency_name' =>  'nullable|string', // تأكد من استخدام الاسم الصحيح هنا
@@ -216,6 +211,7 @@ $dailyEntrie = DailyEntrie::updateOrCreate(
         ]);
         $dataCredit = $request->validate([
             'sub_account_debit_id' => 'required|integer',
+            'entrie_id_credit' => 'nullable|integer',
             'Amount_credit' => 'required',
             'Statement' => 'nullable|string',
             'Currency_name_credit' =>  'nullable|string', // تأكد من استخدام الاسم الصحيح هنا
@@ -224,13 +220,13 @@ $dailyEntrie = DailyEntrie::updateOrCreate(
         ]);
         $Amountcredit=$Amount_credit;
         $Amountdebit=$Amount_debit;
-        $this->storeConversion($dataDebit,$Amount_debit,$Amount_credit=0 ,$dailyPage ,$dailyPageId,$request  ,$currentConditions);
-        $this->storeConversion($dataCredit, $Amount_debit=0 ,$Amount_credit=$Amountcredit ,$dailyPage ,$dailyPageId,$request ,$currentConditions);
+        $this->storeConversion($dataDebit,$Amount_debit,$Amount_credit=0 ,$dailyPage ,$request  ,$currentConditions ,$entrie_id=$dataDebit["entrie_id_debit"]);
+        $this->storeConversion($dataCredit, $Amount_debit=0 ,$Amount_credit=$Amountcredit ,$dailyPage ,$request ,$currentConditions,$entrie_id=$dataCredit["entrie_id_credit"]);
         return response()->json(['success' => 'تم حفظ القيد بنجاح']);
 
 
     }
-      public function storeConversion($validated,$Amount_debit,$Amount_credit,$dailyPage ,$dailyPageId,$request,$currentConditions)
+      public function storeConversion($validated,$Amount_debit,$Amount_credit,$dailyPage ,$request,$currentConditions,$entrie_id)
     {
            $user = Auth::user();
         if (! $user->canWrite('القيود')) {
@@ -269,13 +265,13 @@ $Payment_type = $defaultPaymentType;
 // // إنشاء القيد اليومي
 $dailyEntrie = DailyEntrie::updateOrCreate(
     [
-        'entrie_id'=>$request->entrie_id ,
+        'entrie_id'=>$entrie_id ,
         'accounting_period_id' => $accountingPeriod->accounting_period_id,
         
     ],
     [
-        'invoice_id'=>$currentConditions->id,
-        'daily_page_id' => $dailyPage->page_id ??$dailyPageId->daily_page_id,
+        'invoice_id'=>$currentConditions,
+        'daily_page_id' =>$request->page_id?? $dailyPage->page_id ,
         'daily_entries_type' =>$invoice_type ?? $Payment_type,
         'account_debit_id' => $validated['sub_account_debit_id'],
         'amount_credit' => $Amount_credit,
@@ -410,6 +406,8 @@ public function stor(Request $request){
         }
 
         $DailyEntrie=DailyEntrie::where('entrie_id',$id)->first();
+        
+    
         if ($DailyEntrie) {
             if($DailyEntrie->daily_entries_type=="رصيد افتتاحي" )
             {
@@ -430,11 +428,50 @@ public function stor(Request $request){
         $Debitsub_account_id=SubAccount::where('sub_account_id',$DailyEntrie->account_debit_id)->first();
         $Creditsub_account_id=SubAccount::where('sub_account_id',$DailyEntrie->account_credit_id)->first();
         $currs=Currency::where('currency_name',$DailyEntrie->currency_name)->first();
+                $curr=Currency::all();
+
         // الحصول على تاريخ اليوم
         $today = Carbon::now()->toDateString(); // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
         $dailyPage = GeneralJournal::whereDate('created_at',$today)->first(); // البحث عن الصفحة
       
-       
+if(in_array($DailyEntrie->daily_entries_type, ["تحويل عمله", "شراء عمله", "بيع عمله"]))        {
+            $dailyEntries=DailyEntrie::where('daily_entries_type',$DailyEntrie->daily_entries_type)
+            ->where('invoice_id',$DailyEntrie->invoice_id)
+            ->get();
+            $DailyEntrieCredit=null;
+            $DailyEntrieDebit=null;
+            foreach($dailyEntries as $dailyEntrie)
+            {
+                if($dailyEntrie->amount_debit !=0)
+                {
+                    $DailyEntrieDebit=$dailyEntrie;
+                }
+                if($dailyEntrie->amount_credit !=0)
+                {
+                    $DailyEntrieCredit=$dailyEntrie;
+ 
+    
+}
+
+}
+            
+
+            return view('daily_restrictions.create-currency',[
+                'mainAccounts'=> $main,
+                'DailyEntrieCredit'=> $DailyEntrieCredit,
+                'DailyEntrie'=> $DailyEntrieDebit,
+                  'sub_account_debit' => $Debitsub_account_id,
+            'sub_account_Credit' => $Creditsub_account_id->sub_name,
+            'curr' => $curr,
+            'currs' => $currs,
+            'dailyPage' => $dailyPage,
+            'submitButton' => 'تعديل القيد',
+
+        ]);
+
+
+
+        }
 
         return view('daily_restrictions.create', [
             'main'=>$main,
@@ -455,19 +492,32 @@ public function stor(Request $request){
         $DailyEntrie=DailyEntrie::where('entrie_id',$id)->first();
      $payment_bond=   PaymentBond::where(['transaction_type'=>$DailyEntrie->daily_entries_type,
         ])->first();
-        if($payment_bond){
+        if($DailyEntrie){
+           
 
-            $payment_bond ->delete();
              $generalEntrieaccount_debit_id = GeneralEntrie::where([
             'daily_entry_id' => $DailyEntrie->entrie_id,
             'accounting_period_id' => $DailyEntrie->accounting_period_id,
             'sub_id' => $DailyEntrie->account_debit_id,
-        ])->delete();
-        $generalEntrieaccount_debit_id = GeneralEntrie::where([
+        ])->first();
+        $generalEntrieaccount_credit_id = GeneralEntrie::where([
             'daily_entry_id' => $DailyEntrie->entrie_id,
             'accounting_period_id' => $DailyEntrie->accounting_period_id,
             'sub_id' => $DailyEntrie->account_credit_id,
-        ])->delete();
+        ])->first();
+         if($payment_bond)
+            {
+                $payment_bond ->delete();
+            }
+         if($generalEntrieaccount_debit_id)
+            {
+                $generalEntrieaccount_debit_id ->delete();
+            }
+         if($generalEntrieaccount_credit_id)
+            {
+                $generalEntrieaccount_credit_id ->delete();
+            }
+
         $DailyEntrie->delete();
 
         }

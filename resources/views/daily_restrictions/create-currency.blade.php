@@ -96,25 +96,29 @@
                     </div>
                      <div class="">
                         <label for="Currency_name" class="block font-medium mb-2">العملة</label>
-                        <select dir="ltr" id="Currency_name" class="inputSale input-field" name="Currency_name">
-                            @isset($currs)
-                                <option selected value="{{ $currs->currency_name }} ">{{ $currs->currency_name }}</option>
-                            @endisset
+<select dir="ltr" id="Currency_name" class="inputSale input-field" name="Currency_name">
+    @isset($DailyEntrie)
+        <option selected value="{{ $DailyEntrie->currency_name }}">
+            {{ $DailyEntrie->currency_name }}
+        </option>
+    @endisset
 
-                            @isset($curr)
-                                @foreach ($curr as $cur)
-                                    <option value="{{ $cur->currency_name }}"
-                                        @isset($cu)
-                                @selected($cur->currency_id == $cu->Currency_id)
-                            @endisset>
-                                        {{ $cur->currency_name }}
-                                    </option>
-                                @endforeach
-                            @endisset
-                        </select>
+    @isset($curr)
+        @foreach ($curr as $cur)
+            @if(!isset($DailyEntrie) || $DailyEntrie->currency_name !== $cur->currency_name)
+                <option value="{{ $cur->currency_name }}"
+                    @isset($cu)
+                        @selected($cur->currency_id == $cu->Currency_id)
+                    @endisset>
+                    {{ $cur->currency_name }}
+                </option>
+            @endif
+        @endforeach
+    @endisset
+</select>
                     </div>
-                    <div class="text-center">
-                        <label for="exchange_rate" class="text-center">سعر الصرف</label>
+                    <div >
+                        <label for="exchange_rate">سعر الصرف</label>
 
                         <input id="exchange_rate" class="inputSale input-field" name="exchange_rate" type="number"
                             value="{{ isset($DailyEntrie->exchange_rate) ? number_format($DailyEntrie->exchange_rate, 2, '.', ',') : 1 }}">
@@ -129,6 +133,13 @@
 
 
                     </div>
+                       <div class="">
+                        <label for="entrie_id_debit" class="block font-medium mb-2">رقم القيد</label>
+                        <input name="entrie_id_debit" id="entrie_id_debit" type="number" class=" inputSale input-field"
+                            @isset($DailyEntrie->entrie_id)
+                value="{{ $DailyEntrie->entrie_id }}"
+                @endisset>
+                    </div>
                 </div>
                 <!-- حساب الدائن -->
             <div class="bg-white p-1 rounded-lg border border-gray-200 ">
@@ -138,8 +149,8 @@
                         <label for="sub_account_Credit_id" class="block font-medium ">حساب الدائن/الفرعي</label>
                        
                         <input name="sub_account_Credit_id" id="sub_account_Credit_id" type="text" class="inputSale "
-                         @isset($DailyEntrie->account_credit_id)
-                           value="{{ $DailyEntrie->account_credit_id }}" 
+                         @isset($DailyEntrieCredit->account_credit_id)
+                           value="{{ $sub_account_Credit}}" 
                             @endisset
                             @disabled(true)
                          />
@@ -147,37 +158,48 @@
                      <div class="">
                         <label for="Currency_name_credit" class="block font-medium mb-2">العملة</label>
                         <select dir="ltr" id="Currency_name_credit" class="inputSale input-field" name="Currency_name_credit">
-                            @isset($currs)
-                                <option selected value="{{ $currs->currency_name }} ">{{ $currs->currency_name }}</option>
-                            @endisset
+                             @isset($DailyEntrieCredit)
+        <option selected value="{{ $DailyEntrieCredit->currency_name }}">
+            {{ $DailyEntrieCredit->currency_name }}
+        </option>
+    @endisset
 
-                            @isset($curr)
-                                @foreach ($curr as $cur)
-                                    <option value="{{ $cur->currency_name }}"
-                                        @isset($cu)
-                                @selected($cur->currency_id == $cu->Currency_id)
-                            @endisset>
-                                        {{ $cur->currency_name }}
-                                    </option>
-                                @endforeach
-                            @endisset
+    @isset($curr)
+        @foreach ($curr as $cur)
+            @if(!isset($DailyEntrieCredit) || $DailyEntrieCredit->currency_name !== $cur->currency_name)
+                <option value="{{ $cur->currency_name }}"
+                    @isset($cu)
+                        @selected($cur->currency_id == $cu->Currency_id)
+                    @endisset>
+                    {{ $cur->currency_name }}
+                </option>
+            @endif
+        @endforeach
+    @endisset
                         </select>
                     </div>
-                    <div class="text-center">
-                        <label for="exchange_rate_credit" class="text-center">سعر الصرف</label>
+                    <div >
+                        <label for="exchange_rate_credit" >سعر الصرف</label>
 
                         <input id="exchange_rate_credit" class="inputSale input-field" name="exchange_rate_credit" type="number"
-                            value="{{ isset($DailyEntrie->exchange_rate) ? number_format($DailyEntrie->exchange_rate, 2, '.', ',') : 1 }}">
+                            value="{{ isset($DailyEntrieCredit->exchange_rate) ? number_format($DailyEntrieCredit->exchange_rate, 2, '.', ',') : 1 }}">
 
                     </div>
                      <div>
                         <label for="Amount_credit" class="block font-medium mb-2">المبلغ الدائن</label>
                         <input name="Amount_credit" id="Amount_credit" type="text" class="inputSale input-field"
                             placeholder="أدخل المبلغ"
-                            value="{{ !empty($DailyEntrie->amount_debit) ? number_format($DailyEntrie->amount_debit, 0, '.', ',') : (!empty($DailyEntrie->amount_credit) ? number_format($DailyEntrie->amount_credit, 0, '.', ',') : '') }}"
+                            value="{{ !empty($DailyEntrieCredit->amount_credit) ? number_format($DailyEntrieCredit->amount_credit, 0, '.', ',') : (!empty($DailyEntrieCredit->amount_credit) ? number_format($DailyEntrieCredit->amount_credit, 0, '.', ',') : '') }}"
                             required>
 
 
+                    </div>
+                     <div class="">
+                        <label for="entrie_id_credit" class="block font-medium mb-2">رقم القيد</label>
+                        <input name="entrie_id_credit" id="entrie_id_credit" type="number" class=" inputSale input-field"
+                            @isset($DailyEntrieCredit["entrie_id"])
+                value="{{ $DailyEntrieCredit["entrie_id"] }}"
+                @endisset>
                     </div>
 
                 </div>
@@ -205,13 +227,7 @@
                         </button>
                     </div>
 
-                    <div class="">
-                        <label for="entrie_id" class="block font-medium mb-2">رقم القيد</label>
-                        <input name="entrie_id" id="entrie_id" type="number" class=" inputSale input-field"
-                            @isset($DailyEntrie->entrie_id)
-                value="{{ $DailyEntrie->entrie_id }}"
-                @endisset>
-                    </div>
+                   
                     <div class="">
                         <label for="Conversion_id" class="block font-medium mb-2">رقم العملية</label>
                         <input name="Conversion_id" id="Conversion_id" type="number" class=" inputSale input-field"
@@ -227,11 +243,14 @@
                             <div class="">
                                 <label for="page_id" class="block font-medium ">رقم الصفحة</label>
                                 @auth
-                                    @isset($dailyPage->page_id)
+                                   
                                         <input type="text" name="page_id" id="page_id" class=" rounded-md "
-                                            value="{{ $dailyPage['page_id'] }}">
-                                    @endisset
-
+                                        @isset( $DailyEntrie->daily_page_id)
+                                            
+                                        value="{{$DailyEntrie->daily_page_id?? $dailyPage->page_id}}"
+                                        @endisset
+                                        {{-- value="{{$dailyPage->page_id}}" --}}
+                                        >
 
                                 @endauth
 
