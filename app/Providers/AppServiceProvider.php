@@ -84,9 +84,13 @@ class AppServiceProvider extends ServiceProvider
             }
 
             if (Schema::hasTable('products')) {
+                $expiringProducts = Product::whereNotNull('expiry_date')
+                    ->where('expiry_date', '<=', Carbon::now()->addMonth())
+                    ->get();
+
                 $products = Product::all();
                 if (isset($products)) {
-                    View::share(['products' => $products]);
+                    View::share(['products' => $products, 'expiringProducts' => $expiringProducts]);
                 }
                 $accountClasses = AccountClass::cases();
                 $PaymentType = PaymentType::cases();
@@ -122,8 +126,10 @@ class AppServiceProvider extends ServiceProvider
                 }
             }
 
-            if (Schema::hasTable('business_data') && Schema::hasTable('currency_settings') &&
-                Schema::hasTable('payment_bonds') && Schema::hasTable('currencies')) {
+            if (
+                Schema::hasTable('business_data') && Schema::hasTable('currency_settings') &&
+                Schema::hasTable('payment_bonds') && Schema::hasTable('currencies')
+            ) {
                 $buss = BusinessData::first();
                 $cu = CurrencySetting::first();
                 $transaction_typeExchangeBond = "سند صرف";

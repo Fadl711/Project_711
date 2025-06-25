@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,27 +12,38 @@ class Product extends Model
     protected $table = 'products';
     protected $primaryKey = 'product_id';
 
-    protected $fillable =[
-            'Barcode',
-            'product_name',
-            'Quantity',
-            'Purchase_price',
-            'Selling_price',
-            'Total',
-            'Cost',
-            'Regular_discount',
-            'Special_discount',
-            'Profit',
-            'note',
-            'Categorie_id',
-            'currency_id',
-            'warehouse_id',
-            'User_id',
-            'supplier_id',
+    protected $fillable = [
+        'Barcode',
+        'product_name',
+        'Quantity',
+        'Purchase_price',
+        'Selling_price',
+        'Total',
+        'Cost',
+        'Regular_discount',
+        'Special_discount',
+        'Profit',
+        'note',
+        'Categorie_id',
+        'currency_id',
+        'warehouse_id',
+        'User_id',
+        'expiry_date',
+        'supplier_id',
     ];
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-     // تحويل Purchase_price إلى أرقام إنجليزية
+
+    public function scopeExpiringSoon($query)
+    {
+        return $query->where('expiry_date', '<=', now()->addMonth())
+            ->where('expiry_date', '>', now());
+    }
+    public function getDaysUntilExpiryAttribute()
+    {
+        return Carbon::now()->diffInDays(Carbon::parse($this->expiry_date), false);
+    }
+    // تحويل Purchase_price إلى أرقام إنجليزية
 }

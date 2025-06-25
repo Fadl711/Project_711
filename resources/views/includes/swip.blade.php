@@ -1,5 +1,5 @@
 
-<div class="">
+<div class="max-w-40">
 <div class="">
     <div class=" divNav">
         <ul class="list-none ">
@@ -12,7 +12,7 @@
                 </svg>
                 <span class="textNav"> الرئسية</span>
                     </a>
-                    
+
                 </li>
                 @if(auth()->user()->hasPermission('الحسابات'))
                     <li class="hover:text-black">
@@ -20,7 +20,7 @@
                         <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M4.5 17H4a1 1 0 0 1-1-1 3 3 0 0 1 3-3h1m0-3.05A2.5 2.5 0 1 1 9 5.5M19.5 17h.5a1 1 0 0 0 1-1 3 3 0 0 0-3-3h-1m0-3.05a2.5 2.5 0 1 0-2-4.45m.5 13.5h-7a1 1 0 0 1-1-1 3 3 0 0 1 3-3h3a3 3 0 0 1 3 3 1 1 0 0 1-1 1Zm-1-9.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"/>
                           </svg>
-                          
+
                     <span class="textNav"> الحسابات</span>
                     </a>
                 </li>
@@ -47,7 +47,7 @@
                     </a>
                 </li>
                 @endif
-               
+
                 @if(auth()->user()->hasPermission('المبيعات'))
 
             <li class="hover:text-black">
@@ -60,8 +60,8 @@
             </li>
             @endif
 
-          
-   
+
+
             @if(auth()->user()->hasPermission('الفواتير المبيعات'))
 
                 <li class="hover:text-black"><a class="NavTagA" href="{{route('invoice_sales.all_invoices_sale')}}">
@@ -72,7 +72,7 @@
                     </a>
                 </li>
                 @endif
-         
+
                                 @if(auth()->user()->hasPermission('المشتريات'))
                 <li class="hover:text-black">
                     <a class="NavTagA" href="{{route('Purchases.create')}}">
@@ -217,7 +217,7 @@
                 <li class="hover:text-black">
                     <form action="{{route('Saleupdate')}} "  method="POST" >
                     <button type="submit" >
-                   
+
                     <span class="textNav">تفعيل الخصومات</span>
                 </button>
             </form>
