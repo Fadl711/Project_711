@@ -62,7 +62,7 @@
 
         @include('includes.swip')
 
-        <div class=" xl:container mx-10  relative ">
+        <div class=" xl:container mx-10  relative  overflow-auto">
             @yield('conm')
         </div>
     </div>
