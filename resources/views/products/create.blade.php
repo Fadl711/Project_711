@@ -35,7 +35,7 @@
 
             <div class="flex flex-col">
                 <label for="Regular_discount" class="labelSale">خصم عادي</label>
-                <input type="number" name="Regular_discount" id="Regular_discount" placeholder="0" class="inputSale"
+                <input type="number" name="Regular_discount" id="Regular_discount" value="0" class="inputSale"
                     @isset($prod->Regular_discount)
           value="{{ $prod->Regular_discount }}"
 
@@ -44,7 +44,7 @@
 
             <div class="flex flex-col">
                 <label for="Special_discount" class="labelSale">خصم خاص </label>
-                <input type="number" name="Special_discount" id="Special_discount" placeholder="0" class="inputSale"
+                <input type="number" name="Special_discount" id="Special_discount" value="0" class="inputSale"
                     @isset($prod->Special_discount)
           value="{{ $prod->Special_discount }}"
           @endisset />
@@ -110,14 +110,34 @@
 
           @endisset />
             </div>
-            <div class="py-2 mt-3 mr-4">
-                <input type="button" id="newProduc" name="newProduc"
-                    class="flex bg-blue-500 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded"
-                    @isset($editProduct)
-                  value="{{ $editProduct }}"
-                  @endisset
-                    value="اضافة صنف">
+            <div class="flex flex-col">
+                <label for="Purchase_price" class="labelSale">سعر الوحدة الشراء</label>
+                <input type="number" name="Purchase_price" id="Purchase_price" placeholder="0" class="inputSale"
+                    @isset($prod)
+      value="{{ $prod->Purchase_price }}"
 
+      @endisset
+                    required />
+            </div>
+            <div class="flex flex-col">
+                <label for="Selling_price" class="labelSale"> سعر الوحدة البيع</label>
+                <input type="number" name="Selling_price" id="Selling_price" placeholder="0" class="inputSale"
+                    @isset($prod)
+      value="{{ $prod->Selling_price }}"
+
+      @endisset
+                    required />
+            </div>
+            <div class="py-2 mt-3 mr-4">
+
+                <button id="newProduc" name="newProduc"
+                    class="flex bg-blue-500 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded">
+                    @if (isset($editProduct))
+                        {{ $editProduct }}
+                    @else
+                        اضافة صنف
+                    @endif
+                </button>
             </div>
         </div>
         <button type="button" id="openUnitModal" class="btn-main"
@@ -137,7 +157,7 @@
             <div>
                 <label for="producid" class="labelSale"> رقم المنتج</label>
                 <input type="number" name="producid" id="producid"
-                    class="inputSale   disabled:bg-gray-300  english-numbers " disabled
+                    class="inputSale   disabled:bg-gray-300  english-numbers "
                     @isset($prod->product_id)
          value="{{ $prod->product_id }}"
          @endisset />
@@ -174,7 +194,7 @@
                                         class="inputSale" />
                                 </div>
                             </div>
-                            <div class="flex flex-col">
+                            {{--                  <div class="flex flex-col">
                                 <label for="Purchase_price" class="labelSale">سعر الوحدة الشراء</label>
                                 <input type="number" name="Purchase_price" id="Purchase_price" placeholder="0"
                                     class="inputSale"
@@ -193,7 +213,7 @@
 
                       @endisset
                                     required />
-                            </div>
+                            </div> --}}
                             <div>
                                 <label for="Quantityprice" class="labelSale"> العبوة</label>
                                 <input type="number" name="Quantityprice" id="Quantityprice" placeholder="0"

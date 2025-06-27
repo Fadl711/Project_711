@@ -54,7 +54,6 @@
                     <th scope="col" class="leading-2 tagHt ">الباركود</th>
                     <th scope="col" class="leading-2 tagHt  ">اسم الصنف</th>
                     <th scope="col" class="leading-2 tagHt ">الكمية</th>
-                    <th scope="col" class="leading-2 tagHt ">الوحدة</th>
                     <th scope="col" class="leading-2 tagHt ">سعر الشراء</th>
                     <th scope="col" class="leading-2 tagHt ">سعر البيع</th>
                     <th scope="col" class="leading-2 tagHt ">الاجمالي</th>
@@ -74,15 +73,6 @@
                         <td class="tagTd ">{{ $pro->Barcode }}</td>
                         <td class="tagTd  ">{{ $pro->product_name }}</td>
                         <td class="tagTd ">{{ $pro->Quantity }}</td>
-                        @if (isset($pro->Categorie_id) && !empty($pro->Categorie_id))
-                            @foreach ($cate as $cat)
-                                @if ($cat->categorie_id == $pro->Categorie_id)
-                                    <td class="tagTd ">{{ $cat->Categorie_name }}</td>
-                                @endif
-                            @endforeach
-                        @else
-                            <td class="tagTd "></td>
-                        @endif
                         <td class="tagTd ">{{ $pro->Purchase_price }}</td>
                         <td class="tagTd ">{{ $pro->Selling_price }}</td>
                         <td class="tagTd ">{{ $pro->Total }}</td>
@@ -106,7 +96,7 @@
                                         viewBox="0 0 24 24">
 
                                         <path fill-rule="evenodd" d="M19.846 4.318a2.148 2.148 0 0 0-.437-.692 2.014 2.014 0 0 0-.654-.463 1.92 1.92 0 0 0-1.544 0 2.014 2.014 0 0 0-.654.463l-.546.578 2.852 3.02.546-.579a2.14 2.14 0 0 0 .437-.692 2.244 2.244 0 0 0 0-1.635ZM17.45 8.721 14.597 5.7 9.82 10.76a.54.54 0 0 0-.137.27l-.536 2.84c-.07.37.239.696.588
-                                        .622l2.682-.567a.492.492 0 0 0 .255-.145l4.778-5.06Z" clip-rule="evenodd" />
+                                            .622l2.682-.567a.492.492 0 0 0 .255-.145l4.778-5.06Z" clip-rule="evenodd" />
                                     </svg>
                                 </a>
                                 </a>
@@ -172,11 +162,12 @@
                                 $(rowSelector).css('display', 'none');
                                 $(rowSelector).fadeOut(function() {
                                     console.log(
-                                    'Row faded out successfully'); // تحقق من نجاح الإخفاء
+                                        'Row faded out successfully'
+                                        ); // تحقق من نجاح الإخفاء
                                 });
 
                                 successMessage.text(response.message || 'تم الحذف بنجاح.')
-                                .show();
+                                    .show();
                                 setTimeout(() => successMessage.hide(), 3000);
                             } else {
                                 errorMessage.text(response.message || 'حدث خطأ أثناء الحذف.')
