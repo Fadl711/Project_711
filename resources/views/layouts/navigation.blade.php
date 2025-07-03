@@ -1,12 +1,20 @@
-<nav x-data="{ open: false, notificationOpen: false }" class="bg-white dark:bg-gray-800 border-b border-gray-300 dark:border-gray-700">
+<nav x-data="{ open: false, notificationOpen: false }" class="bg-white dark:bg-gray-800 border-b border-gray-300 dark:border-gray-700 h-[55px]">
     <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
         <div class="flex justify-between h-16">
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('home.index') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
+                        @if (isset($buss->Company_Logo))
+                            <x-application-logo class="block  w-auto fill-current text-gray-800 dark:text-gray-200" />
+                        @else
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <x-nav-link :href="route('home.index')" :active="request()->routeIs('home.index')">
+                                    {{ __('الرئيسي') }}
+                                </x-nav-link>
+                            </div>
+                        @endif
                     </a>
                 </div>
 
@@ -27,7 +35,15 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                         </svg>
-                        <span class="absolute top-0 right-0 inline-block w-2 h-2 bg-red-600 rounded-full"></span>
+                        @if ($operations->count() > 0)
+                            <span id="not">
+                                <span
+                                    class="absolute top-0 right-0 inline-block w-2 h-2 bg-red-600   animate-ping rounded-full"></span>
+                                <span
+                                    class="absolute top-0 right-0 inline-block w-2 h-2 bg-red-600  rounded-full"></span>
+                            </span>
+                        @endif
+
                     </button>
                 </div>
                 <x-dropdown align="right" width="48">
@@ -137,7 +153,7 @@
                     </svg>
                 </button>
             </div>
-            <div class="bg-white rounded-lg shadow-md p-6">
+            {{-- <div class="bg-white rounded-lg shadow-md p-6">
                 <h2 class="text-xl font-bold text-red-600 mb-4 border-b pb-2">المنتجات المنتهية أو المقاربة للانتهاء
                 </h2>
 
@@ -199,7 +215,116 @@
                         لا توجد منتجات منتهية أو مقاربة للانتهاء
                     </div>
                 @endif
+            </div> --}}
+            <div class="container mx-auto p-4" x-data="operations">
+                <h1 class="text-2xl font-bold text-gray-800 mb-6">سجل العمليات</h1>
+
+                <!-- زر "مسح الكل" -->
+                @if ($operations->count() > 0)
+                    <button @click="markAllSeen()" id="mark-all-seen"
+                        class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 -mx-2" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 -mx-2" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5 13l4 4L19 7" />
+                        </svg>
+                        قراءة الكل
+                    </button>
+                @endif
+
+                <!-- قائمة العمليات -->
+                <div class="bg-white shadow rounded-lg overflow-auto max-h-96">
+                    <ul class="divide-y divide-gray-200">
+                        <template x-for="operation in operations" :key="operation.id">
+                            <li
+                                class="p-4 hover:bg-gray-50 transition duration-150 ease-in-out flex justify-between items-center">
+                                <div>
+                                    <p x-text="operation.message" class="text-sm font-medium text-gray-900"></p>
+                                    <p x-text="'بواسطة: ' + getUserName(operation)"></p>
+                                    <p x-text="new Date(operation.created_at).toLocaleString()"
+                                        class="text-sm text-gray-500"></p>
+
+                                </div>
+                                <button @click="markSeen(operation.id)" class="text-gray-400 hover:text-red-500"
+                                    title="تعليم كمقروء">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </button>
+                            </li>
+                        </template>
+                        <template x-if="operations.length === 0">
+                            <li class="p-4 text-center text-gray-500">لا توجد عمليات جديدة.</li>
+                        </template>
+                    </ul>
+                </div>
             </div>
-        </div>
-    </div>
 </nav>
+
+<script>
+    window.Laravel = {!! json_encode([
+        'baseUrl' => url('/'), // إضافة الـ URL الأساسي
+    ]) !!};
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('operations', () => ({
+            operations: @json($operations), // تمرير البيانات من PHP إلى JS
+            getUserName(operation) {
+                return operation.user?.name || 'مجهول';
+            },
+            async markSeen(operationId) {
+                try {
+                    const response = await fetch(
+                        `${window.Laravel.baseUrl}/operations/${operationId}/mark-seen`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                            },
+                        });
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // إزالة العملية من القائمة
+                        this.operations = this.operations.filter(op => op.id !== operationId);
+                        // إذا كانت القائمة فارغة، إخفاء الإشعار
+                        if (this.operations.length === 0) {
+                            document.getElementById('not').style.display = 'none';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            },
+
+            async markAllSeen() {
+                try {
+                    const response = await fetch(
+                        `${window.Laravel.baseUrl}/operations/mark-all-seen`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Content-Type': 'application/json',
+                            },
+                        });
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // إفراغ القائمة
+                        this.operations = [];
+                        // إخفاء الإشعار
+                        document.getElementById('not').style.display = 'none';
+                        document.getElementById('mark-all-seen').style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            },
+        }));
+    });
+</script>

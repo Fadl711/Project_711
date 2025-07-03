@@ -15,6 +15,7 @@ use App\Models\MainAccount;
 use App\Models\SubAccount;
 use App\Models\CurrencySetting;
 use App\Models\Default_customer;
+use App\Models\Operation;
 use App\Models\PaymentBond;
 use App\Models\Product;
 use App\Models\User;
@@ -87,10 +88,14 @@ class AppServiceProvider extends ServiceProvider
                 $expiringProducts = Product::whereNotNull('expiry_date')
                     ->where('expiry_date', '<=', Carbon::now()->addMonth())
                     ->get();
-
+                $operations = Operation::with('user')
+                    ->where('is_seen', 0)
+                    ->latest()
+                    ->take(25) // تحديد العدد الأقصى
+                    ->get();
                 $products = Product::all();
                 if (isset($products)) {
-                    View::share(['products' => $products, 'expiringProducts' => $expiringProducts]);
+                    View::share(['products' => $products, 'expiringProducts' => $expiringProducts, 'operations' => $operations]);
                 }
                 $accountClasses = AccountClass::cases();
                 $PaymentType = PaymentType::cases();

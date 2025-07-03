@@ -28,6 +28,7 @@ use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\InvoicePurchaseController;
 use App\Http\Controllers\invoicesController\AllBillsController;
 use App\Http\Controllers\LocksFinancialPeriods\LocksFinancialPeriodsController;
+use App\Http\Controllers\OperationController;
 use App\Http\Controllers\PaymentCoctroller;
 use App\Http\Controllers\SaleCoctroller;
 
@@ -185,60 +186,60 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/print_bills_sale', [AllBillsController::class, 'print_bills_sale'])->name('print_bills_sale');
     Route::get('/bills_sale_show', [AllBillsController::class, 'bills_sale_show'])->name('invoice_sales.bills_sale_show');
 
-
+    Route::get('/operations', [OperationController::class, 'index'])->name('operations.index');
+    Route::post('/operations/mark-all-seen', [OperationController::class, 'markAllSeen'])->name('operations.markAllSeen');
+    Route::post('/operations/{operation}/mark-seen', [OperationController::class, 'markSeen'])->name('operations.markSeen');
+    Route::delete('/operations/{operation}', [OperationController::class, 'destroy'])->name('operations.destroy');
 
     Route::get('/api/Receip-invoices/{filterType}', [ReceipController::class, 'getPaymentBond']);
     Route::get('/api/Receip-invoices', [ReceipController::class, 'searchInvoices']);
-    Route::post('/store/storeUp', function(){
-           $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+    Route::post('/store/storeUp', function () {
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
 
-     
-    $numberToWords = new NumberToWords();
-    $numberTransformer = $numberToWords->getNumberTransformer('ar');
-   // 3. جلب جميع العملات والحسابات مرة واحدة
-$currencies = Currency::all()->keyBy('currency_name');
-$subAccounts = SubAccount::all()->keyBy('sub_account_id');
 
-// 4. معالجة البيانات باستخدام chunk
-$paymentInvoices = [];
+        $numberToWords = new NumberToWords();
+        $numberTransformer = $numberToWords->getNumberTransformer('ar');
+        // 3. جلب جميع العملات والحسابات مرة واحدة
+        $currencies = Currency::all()->keyBy('currency_name');
+        $subAccounts = SubAccount::all()->keyBy('sub_account_id');
 
-DailyEntrie::where('accounting_period_id', $accountingPeriod->accounting_period_id)
-        ->where('daily_entries_type','سند صرف')
-    ->chunk(50, function ($entries) use (&$paymentInvoices, $numberTransformer, $currencies, $subAccounts) {
-        // dd($entries);
+        // 4. معالجة البيانات باستخدام chunk
+        $paymentInvoices = [];
 
-        foreach ($entries as $entry) {
-        
-                $Main_debit_account_id=SubAccount::where('sub_account_id', $entry->account_debit_id)->first();
-                $Main_Credit_account_id=SubAccount::where('sub_account_id', $entry->account_credit_id)->first();
-    $currs=Currency::where('currency_name',$entry->currency_name)->first();
+        DailyEntrie::where('accounting_period_id', $accountingPeriod->accounting_period_id)
+            ->where('daily_entries_type', 'سند صرف')
+            ->chunk(50, function ($entries) use (&$paymentInvoices, $numberTransformer, $currencies, $subAccounts) {
+                // dd($entries);
 
-           $paymentBond=  PaymentBond::updateOrCreate(
-                ['payment_bond_id' => $entry->invoice_id],
-                [
-                    'accounting_period_id' => $entry->accounting_period_id,
-                    'Main_debit_account_id' => $Main_debit_account_id->main_id,
-                    'Debit_sub_account_id' => $entry->account_debit_id,
-                    'Main_Credit_account_id' =>  $Main_Credit_account_id->main_id,
-                    'Credit_sub_account_id' => $entry->account_credit_id,
-                    'payment_type' => $entry->invoice_type,
-                    'Currency_id' => $currs->currency_id ?? null,
-                    'exchange_rate' => $entry->exchange_rate ?? 1,
-                    'Amount_debit' => $entry->amount_credit,
-                    'transaction_type' => $entry->daily_entries_type,
-                    'Statement' => $entry->statement,
-                    'User_id' => $entry->user_id,
-                     'created_at' => $entry->created_at,
-                    'updated_at' => $entry->updated_at,
-                ]
-            );
- 
+                foreach ($entries as $entry) {
 
-           
-        }
-    });
+                    $Main_debit_account_id = SubAccount::where('sub_account_id', $entry->account_debit_id)->first();
+                    $Main_Credit_account_id = SubAccount::where('sub_account_id', $entry->account_credit_id)->first();
+                    $currs = Currency::where('currency_name', $entry->currency_name)->first();
 
-return response()->json(['PaymentInvoices' => $paymentInvoices], 200);
+                    $paymentBond =  PaymentBond::updateOrCreate(
+                        ['payment_bond_id' => $entry->invoice_id],
+                        [
+                            'accounting_period_id' => $entry->accounting_period_id,
+                            'Main_debit_account_id' => $Main_debit_account_id->main_id,
+                            'Debit_sub_account_id' => $entry->account_debit_id,
+                            'Main_Credit_account_id' =>  $Main_Credit_account_id->main_id,
+                            'Credit_sub_account_id' => $entry->account_credit_id,
+                            'payment_type' => $entry->invoice_type,
+                            'Currency_id' => $currs->currency_id ?? null,
+                            'exchange_rate' => $entry->exchange_rate ?? 1,
+                            'Amount_debit' => $entry->amount_credit,
+                            'transaction_type' => $entry->daily_entries_type,
+                            'Statement' => $entry->statement,
+                            'User_id' => $entry->user_id,
+                            'created_at' => $entry->created_at,
+                            'updated_at' => $entry->updated_at,
+                        ]
+                    );
+                }
+            });
+
+        return response()->json(['PaymentInvoices' => $paymentInvoices], 200);
     });
 
     Route::get('/bonds', [BondController::class, 'bonds'])->name('bonds.index');
