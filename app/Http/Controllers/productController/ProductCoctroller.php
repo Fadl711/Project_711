@@ -621,6 +621,7 @@ $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_a
                 'message' => 'يجب عليك تحديد اسم المنتج.'
             ]);
         }
+
         // dd($request->product_name);
 
         // تحويل الأرقام العربية إلى الإنجليزية
@@ -663,17 +664,20 @@ $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_a
                 'message' => 'يجب عليك تحديد سعر البيع.'
             ]);
         }
-        $date = $request->validate([
-            'expiry_date' => [
-                'required',
-                'date',
-                function ($attribute, $value, $fail) {
-                    if (strtotime($value) < strtotime('today')) {
-                        $fail('تاريخ الانتهاء غير صالح!');
-                    }
-                }
-            ]
-        ]);
+
+        if ($request->expiry_date) {
+
+            if (strtotime($request->expiry_date) < strtotime('today')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'تاريخ الانتهاء غير صالح!'
+                ]);
+            }
+        }
+
+
+
+
 
         // إنشاء منتج جديد أو تحديثه
         $ProductNew = Product::updateOrCreate(
@@ -696,7 +700,7 @@ $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_a
                 'Cost' => $request->Cost,
                 'Profit' => $request->Profit,
                 'note' => $request->note,
-                'expiry_date' => $date['expiry_date'],
+                'expiry_date' => $request->expiry_date,
                 'warehouse_id' => $request->account_debitid,
             ]
         );
