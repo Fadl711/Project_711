@@ -69,6 +69,10 @@ class Sale extends Model
         return $this->belongsTo(SubAccount::class, 'Customer_id', 'sub_account_id');
     }
 
+   public function product()
+  {
+      return $this->belongsTo(Product::class, 'product_id', 'product_id');
+  }
     // العلاقة مع User
     public function user()
     {

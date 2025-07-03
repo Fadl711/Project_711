@@ -1,4 +1,5 @@
 @isset($productData)
+
     
 <div class="overflow-x-auto">
     <table class="w-full text-sm  bg-white ">

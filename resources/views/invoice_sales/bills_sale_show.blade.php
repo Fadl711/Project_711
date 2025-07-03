@@ -293,6 +293,8 @@
         <div class="mt-4 no-print">
             <button onclick="printAndClose()"
                 class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">طباعة</button>
+                     {{-- <button id="myButton4" class="px-4 py-2   rounded-lg shadow-md hover:bg-blue-600">
+اخفاء  الحسابات            </button> --}}
             <script>
                 function printAndClose() {
                     window.print(); // أمر الطباعة
@@ -300,6 +302,15 @@
                         window.close(); // الإغلاق بعد بدء الطباعة
                     }, 500); // فترة الانتظار نصف ثانية فقط
                 }
+                //    $(document).ready(function(){
+                //      $("#myButton4").click(function(){
+                //         $("th[id='Statement']").toggleClass("hidden");
+                //         $("td[id='Statement2']").toggleClass("hidden");
+                //         // $("span[id='Statement2']").toggleClass("bg-white");
+
+                //     });
+
+                //    } )
             </script>
             <button onclick="closeWindow()" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700">إلغاء
                 الطباعة</button>

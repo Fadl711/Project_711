@@ -402,17 +402,14 @@ public function stor(Request $request){
         $user = Auth::user();
         if (! $user->canModify('القيود')) {
 
-            abort(403, 'غير مصرح لك.');
+            abort(403,'غير مصرح لك.');
         }
 
         $DailyEntrie=DailyEntrie::where('entrie_id',$id)->first();
-        
-    
         if ($DailyEntrie) {
             if($DailyEntrie->daily_entries_type=="رصيد افتتاحي" )
             {
                 abort(403, 'لا يمكنك تعديل الرصيد الافتتاحي من هنا يمكنك التعديل علية من صفحة الحسابات الفرعية');
-
                 return response()->json(['success'=>false,'errorMessage' => 'لا يمكنك تعديل الرصيد الافتتاحي من هنا يمكنك التعديل علية من صفحة الحسابات الفرعية'],404);
             }
             if($DailyEntrie->daily_entries_type =="سند صرف" || $DailyEntrie->daily_entries_type =="سند قبض" || $DailyEntrie->daily_entries_type =="مبيعات" || $DailyEntrie->daily_entries_type =="مردود مبيعات")
@@ -429,12 +426,11 @@ public function stor(Request $request){
         $Creditsub_account_id=SubAccount::where('sub_account_id',$DailyEntrie->account_credit_id)->first();
         $currs=Currency::where('currency_name',$DailyEntrie->currency_name)->first();
                 $curr=Currency::all();
-
         // الحصول على تاريخ اليوم
         $today = Carbon::now()->toDateString(); // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
         $dailyPage = GeneralJournal::whereDate('created_at',$today)->first(); // البحث عن الصفحة
       
-if(in_array($DailyEntrie->daily_entries_type, ["تحويل عمله", "شراء عمله", "بيع عمله"]))        {
+    if(in_array($DailyEntrie->daily_entries_type, ["تحويل عمله", "شراء عمله", "بيع عمله"]))        {
             $dailyEntries=DailyEntrie::where('daily_entries_type',$DailyEntrie->daily_entries_type)
             ->where('invoice_id',$DailyEntrie->invoice_id)
             ->get();

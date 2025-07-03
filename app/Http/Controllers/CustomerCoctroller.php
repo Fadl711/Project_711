@@ -92,7 +92,6 @@ class CustomerCoctroller extends Controller
             if ($validated['list'] === 'detail') {
                 return $this->getDailyEntriesMainAccountMyanalysis($validated, $id);
 
-                // return $this->getDailyEntriesMainAccountMyanalysis($validated, $id);
             }
         }
 
@@ -106,10 +105,9 @@ class CustomerCoctroller extends Controller
     public function dailyRestrictions($validated, $id)
     {
         $Myanalysis = 'القيود';
-        // dd($id);
 
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
-        // البحث عن التقارير المتعلقة في الحدود اليومية
+        // البحث عن التقارير المتعلقة في القيود اليومية
         if ($validated['list'] === 'dailyRestrictions') {
             $query = DailyEntrie::with(['debitAccount', 'debitAccount.mainAccount', 'creditAccount', 'creditAccount.mainAccount']);
         }

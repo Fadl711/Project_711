@@ -61,6 +61,10 @@ public function user()
 {
     return $this->belongsTo(User::class, 'User_id');
 }
+ public function product()
+  {
+      return $this->belongsTo(Product::class, 'product_id', 'product_id');
+  }
 // في Purchase.php
 
 // تعريف العلاقات (إذا لزم الأمر)

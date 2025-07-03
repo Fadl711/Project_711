@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>              التقرير المخزن -  {{ $Myanalysis }}
+    <title>               {{ $Myanalysis }}
     </title>
     <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
     <style>
@@ -62,9 +62,8 @@
   </div>
   <div class="text-center space-y-4">
     <p class="font-extrabold text-lg">
-      التقرير المخزن -  {{ $Myanalysis }}
-       :
-          {{ $accountingPeriod ?? ''}}
+        {{ $Myanalysis }}
+      
     </p>
 </div>
   {{-- <div class="grid grid-cols-2 w-full gap-2  text-gray-700">
@@ -87,6 +86,9 @@
 @include('components.storesData.all-Quantit-yonly')
 @endisset
 @isset($allQuantityCosts)
+@include('components.storesData.all-Quantity-Costs')
+@endisset
+@isset($firstQuantityCosts)
 @include('components.storesData.all-Quantity-Costs')
 @endisset
 @isset($QuantityCostsSupplier)
