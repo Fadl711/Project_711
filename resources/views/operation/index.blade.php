@@ -79,66 +79,47 @@
             'baseUrl' => url('/'), // إضافة الـ URL الأساسي
         ]) !!};
         document.addEventListener('alpine:init', () => {
-            Alpine.data('operations1', () => ({
-                operations1: @json($operationsAll),
-                getUserName(operation) {
-                    return operation.user?.name || 'مجهول';
-                },
-                filter: 'all',
+            Alpine.data('operations1', () => {
+                return {
+                    operations1: @json($operationsAll),
 
-                get filteredOperations() {
-                    if (this.filter === 'unseen') {
-                        return this.operations1.filter(op => !op.is_seen);
-                    } else if (this.filter === 'seen') {
-                        return this.operations1.filter(op => op.is_seen);
-                    }
-                    return this.operations1;
-                },
+                    getUserName(operation) {
+                        return operation.user?.name || 'مجهول';
+                    },
+                    filter: 'all',
 
-                get unseenCount() {
-                    return this.operations1.filter(op => !op.is_seen).length;
-                },
-
-                get seenCount() {
-                    return this.operations1.filter(op => op.is_seen).length;
-                },
-
-                getTypeClass(type) {
-                    const classes = {
-                        'حذف': 'bg-red-100 text-red-800',
-                        'تعديل': 'bg-yellow-100 text-yellow-800',
-                        'إضافة': 'bg-green-100 text-green-800',
-                        'تنبيه': 'bg-blue-100 text-blue-800'
-                    };
-                    return classes[type] || 'bg-gray-100 text-gray-800';
-                },
-
-                async markSeen(operationId) {
-                    try {
-                        const response = await fetch(
-                            `${window.Laravel.baseUrl}/operations/${operationId}/mark-seen`, {
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                    'Accept': 'application/json',
-                                },
-                            });
-                        const data = await response.json();
-                        if (data.success) {
-                            const index = this.operations1.findIndex(op => op.id === operationId);
-                            this.operations1[index].is_seen = 1;
+                    get filteredOperations() {
+                        if (this.filter === 'unseen') {
+                            return this.operations1.filter(op => !op.is_seen);
+                        } else if (this.filter === 'seen') {
+                            return this.operations1.filter(op => op.is_seen);
                         }
-                    } catch (error) {
-                        console.error('Error:', error);
-                    }
-                },
+                        return this.operations1;
+                    },
 
-                async deleteOperation(operationId) {
-                    if (confirm('هل أنت متأكد من حذف هذه العملية؟')) {
+                    get unseenCount() {
+                        return this.operations1.filter(op => !op.is_seen).length;
+                    },
+
+                    get seenCount() {
+                        return this.operations1.filter(op => op.is_seen).length;
+                    },
+
+                    getTypeClass(type) {
+                        const classes = {
+                            'حذف': 'bg-red-100 text-red-800',
+                            'تعديل': 'bg-yellow-100 text-yellow-800',
+                            'إضافة': 'bg-green-100 text-green-800',
+                            'تنبيه': 'bg-blue-100 text-blue-800'
+                        };
+                        return classes[type] || 'bg-gray-100 text-gray-800';
+                    },
+
+                    async markSeen(operationId) {
                         try {
                             const response = await fetch(
-                                `${window.Laravel.baseUrl}/operations/${operationId}`, {
-                                    method: 'DELETE',
+                                `${window.Laravel.baseUrl}/operations/${operationId}/mark-seen`, {
+                                    method: 'POST',
                                     headers: {
                                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
                                         'Accept': 'application/json',
@@ -146,15 +127,58 @@
                                 });
                             const data = await response.json();
                             if (data.success) {
-                                this.operations1 = this.operations1.filter(op => op.id !==
-                                    operationId);
+                                const index = this.operations1.findIndex(op => op.id === operationId);
+                                this.operations1[index].is_seen = 1;
                             }
                         } catch (error) {
                             console.error('Error:', error);
                         }
+                    },
+
+                    async deleteOperation(operationId) {
+                        const result = await Swal.fire({
+                            title: 'هل أنت متأكد من الحذف؟',
+                            text: "لن تتمكن من التراجع!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'نعم، احذف',
+                            cancelButtonText: 'إلغاء'
+                        });
+
+                        if (result.isConfirmed) {
+                            try {
+                                const res = await fetch(
+                                    `${window.Laravel.baseUrl}/operations/${operationId}`, {
+                                        method: 'DELETE',
+                                        headers: {
+                                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                            'Accept': 'application/json',
+                                        },
+                                    });
+                                const data = await res.json();
+                                if (data.success) {
+                                    Swal.fire({
+                                        title: 'تم الحذف!',
+                                        text: data.message ?? 'تمت عملية الحذف بنجاح',
+                                        icon: 'success',
+                                        timer: 1500,
+                                        showConfirmButton: false
+                                    });
+                                    this.operations1 = this.operations1.filter(op => op.id !==
+                                        operationId);
+                                } else {
+                                    Swal.fire('خطأ', data.message, 'error');
+                                }
+                            } catch {
+                                Swal.fire('خطأ', 'حدث خطأ أثناء الحذف', 'error');
+                            }
+                        }
                     }
                 }
-            }));
+            });
+
         });
     </script>
 @endsection

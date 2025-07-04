@@ -168,13 +168,23 @@
 
                 window.open(url, '_blank', 'width=800,height=800'); // فتح الرابط في نافذة جديدة
             });
-            $(document).on('click', '.delete-payment', function(e) {
+            $(document).on('click', '.delete-payment', async function(e) {
                 e.preventDefault();
 
                 let paymentId = $(this).data('id');
                 let url = $(this).data('url');
 
-                if (confirm('هل أنت متأكد أنك تريد حذف هذا فاتورة?')) {
+                const result = await Swal.fire({
+                    title: 'هل أنت متأكد أنك تريد حذف هذا فاتورة?',
+                    text: "لن تتمكن من التراجع!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'نعم، احذف',
+                    cancelButtonText: 'إلغاء'
+                });
+                if (result.isConfirmed) {
                     $.ajax({
                         url: url,
                         method: 'DELETE',
@@ -182,19 +192,24 @@
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                         },
                         success: function(response) {
-                            if (response.success) {
-
-                                // إخفاء السند من الواجهة
-                                $('#invoice-' + paymentId)
-                                    .fadeOut(); // يمكن استخدام fadeOut لإخفاء العنصر مع تأثير } else {
-                            }
+                            Swal.fire({
+                                title: 'تم الحذف!',
+                                text: 'تمت عملية الحذف بنجاح',
+                                icon: 'success',
+                                timer: 1500,
+                                showConfirmButton: false
+                            });
+                            $('#invoice-' + paymentId)
+                                .fadeOut();
                         },
-                        error: function(error) {
-                            console.error('Error deleting payment bond:', message.responseText);
-                            alert('حدث خطأ أثناء الحذف. يرجى المحاولة لاحقًا.');
+                        error: function(xhr) {
+                            Swal.fire('خطأ', xhr.responseJSON.message ||
+                                'حدث خطأ أثناء الاتصال بالخادم.');
                         }
                     });
                 }
+
+
             });
 
             // البحث بالمدخل

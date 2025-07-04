@@ -95,8 +95,10 @@
                                         xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
                                         viewBox="0 0 24 24">
 
-                                        <path fill-rule="evenodd" d="M19.846 4.318a2.148 2.148 0 0 0-.437-.692 2.014 2.014 0 0 0-.654-.463 1.92 1.92 0 0 0-1.544 0 2.014 2.014 0 0 0-.654.463l-.546.578 2.852 3.02.546-.579a2.14 2.14 0 0 0 .437-.692 2.244 2.244 0 0 0 0-1.635ZM17.45 8.721 14.597 5.7 9.82 10.76a.54.54 0 0 0-.137.27l-.536 2.84c-.07.37.239.696.588
-                                            .622l2.682-.567a.492.492 0 0 0 .255-.145l4.778-5.06Z" clip-rule="evenodd" />
+                                        <path fill-rule="evenodd"
+                                            d="M19.846 4.318a2.148 2.148 0 0 0-.437-.692 2.014 2.014 0 0 0-.654-.463 1.92 1.92 0 0 0-1.544 0 2.014 2.014 0 0 0-.654.463l-.546.578 2.852 3.02.546-.579a2.14 2.14 0 0 0 .437-.692 2.244 2.244 0 0 0 0-1.635ZM17.45 8.721 14.597 5.7 9.82 10.76a.54.54 0 0 0-.137.27l-.536 2.84c-.07.37.239.696.588
+                                                                        .622l2.682-.567a.492.492 0 0 0 .255-.145l4.778-5.06Z"
+                                            clip-rule="evenodd" />
                                     </svg>
                                 </a>
                                 </a>
@@ -131,11 +133,9 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
-            $(document).on('click', '.delete-payment', function(e) {
+            $(document).on('click', '.delete-payment', async function(e) {
                 e.preventDefault();
 
-                var successMessage = $('#successMessage'); // الرسالة الناجحة
-                var errorMessage = $('#successAlert1'); // الرسالة الخطأ
                 const act = "{{ route('products.destroy', ':id') }}"; // استخدم مُتغير
 
                 let paymentId = $(this).data('id');
@@ -143,7 +143,17 @@
 
                 const url = act.replace(':id', paymentId);
 
-                if (confirm('هل أنت متأكد أنك تريد حذف هذا المنتج')) {
+                const result = await Swal.fire({
+                    title: "هل أنت متأكد من حذف هذا المنتج؟",
+                    text: "لن تتمكن من التراجع!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'نعم، احذف',
+                    cancelButtonText: 'إلغاء'
+                });
+                if (result.isConfirmed) {
                     $.ajax({
                         url: url,
                         method: 'DELETE',
@@ -153,6 +163,13 @@
                         success: function(response) {
                             console.log(response); // تحقق من استجابة الخادم
                             if (response.success) {
+                                Swal.fire({
+                                    title: 'تم الحذف!',
+                                    text: 'تمت عملية الحذف بنجاح',
+                                    icon: 'success',
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                });
                                 var rowSelector = '#row' + paymentId;
                                 $(rowSelector).hide();
                                 $(rowSelector).css('display', 'none');
@@ -160,27 +177,15 @@
                                 $('#row-' + paymentId).fadeOut(); // إخفاء الصف
 
                                 $(rowSelector).css('display', 'none');
-                                $(rowSelector).fadeOut(function() {
-                                    console.log(
-                                        'Row faded out successfully'
-                                        ); // تحقق من نجاح الإخفاء
-                                });
-
-                                successMessage.text(response.message || 'تم الحذف بنجاح.')
-                                    .show();
-                                setTimeout(() => successMessage.hide(), 3000);
+                                $(rowSelector).fadeOut(function() {});
                             } else {
-                                errorMessage.text(response.message || 'حدث خطأ أثناء الحذف.')
-                                    .show();
-                                setTimeout(() => errorMessage.hide(), 3000);
+                                Swal.fire('خطأ', response.message ||
+                                    'حدث خطأ أثناء الحذف.');
                             }
                         },
                         error: function(xhr) {
-                            errorMessage.show().text(xhr.responseJSON.message ||
+                            Swal.fire('خطأ', xhr.responseJSON.message ||
                                 'حدث خطأ أثناء الاتصال بالخادم.');
-                            setTimeout(() => {
-                                errorMessage.hide();
-                            }, 5000);
                         }
                     });
                 }

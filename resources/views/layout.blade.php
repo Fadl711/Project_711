@@ -8,7 +8,7 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
     <link href="{{ asset('assets/css/select2.min.css') }}" rel="stylesheet">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
 
     <!-- jQuery -->
     <script src="{{ asset('assets/js/jquery/dist/jquery.min.js') }}"></script>
@@ -27,6 +27,7 @@
     {{--         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
  --}} {{--  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> --}}
     {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> --}}
+
 
     <style>
         .sel {
@@ -50,10 +51,9 @@
     {{--         <link rel="stylesheet" href="https://demos.creative-tim.com/notus-js/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css">
  --}}{{-- fiex_assets --}}
     <script src="{{ asset('assets/flowbite/dist/flowbite.min.js') }}"></script>
-
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <!-- Scripts -->
-    <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
 </head>
 
 <body class="justify-center bg-[#f1efefc9] overflow-hidden">
@@ -69,6 +69,7 @@
 
 
 
+    <script src="{{ asset('assets\js\sweetalert2\dist\sweetalert2.all.min.js') }}" defer></script>
     <script src="{{ asset('assets\js\alpinejs\dist\cdn.min.js') }}" defer></script>
 
 

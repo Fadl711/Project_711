@@ -36,68 +36,68 @@
         }
     </style>
 
-   <div class="container mx-auto p-4">
-    <!-- Search and Filter Section -->
-    <div class="bg-white p-3 shadow-lg rounded-lg flex flex-wrap gap-4 justify-between items-center mb-4">
-        <div class="flex flex-wrap gap-4 items-center w-full sm:w-auto">
-            <select name="searchType"
-                class="border border-gray-300 rounded-lg p-2 w-full sm:w-auto focus:ring-2 focus:ring-indigo-500 sel">
-                <option selected value="كل السندات">كل السندات</option>
-                <option value="أول سند">أول سند</option>
-                <option value="آخر سند">آخر سند</option>
+    <div class="container mx-auto p-4">
+        <!-- Search and Filter Section -->
+        <div class="bg-white p-3 shadow-lg rounded-lg flex flex-wrap gap-4 justify-between items-center mb-4">
+            <div class="flex flex-wrap gap-4 items-center w-full sm:w-auto">
+                <select name="searchType"
+                    class="border border-gray-300 rounded-lg p-2 w-full sm:w-auto focus:ring-2 focus:ring-indigo-500 sel">
+                    <option selected value="كل السندات">كل السندات</option>
+                    <option value="أول سند">أول سند</option>
+                    <option value="آخر سند">آخر سند</option>
+                </select>
+                <input type="search" name="search"
+                    class="border border-gray-300 rounded-lg p-2 w-full sm:w-auto focus:ring-2 focus:ring-indigo-500"
+                    placeholder="بحث">
+            </div>
+
+            <select name="transactionType"
+                class="border border-gray-300 rounded-lg p-2 w-full sm:w-auto focus:ring-2 focus:ring-indigo-500  sel">
+                <option selected value="سند قبض">سند قبض</option>
+                <option value="سند صرف">سند صرف</option>
             </select>
-            <input type="search" name="search"
-                class="border border-gray-300 rounded-lg p-2 w-full sm:w-auto focus:ring-2 focus:ring-indigo-500"
-                placeholder="بحث">
+
+            <button
+                class="response-payment bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                استرجع سندات الصرف البيانات
+            </button>
         </div>
 
-        <select name="transactionType"
-            class="border border-gray-300 rounded-lg p-2 w-full sm:w-auto focus:ring-2 focus:ring-indigo-500  sel">
-            <option selected value="سند قبض">سند قبض</option>
-            <option value="سند صرف">سند صرف</option>
-        </select>
+        <!-- Date Filter Section -->
+        <form class="bg-white p-3 rounded-lg shadow-md">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-center">
+                <label class="text-sm font-medium text-center">عرض حسب</label>
 
-        <button
-            class="response-payment bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            استرجع سندات الصرف البيانات
-        </button>
+                <div class="flex items-center justify-center">
+                    <input type="radio" name="list-radio" value="1" class="mr-2"> تلقائي
+                </div>
+                <div class="flex items-center justify-center">
+                    <input type="radio" name="list-radio" value="2" class="mr-2"> اليوم
+                </div>
+                <div class="flex items-center justify-center">
+                    <input type="radio" name="list-radio" value="3" class="mr-2"> هذا الأسبوع
+                </div>
+                <div class="flex items-center justify-center">
+                    <input type="radio" name="list-radio" value="4" class="mr-2"> هذا الشهر
+                </div>
+                <div class="flex items-center justify-center">
+                    <input type="radio" name="list-radio" value="5" class="mr-2"> حسب التاريخ
+                </div>
+
+                <div class="flex items-center justify-center">
+                    <label class="text-sm font-medium">من:</label>
+                    <input type="date" name="from-Date"
+                        class="mx-2 p-2 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <div class="flex items-center justify-center">
+                    <label class="text-sm font-medium">إلى:</label>
+                    <input type="date" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" name="to-Date"
+                        class="mx-2 p-2 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                </div>
+            </div>
+        </form>
     </div>
-
-    <!-- Date Filter Section -->
-    <form class="bg-white p-3 rounded-lg shadow-md">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-center">
-            <label class="text-sm font-medium text-center">عرض حسب</label>
-
-            <div class="flex items-center justify-center">
-                <input type="radio" name="list-radio" value="1" class="mr-2"> تلقائي
-            </div>
-            <div class="flex items-center justify-center">
-                <input type="radio" name="list-radio" value="2" class="mr-2"> اليوم
-            </div>
-            <div class="flex items-center justify-center">
-                <input type="radio" name="list-radio" value="3" class="mr-2"> هذا الأسبوع
-            </div>
-            <div class="flex items-center justify-center">
-                <input type="radio" name="list-radio" value="4" class="mr-2"> هذا الشهر
-            </div>
-            <div class="flex items-center justify-center">
-                <input type="radio" name="list-radio" value="5" class="mr-2"> حسب التاريخ
-            </div>
-
-            <div class="flex items-center justify-center">
-                <label class="text-sm font-medium">من:</label>
-                <input type="date" name="from-Date"
-                    class="mx-2 p-2 border rounded-md focus:ring-2 focus:ring-indigo-500">
-            </div>
-
-            <div class="flex items-center justify-center">
-                <label class="text-sm font-medium">إلى:</label>
-                <input type="date" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" name="to-Date"
-                    class="mx-2 p-2 border rounded-md focus:ring-2 focus:ring-indigo-500">
-            </div>
-        </div>
-    </form>
-</div>
 
     <div id="displayContainer" class="overflow-y-auto max-h-[80vh] bg-white px-4 py-1  ">
     </div>
@@ -148,6 +148,7 @@
                     }
                 });
             }
+
             function fetchInvoice(url, container) {
                 $.ajax({
                     url: url,
@@ -227,13 +228,22 @@
             });
 
             // دالة لحذف السند باستخدام AJAX بعد التأكيد
-            $(document).on('click', '.delete-payment', function(e) {
+            $(document).on('click', '.delete-payment', async function(e) {
                 e.preventDefault();
 
                 let paymentId = $(this).data('id');
                 let url = $(this).data('url');
-
-                if (confirm('هل أنت متأكد أنك تريد حذف هذا السند؟')) {
+                const result = await Swal.fire({
+                    title: 'هل أنت متأكد من الحذف؟',
+                    text: "لن تتمكن من التراجع!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'نعم، احذف',
+                    cancelButtonText: 'إلغاء'
+                });
+                if (result.isConfirmed) {
                     $.ajax({
                         url: url,
                         method: 'DELETE',
@@ -242,15 +252,23 @@
                         },
                         success: function(response) {
                             if (response.status === 'success') {
-
+                                Swal.fire({
+                                    title: 'تم الحذف!',
+                                    text: response.data ??
+                                        'تمت عملية الحذف بنجاح',
+                                    icon: 'success',
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                });
                                 // إخفاء السند من الواجهة
                                 $('#invoice-' + paymentId)
-                            .fadeOut(); // يمكن استخدام fadeOut لإخفاء العنصر مع تأثير } else {
+                                    .fadeOut(); // يمكن استخدام fadeOut لإخفاء العنصر مع تأثير } else {
                             }
                         },
                         error: function(error) {
-                            console.error('Error deleting payment bond:', error.responseText);
-                            alert('حدث خطأ أثناء الحذف. يرجى المحاولة لاحقًا.');
+                            console.error('Error deleting payment bond:', error
+                                .responseText);
+                            Swal.fire('خطأ', error, 'error');
                         }
                     });
                 }
@@ -309,8 +327,8 @@
 
                 fetchInvoices(url, displayContainer);
             });
-             $(document).on('click', '.response-payment', function() {
-                                const url = "{{ url('/store/storeUp') }}";
+            $(document).on('click', '.response-payment', function() {
+                const url = "{{ url('/store/storeUp') }}";
 
                 //   $.ajax({
                 //     url: url,
@@ -320,9 +338,9 @@
                 displayContainer.removeClass("hidden");
 
                 fetchInvoice(url, displayContainer);
-            // });
+                // });
 
-                  });
+            });
 
 
 
