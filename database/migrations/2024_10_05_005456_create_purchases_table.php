@@ -34,7 +34,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('transaction_type')->comment('نوع المعاملة: 1 للشراء، 2 للبيع، 3 للترحيل المخزني');
             $table->integer('account_id')->unsigned()->nullable()->comment('الحساب المرتبط بدفع');
             $table->integer('warehouse_from_id')->unsigned()->nullable()->comment('المخزن المصدر (للتحويل المخزني)');
-            $table->integer('warehouse_to_id')->unsigned()->nullable()->comment('المخزن الوجهة (للتحويل المخزني)');
+            $table->integer('warehouse_to_id')->unsigned()->nullable()->comment('المخزن الاستيراد (للتحويل المخزني)');
             $table->integer('Supplier_id')->unsigned()->nullable();
             $table->string('categorie_id')->nullable();
             $table->timestamps();

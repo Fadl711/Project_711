@@ -73,9 +73,12 @@ class PurchaseController extends Controller
     // getPurchasesByInvoice
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $transaction_type=(int)$request->transaction_type;
+        
+                                if (in_array($transaction_type, [1,2,3])){
+             $validator = Validator::make($request->all(), [
             'Payment_type' => 'required|numeric',
-            'transaction_type' => 'required|string',
+            'transaction_type' => 'required',
             'main_account_debit_id' => 'required|numeric',
             'Supplier_id' => 'required|numeric',
             'Currency_id' => 'required|numeric',
@@ -85,9 +88,24 @@ class PurchaseController extends Controller
             'Supplier_id.required' => 'حقل اسم المورد مطلوب.',
             'main_account_debit_id.required' => 'حقل حساب التصدير مطلوب.',
             'Currency_id.required' => 'حقل  العملة الفاتورة مطلوب.',
-            'Supplier_id' => 'حساب التصدير المحدد غير موجود.',
+            'Supplier_id' => 'حساب التصدير  غير موجود.',
         ]);
-    
+
+        }
+                                if (in_array($transaction_type, [8,9,10])){
+             $validator = Validator::make($request->all(), [
+            'transaction_type' => 'required',
+            'main_account_debit_id' => 'required|numeric',
+            'Currency_id' => 'required|numeric',
+        ], [
+            'transaction_type.required' => 'حقل نوع المعاملة مطلوب.',
+            'main_account_debit_id.required' => 'حقل حساب التصدير مطلوب.',
+            'Currency_id.required' => 'حقل  العملة الفاتورة مطلوب.',
+        ]);
+
+        }
+       
+     
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,

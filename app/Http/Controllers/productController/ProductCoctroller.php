@@ -80,7 +80,7 @@ class ProductCoctroller extends Controller
         }
 
         if ($validated['DisplayMethod'] === "ShowAllProducts") {
-            if ($validated['Quantit'] === "QuantityCosts") {
+            if ($validated['Quantit'] === "QuantityCosts" ) {
                 return $this->QuantityAndCostsAccordingToSuppliersMovement($warehouse_to_id, $productname, $Quantit, $DisplayMethod);
             }
         }
@@ -90,38 +90,9 @@ class ProductCoctroller extends Controller
             }
         }
     }
-
-    public function ShowAllProducts($warehouse_to_id, $productname, $Quantit, $DisplayMethod)
-    {
-                $warehouse_to_id=(int)$warehouse_to_id;
-
-                $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
-                // dd($warehouse_to_id);
-
-//     $balances = Sale::selectRaw('
-
-//     SUM(CASE WHEN sales.transaction_type = 4 THEN sales.quantity ELSE 0 END) as total_out,
-//     SUM(CASE WHEN sales.transaction_type = 5 THEN sales.quantity ELSE 0 END) as total_transfer
-// ')
-// ->where('warehouse_to_id', $warehouse_to_id)
-// ->where('product_id', $productname)
-// ->get();
-                   
-                
-//
-        // $Myanalysis="الكمية والتكاليف من تاريخ";
-        if ($Quantit == "inventoryList") {
-            $Myanalysis = " امر جرد  ";
-        }
-        if ($DisplayMethod == "ShowAllProducts") {
-        }
-        if ($DisplayMethod == "SelectedProduct") {
-        }
-        $warehouseName = SubAccount::where('sub_account_id', $warehouse_to_id)->value('sub_name');
-        if ($DisplayMethod == "ShowAllProducts") {
-                        $productname = " تقرير  مخزني   لكل الاصناف في   " . "  " . $warehouseName;
-
-           
+    public function allQuantityCosts( $warehouse_to_id,$accountingPeriod,$Quantit){
+         $warehouseName = SubAccount::where('sub_account_id', $warehouse_to_id)->value('sub_name');
+          $productname = " تقرير  مخزني   لكل الاصناف في   " . "  " . $warehouseName;
           $allQuantityCosts = DB::table('products')
     ->select([
         'products.product_id','products.product_name','products.Purchase_price',
@@ -154,32 +125,28 @@ class ProductCoctroller extends Controller
 
     $accountingPeriodCreatedAtFormatted=Carbon::parse($accountingPeriod->created_at)->format('Y-m-d');
             $accountingPeriod = Carbon::now()->format('Y-m-d');
+
             
-    $Myanalysis="تقرير مخزني لكل الأصناف - الكمية والتكاليف - "." "."من ".$accountingPeriodCreatedAtFormatted." "."الى " . $accountingPeriod  ;
+// dd($Quantit);
+if ( $Quantit == "QuantityCosts") {
+  $Myanalysis="تقرير مخزني - الكمية والتكاليف - "." "."من ".$accountingPeriodCreatedAtFormatted." "."الى " . $accountingPeriod  ;
+ return view('report.print', compact('allQuantityCosts', 'productname', 'Myanalysis', 'accountingPeriod'))->render(); 
+}
+           else if ($Quantit == "Quantityonly") {
+            
+                     $allQuantityonly= $allQuantityCosts;
+                     $Myanalysis="تقرير مخزني - الكميات المتوفرة  - ".$accountingPeriod ;
+                 //allQuantityonly
+                return view('report.print', compact('allQuantityonly', 'productname', 'Myanalysis', 'accountingPeriod'))->render(); 
+                }
+                // إرجاع المحتوى كـ HTML
 
-                return view('report.print', compact('allQuantityCosts', 'productname', 'Myanalysis', 'accountingPeriod'))->render(); // إرجاع المحتوى كـ HTML
 
-            $productname = null;
-            $uniqueProducts = Product::all();
-
-        }
-
-        if ($DisplayMethod == "SelectedProduct" && $Quantit == "QuantityCosts")
-        {
-            $uniqueProduct = [];
-            $productname = explode(',', $productname);
-            foreach ($productname as $produ) {
-
-                $uniqueProduc = Product::where('product_id',  $produ)->get();
-                $product = Product::where('product_id', (int)$produ)->first();
-                $uniqueProducts = [
-                    'product_id' => $product->product_id,
-                ];
-            }
-                            $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
-
-            $firstQuantityCosts =Product::
-                             where('product_id', (int)$produ)
+    }
+    
+    public function selectedProduct($warehouse_to_id,$accountingPeriod,$productname,$Quantit){
+         $firstQuantityCosts =Product::
+                             where('product_id', (int)$productname)
 
    -> with(['sales', 'purchases' => function($query) use ($accountingPeriod, $warehouse_to_id) {
         $query->where('accounting_period_id', $accountingPeriod->accounting_period_id);
@@ -224,17 +191,68 @@ class ProductCoctroller extends Controller
 $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_at)->format('Y-m-d');
                         $accountingPeriod = Carbon::now()->format('Y-m-d');
 
-
-    $Myanalysis="تقرير مخزني - الكمية والتكاليف - "." "."من ".$accountingPeriodCreatedAtFormatted." "."الى " . $accountingPeriod  ;
-
-
-
-
-            
-    
+                        if ($Quantit == "Quantityonly") {
+                 $Myanalysis="تقرير مخزني - الكمية المتوفرة  - "." "."من ".$accountingPeriodCreatedAtFormatted." "."الى " . $accountingPeriod  ;
+                 $firstQuantityonly= $firstQuantityCosts;
+                 //allQuantityonly
+                 return view('report.print', compact('firstQuantityonly', 'productname', 'accountingPeriod', 'Myanalysis'))->render(); // إرجاع المحتوى كـ HTML
+                }
+                if ( $Quantit == "QuantityCosts") {
+                 $Myanalysis="تقرير مخزني - الكمية والتكاليف - "." "."من ".$accountingPeriodCreatedAtFormatted." "."الى " . $accountingPeriod  ;
             return view('report.print', compact('firstQuantityCosts', 'productname', 'Myanalysis', 'accountingPeriod'))->render(); // إرجاع المحتوى كـ HTML
-        
         }
+        
+    }
+
+    public function ShowAllProducts($warehouse_to_id, $productname, $Quantit, $DisplayMethod)
+    {
+                $warehouse_to_id=(int)$warehouse_to_id;
+
+                $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+                // dd($warehouse_to_id);
+
+//     $balances = Sale::selectRaw('
+
+//     SUM(CASE WHEN sales.transaction_type = 4 THEN sales.quantity ELSE 0 END) as total_out,
+//     SUM(CASE WHEN sales.transaction_type = 5 THEN sales.quantity ELSE 0 END) as total_transfer
+// ')
+// ->where('warehouse_to_id', $warehouse_to_id)
+// ->where('product_id', $productname)
+// ->get();
+                
+//
+        // $Myanalysis="الكمية والتكاليف من تاريخ";
+        if ($Quantit == "inventoryList") {
+            $Myanalysis = " امر جرد  ";
+        }
+       
+       
+        $warehouseName = SubAccount::where('sub_account_id', $warehouse_to_id)->value('sub_name');
+        if ($DisplayMethod == "ShowAllProducts") {
+         return   $this->allQuantityCosts($warehouse_to_id,$accountingPeriod,$Quantit);
+            
+        }
+       
+        if ($DisplayMethod == "SelectedProduct" ) {
+         return   $this->selectedProduct($warehouse_to_id,$accountingPeriod,$productname,$Quantit);
+            
+        }
+
+        if ($DisplayMethod == "SelectedProduct" )
+        {
+            $uniqueProduct = [];
+            $productname = explode(',', $productname);
+            foreach ($productname as $produ) {
+
+                $uniqueProduc = Product::where('product_id', $produ)->get();
+                $product = Product::where('product_id', (int)$produ)->first();
+                $uniqueProducts = [
+                    'product_id' => $product->product_id,
+                ];
+            }
+                            $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+          
+       
         $QuantityIncomplete = []; // تخزين المنتجات
         $allQuantityonly = [];
         $allQuantityCosts = []; // تخزين المنتجات
@@ -244,7 +262,7 @@ $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_a
         foreach ($uniqueProducts as $products) {
             if ($DisplayMethod == "SelectedProduct") {
                 if (is_object($products)|| is_array($products)) {
-    $product_id = $products->product_id ??(int)$products->product_id ??$product->product_id;
+    $product_id = $products->product_id ??(int)$products->product_id ?? $product->product_id;
     
 }else {
     $productname= $productname;
@@ -323,6 +341,7 @@ $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_a
                         ];
                     }
                 }
+                 }
                 if ($Quantit == "inventoryList") {
                     if (!in_array($product_id,$inventoryList1)) {
 
@@ -742,6 +761,7 @@ $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_a
 
 
         $transaction_type = $entrie_id->transaction_type ?? 6;
+        
 
         if ($Quantity > 0) {
 

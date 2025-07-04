@@ -13,12 +13,14 @@
     }
    
 .select2-container--default .select2-dropdown {
-    max-height: 200px; /* ارتفاع القائمة */
-    overflow-y: auto; /* تمكين التمرير إذا تجاوز المحتوى الارتفاع */
+            width: 400px; /* ارتفاع العنصر الأساسي */
+
+    max-width: 400px; /* ارتفاع القائمة */
 }
 .select2-container--default .select2-selection--single {
     height: 40px; /* ارتفاع العنصر الأساسي */
-    line-height: 45px; لتوسيط النص عموديًا
+    line-height: 45px; 
+    
 }
 .select2-container--default .select2-selection__rendered {
     padding-top: 5px; /* تحسين النصوص */
@@ -29,13 +31,13 @@
   </div>
 <div id="errorMessage" style="display: none;" class="alert alert-danger"></div>
 <div id="successMessage" style="display: none;" class="alert alert-success"></div>
-<div class="min-w-[20%] px-1  bg-white rounded-xl ">
-    <div class=" flex items-center">
-        <div class="w-full min-w-full  py-1">
+<div class=" px-1  bg-white rounded-xl ">
+    <div class=" flex">
+        <div class="w-full   py-1">
             <form id="invoicePurchases" action="{{ route('invoicePurchases.store') }}" method="POST" >
                 @csrf
               
-                <div class="flex gap-4">
+                <div class="flex gap-1">
                     <div class="flex gap-4">
                         @foreach ($PaymentType as $index => $item)
         <div class="flex">
@@ -46,21 +48,23 @@
     @endforeach
                     </div>
                 </div>
-                <div class="md:justify- text-right grid md:grid-cols-8 gap-2">
+                <div class=" text-right grid grid-cols-2 md:grid-cols-4 gap-1">
                     <div>
-                        <label for="transaction_type" class="labelSale">نوع العملية</label>
-                        <select dir="ltr" id="transaction_type" class="inputSale input-field" name="transaction_type">
+                        <label for="transaction_type" class="labelSale transaction_type">نوع العملية</label>
+                        <select  id="transaction_type" class="inputSale input-field select2" name="transaction_type">
+                         <option selected value="{{ null }}">{{"حدد نوع العملية "}}</option>
+
                             @foreach ($transactionTypes as $transactionType)
-                                @if (in_array($transactionType->value, [1,2,3]))
+                                @if (in_array($transactionType->value, [1,2,3,8,9,10]))
                                     <option value="{{ $transactionType->value }}">{{ $transactionType->label() }}</option>
                                 @endif
                             @endforeach
                         </select>
                     </div>
                         
-                       <div>
-                        <label for="Supplier_id" class="labelSale">اسم المورد</label>
-                        <select name="Supplier_id" id="Supplier_id" dir="ltr" class="input-field w-full select2 inputSale" >
+                       <div >
+                        <label for="Supplier_id" class="labelSale supplier_id">اسم المورد</label>
+                        <select name="Supplier_id" id="Supplier_id" class="input-field w-full select2 inputSale" >
                             @isset($subAccountSupplierid)
                             @foreach ($subAccountSupplierid as $Supplier)
                             <option value="{{$Supplier->sub_account_id}}">{{$Supplier->sub_name}}</option>
@@ -70,8 +74,8 @@
                     </div>
                   
                     <div >
-                        <label for="main_account_debit_id" class="  labelSale">  حساب التصدير  </label>
-                       <select name="main_account_debit_id" id="main_account_debit_id" dir="ltr" class="input-field  select2 inputSale" required >
+                        <label for="main_account_debit_id" class="main_accountdebit  labelSale">  حساب التصدير  </label>
+                       <select name="main_account_debit_id" id="main_account_debit_id"  class="input-field  select2 inputSale" required >
                           @isset($main_accounts)
                         <option value="" selected>اختر الحساب</option>
                          @foreach ($main_accounts as $mainAccount)
@@ -80,8 +84,9 @@
                          @endisset 
                        </select>
                    </div>
+
                    <div >
-                       <label for="sub_account_debit_id" class="labelSale   ">  تحديد الدائن</label>
+                       <label for="sub_account_debit_id" class="labelSale  sub_account_debit_id ">  تحديد الدائن</label>
                        <select name="sub_account_debit_id" id="sub_account_debit_id" dir="ltr" class="input-field select2 inputSale" required>
                            <option value="" selected>اختر الحساب الفرعي</option>
                            </select>
@@ -123,7 +128,7 @@
             @csrf 
             <div  class=" gap-2 grid grid-cols-2   ">
                 <div>
-                    <label for="account_debitid" class="labelSale  ">  مخازن الستيراد</label>
+                    <label for="account_debitid" class="labelSale account_debitid ">  مخازن الستيراد</label>
                     <select name="account_debitid" id="account_debitid" dir="ltr" class="input-field  select2 inputSale" required>
                        @isset($Warehouse)
                      <option value="" selected>اختر المخزن</option>
@@ -134,7 +139,7 @@
                     </select>
                 </div>
                 <div >
-                    <label for="product_id" class="block   labelSale">بحث  </label>
+                    <label for="product_id" class="block  product_id labelSale">بحث  </label>
                     <select name="product_id" id="product_id" dir="ltr" class="input-field select2 inputSale" required>
                         @isset($products)
                         <option value="9505070441001"  >اختر منتج</option>
@@ -310,9 +315,46 @@ else{
           submitButton = $('#newInvoice'),
           successMessage = $('#successMessage'),
           errorMessage = $('#errorMessage'),
+          transaction_type = $('.transaction_type'),
           invoiceField = $('#purchase_invoice_id'),
           supplierField = $('#supplier_name'),
+          main_accountdebit = $('.main_accountdebit'),
+          sub_account_debit_id = $('.sub_account_debit_id'),
+          supplier_id = $('.supplier_id'),
+          product_id = $('.product_id'),
           csrfToken = $('input[name="_token"]').val();
+
+            $('#transaction_type').on('change', function() {
+                 let type=$(this).val();
+              
+
+                 if(type==1){
+                        main_accountdebit.html(" حساب الرئيسي/ الدفع  ").show();
+                        supplier_id.html("اسم المورد").show();
+                        sub_account_debit_id.html(" حساب الفرعي/ الدفع ").show();
+                 }
+                 if(type==9){
+                        main_accountdebit.html("   حساب الرئيسي/ لخسائر النقص  ").show();
+                            sub_account_debit_id.html(" حساب الفرعي/ خسارة النقص ").show();
+                            product_id.html("  البحث عن المنتج الناقص ").show();
+                            supplier_id.html("اسم المورد (الختياري)").show();
+                 }
+                 if(type==10){
+                        main_accountdebit.html("   حساب الرئيسي/ لخسائر الأتلاف  ").show();
+                            sub_account_debit_id.html(" حساب الفرعي/ خسارة الأتلاف ").show();
+                            product_id.html("  البحث عن المنتج التالف ").show();
+                            supplier_id.html("اسم المورد (الختياري)").show();
+                        }
+                        if(type==8){
+                            main_accountdebit.html("   حساب الرئيسي/ إيرادات زيادة المخزون  ").show();
+                            sub_account_debit_id.html(" حساب الفرعي/ إيراد زيادة المخزون  ").show();
+                            product_id.html("  البحث عن المنتج الزايد ").show();
+                           supplier_id.html("اسم المورد (الختياري)").show();
+                 }
+
+                
+    // $('#product_id').select2('open');
+});
     submitButton.click(function(e) {
         e.preventDefault();
         submitButton.prop('disabled', true).text('جاري الإرسال...');

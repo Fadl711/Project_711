@@ -2,80 +2,74 @@
 @tailwind components;
 @tailwind utilities;
 
+.divNav {
+    @apply min-h-screen  text-white sticky top-0  bg-gradient-to-r from-indigo-900 to-indigo-600 border-b border-gray-100;
+}
+.buttNav {
+    @apply text-white font-semibold py-2 px-2 rounded inline-flex items-center hover:bg-gray-400;
+}
+.ulNav {
+    @apply dropdown-content absolute hidden text-gray-700  bg-gradient-to-r from-indigo-700 to-indigo-500 -right-3;
+}
+.aNav {
+    @apply rounded-t  border border-white hover:bg-indigo-400  py-2 px-4 flex;
+}
 
-.divNav{
-   @apply  min-h-screen  text-white sticky top-0  bg-gradient-to-r from-indigo-900 to-indigo-600 border-b border-gray-100 ;
-}
-.buttNav{
-   @apply text-white font-semibold py-2 px-2 rounded inline-flex items-center hover:bg-gray-400;
-}
-.ulNav{
-   @apply  dropdown-content absolute hidden text-gray-700  bg-gradient-to-r from-indigo-700 to-indigo-500 -right-3;
-}
-.aNav{
-   @apply  rounded-t  border border-white hover:bg-indigo-400  py-2 px-4 flex;
-}
-
-.btn{
+.btn {
     @apply mb-1 block text-base font-medium text-[#07074D];
 }
-.textNav{
-   @apply ml-2 text-sm font-medium hidden md:block text-nowrap;
-
-
+.textNav {
+    @apply ml-2 text-sm font-medium hidden md:block text-nowrap;
 }
 .NavTagA {
-   @apply flex items-center w-full h-10 px-4 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ease-in-out duration-200;
+    @apply flex items-center w-full h-10 px-4 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ease-in-out duration-200;
 }
 
-.navIndex{
-   @apply shadow-md py-1  rounded  flex items-center justify-between;
+.navIndex {
+    @apply shadow-md py-1  rounded  flex items-center justify-between;
 }
-.labelSale{
-  @apply block    text-gray-700 dark:text-white text-center font-sans;
+.labelSale {
+    @apply block    text-gray-700 dark:text-white text-center font-sans;
 }
-.inputSale{
-@apply w-full rounded-md border border-[#d2d0d0] bg-white py-2 px-2   text-[#07074D] outline-none focus:border-[#6A64F1] focus:shadow-md;
+.inputSale {
+    @apply w-full rounded-md border border-[#d2d0d0] bg-white py-2 px-2   text-[#07074D] outline-none focus:border-[#6A64F1] focus:shadow-md;
 }
 .divProducte {
-   @apply flex items-center w-full px-1 py-1 text-base  text-black bg-white  rounded-l-md  md:col-span-3;
+    @apply flex items-center w-full px-1 py-1 text-base  text-black bg-white  rounded-l-md  md:col-span-3;
 }
-.btnSave{
-   @apply text-white bg-gradient-to-r from-stone-500 to-stone-700 hover:bg-cyan-700 focus:ring-4 focus:ring-cyan-200 font-medium rounded-lg text-sm px-5 py-2  text-center;
+.btnSave {
+    @apply text-white bg-gradient-to-r from-stone-500 to-stone-700 hover:bg-cyan-700 focus:ring-4 focus:ring-cyan-200 font-medium rounded-lg text-sm px-5 py-2  text-center;
 }
-.tagHt{
-   @apply p-2  text-sm text-right     rounded bg-gray-50   border-x  border-y border-[#d2d0d0];
+.tagHt {
+    @apply p-2  text-sm text-right     rounded bg-gray-50   border-x  border-y border-[#d2d0d0];
 }
-.tagTd{
-   @apply py-1 px-1   border-x  border-y border-[#d2d0d0] text-right bg-gray-50;
+.tagTd {
+    @apply py-1 px-1   border-x  border-y border-[#d2d0d0] text-right bg-gray-50;
 }
-.tagTtbody{
-   @apply divide-y divide-gray-300;
+.tagTtbody {
+    @apply divide-y divide-gray-300;
 }
-.tagTr{
-   @apply   border-x  border-y border-[#d2d0d0];
+.tagTr {
+    @apply border-x  border-y border-[#d2d0d0];
 }
-.buttonEdit{
-   @apply p-1  rounded-full  duration-500;
-
+.buttonEdit {
+    @apply p-1  rounded-full  duration-500;
 }
-.tagTable{
-   @apply min-w-full rounded-xl;
+.tagTable {
+    @apply min-w-full rounded-xl;
 }
-.tagDivTable{
-       @apply flex flex-col sm:w-full;
+.tagDivTable {
+    @apply flex flex-col sm:w-full;
 }
-.bgcolor{
-   @apply bg-gradient-to-r from-stone-500 to-indigo-700;
+.bgcolor {
+    @apply bg-gradient-to-r from-stone-500 to-indigo-700;
 }
-.bgcolor2{
-   @apply bg-gradient-to-r from-amber-400 to-amber-400 text-black ;
+.bgcolor2 {
+    @apply bg-gradient-to-r from-amber-400 to-amber-400 text-black;
 }
-.bgcolor3{
-   @apply bg-gradient-to-r from-indigo-700 to-indigo-700 text-white;
+.bgcolor3 {
+    @apply bg-gradient-to-r from-indigo-700 to-indigo-700 text-white;
 }
 .dropdown:hover > .dropdown-content {
-	 display: block;
+    display: block;
 }
-
-
