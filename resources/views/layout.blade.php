@@ -62,7 +62,7 @@
 
         @include('includes.swip')
 
-        <div class=" p-2  relative  overflow-auto">
+        <div class=" p-2 mb-5 relative  overflow-auto flex-1">
             @yield('conm')
         </div>
     </div>
