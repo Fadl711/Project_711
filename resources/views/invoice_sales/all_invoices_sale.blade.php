@@ -1,11 +1,11 @@
 @extends('layout')
 @section('conm')
-    <div class="container mx-auto ">
+    <div class="container mx-auto overflow-hidden ">
         <!-- Search and Filter Section -->
         <div class="w-full sm:w-auto flex items-center bg-white p-1 shadow-lg rounded-lg gap-4 justify-between mb-2  ">
             <div class="w-full sm:w-auto flex gap-4 items-center">
                 <select name="searchType"
-                    class="border border-gray-300 rounded-lg p-2 w-full sm:w-auto focus:ring-2 focus:ring-indigo-500">
+                    class="sel border border-gray-300 rounded-lg p-2 w-full sm:w-auto focus:ring-2 focus:ring-indigo-500">
                     <option selected>كل الفواتير</option>
                     <option value="أول فاتورة">أول فاتورة</option>
                     <option value="آخر فاتورة">آخر فاتورة</option>
@@ -24,9 +24,9 @@
             </div>
             <div class="col-span-6 sm:col-span-3">
 
-                <button
+                {{--                 <button
                     class="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">تحديث
-                    البيانات</button>
+                    البيانات</button> --}}
             </div>
         </div>
         <!-- Date Filter Section -->
@@ -62,56 +62,19 @@
                 </li>
             </ul>
         </form>
-        <div id="displayContainer" class="overflow-y-auto max-h-[80vh] bg-white px-4 py-1 rounded-lg shadow-md">
+        <div id="displayContainer" class="overflow-y-auto max-h-[65vh] bg-white px-4 py-1 rounded-lg shadow-md">
         </div>
-        <div id="displayContainer2" class="overflow-y-auto max-h-[80vh]  bg-white px-4 py-1 rounded-lg shadow-md">
+        <div id="displayContainer2" class="overflow-y-auto max-h-[65vh]  bg-white px-4 py-1 rounded-lg shadow-md">
         </div>
     </div>
     <script>
-        $(document).ready(function() {
-            const searchTypeSelect = $('select[name="searchType"]');
-            const searchInput = $('input[name="search"]');
-            const fromDate = $('input[name="from-date"]');
-            const toDate = $('input[name="to-date"]');
-            const radioInput = $('input[name="list-radio"]');
-            const displayContainer = $('#displayContainer');
-            const displayContainer2 = $('#displayContainer2');
-            let debounceTimeout;
-
-            function fetchInvoices(url, container) {
-                console.log(`Fetching invoices from ${url}`);
-                $.ajax({
-                    url: url,
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                    },
-                    success: function(data) {
-                        container.empty();
-                        if (data.saleInvoice && data.saleInvoice.length > 0) {
-                            data.saleInvoice.forEach((sale) => {
-                                container.append(renderInvoiceCard(sale));
-                            });
-                        } else {
-                            container.append(
-                                '<p class="text-center text-gray-500">لا توجد فواتير لعرضها.</p>');
-                        }
-                    },
-                    error: function(error) {
-                        console.error('Error fetching invoices:', error.responseText);
-                    },
-                });
-            }
-
-            // إنشاء كارت الفاتورة
-            function renderInvoiceCard(sale) {
-                return `
+        function renderInvoiceCard(sale) {
+            return `
             <div  id="invoice-${sale.invoice_number}"  class="mb-3 border border-gray-300 rounded-lg px-4 py-2 shadow-sm" >
                 <div class="flex justify-between items-center ">
                     <div class="text-right">
                         <div class="text-gray-700 text-right">تاريخ الفاتورة: <span class="text-sm">${sale.formatted_date}</span></div>
-                        <div class="text-gray-700 text-right">اسم .${" "}.${sale.main_account_class}: <span class="text-sm">${sale.Customer_name}</span></div>
+                        <div class="text-gray-700 text-right">اسم ${" "}${sale.main_account_class}: <span class="text-sm">${sale.Customer_name}</span></div>
                     </div>
                     <div class="text-gray-700">فاتورة ${sale.transaction_type}: <span class="text-sm">${sale.payment_type}
 </span></div>
@@ -155,67 +118,197 @@
                     <div class="text-gray-700 text-sm  text-left">المستخدم: <span>${sale.user_name}</span></div>
                 </div>
             </div>`;
-            }
-            $(document).on('click', '.show-payment', function(e) {
-                e.preventDefault();
+        }
+        $(document).ready(function() {
+            const searchTypeSelect = $('select[name="searchType"]');
+            const searchInput = $('input[name="search"]');
+            const fromDate = $('input[name="from-date"]');
+            const toDate = $('input[name="to-date"]');
+            const radioInput = $('input[name="list-radio"]');
+            const displayContainer = $('#displayContainer');
+            const displayContainer2 = $('#displayContainer2');
+            let debounceTimeout;
+            let currentPage = 1;
+            let currentUrl = '';
 
-                let invoiceField = $(this).data('id');
-                let size = $(this).data('size');
-                const analysis = $('input[name="analysis"]:checked').val(); // الخيار المحدد لعرض القائمة
-                const url = `{{ route('invoiceSales.print', ':invoiceField') }}`.replace(':invoiceField',
-                        invoiceField) +
-                    `?analysis=${analysis}&size=${size}`;
-
-                window.open(url, '_blank', 'width=800,height=800'); // فتح الرابط في نافذة جديدة
-            });
-            $(document).on('click', '.delete-payment', async function(e) {
-                e.preventDefault();
-
-                let paymentId = $(this).data('id');
-                let url = $(this).data('url');
-
-                const result = await Swal.fire({
-                    title: 'هل أنت متأكد أنك تريد حذف هذا فاتورة?',
-                    text: "لن تتمكن من التراجع!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'نعم، احذف',
-                    cancelButtonText: 'إلغاء'
+            // دالة جلب الفواتير مع الترحيم
+            function bindDynamicEvents() {
+                // حدث الزر عرض/طباعة
+                $(document).off('click', '.show-payment').on('click', '.show-payment', function(e) {
+                    e.preventDefault();
+                    let invoiceField = $(this).data('id');
+                    let size = $(this).data('size');
+                    const analysis = $('input[name="analysis"]:checked').val();
+                    const url = `{{ route('invoiceSales.print', ':invoiceField') }}`.replace(
+                            ':invoiceField', invoiceField) +
+                        `?analysis=${analysis}&size=${size}`;
+                    window.open(url, '_blank', 'width=800,height=800');
                 });
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: url,
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                        },
-                        success: function(response) {
+
+                // حدث الزر حذف
+                $(document).off('click', '.delete-payment').on('click', '.delete-payment', async function(e) {
+                    e.preventDefault();
+                    let paymentId = $(this).data('id');
+                    let url = $(this).data('url');
+
+                    const result = await Swal.fire({
+                        title: 'هل أنت متأكد أنك تريد حذف هذه الفاتورة؟',
+                        text: "لن تتمكن من التراجع عن هذا الإجراء!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'نعم، احذف',
+                        cancelButtonText: 'إلغاء',
+                        reverseButtons: true
+                    });
+
+                    if (result.isConfirmed) {
+                        try {
+                            const response = await $.ajax({
+                                url: url,
+                                method: 'DELETE',
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
+                                        'content'),
+                                }
+                            });
+
                             Swal.fire({
                                 title: 'تم الحذف!',
-                                text: 'تمت عملية الحذف بنجاح',
+                                text: 'تم حذف الفاتورة بنجاح',
                                 icon: 'success',
                                 timer: 1500,
                                 showConfirmButton: false
                             });
-                            $('#invoice-' + paymentId)
-                                .fadeOut();
-                        },
-                        error: function(xhr) {
-                            Swal.fire('خطأ', xhr.responseJSON.message ||
-                                'حدث خطأ أثناء الاتصال بالخادم.');
+
+                            // إعادة تحميل البيانات بعد الحذف
+                            if (currentUrl) {
+                                fetchInvoices(currentUrl, displayContainer, currentPage);
+                            }
+                        } catch (xhr) {
+                            Swal.fire({
+                                title: 'خطأ!',
+                                text: xhr.responseJSON?.message || 'حدث خطأ أثناء محاولة الحذف',
+                                icon: 'error'
+                            });
                         }
-                    });
+                    }
+                });
+            }
+
+            // تعديل دالة fetchInvoices لربط الأحداث بعد تحميل البيانات
+            function fetchInvoices(url, container, page = 1) {
+                currentUrl = url;
+                currentPage = page;
+
+                $.ajax({
+                    url: `${url}&page=${page}`,
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    },
+                    success: function(data) {
+                        container.empty();
+                        if (data.saleInvoice && data.saleInvoice.length > 0) {
+                            data.saleInvoice.forEach((sale) => {
+                                container.append(renderInvoiceCard(sale));
+                            });
+                            renderPagination(data.pagination, container);
+                        } else {
+                            container.append(
+                                '<p class="text-center text-gray-500">لا توجد فواتير لعرضها.</p>');
+                        }
+                        bindDynamicEvents(); // ربط الأحداث بعد تحميل البيانات
+                    },
+                    error: function(error) {
+                        console.error('Error fetching invoices:', error.responseText);
+                    }
+                });
+            }
+
+            // دالة إنشاء عناصر الترحيم
+            function renderPagination(pagination, container) {
+                // إزالة أي ترحيم سابق
+                container.next('.pagination').remove();
+
+                // إنشاء عنصر الترحيم الجديد
+                const paginationContainer = $(`
+        <div class="pagination flex justify-center items-center gap-2 mt-6 mb-4">
+            <div class="flex items-center gap-1 bg-white p-2 rounded-lg shadow-sm border border-gray-200">
+                <!-- سيتم إضافة أزرار الصفحات هنا -->
+            </div>
+        </div>
+    `);
+
+                const paginationInner = paginationContainer.find('div');
+
+                // زر السابق
+                if (pagination.current_page > 1) {
+                    paginationInner.append(`
+            <button class="page-btn w-8 h-8 flex items-center justify-center rounded-md bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition"
+                    data-page="${pagination.current_page - 1}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+        `);
                 }
 
+                // أزرار الصفحات
+                const startPage = Math.max(1, pagination.current_page - 2);
+                const endPage = Math.min(pagination.last_page, pagination.current_page + 2);
 
+                if (startPage > 1) {
+                    paginationInner.append(`
+            <button class="page-btn w-8 h-8 flex items-center justify-center rounded-md" data-page="1">1</button>
+            ${startPage > 2 ? '<span class="px-1">...</span>' : ''}
+        `);
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
+                    const active = i === pagination.current_page ? 'bg-indigo-600 text-white' :
+                        'text-gray-700 hover:bg-indigo-50';
+                    paginationInner.append(`
+            <button class="page-btn w-8 h-8 flex items-center justify-center rounded-md ${active}" data-page="${i}">${i}</button>
+        `);
+                }
+
+                if (endPage < pagination.last_page) {
+                    paginationInner.append(`
+            ${endPage < pagination.last_page - 1 ? '<span class="px-1">...</span>' : ''}
+            <button class="page-btn w-8 h-8 flex items-center justify-center rounded-md" data-page="${pagination.last_page}">${pagination.last_page}</button>
+        `);
+                }
+
+                // زر التالي
+                if (pagination.current_page < pagination.last_page) {
+                    paginationInner.append(`
+            <button class="page-btn w-8 h-8 flex items-center justify-center rounded-md bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition"
+                    data-page="${pagination.current_page + 1}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+        `);
+                }
+
+                // إضافة الترحيم بعد الحاوية الرئيسية
+                container.after(paginationContainer);
+            }
+
+            // التعامل مع تغيير الصفحات
+            $(document).on('click', '.page-btn', function() {
+                const page = $(this).data('page');
+                fetchInvoices(currentUrl, displayContainer, page);
             });
 
             // البحث بالمدخل
             searchInput.on('input', function() {
                 const searchQuery = searchInput.val().trim();
                 clearTimeout(debounceTimeout);
+
                 if (searchQuery !== "") {
                     displayContainer.addClass("hidden");
                     displayContainer2.removeClass("hidden");
@@ -226,7 +319,7 @@
                         const baseUrl = "{{ url('/api/sale-invoices') }}";
                         const url =
                             `${baseUrl}?searchType=${searchType}&searchQuery=${searchQuery}&fromDate=${FromDate}&toDate=${ToDate}`;
-                        fetchInvoices(url, displayContainer2);
+                        fetchInvoices(url, displayContainer2, 1);
                     }, 500);
                 } else {
                     displayContainer.removeClass("hidden");
@@ -240,20 +333,14 @@
                 const value = $(this).val();
                 const From_Date = fromDate.val();
                 const To_Date = toDate.val();
-                // const baseUrl = "{{ url('/api/Receip-invoices') }}";
-
                 const baseUrl = "{{ url('/api/sale-invoices') }}";
-                // const url = `${baseUrl}/${filterType}?transactionType=${transactionType}&fromDate=${FromDate}&toDate=${ToDate}`;
-
                 const url = `${baseUrl}/${value}?fromDate=${From_Date}&toDate=${To_Date}`;
-
 
                 displayContainer.removeClass("hidden");
                 displayContainer2.addClass("hidden");
-
-
-                fetchInvoices(url, displayContainer);
+                fetchInvoices(url, displayContainer, 1);
             });
+
         });
     </script>
 

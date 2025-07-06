@@ -72,7 +72,18 @@
     <script src="{{ asset('assets\js\sweetalert2\dist\sweetalert2.all.min.js') }}" defer></script>
     <script src="{{ asset('assets\js\alpinejs\dist\cdn.min.js') }}" defer></script>
 
-
+    <script>
+        window.Laravel = {!! json_encode(['baseUrl' => url('/')]) !!};
+        setInterval(() => {
+            fetch(`${window.Laravel.baseUrl}/ping`)
+                .then(res => {
+                    if (!res.ok) throw new Error("HTTP error " + res.status);
+                    return res.json();
+                })
+                .then(data => console.log("✅ Ping:", data.status))
+                .catch(err => console.error("❌ Ping Error:", err));
+        }, 5 * 60 * 1000);
+    </script>
 </body>
 
 </html>

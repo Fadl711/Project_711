@@ -193,6 +193,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/api/Receip-invoices/{filterType}', [ReceipController::class, 'getPaymentBond']);
     Route::get('/api/Receip-invoices', [ReceipController::class, 'searchInvoices']);
+    Route::get('/ping', function () {
+        DB::select('SELECT 1');
+        return response()->json(['status' => 'alive']);
+    });
+
     Route::post('/store/storeUp', function () {
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
 

@@ -19,6 +19,7 @@ use App\Models\User;
 use App\Models\UserPermission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -525,82 +526,96 @@ class InvoiceSaleController extends Controller
     }
     public function getSaleInvoice(Request $request, $filterType)
     {
-        $validated = $request->validate([
-
-            'fromDate' => 'nullable',
-            'toDate' => 'nullable',
-        ]);
-        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+        // تحقق من الفترة المحاسبية مع التخزين المؤقت
+        $accountingPeriod = Cache::remember('active_accounting_period', 3600, function () {
+            return AccountingPeriod::where('is_closed', false)->first();
+        });
 
         if (!$accountingPeriod) {
             return response()->json(['message' => 'لم يتم العثور على فترة محاسبية حالية.'], 404);
         }
 
-        $query = SaleInvoice::with(['customer.mainAccount', 'user']);
+        // بناء الاستعلام مع تحديد العلاقات المطلوبة
+        $query = SaleInvoice::with([
+            'customer:sub_account_id,sub_name,main_id', // لا نحتاج account_class هنا
+            'customer.mainAccount:main_account_id,AccountClass', // استخدام AccountClass بدلاً من account_class
+            'user:id,name'
+        ]);
+
+        // تطبيق الفلاتر
         switch ($filterType) {
             case '1':
                 $query->where('accounting_period_id', $accountingPeriod->accounting_period_id);
                 break;
             case '2':
-                // $today = Carbon::now()->toDateString();
-
-                $query->where('accounting_period_id', $accountingPeriod->accounting_period_id);
-                $query->whereDate('created_at', now()->toDateString());
+                $query->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                    ->whereDate('created_at', now()->toDateString());
                 break;
             case '3':
-                $query->where('accounting_period_id', $accountingPeriod->accounting_period_id);
-
-                $query->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+                $query->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                    ->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
                 break;
             case '4':
-                $query->where('accounting_period_id', $accountingPeriod->accounting_period_id);
-
-                $query->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year);
+                $query->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                    ->whereMonth('created_at', now()->month)
+                    ->whereYear('created_at', now()->year);
                 break;
             case '5':
-
-                // الفترة المخصصة
                 if ($request->filled(['fromDate', 'toDate'])) {
-
-                    $query->whereBetween('created_at', [$validated['fromDate'], $validated['toDate']]);
+                    $query->whereBetween('created_at', [
+                        $request->input('fromDate') . ' 00:00:00',
+                        $request->input('toDate') . ' 23:59:59'
+                    ]);
                 }
                 break;
         }
-        $user = auth()->id();
-        $AuthorityName = "الفواتير المبيعات";
-        $us = UserPermission::where('User_id', $user)
-            ->where('Authority_Name', $AuthorityName)
-            ->first();
-        if (optional($us)->Readability == 1) {
-            $SaleInvoice = $query->get()->transform(function ($invoice) {
-                return [
-                    'formatted_date' => $invoice->formatted_date ?? 'غير متاح',
-                    'Customer_name' => optional($invoice->customer)->sub_name ?? 'غير معروف',
-                    'main_account_class' => optional($invoice->customer?->mainAccount)->accountClassLabel() ?? 'غير معروف',
-                    'transaction_type' => TransactionType::fromValue($invoice->transaction_type)?->label() ?? 'غير معروف',
-                    'invoice_number' => $invoice->sales_invoice_id ?? 'غير متاح',
-                    'discount' => $invoice->discount ?? 'غير متاح',
-                    'payment_type' => PaymentType::tryFrom($invoice->payment_type)?->label() ?? 'غير معروف',
-                    'shipping_bearer' => $invoice->shipping_bearer ?? 'غير متاح',
-                    'shipping_amount' => number_format($invoice->shipping_amount, 2)  ?? 0,
-                    'total_price_sale' => number_format($invoice->total_price_sale, 2)  ?? 0,
-                    'net_total_after_discount' => $invoice->net_total_after_discount ?? 0,
-                    'paid_amount' => $invoice->paid_amount ?? 0,
-                    'remaining_amount' => $invoice->remaining_amount ?? 0,
-                    'user_name' => $invoice->userName ?? 'غير معروف',
-                    'updated_at' => optional($invoice->updated_at)->format('Y-m-d') ?? 'غير متاح',
-                    'view_url' => route('searchInvoices', $invoice->sales_invoice_id),
-                    'destroy_url' => route('sales-invoice.delete', $invoice->sales_invoice_id),
-                ];
-            });
-        } else {
 
-            return view('auth.login');
+        // التحقق من الصلاحيات
+        $user = auth()->id();
+        $authorityName = "الفواتير المبيعات";
+        $permission = UserPermission::where('User_id', $user)
+            ->where('Authority_Name', $authorityName)
+            ->first();
+
+        if (!$permission || $permission->Readability != 1) {
+            return response()->json(['error' => 'غير مصرح بالوصول'], 403);
         }
 
+        // استخدام الترحيم
+        $saleInvoices = $query->paginate(50);
 
+        // تحويل البيانات
+        $transformedInvoices = $saleInvoices->getCollection()->map(function ($invoice) {
+            return [
+                'formatted_date' => $invoice->created_at->format('d/m/Y'),
+                'Customer_name' => $invoice->customer->sub_name ?? 'غير معروف',
+                'main_account_class' => optional($invoice->customer?->mainAccount)->accountClassLabel() ?? 'غير معروف',
+                'transaction_type' => TransactionType::fromValue($invoice->transaction_type)?->label() ?? 'غير معروف',
+                'invoice_number' => $invoice->sales_invoice_id,
+                'discount' => $invoice->discount,
+                'payment_type' => PaymentType::tryFrom($invoice->payment_type)?->label() ?? 'غير معروف',
+                'shipping_bearer' => $invoice->shipping_bearer,
+                'shipping_amount' => number_format($invoice->shipping_amount, 2),
+                'total_price_sale' => number_format($invoice->total_price_sale, 2),
+                'net_total_after_discount' => $invoice->net_total_after_discount,
+                'paid_amount' => $invoice->paid_amount,
+                'remaining_amount' => $invoice->remaining_amount,
+                'user_name' => $invoice->user->name ?? 'غير معروف',
+                'updated_at' => $invoice->updated_at->format('Y-m-d'),
+                'view_url' => route('searchInvoices', $invoice->sales_invoice_id),
+                'destroy_url' => route('sales-invoice.delete', $invoice->sales_invoice_id),
+            ];
+        });
 
-        return response()->json(['saleInvoice' => $SaleInvoice]);
+        return response()->json([
+            'saleInvoice' => $transformedInvoices,
+            'pagination' => [
+                'current_page' => $saleInvoices->currentPage(),
+                'last_page' => $saleInvoices->lastPage(),
+                'per_page' => $saleInvoices->perPage(),
+                'total' => $saleInvoices->total(),
+            ]
+        ]);
     }
 
 
@@ -750,86 +765,5 @@ class InvoiceSaleController extends Controller
         } else {
             return view('auth.login');
         }
-    }
-
-    public function searchInvoices(Request $request)
-    {
-        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
-
-        if (!$accountingPeriod) {
-            return response()->json(['message' => 'لم يتم العثور على فترة محاسبية حالية.'], 404);
-        }
-
-        // التحقق من المدخلات
-        $validated = $request->validate([
-            'searchType' => 'nullable|string|in:كل الفواتير,أول فاتورة,آخر فاتورة',
-            'searchQuery' => 'nullable|string|max:255',
-            'fromDate' => 'nullable',
-            'toDate' => 'nullable',
-        ]);
-
-
-        // بناء الاستعلام الأساسي
-        $query = SaleInvoice::with(['customer', 'user']);
-        if ($validated['searchQuery'] ?? false) {
-            $searchQuery = $validated['searchQuery'];
-
-            $query->where(function ($query) use ($searchQuery) {
-                // البحث باستخدام رقم الفاتورة
-                $query->where('sales_invoice_id', 'like', $searchQuery . '%')
-
-                    // البحث باستخدام اسم المورد
-                    ->orWhereHas('customer', function ($query) use ($searchQuery) {
-                        $query->where('sub_name', 'like', $searchQuery . '%'); // البحث عن الأسماء التي تبدأ بالقيمة المدخلة
-                    });
-            });
-        }
-        if ($request->filled(['fromDate', 'toDate'])) {
-
-            $query->whereBetween('created_at', [$validated['fromDate'], $validated['toDate']]);
-        } else {
-            $query->where('accounting_period_id', $accountingPeriod->accounting_period_id);
-            if ($validated['searchType'] && $validated['searchType'] !== 'كل الفواتير') {
-                $orderDirection = ($validated['searchType'] === 'أول فاتورة') ? 'asc' : 'desc';
-                $query->orderBy('created_at', $orderDirection);
-            }
-        }
-        // ترتيب الفواتير حسب نوع البحث
-
-        // dd($numeric);
-
-        $user = auth()->id();
-        $AuthorityName = "الفواتير المبيعات";
-        $us = UserPermission::where('User_id', $user)
-            ->where('Authority_Name', $AuthorityName)
-            ->first();
-        if (optional($us)->Readability == 1) {
-            $SaleInvoice = $query->get()->transform(function ($invoice) {
-                return [
-                    'formatted_date' => $invoice->formatted_date ?? 'غير متاح',
-                    'Customer_name' => optional($invoice->customer)->sub_name ?? 'غير معروف',
-                    'main_account_class' => optional($invoice->customer?->mainAccount)->accountClassLabel() ?? 'غير معروف',
-                    'transaction_type' => $invoice->transaction_type ?? 'غير معروف',
-                    'invoice_number' => $invoice->sales_invoice_id ?? 'غير متاح',
-                    'discount' => $invoice->discount ?? 'غير متاح',
-                    'payment_type' => PaymentType::tryFrom($invoice->payment_type)?->label() ?? 'غير معروف',
-                    'transaction_type' => TransactionType::fromValue($invoice->transaction_type)?->label() ?? 'غير معروف',
-                    'shipping_bearer' => $invoice->shipping_bearer ?? 'غير متاح',
-                    'shipping_amount' => $invoice->shipping_amount ?? 0,
-                    'total_price_sale' => $invoice->total_price_sale ?? 0,
-                    'net_total_after_discount' => $invoice->net_total_after_discount ?? 0,
-                    'paid_amount' => $invoice->paid_amount ?? 0,
-                    'remaining_amount' => $invoice->remaining_amount ?? 0,
-                    'user_name' => $invoice->userName ?? 'غير معروف',
-                    'updated_at' => optional($invoice->updated_at)->format('Y-m-d') ?? 'غير متاح',
-                ];
-            });
-        } else {
-            return view('auth.login');
-        }
-        // الحصول على النتائج
-
-
-        return response()->json(['saleInvoice' => $SaleInvoice]);
     }
 }
