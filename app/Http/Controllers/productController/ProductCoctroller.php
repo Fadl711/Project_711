@@ -110,14 +110,14 @@ class ProductCoctroller extends Controller
         $join->on('products.product_id', '=', 'saleQuantity5.product_id')
              ->addBinding([$warehouse_to_id, $accountingPeriod->accounting_period_id]);
     })
-    ->leftJoin(DB::raw('(SELECT product_id, SUM(quantity) as sum_quantity FROM purchases WHERE transaction_type = 3 AND warehouse_from_id = ? AND accounting_period_id = ? GROUP BY product_id) as warehouseFromQuantity3'), function($join) use ($warehouse_to_id, $accountingPeriod) {
+    ->leftJoin(DB::raw('(SELECT product_id, SUM(quantity) as sum_quantity FROM purchases WHERE transaction_type IN (3,9,10) AND warehouse_from_id = ? AND accounting_period_id = ? GROUP BY product_id) as warehouseFromQuantity3'), function($join) use ($warehouse_to_id, $accountingPeriod) {
         $join->on('products.product_id', '=', 'warehouseFromQuantity3.product_id')
              ->addBinding([$warehouse_to_id, $accountingPeriod->accounting_period_id]);
     })
     ->leftJoin(DB::raw('(SELECT product_id, SUM(quantity) as sum_quantity FROM purchases WHERE transaction_type = 2 GROUP BY product_id) as warehouseFromQuantity'), function($join) {
         $join->on('products.product_id', '=', 'warehouseFromQuantity.product_id');
     })
-    ->leftJoin(DB::raw('(SELECT product_id, SUM(quantity) as sum_quantity FROM purchases WHERE transaction_type IN (1, 6, 3, 7) AND warehouse_to_id = ? AND accounting_period_id = ? GROUP BY product_id) as purchaseToQuantity'), function($join) use ($warehouse_to_id, $accountingPeriod) {
+    ->leftJoin(DB::raw('(SELECT product_id, SUM(quantity) as sum_quantity FROM purchases WHERE transaction_type IN (1, 6, 3, 7,8) AND warehouse_to_id = ? AND accounting_period_id = ? GROUP BY product_id) as purchaseToQuantity'), function($join) use ($warehouse_to_id, $accountingPeriod) {
         $join->on('products.product_id', '=', 'purchaseToQuantity.product_id')
              ->addBinding([$warehouse_to_id, $accountingPeriod->accounting_period_id]);
     })
@@ -167,12 +167,9 @@ if ( $Quantit == "QuantityCosts") {
     ], 'quantity')
     ->withSum([
         'purchases as warehouseFromQuantity3' => function($query) use ($warehouse_to_id,$accountingPeriod) {
-            $query->where('transaction_type', 3)
+            $query->whereIn('transaction_type', [3,9,10])
                  ->where('warehouse_from_id',$warehouse_to_id)
                      ->where('accounting_period_id', $accountingPeriod->accounting_period_id);
-
-
-            
         },
         'purchases as warehouseFromQuantity' => function($query) use ($warehouse_to_id,$accountingPeriod) {
             $query->where('transaction_type', 2)
@@ -182,7 +179,7 @@ if ( $Quantit == "QuantityCosts") {
             ;
         },
         'purchases as purchaseToQuantity' => function($query) use ($warehouse_to_id,$accountingPeriod) {
-            $query->whereIn('transaction_type', [1,3, 6, 7])
+            $query->whereIn('transaction_type', [1,3, 6, 7,8])
                  ->where('warehouse_to_id',$warehouse_to_id)
                  ->where('accounting_period_id', $accountingPeriod->accounting_period_id);
         }
@@ -283,7 +280,7 @@ $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_a
                 $purchaseToQuantity = Purchase::where('product_id', $product_id)
                     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
                     ->where('warehouse_to_id', $warehouse_to_id)
-                    ->whereIn('transaction_type', [1,6, 3, 7])
+                    ->whereIn('transaction_type', [1,6, 3, 7,8])
                     ->sum('quantity');
 
                 $warehouseFromQuantity = Purchase::where('product_id', $product_id)
@@ -464,7 +461,7 @@ $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_a
                         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
                         ->where('warehouse_to_id', $warehouse_to_id)
                         ->where('Supplier_id', $Supplier->sub_account_id)
-                        ->whereIn('transaction_type', [1, 6, 7])
+                        ->whereIn('transaction_type', [1, 6,7,8])
                         ->sum('quantity');
 
                     $lastPurchase = Purchase::where('product_id', $product_id)
@@ -589,7 +586,7 @@ $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_a
         $purchaseToQuantity = Purchase::where('product_id', $id)
             ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
             ->where('warehouse_to_id', $warehouse_to_id)
-            ->whereIn('transaction_type', [1, 6, 3, 7])
+            ->whereIn('transaction_type', [1, 6, 3, 7,8])
             ->sum('quantity');
 
         $warehouseFromQuantity = Purchase::where('product_id', $id)
@@ -888,6 +885,7 @@ $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_a
                 $query->where('transaction_type', 1)
                     ->orWhere('transaction_type', 6)
                     ->orWhere('transaction_type', 7)
+                    ->orWhere('transaction_type', 8)
                     ->orWhere('transaction_type', 3);
             })
             ->select('product_id', 'Product_name') // اختيار الأعمدة المطلوبة

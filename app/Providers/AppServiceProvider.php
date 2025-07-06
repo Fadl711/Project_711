@@ -38,6 +38,7 @@ class AppServiceProvider extends ServiceProvider
         \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::except([
             '*'
         ]);
+        /* Model::preventLazyLoading(); */
     }
 
     /**

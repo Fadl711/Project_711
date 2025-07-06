@@ -472,7 +472,6 @@ class InvoiceSaleController extends Controller
             foreach ($updateSale as $sale) {
                 $sale->update([
                     'transaction_type' => $validatedData['transaction_type'],
-                    'warehouse_to_id' => $DefaultCustomer->warehouse_id,
                     'Customer_id' => $validatedData['Customer_name_id'],
                     'financial_account_id' => $validatedData['financial_account_id'],
                 ]);

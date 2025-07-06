@@ -97,9 +97,11 @@ class PurchaseController extends Controller
             'transaction_type' => 'required',
             'main_account_debit_id' => 'required|numeric',
             'Currency_id' => 'required|numeric',
+            'sub_account_debit_id' => 'required|numeric',
         ], [
             'transaction_type.required' => 'حقل نوع المعاملة مطلوب.',
             'main_account_debit_id.required' => 'حقل حساب التصدير مطلوب.',
+            'sub_account_debit_id.required' => 'حقل حساب التصدير مطلوب.',
             'Currency_id.required' => 'حقل  العملة الفاتورة مطلوب.',
         ]);
 
@@ -213,16 +215,14 @@ class PurchaseController extends Controller
                 $account_id = $purchaseInvoice->account_id;
                 $warehouse_from_id = null;
                 break;
-        
-            case 2: // عملية خروج المخزون
+          case 2: // عملية خروج المخزون
                 $Productquantity=   $Product->Quantity - $request->Quantity;
-
                 $supplier_id= $purchaseInvoice->Supplier_id;
                 $warehouse_from_id = $request->account_debitid;
             $account_id = $purchaseInvoice->account_id;
             $warehouse_to_id = null;
                 break;
-            case 3: // عملية تحويل المخزون
+                     case 3: // عملية تحويل المخزون
 
                 if ($request->account_debitid === $purchaseInvoice->account_id) {
                     return response()->json([
@@ -236,6 +236,31 @@ class PurchaseController extends Controller
                 $warehouse_from_id = $purchaseInvoice->account_id;
                 $account_id = null;
                 break;
+            case 8: // عملية دخول  الزائدة الى المخزون
+             $Productquantity=   $Product->Quantity + $request->Quantity;
+
+                $supplier_id= $purchaseInvoice->Supplier_id ;
+                $warehouse_to_id = $request->account_debitid;
+                $account_id = $purchaseInvoice->account_id;
+                $warehouse_from_id = null;
+                break;
+        
+          
+            case 9: // عملية خروج الكميات التالفة
+                $Productquantity=$Product->Quantity - $request->Quantity;
+                $supplier_id= $purchaseInvoice->Supplier_id ??null;
+                $warehouse_from_id = $request->account_debitid;
+            $account_id = $purchaseInvoice->account_id;
+            $warehouse_to_id = null;
+                break;
+            case 10: // عملية خروج الكميات التالفة
+                $Productquantity=$Product->Quantity - $request->Quantity;
+                $supplier_id= $purchaseInvoice->Supplier_id ??null;
+                $warehouse_from_id = $request->account_debitid;
+            $account_id = $purchaseInvoice->account_id;
+            $warehouse_to_id = null;
+                break;
+       
             default:
                 return response()->json([
                     'success' => false,
@@ -371,7 +396,7 @@ public function search(Request $request)
  $purchaseToQuantity = Purchase::where('product_id', $id)
 ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
 ->where('warehouse_to_id', $warehouse_to_id)
-->whereIn('transaction_type', [1, 6, 3,7])
+->whereIn('transaction_type', [1, 6, 3,7,8])
 ->sum('quantity');
 
 $warehouseFromQuantity = Purchase::where('product_id', $id)
@@ -383,7 +408,7 @@ $warehouseFromQuantity = Purchase::where('product_id', $id)
 $warehouseFromQuantity3 = Purchase::where('product_id', $id)
     ->where('warehouse_from_id', $warehouse_to_id)
     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-    ->where('transaction_type', 3)
+    ->whereIn('transaction_type', [3,9,10])
     ->sum('quantity');
 
 $saleQuantity5 = Sale::where('product_id', $id)
@@ -484,7 +509,7 @@ public function destroy($id)
 public function print($id)
 {
     $DataPurchaseInvoice = PurchaseInvoice::where('purchase_invoice_id', $id)->first();
-    $SubAccount = SubAccount::where('sub_account_id', $DataPurchaseInvoice->Supplier_id)->first();
+    $SubAccount = SubAccount::where('sub_account_id', $DataPurchaseInvoice->Supplier_id ??$DataPurchaseInvoice->account_id)->first();
     $UserName = User::where('id', $DataPurchaseInvoice->User_id)->pluck('name')->first();
 
     if (!$UserName) {

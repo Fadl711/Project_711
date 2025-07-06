@@ -62,9 +62,10 @@
                         </select>
                     </div>
                         
-                       <div >
+                       <div class="supplier_div" >
                         <label for="Supplier_id" class="labelSale supplier_id">اسم المورد</label>
-                        <select name="Supplier_id" id="Supplier_id" class="input-field w-full select2 inputSale" >
+                        <select required name="Supplier_id" id="Supplier_id" class="input-field w-full select2 inputSale " >
+                          <option selected value="{{ null }}">{{"حدد اسم المورد "}}</option>
                             @isset($subAccountSupplierid)
                             @foreach ($subAccountSupplierid as $Supplier)
                             <option value="{{$Supplier->sub_account_id}}">{{$Supplier->sub_name}}</option>
@@ -72,12 +73,11 @@
                              @endisset
                         </select>
                     </div>
-                  
                     <div >
                         <label for="main_account_debit_id" class="main_accountdebit  labelSale">  حساب التصدير  </label>
-                       <select name="main_account_debit_id" id="main_account_debit_id"  class="input-field  select2 inputSale" required >
+                       <select required name="main_account_debit_id" id="main_account_debit_id"  class="input-field  select2 inputSale" required >
                           @isset($main_accounts)
-                        <option value="" selected>اختر الحساب</option>
+                        <option value="{{ null }}" selected>اختر الحساب</option>
                          @foreach ($main_accounts as $mainAccount)
                               <option value="{{$mainAccount->main_account_id}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
                          @endforeach
@@ -87,7 +87,7 @@
 
                    <div >
                        <label for="sub_account_debit_id" class="labelSale  sub_account_debit_id ">  تحديد الدائن</label>
-                       <select name="sub_account_debit_id" id="sub_account_debit_id" dir="ltr" class="input-field select2 inputSale" required>
+                       <select name="sub_account_debit_id" id="sub_account_debit_id"  class="input-field select2 inputSale" required>
                            <option value="" selected>اختر الحساب الفرعي</option>
                            </select>
                </div>
@@ -104,7 +104,7 @@
                     @endauth
                     <div>
                         <label for="Currency_id" class="labelSale">العملة الفاتورة</label>
-                        <select   dir="ltr" id="Currency_id" class="inputSale input-field " name="Currency_id"  >
+                        <select    id="Currency_id" class="inputSale input-field " name="Currency_id"  >
                             @isset($Currency_name)
                           @foreach ($Currency_name as $cur)
                           <option @isset($cu) @selected($cur->currency_id==$cu->Currency_id)@endisset value="{{$cur->currency_id}}">{{$cur->currency_name}}</option>
@@ -129,7 +129,7 @@
             <div  class=" gap-2 grid grid-cols-2   ">
                 <div>
                     <label for="account_debitid" class="labelSale account_debitid ">  مخازن الستيراد</label>
-                    <select name="account_debitid" id="account_debitid" dir="ltr" class="input-field  select2 inputSale" required>
+                    <select name="account_debitid" id="account_debitid"  class="input-field  select2 inputSale" required>
                        @isset($Warehouse)
                      <option value="" selected>اختر المخزن</option>
                       @foreach ($Warehouse as $mainAccount)
@@ -329,27 +329,50 @@ else{
               
 
                  if(type==1){
-                        main_accountdebit.html(" حساب الرئيسي/ الدفع  ").show();
+                        main_accountdebit.html(" الحساب الرئيسي/ الدفع").show();
                         supplier_id.html("اسم المورد").show();
-                        sub_account_debit_id.html(" حساب الفرعي/ الدفع ").show();
+                        sub_account_debit_id.html(" الحساب الفرعي/ الدفع ").show();
+                         $(".account_debitid").html("المخزن ").show();
+                         product_id.html("  البحث عن المنتج  ").show();
+
+
+
+                 }
+
+                 if(type==2){
+                        main_accountdebit.html("الحساب الرئيسي /المدين").show();
+                        supplier_id.html("اسم المورد").show();
+                        sub_account_debit_id.html(" الحساب الفرعي /المدين ").show();
+                        // $(".supplier_div").hide();
+                        $(".account_debitid").html("المخزن المرسل").show();
+                       product_id.html("  البحث عن المنتج المردود ").show();
+
+                 }
+                 if(type==3){
+                        main_accountdebit.html("المخزن الرئيسي /المصدر ").show();
+                        supplier_id.html("اسم المورد").show();
+                        sub_account_debit_id.html(" المخزن الفرعي /المصدر ").show();
+                         $(".account_debitid").html("المخزن المستقبل ").show();
+                         product_id.html("البحث عن المنتج").show();
+
                  }
                  if(type==9){
-                        main_accountdebit.html("   حساب الرئيسي/ لخسائر النقص  ").show();
-                            sub_account_debit_id.html(" حساب الفرعي/ خسارة النقص ").show();
+                        main_accountdebit.html("   الحساب الرئيسي/ خسائر النقص  ").show();
+                            sub_account_debit_id.html(" الحساب الفرعي/ خسارة النقص ").show();
                             product_id.html("  البحث عن المنتج الناقص ").show();
-                            supplier_id.html("اسم المورد (الختياري)").show();
+                            supplier_id.html("اسم المورد (اختياري)").show();
                  }
                  if(type==10){
-                        main_accountdebit.html("   حساب الرئيسي/ لخسائر الأتلاف  ").show();
-                            sub_account_debit_id.html(" حساب الفرعي/ خسارة الأتلاف ").show();
+                        main_accountdebit.html("   الحساب الرئيسي/ خسائر الأتلاف  ").show();
+                            sub_account_debit_id.html(" الحساب الفرعي/ خسارة الأتلاف ").show();
                             product_id.html("  البحث عن المنتج التالف ").show();
-                            supplier_id.html("اسم المورد (الختياري)").show();
+                            supplier_id.html("اسم المورد (اختياري)").show();
                         }
                         if(type==8){
-                            main_accountdebit.html("   حساب الرئيسي/ إيرادات زيادة المخزون  ").show();
-                            sub_account_debit_id.html(" حساب الفرعي/ إيراد زيادة المخزون  ").show();
+                            main_accountdebit.html("   الحساب الرئيسي/ إيرادات زيادة المخزون  ").show();
+                            sub_account_debit_id.html(" الحساب الفرعي/ إيراد زيادة المخزون  ").show();
                             product_id.html("  البحث عن المنتج الزايد ").show();
-                           supplier_id.html("اسم المورد (الختياري)").show();
+                           supplier_id.html("اسم المورد (اختياري)").show();
                  }
 
                 
