@@ -524,6 +524,95 @@ class InvoiceSaleController extends Controller
             }
         }
     }
+
+    public function searchInvoices(Request $request)
+    {
+        $accountingPeriod = Cache::remember('active_accounting_period', 3600, function () {
+            return AccountingPeriod::where('is_closed', false)->first();
+        });
+
+        if (!$accountingPeriod) {
+            return response()->json(['message' => 'لم يتم العثور على فترة محاسبية حالية.'], 404);
+        }
+        $validated = $request->validate([
+            'searchType' => 'nullable|string|in:كل الفواتير,أول فاتورة,آخر فاتورة',
+            'searchQuery' => 'nullable|string|max:255',
+            'fromDate' => 'nullable',
+            'toDate' => 'nullable',
+        ]);
+        // بناء الاستعلام مع تحديد العلاقات المطلوبة
+        $query = SaleInvoice::with([
+            'customer:sub_account_id,sub_name,main_id', // لا نحتاج account_class هنا
+            'customer.mainAccount:main_account_id,AccountClass', // استخدام AccountClass بدلاً من account_class
+            'user:id,name'
+        ]);
+
+        if ($validated['searchQuery'] ?? false) {
+            $searchQuery = $validated['searchQuery'];
+
+            $query->where(function ($query) use ($searchQuery) {
+                // البحث باستخدام رقم الفاتورة
+                $query->where('sales_invoice_id', 'like', $searchQuery . '%')
+                    // البحث باستخدام اسم المورد
+                    ->orWhereHas('customer', function ($query) use ($searchQuery) {
+                        $query->where('sub_name', 'like', $searchQuery . '%'); // البحث عن الأسماء التي تبدأ بالقيمة المدخلة
+                    });
+            });
+        }
+
+        // ترتيب الفواتير حسب نوع البحث
+        if ($request->filled(['fromDate', 'toDate'])) {
+            // dd($validated['fromDate'], $validated['toDate']);
+
+            $query->whereBetween('created_at', [$validated['fromDate'], $validated['toDate']]);
+        } else {
+            $query->where('accounting_period_id', $accountingPeriod->accounting_period_id);
+            if ($validated['searchType'] && $validated['searchType'] !== 'كل الفواتير') {
+                $orderDirection = ($validated['searchType'] === 'أول فاتورة') ? 'asc' : 'desc';
+                $query->orderBy('created_at', $orderDirection);
+            }
+        }
+
+        $saleInvoices = $query->paginate(50);
+
+        if ($request->filled('searchQuery') || $request->filled('fromDate') || $request->filled('toDate')) {
+            // إعادة حساب الترحيم بناءً على نتائج البحث المصفاة
+            $saleInvoices = $query->paginate(50);
+        }
+
+        // تحويل البيانات
+        $transformedInvoices = $saleInvoices->getCollection()->map(function ($invoice) {
+            return [
+                'formatted_date' => $invoice->created_at->format('d/m/Y'),
+                'Customer_name' => $invoice->customer->sub_name ?? 'غير معروف',
+                'main_account_class' => optional($invoice->customer?->mainAccount)->accountClassLabel() ?? 'غير معروف',
+                'transaction_type' => TransactionType::fromValue($invoice->transaction_type)?->label() ?? 'غير معروف',
+                'invoice_number' => $invoice->sales_invoice_id,
+                'discount' => $invoice->discount,
+                'payment_type' => PaymentType::tryFrom($invoice->payment_type)?->label() ?? 'غير معروف',
+                'shipping_bearer' => $invoice->shipping_bearer,
+                'shipping_amount' => number_format($invoice->shipping_amount, 2),
+                'total_price_sale' => number_format($invoice->total_price_sale, 2),
+                'net_total_after_discount' => $invoice->net_total_after_discount,
+                'paid_amount' => $invoice->paid_amount,
+                'remaining_amount' => $invoice->remaining_amount,
+                'user_name' => $invoice->user->name ?? 'غير معروف',
+                'updated_at' => $invoice->updated_at->format('Y-m-d'),
+                'view_url' => route('searchInvoices', $invoice->sales_invoice_id),
+                'destroy_url' => route('sales-invoice.delete', $invoice->sales_invoice_id),
+            ];
+        });
+
+        return response()->json([
+            'saleInvoice' => $transformedInvoices,
+            'pagination' => [
+                'current_page' => $saleInvoices->currentPage(),
+                'last_page' => $saleInvoices->lastPage(),
+                'per_page' => $saleInvoices->perPage(),
+                'total' => $saleInvoices->total(),
+            ]
+        ]);
+    }
     public function getSaleInvoice(Request $request, $filterType)
     {
         // تحقق من الفترة المحاسبية مع التخزين المؤقت

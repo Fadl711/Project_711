@@ -362,7 +362,7 @@ class RestrictionController extends Controller
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
 
         // $pageNums=GeneralJournal::all();
-        $pageNums = GeneralJournal::where('accounting_period_id', $accountingPeriod->accounting_period_id)->get()->sortDesc();
+        $pageNums = GeneralJournal::with('dailyEntries')->where('accounting_period_id', $accountingPeriod->accounting_period_id)->get()->sortDesc();
 
         return view('daily_restrictions.all_restrictions_show1', ['pagesNum' => $pageNums]);
     }

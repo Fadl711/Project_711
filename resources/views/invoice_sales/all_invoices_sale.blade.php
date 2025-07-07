@@ -3,7 +3,7 @@
     <div class="container mx-auto overflow-hidden ">
         <!-- Search and Filter Section -->
         <div class="w-full sm:w-auto flex items-center bg-white p-1 shadow-lg rounded-lg gap-4 justify-between mb-2  ">
-            <div class="w-full sm:w-auto flex gap-4 items-center">
+            <div class="w-full sm:w-1/2 flex gap-4 items-center">
                 <select name="searchType"
                     class="sel border border-gray-300 rounded-lg p-2 w-full sm:w-auto focus:ring-2 focus:ring-indigo-500">
                     <option selected>كل الفواتير</option>
@@ -11,8 +11,8 @@
                     <option value="آخر فاتورة">آخر فاتورة</option>
                 </select>
                 <input type="search" name="search"
-                    class="border border-gray-300 rounded-lg p-2 w-full sm:w-auto focus:ring-2 focus:ring-indigo-500"
-                    placeholder="بحث" name="search">
+                    class="border border-gray-300 rounded-lg p-2 w-1/2 focus:ring-2 focus:ring-indigo-500"
+                    placeholder="بحث باسم العميل او رقم الفاتورة">
             </div>
             <div class="col-span-6 sm:col-span-3">
                 @foreach (['1' => 'تلقائي', '2' => 'تحليل'] as $key => $label)
@@ -210,15 +210,17 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                     },
                     success: function(data) {
+                        renderPagination(data.pagination,
+                            container);
                         container.empty();
                         if (data.saleInvoice && data.saleInvoice.length > 0) {
                             data.saleInvoice.forEach((sale) => {
                                 container.append(renderInvoiceCard(sale));
                             });
-                            renderPagination(data.pagination, container);
+
+                            // تحديث الترحيم بناءً على البيانات الجديدة
                         } else {
-                            container.append(
-                                '<p class="text-center text-gray-500">لا توجد فواتير لعرضها.</p>');
+                            container.append('<p class="text-center text-gray-500">لا توجد نتائج.</p>');
                         }
                         bindDynamicEvents(); // ربط الأحداث بعد تحميل البيانات
                     },
@@ -230,7 +232,8 @@
 
             // دالة إنشاء عناصر الترحيم
             function renderPagination(pagination, container) {
-                // إزالة أي ترحيم سابق
+                // إزالة أي ترحيم سابق مرتبط بالحاوية
+                container.siblings('.pagination').remove();
                 container.next('.pagination').remove();
 
                 // إنشاء عنصر الترحيم الجديد
@@ -301,7 +304,10 @@
             // التعامل مع تغيير الصفحات
             $(document).on('click', '.page-btn', function() {
                 const page = $(this).data('page');
-                fetchInvoices(currentUrl, displayContainer, page);
+                // تحديد أي حاوية ظاهرة (بحث أو عرض عادي)
+                const isSearchActive = !displayContainer2.hasClass('hidden');
+                const targetContainer = isSearchActive ? displayContainer2 : displayContainer;
+                fetchInvoices(currentUrl, targetContainer, page);
             });
 
             // البحث بالمدخل
@@ -325,6 +331,14 @@
                     displayContainer.removeClass("hidden");
                     displayContainer2.addClass("hidden");
                     displayContainer2.empty();
+                    // عند مسح البحث، إعادة تحميل جميع الفواتير مع الترحيم الافتراضي
+                    const searchType = searchTypeSelect.val();
+                    const FromDate = fromDate.val();
+                    const ToDate = toDate.val();
+                    const baseUrl = "{{ url('/api/sale-invoices') }}";
+                    const url =
+                        `${baseUrl}?searchType=${searchType}&searchQuery=${searchQuery}&fromDate=${FromDate}&toDate=${ToDate}`;
+                    fetchInvoices(url, displayContainer, 1);
                 }
             });
 
