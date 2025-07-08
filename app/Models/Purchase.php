@@ -10,7 +10,6 @@ class Purchase extends Model
     use HasFactory;
 
 protected $primaryKey = 'purchase_id';
-   
 protected $fillable = [
     'Product_name',
     'product_id',
