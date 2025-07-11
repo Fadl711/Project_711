@@ -54,7 +54,9 @@ class RestrictionController extends Controller
             if ($dailyPageId->daily_entries_type == "سند صرف" || $dailyPageId->daily_entries_type == "سند قبض") {
                 return response()->json(['success' => false, 'errorMessage' => 'لا يمكنك تعديل من هنا']);
             }
-            Operation::createOpertion($dailyPageId->entrie_id, 'تعديل', $dailyPageId->getTranslatedType());
+            $message = "إيداع في حساب : " . $dailyPageId->debitAccount->sub_name . " مبلغ وقدره : " . $dailyPageId->amount_debit . " تقيد المبلغ في حساب : " . $dailyPageId->creditAccount->sub_name;
+
+            Operation::createOpertion($dailyPageId->entrie_id, 'تعديل', $dailyPageId->getTranslatedType(), $message);
         }
         $Amount_debit = $this->removeCommas($request->Amount_debit);
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
@@ -486,7 +488,8 @@ class RestrictionController extends Controller
             if ($generalEntrieaccount_credit_id) {
                 $generalEntrieaccount_credit_id->delete();
             }
-            Operation::createOpertion($DailyEntrie->entrie_id, 'حذف', $DailyEntrie->getTranslatedType());
+            $message = "إيداع في حساب : " . $DailyEntrie->debitAccount->sub_name . " مبلغ وقدره : " . $DailyEntrie->amount_debit . " تقيد المبلغ في حساب : " . $DailyEntrie->creditAccount->sub_name;
+            Operation::createOpertion($DailyEntrie->entrie_id, 'حذف', $DailyEntrie->getTranslatedType(), $message);
 
             $DailyEntrie->delete();
         } else {

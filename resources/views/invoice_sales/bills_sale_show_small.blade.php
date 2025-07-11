@@ -237,23 +237,17 @@
                 @endisset
             </tbody>
         </table>
-        <hr class="border-dashed border-gray-300 my-2">
         <!-- المجاميع -->
-        <div class="totals">
-            <div class="total-row">
-                <span>المجموع قبل الخصم:</span>
-                <span>{{ number_format($net_total_after_discount) ?? 0 }}</span>
-            </div>
-            <div class="grand-total total-row">
-                <span>الإجمالي:</span>
-                <span>{{ number_format($net_total_after_discount) ?? 0 }}
-                    <p class="text-sm">{{ $priceInWords }}</p>
-                </span>
-            </div>
+        <div class="grand-total total-row">
+            <span>الإجمالي:</span>
+            <span>{{ number_format($net_total_after_discount) ?? 0 }}
+                <p class="text-sm">{{ $priceInWords }}</p>
+            </span>
         </div>
+    </div>
 
-        <!-- طريقة الدفع -->
-        {{--         <div class="payment-method">
+    <!-- طريقة الدفع -->
+    {{--         <div class="payment-method">
             <div class="total-row">
                 <span>المبلغ المدفوع:</span>
                 <span>160.00 ريال</span>
@@ -264,17 +258,15 @@
             </div>
         </div> --}}
 
-        <!-- الباركود -->
-        <div class="barcode">
-            *{{ $DataPurchaseInvoice->sales_invoice_id ?? __('غير متوفر') }}*
-        </div>
+    <!-- الباركود -->
+    <div class="barcode">
+        *{{ $DataPurchaseInvoice->sales_invoice_id ?? __('غير متوفر') }}*
+    </div>
 
-        <!-- تذييل الفاتورة -->
-        <div class="footer">
-            <p>شكراً لزيارتكم - نتشرف بخدمتكم دائماً</p>
-            <p>هذه فاتورة ضريبية مبسطة</p>
-            <p>يرجى الاحتفاظ بالفاتورة لاستبدال أو إرجاع السلع خلال 14 يوم</p>
-        </div>
+    <!-- تذييل الفاتورة -->
+    <div class="footer">
+        <p>شكراً لزيارتكم - نتشرف بخدمتكم دائماً</p>
+    </div>
     </div>
 
     <!-- أزرار الطباعة - لن تظهر في المطبوعة -->

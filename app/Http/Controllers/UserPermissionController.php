@@ -62,7 +62,6 @@ class UserPermissionController extends Controller
                 'success' => true,
                 'message' => 'تم تحديث الصلاحية بنجاح'
             ]);
-
         } catch (\Exception $e) {
             \Log::error('Error updating permission: ' . $e->getMessage());
             return response()->json([
@@ -214,7 +213,14 @@ class UserPermissionController extends Controller
                 'التقارير',
                 'المردودات',
                 'الإعدادات',
-                'الخصم والتحليل'
+                'الخصم والتحليل',
+                'ادارت المستخدمين',
+                'تحديث النظام',
+                'النسخ الاحتياطي',
+                'قيد الارباح',
+                'العملات',
+                'الإعدادات الافتراضية',
+                'الاشعارات',
             ];
 
             foreach ($pages as $page) {
@@ -273,5 +279,4 @@ class UserPermissionController extends Controller
             ], 500);
         }
     }
-
 }

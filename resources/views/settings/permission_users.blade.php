@@ -6,7 +6,7 @@
                 <label for="userSelect" class="block text-sm font-medium text-gray-700 mb-2">اختر مستخدم</label>
                 <select id="userSelect" class="w-full p-2 border rounded-md sel">
                     <option value="">اختر مستخدم</option>
-                    @foreach($users as $user)
+                    @foreach ($users as $user)
                         <option value="{{ $user->id }}">{{ $user->name }}</option>
                     @endforeach
                 </select>
@@ -48,11 +48,12 @@
                                         <option value="الإعدادات">الإعدادات</option>
                                         <option value="الخصم والتحليل">الخصم والتحليل</option>
                                         <option value="ادارت المستخدمين">ادارت المستخدمين </option>
-                                        <option value="تحديث النظام">تحديث النظام  </option>
-                                        <option value="النسخ الاحتياطي">النسخ الاحتياطي  </option>
-                                        <option value="العملات">العملات  </option>
-                                        <option value="قيد الارباح">قيد الارباح  </option>
-                                        <option value="الإعدادات الافتراضية"> الإعدادات الافتراضية  </option>
+                                        <option value="تحديث النظام">تحديث النظام </option>
+                                        <option value="النسخ الاحتياطي">النسخ الاحتياطي </option>
+                                        <option value="العملات">العملات </option>
+                                        <option value="قيد الارباح">قيد الارباح </option>
+                                        <option value="الإعدادات الافتراضية"> الإعدادات الافتراضية </option>
+                                        <option value="الاشعارات"> الاشعارات </option>
                                     </select>
                                 </div>
                             </div>

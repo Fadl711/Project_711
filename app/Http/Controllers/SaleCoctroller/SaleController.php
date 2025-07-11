@@ -471,7 +471,10 @@ class SaleController extends Controller
             if (!$accountingPeriod) {
                 return response()->json(['success' => false, 'message' => 'لا توجد فترة محاسبية مفتوحة.']);
             }
-            Operation::createOpertion($invoice->sales_invoice_id, 'حذف', 'فاتورة مبيعات');
+            $message = "اسم الفاتورة :" . $invoice->customer->sub_name . "  أجمالي الفاتورة : " . $invoice->net_total_after_discount . " المدفوع: " . $invoice->paid_amount;
+
+
+            Operation::createOpertion($invoice->sales_invoice_id, 'حذف', 'فاتورة مبيعات', $message);
             $invoice->delete();
             // البحث عن السجل المرتبط في DailyEntrie
             $GetentrieIds = DailyEntrie::where('invoice_id', $id)

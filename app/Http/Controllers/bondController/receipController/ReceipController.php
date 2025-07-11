@@ -76,9 +76,7 @@ class ReceipController extends Controller
                 }
             }
             $payment_bond_id = $request->payment_bond_id;
-            if ($payment_bond_id) {
-                Operation::createOpertion($payment_bond_id, 'تعديل', $request->transaction_type);
-            }
+
             $paymentBond = PaymentBond::updateOrCreate(
                 [
                     'payment_bond_id' => $payment_bond_id,
@@ -98,7 +96,10 @@ class ReceipController extends Controller
                     'User_id' => $request->User_id,
                 ]
             );
-
+            if ($payment_bond_id) {
+                $message = "إيداع في حساب : " . $paymentBond->debitSubAccount->sub_name . " مبلغ وقدره : " . $paymentBond->Amount_debit . " تقيد المبلغ في حساب : " . $paymentBond->creditSubAccount->sub_name;
+                Operation::createOpertion($payment_bond_id, 'تعديل', $request->transaction_type, $message);
+            }
             DB::table('payment_bonds')
                 ->where('payment_bond_id', $paymentBond->payment_bond_id)
                 ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
@@ -255,7 +256,8 @@ class ReceipController extends Controller
                     // حذف Daily Entry
                     $DailyEntrie->delete();
                 }
-                Operation::createOpertion($paymentBond->payment_bond_id, 'حذف', $paymentBond->transaction_type);
+                $message = "إيداع في حساب : " . $paymentBond->debitAccount->sub_name . " مبلغ وقدره : " . $paymentBond->amount_debit . " تقيد المبلغ في حساب : " . $paymentBond->creditAccount->sub_name;
+                Operation::createOpertion($paymentBond->payment_bond_id, 'حذف', $paymentBond->transaction_type, $message);
                 // حذف سند الدفع
                 $paymentBond->delete();
 

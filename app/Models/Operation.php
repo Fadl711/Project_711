@@ -21,7 +21,7 @@ class Operation extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
-    public static function createOpertion($modelId, $type, $model_type)
+    public static function createOpertion($modelId, $type, $model_type, $message)
     {
         self::create([
             'user_id' => Auth::id(),
@@ -29,7 +29,8 @@ class Operation extends Model
             'type' => $type,
             'model_type' =>  $model_type,
             'model_id' => $modelId,
-            'message' => "تم {$type} {$model_type} رقم: {$modelId}",
+            'message' => "تم {$type} {$model_type} رقم: {$modelId} \n
+        {$message}",
             'is_seen' => 0,
         ]);
     }
