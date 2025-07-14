@@ -36,22 +36,27 @@ class SaleController extends Controller
         $DefaultCustomer  = Default_customer::where('id', 1)->first();
         $financial_account = Default_customer::where('id', 1)->pluck('financial_account_id')->first();
         $Currency_name = Currency::all();
-        $MainAccounts = MainAccount::all();
+        $main_accounts = MainAccount::all();
+          $products = Product::all();
         $user = Auth::user();
+                        $transaction_types = TransactionType::cases();
 
         // التحقق من إذن القراءةcanRead
         if (! $user->hasPermission('المبيعات')) {
             abort(403, 'غير مصرح لك بعرض الصفحة.');
         }
-
+$PaymentType = PaymentType::cases();
 
         return view('sales.create', [
             'customers' => $customers,
+            'products' => $products,
             'DefaultCustomer' => $DefaultCustomer,
             'Currency_name' => $Currency_name,
-            'MainAccounts' => $MainAccounts,
+            'main_accounts' => $main_accounts,
             'financial_account' => $financial_account,
             'financialts' => $financialt,
+            'PaymentType' =>$PaymentType,
+            'transaction_types' =>$transaction_types,
         ]);
     }
     private function removeCommas($value)

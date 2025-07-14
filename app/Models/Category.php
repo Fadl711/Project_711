@@ -18,7 +18,6 @@ class Category extends Model
         'Purchase_price',
         'Selling_price',
         'Quantityprice',
-
         'user_id',
 
     ];

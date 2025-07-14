@@ -36,9 +36,9 @@
         }
     </style>
 
-    <div class="container mx-auto p-4">
+    <div class="container mx-auto ">
         <!-- Search and Filter Section -->
-        <div class="bg-white p-3 shadow-lg rounded-lg flex flex-wrap gap-4 justify-between items-center mb-4">
+        <div class="bg-white p-1 shadow-lg rounded-lg flex flex-wrap gap-2 justify-between items-center mb-1">
             <div class="flex flex-wrap gap-4 items-center w-full sm:w-auto">
                 <select name="searchType"
                     class="border border-gray-300 rounded-lg p-2 w-full sm:w-auto focus:ring-2 focus:ring-indigo-500 sel">
@@ -57,14 +57,14 @@
                 <option value="سند صرف">سند صرف</option>
             </select>
 
-            <button
+            {{-- <button
                 class="response-payment bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 استرجع سندات الصرف البيانات
-            </button>
+            </button> --}}
         </div>
 
         <!-- Date Filter Section -->
-        <form class="bg-white p-3 rounded-lg shadow-md">
+        <form class="bg-white p-1 rounded-lg shadow-md">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-center">
                 <label class="text-sm font-medium text-center">عرض حسب</label>
 

@@ -748,14 +748,13 @@ $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_a
         // حركات المشتريات
         DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type IN (1, 6) THEN purchases.quantity ELSE 0 END), 0) as purchaseToQuantity'),
         DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type IN (1,6) THEN purchases.Quantityprice ELSE 0 END), 0) as lastQuantity'),
-                DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 3 THEN purchases.quantity ELSE 0 END), 0) as warehouseFromQuantity3'),
+        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 3 THEN purchases.quantity ELSE 0 END), 0) as warehouseFromQuantity3'),
         DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type IN (1, 6) THEN purchases.quantity ELSE 0 END), 0) as lastPurchase'),
         DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type IN (1, 6) THEN purchases.Total ELSE 0 END), 0) as lastTotal'),
         DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 2 THEN purchases.quantity ELSE 0 END), 0) as returnPurchaseToQuantity'),
         DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 8 THEN purchases.quantity ELSE 0 END), 0) as excess_quantities'),
         DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 9 THEN purchases.quantity ELSE 0 END), 0) as missing_quantities'),
         DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 10 THEN purchases.quantity ELSE 0 END), 0) as damaged_quantity'),
-
         // حركات المبيعات
         DB::raw('COALESCE(SUM(CASE WHEN sales.transaction_type = 5 THEN sales.quantity ELSE 0 END), 0) as saleQuantity5'),
         DB::raw('COALESCE(SUM(CASE WHEN sales.transaction_type = 5 THEN sales.Selling_price ELSE 0 END), 0) as astsaleQuantity'),

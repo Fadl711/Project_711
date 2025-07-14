@@ -25,8 +25,8 @@
                 <label class="labelSale" for="Main_id">الحساب الرئيسي</label>
                 <select dir="ltr" class="input-field select2 inputSale" id="Main_id" name="Main_id">
 
-                    @foreach($MainAccounts as $MainAccount)
-                    <option value="{{$MainAccount['main_account_id']}}">{{$MainAccount['account_name']}}</option>
+                    @foreach($main_accounts as $main_account)
+                    <option value="{{$main_account->main_account_id}}">{{$main_account->account_name}}</option>
                     @endforeach
                 </select>
             </div>

@@ -29,7 +29,7 @@ class MainaccountController extends Controller
 {
 
     public function create(){
-        $mainAccount=MainAccount::all();//
+        $main_accounts=MainAccount::all();//
         $subAccount = SubAccount::all();
 
  $classd=AccountClass::cases();
@@ -39,7 +39,7 @@ class MainaccountController extends Controller
 
 
 return view('accounts.Main_Account.create',
-[ 'mainAccounts'=>$mainAccount,'subAccounts'=>$subAccount,'cuo'=> $cus,'financal'=>$financal]);  }
+[ 'main_accounts'=>$main_accounts,'subAccounts'=>$subAccount,'cuo'=> $cus,'financal'=>$financal]);  }
 
     public function convertArabicToEnglish($number)
     {

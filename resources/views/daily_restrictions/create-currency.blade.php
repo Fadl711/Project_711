@@ -46,8 +46,8 @@
                      dir="rtl"
                         class="select2 w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sel">
                         <option value="" selected>اختر نوع العملية</option>
-                        @foreach ($transactionTypes as $transactionType)
-                        @if ($transactionType->value ==7 || $transactionType->value ==8 || $transactionType->value ==9 )
+                        @foreach ($transaction_types as $transactionType)
+                        @if ($transactionType->value ==11 || $transactionType->value ==12 || $transactionType->value ==13 )
                             
                         
                             <option value="{{ $transactionType->value }}"

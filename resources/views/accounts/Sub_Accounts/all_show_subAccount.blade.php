@@ -71,8 +71,6 @@
                     <th class="text-right"> اسم الحساب الفرعي</th>
                     <th class="text-right"> نوع الحساب </th>
                     <th class="text-right"> تصنيف الحساب </th>
-                    <th class="text-right"> رصيد مدين</th>
-                    <th class="text-right"> رصيد دائن</th>
                     <th class="text-right"> المستخدم </th>
                     <th class="text-right"> تاريخ الإضافة</th>
                     <th class="text-right"> تاريخ التحديث</th>
@@ -114,8 +112,7 @@
                         <td class="text-right tagTd">
                             {{ $SubAccount->mainAccount ? $SubAccount->mainAccount->accountTypeLabel() : 'N/A' }}
                         </td>
-                        <td class="text-right tagTd">{{ $SubAccount->debtor_amount }}</td>
-                        <td class="text-right tagTd">{{ $SubAccount->creditor_amount }}</td>
+                   
                         <td class="text-right tagTd">{{ $SubAccount->user->name }}</td>
                         <td class="text-right tagTd">{{ $SubAccount->created_at }}</td>
                         <td class="text-right tagTd">{{ $SubAccount->updated_at }}</td>

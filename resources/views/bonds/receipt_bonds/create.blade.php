@@ -114,13 +114,13 @@
                 <label for="AccountReceivable" class="text-center ">  حساب القبض </label>
                 <select name="AccountReceivable" id="AccountReceivable" dir="ltr" class="input-field  select2 inputSale" required>
                     <!-- إضافة خيارات الحسابات -->
-                    @isset($mainAccounts)
+                    @isset($main_accounts)
                   <option value="" selected>اختر الحساب</option>
-                   @foreach ($mainAccounts as $mainAccount)
+                   @foreach ($main_accounts as $mainAccount)
                         <option @isset($ExchangeBond->Main_debit_account_id)
-                             @selected($ExchangeBond->Main_debit_account_id==$mainAccount->main_account_id) value="{{$mainAccount['main_account_id']}}"
+                             @selected($ExchangeBond->Main_debit_account_id==$mainAccount->main_account_id) value="{{$mainAccount->main_account_id}}"
 
-                        @endisset value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
+                        @endisset value="{{$mainAccount->main_account_id}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
                    @endforeach
                    @endisset
                  </select>
@@ -149,13 +149,13 @@
                 <li class="text-center">
                     <select name="PaymentParty" id="PaymentParty" class=" select2 inputSale" required>
                     <option value="" selected>اختر الحساب</option>
-                    @isset($mainAccounts)
+                    @isset($main_accounts)
                     <option value="" selected>اختر الحساب</option>
-                     @foreach ($mainAccounts as $mainAccount)
+                     @foreach ($main_accounts as $mainAccount)
                           <option @isset($ExchangeBond->Main_Credit_account_id)
-                               @selected($ExchangeBond->Main_Credit_account_id==$mainAccount->main_account_id) value="{{$mainAccount['main_account_id']}}"
+                               @selected($ExchangeBond->Main_Credit_account_id==$mainAccount->main_account_id) value="{{$mainAccount->main_account_id}}"
 
-                          @endisset value="{{$mainAccount['main_account_id']}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
+                          @endisset value="{{$mainAccount->main_account_id}}">{{$mainAccount->account_name}}-{{$mainAccount->main_account_id}}</option>
                      @endforeach
                      @endisset
                     </select>

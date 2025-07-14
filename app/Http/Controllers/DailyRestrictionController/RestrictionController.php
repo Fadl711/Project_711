@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\DailyRestrictionController;
 
+use App\Enum\PaymentType;
 use App\Enum\TransactionType;
 use App\Http\Controllers\Controller;
 use App\Models\AccountingPeriod;
@@ -123,9 +124,7 @@ class RestrictionController extends Controller
                 throw new \Exception('الفاتورة غير موجودة.');
             }
         }
-        $mainc = MainAccount::all();
-        $suba = SubAccount::all();
-        // dd($validated['Currency_name']);
+
 
         // // إنشاء القيد اليومي
         $dailyEntrie = DailyEntrie::updateOrCreate(
@@ -225,12 +224,6 @@ class RestrictionController extends Controller
             abort(403, 'غير مصرح لك.');
         }
 
-
-        // التأكد من عدم اختيار حسابين فرعيين متماثلين
-
-        // if(!$dailyPageId)
-
-
         // حفظ القيد اليومي
         // $dailyEntrie = new DailyEntrie();
         if ($request->Invoice_type) {
@@ -248,10 +241,6 @@ class RestrictionController extends Controller
         $defaultPaymentType = 'تحويل عملة';
         $Invoice_id = null;
         $Payment_type = $defaultPaymentType;
-
-
-
-
         // // إنشاء القيد اليومي
         $dailyEntrie = DailyEntrie::updateOrCreate(
             [
@@ -280,17 +269,25 @@ class RestrictionController extends Controller
     public function saveAndPrint(Request $request) {}
     public function stor(Request $request)
     {
+        // dd(65)
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
         if (!$accountingPeriod) {
             return response()->json(['success' => false, 'message' => 'لا توجد فترة محاسبية مفتوحة.']);
         }
+           $PaymentType = PaymentType::cases();
+         $transaction_types = TransactionType::cases();
         $today = Carbon::now()->toDateString(); // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
         $dailyPage = GeneralJournal::whereDate('created_at', $today)->first(); // البحث عن الصفحة
         if ($dailyPage) {
             $generalJournal1 = GeneralJournal::where('accounting_period_id', $accountingPeriod->accounting_period_id)->get();
             $mainAccount = MainAccount::all();
             $curr = Currency::all();
-            return view('daily_restrictions.create', compact('curr', 'dailyPage'), ['mainAccounts' => $mainAccount]);
+
+            return view('daily_restrictions.create', compact('curr', 'dailyPage'), [
+                'mainAccounts' => $mainAccount,
+                     'transaction_types' => $transaction_types,
+                    'PaymentType' => $PaymentType,
+        ]);
         } else {
             $Statement = $request->Statement;
             GeneralJournal::create([
@@ -302,9 +299,13 @@ class RestrictionController extends Controller
             if ($dailyPage) {
                 // إذا تم العثور على الصفحة، عرض رقم الصفحة
                 $generalJournal1 = GeneralJournal::where('accounting_period_id', $accountingPeriod->accounting_period_id)->get();
-                $mainAccount = MainAccount::all();
+                $main_accounts = MainAccount::all();
                 $curr = Currency::all();
-                return view('daily_restrictions.create', compact('curr', 'dailyPage'), ['mainAccounts' => $mainAccount]);
+                return view('daily_restrictions.create', compact('curr', 'dailyPage'), [
+                    'main_accounts' => $main_accounts,
+                    'transaction_types' => $transaction_types,
+                    'PaymentType' => $PaymentType,
+                ]);
             }
         }
     }
@@ -319,12 +320,21 @@ class RestrictionController extends Controller
             abort(403, 'غير مصرح لك  .');
         }
 
-        $mainAccount = MainAccount::all();
+        $main_accounts = MainAccount::all();
         $curr = Currency::all();
+                            $PaymentType = PaymentType::cases();
+                             $transaction_types = TransactionType::cases();
+
+
         // الحصول على تاريخ اليوم
         $today = Carbon::now()->toDateString(); // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
         $dailyPage = GeneralJournal::whereDate('created_at', $today)->first(); // البحث عن الصفحة
-        return view('daily_restrictions.create', compact('curr', 'dailyPage'), ['mainAccounts' => $mainAccount, $dailyPage]);
+        return view('daily_restrictions.create', compact('curr', 'dailyPage'), [
+            'main_accounts' => $main_accounts, 
+            'transaction_types' => $transaction_types, 
+        $dailyPage,
+    'PaymentType'=>$PaymentType
+    ]);
     }
     public function createCurrency()
     {
@@ -335,13 +345,20 @@ class RestrictionController extends Controller
         if (! $user->canWrite('القيود')) {
             abort(403, 'غير مصرح لك  .');
         }
+                        $transaction_types = TransactionType::cases();
 
+
+                        $curr = Currency::all();
         $mainAccount = MainAccount::all();
-        $curr = Currency::all();
+                                    $PaymentType = PaymentType::cases();
+
         // الحصول على تاريخ اليوم
         $today = Carbon::now()->toDateString(); // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
         $dailyPage = GeneralJournal::whereDate('created_at', $today)->first(); // البحث عن الصفحة
-        return view('daily_restrictions.create-currency', compact('curr', 'dailyPage'), ['mainAccounts' => $mainAccount, $dailyPage]);
+        return view('daily_restrictions.create-currency', compact('curr', 'dailyPage'), ['mainAccounts' => $mainAccount, $dailyPage
+    ,'transaction_types'=>$transaction_types,     
+            'PaymentType' =>$PaymentType,
+]);
     }
 
     public function index()

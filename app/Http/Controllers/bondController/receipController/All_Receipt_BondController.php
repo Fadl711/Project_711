@@ -14,10 +14,7 @@ class All_Receipt_BondController extends Controller
 {
 
     public function show_all_receipt(){
-        $PaymentBonds=PaymentBond::all();
-        $SubAccounts=SubAccount::all();
-       $MainAccounts= MainAccount::all();
-       $Currencies=Currency::all();
-        return view('bonds.receipt_bonds.all_receipt_bonds',compact('PaymentBonds','SubAccounts','MainAccounts','Currencies'));
+   
+        return view('bonds.receipt_bonds.all_receipt_bonds');
     }
 }

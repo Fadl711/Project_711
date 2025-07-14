@@ -84,13 +84,16 @@
                         <select id="Invoice_type" name="Invoice_type" dir="rtl"
                             class="select2 w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sel">
                             <option value="" selected>اختر نوع المستند</option>
-                            @foreach ($transactionTypes as $transactionType)
+                            @foreach ($transaction_types as $transactionType)
+                                                    @if ($transactionType->value ==1 || $transactionType->value ==2 || $transactionType->value ==3 || $transactionType->value ==8 || $transactionType->value ==9 || $transactionType->value ==10 )
+
                                 <option value="{{ $transactionType->value }}"
                                     @isset($DailyEntrie->daily_entries_type)
                                     @if ($DailyEntrie->daily_entries_type == $transactionType->label()) selected @endif
                                 @endisset>
                                     {{ $transactionType->label() }}
                                 </option>
+                                @endif
                             @endforeach
                         </select>
                     </div>
@@ -105,7 +108,6 @@
                         </select>
                     </div>
                 </div>
-
                 <!-- حساب المدين -->
                 <div class="bg-gray-50 rounded-lg border border-gray-200 scrollable-container">
                     <h3 class="text-lg font-semibold text-gray-800 mb-3">المدين</h3>
@@ -116,15 +118,15 @@
                                 required>
                                 <option value="" selected>اختر الحساب</option>
                                 @isset($main)
-                                    @foreach ($main as $mainAccount)
-                                        <option @selected($mainAccount->main_account_id == $sub_account_debit->main_id) value="{{ $mainAccount['main_account_id'] }}">
-                                            {{ $mainAccount->account_name }}-{{ $mainAccount->main_account_id }}</option>
+                                    @foreach ($main as $main_account)
+                                        <option @selected($main_account->main_account_id == $sub_account_debit->main_id) value="{{ $main_account->main_account_id }}">
+                                            {{ $main_account->account_name }}-{{ $main_account->main_account_id }}</option>
                                     @endforeach
                                 @endisset
-                                @isset($mainAccounts)
-                                    @foreach ($mainAccounts as $mainAccount)
-                                        <option value="{{ $mainAccount['main_account_id'] }}">
-                                            {{ $mainAccount->account_name }}-{{ $mainAccount->main_account_id }}</option>
+                                @isset($main_accounts)
+                                    @foreach ($main_accounts as $main_account)
+                                        <option value="{{ $main_account->main_account_id }}">
+                                            {{ $main_account->account_name }}-{{ $main_account->main_account_id }}</option>
                                     @endforeach
                                 @endisset
                             </select>
@@ -152,15 +154,15 @@
                             <select name="account_Credit_id" id="account_Credit_id" class="input-field select2" required>
                                 <option value="" selected>اختر الحساب</option>
                                 @isset($main)
-                                    @foreach ($main as $mainAccount)
-                                        <option @selected($mainAccount->main_account_id == $sub_account_Credit->main_id) value="{{ $mainAccount['main_account_id'] }}">
-                                            {{ $mainAccount->account_name }}-{{ $mainAccount->main_account_id }}</option>
+                                    @foreach ($main as $main_account)
+                                        <option @selected($main_account->main_account_id == $sub_account_Credit->main_id) value="{{ $main_account->main_account_id }}">
+                                            {{ $main_account->account_name }}-{{ $main_account->main_account_id }}</option>
                                     @endforeach
                                 @endisset
-                                @isset($mainAccounts)
-                                    @foreach ($mainAccounts as $mainAccount)
-                                        <option value="{{ $mainAccount->main_account_id }}">
-                                            {{ $mainAccount->account_name }}-{{ $mainAccount->main_account_id }}</option>
+                                @isset($main_accounts)
+                                    @foreach ($main_accounts as $main_account)
+                                        <option value="{{ $main_account->main_account_id }}">
+                                            {{ $main_account->account_name }}-{{ $main_account->main_account_id }}</option>
                                     @endforeach
                                 @endisset
                             </select>

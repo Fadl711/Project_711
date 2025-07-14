@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\bondController\receipController;
 
 use App\Enum\PaymentType;
+use App\Enum\TransactionType;
 use App\Http\Controllers\Controller;
 use App\Models\AccountingPeriod;
 use App\Models\Currency;
@@ -27,12 +28,19 @@ class ReceipController extends Controller
 {
     public function create()
     {
-        $mainAccount = MainAccount::all();
+        $main_accounts = MainAccount::all();
         $curr = Currency::all();
+                            $PaymentType = PaymentType::cases();
+                             $transaction_types = TransactionType::cases();
         // الحصول على تاريخ اليوم
         $today = Carbon::now()->toDateString(); // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
         $dailyPage = GeneralJournal::whereDate('created_at', $today)->first(); // البحث عن الصفحة
-        return view('bonds.receipt_bonds.create', compact('curr', 'dailyPage'), ['mainAccounts' => $mainAccount, $dailyPage]);
+        return view('bonds.receipt_bonds.create', compact('curr', 'dailyPage'), [
+            'main_accounts' => $main_accounts,
+            'PaymentType' => $PaymentType,
+            'transaction_types' => $transaction_types,
+             $dailyPage
+        ]);
     }
 
     private function removeCommas($value)
@@ -176,24 +184,29 @@ class ReceipController extends Controller
             ->first();
         if (optional($us)->Ability_modify == 1) {
             $ExchangeBond = PaymentBond::where('payment_bond_id', $id)->first();
-            $mainAccount = MainAccount::all();
+            $main_accounts = MainAccount::all();
             $SubAccounts = SubAccount::all();
             $Debitsub_account_id = SubAccount::where('sub_account_id', $ExchangeBond->Debit_sub_account_id)->first();
             $Creditsub_account_id = SubAccount::where('sub_account_id', $ExchangeBond->Credit_sub_account_id)->first();
             $submitButton = "تعديل السند";
+
+
             $currs = Currency::where('currency_id', $ExchangeBond->Currency_id)->first();
             // الحصول على تاريخ اليوم
             $today = Carbon::now()->toDateString(); // الحصول على تاريخ اليوم بصيغة YYYY-MM-DD
             $dailyPage = GeneralJournal::whereDate('created_at', $today)->first(); // البحث عن الصفحة
+                    $PaymentType = PaymentType::cases();
+
 
             return view('bonds.receipt_bonds.create', [
                 'ExchangeBond' => $ExchangeBond,
                 'Debitsub_account_id' => $Debitsub_account_id,
                 'Creditsub_account_id' => $Creditsub_account_id,
                 'currs' => $currs,
-                'mainAccounts' => $mainAccount,
+                'main_accounts' => $main_accounts,
                 'SubAccounts' => $SubAccounts,
                 'dailyPage' => $dailyPage,
+                'PaymentType' => $PaymentType,
                 'submitButton' => 'تعديل السند',
             ]);
         } else {
@@ -251,7 +264,6 @@ class ReceipController extends Controller
                         'accounting_period_id' => $DailyEntrie->accounting_period_id,
                         'sub_id' => $DailyEntrie->account_credit_id,
                     ])->delete();
-
                     // حذف Daily Entry
                     $DailyEntrie->delete();
                 }

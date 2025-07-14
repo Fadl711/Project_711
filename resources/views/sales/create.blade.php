@@ -38,8 +38,8 @@
                             <label for="transaction_type" class="labelSale">نوع العملية</label>
                             <select dir="ltr" id="transaction_type" class="inputSale input-field"
                                 name="transaction_type">
-                                @isset($transactionTypes)
-                                    @foreach ($transactionTypes as $transactionType)
+                                @isset($transaction_types)
+                                    @foreach ($transaction_types as $transactionType)
                                         @if (in_array($transactionType->value, [4, 5, 6]))
                                             <option value="{{ $transactionType->value }}">{{ $transactionType->label() }}
                                             </option>
@@ -127,10 +127,10 @@
                                 <label for="financial_account_id_main" class="labelSale"> حساب الدفع</label>
                                 <select name="financial_account_id_main" id="financial_account_id_main" dir="ltr"
                                     class=" select2 inputSale">
-                                    @isset($MainAccounts)
+                                    @isset($main_accounts)
                                         <option value="" selected>اختر الحساب</option>
-                                        @foreach ($MainAccounts as $mainAccount)
-                                            <option value="{{ $mainAccount['main_account_id'] }}">
+                                        @foreach ($main_accounts as $mainAccount)
+                                            <option value="{{ $mainAccount->main_account_id }}">
                                                 {{ $mainAccount->account_name }} - {{ $mainAccount->main_account_id }}
                                             </option>
                                         @endforeach

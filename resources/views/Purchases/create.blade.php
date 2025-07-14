@@ -54,7 +54,7 @@
                         <select  id="transaction_type" class="inputSale input-field select2" name="transaction_type">
                          <option selected value="{{ null }}">{{"حدد نوع العملية "}}</option>
 
-                            @foreach ($transactionTypes as $transactionType)
+                            @foreach ($transaction_types as $transactionType)
                                 @if (in_array($transactionType->value, [1,2,3,8,9,10]))
                                     <option value="{{ $transactionType->value }}">{{ $transactionType->label() }}</option>
                                 @endif

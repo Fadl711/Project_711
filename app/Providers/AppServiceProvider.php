@@ -77,7 +77,6 @@ class AppServiceProvider extends ServiceProvider
                     }
                 }
 
-                $mainAccount_Supplier = MainAccount::where('AccountClass', AccountClass::SUPPLIER->value)->first();
                 $subAccountSupplierid = SubAccount::where('account_class', AccountClass::SUPPLIER->value)->get();
                 if (isset($subAccountSupplierid)) {
                     View::share(['subAccountSupplierid' => $subAccountSupplierid]);
@@ -85,21 +84,23 @@ class AppServiceProvider extends ServiceProvider
             }
 
             if (Schema::hasTable('products')) {
-                $expiringProducts = Product::whereNotNull('expiry_date')
-                    ->where('expiry_date', '<=', Carbon::now()->addMonth())
-                    ->get();
-                $operations = Operation::with('user')
-                    ->where('is_seen', 0)
-                    ->latest()
-                    ->take(25) // تحديد العدد الأقصى
-                    ->get();
-                $products = Product::all();
+                // $expiringProducts = Product::whereNotNull('expiry_date')
+                //     ->where('expiry_date', '<=', Carbon::now()->addMonth())
+                //     ->get();
+                // $operations = Operation::with('user')
+                //     ->where('is_seen', 0)
+                //     ->latest()
+                //     ->take(25) // تحديد العدد الأقصى
+                //     ->get();
+                // $products = Product::all();
+
+             $products=0;
                 if (isset($products)) {
-                    View::share(['products' => $products, 'expiringProducts' => $expiringProducts, 'operations' => $operations]);
+                    View::share([ 'expiringProducts' => null, 'operations' => null]);
                 }
                 $accountClasses = AccountClass::cases();
-                $PaymentType = PaymentType::cases();
-                $transactionTypes = TransactionType::cases();
+                // $PaymentType = PaymentType::cases();
+                // $transactionTypes = TransactionType::cases();
                 $AccountType = AccountType::cases();
 
                 View::share([
@@ -107,9 +108,9 @@ class AppServiceProvider extends ServiceProvider
                     'TypesAccounts' => $TypesAccountName,
                     'AccountTypes' => $AccountType,
                     'Deportattons' => $dataDeportattons,
-                    'PaymentType' => $PaymentType,
+                    // 'PaymentType' => $PaymentType,
                     'today' => Carbon::now()->toDateString(),
-                    'transactionTypes' => $transactionTypes,
+                    // 'transactionTypes' => $transactionTypes,
                 ]);
             }
 
@@ -143,8 +144,8 @@ class AppServiceProvider extends ServiceProvider
                 if (isset($buss)) {
                     $PaymentBonds = PaymentBond::where('transaction_type', $transaction_typePaymentBonds)->get();
                     $ExchangeBond = PaymentBond::where('transaction_type', $transaction_typeExchangeBond)->get();
-                    $SubAccounts = SubAccount::all();
-                    $MainAccounts = MainAccount::all();
+                    // $SubAccounts = SubAccount::all();
+                    // $MainAccounts = MainAccount::all();
                     $Currencies = Currency::all();
 
                     View::share([
@@ -152,8 +153,8 @@ class AppServiceProvider extends ServiceProvider
                         'buss' => $buss,
                         'PaymentBonds' => $PaymentBonds,
                         'ExchangeBond' => $ExchangeBond,
-                        'SubAccounts' => $SubAccounts,
-                        'MainAccounts' => $MainAccounts,
+                        // 'SubAccounts' => $SubAccounts,
+                        // 'MainAccounts' => $MainAccounts,
                         'Currencies' => $Currencies,
                     ]);
 
@@ -169,14 +170,14 @@ class AppServiceProvider extends ServiceProvider
                     $EXPENSES_name = Deportatton::EXPENSES;
                     $MainAccount3 = MainAccount::where('typeAccount', $EXPENSES_id)->get();
 
-                    $REVENUE_id = AccountType::REVENUE;
+                    // $REVENUE_id = AccountType::REVENUE;
                     $REVENUE_name = Deportatton::REVENUE;
-                    $MainAccount4 = MainAccount::where('typeAccount', $REVENUE_id)->get();
-                    $SubAccounts = SubAccount::all();
+                    // $MainAccount4 = MainAccount::where('typeAccount', $REVENUE_id)->get();
+                    // $SubAccounts = SubAccount::all();
                     $currentDateTime = Carbon::now()->format('Y-m-d H:i:s');
 
                     View::share([
-                        'SubAccounts' => $SubAccounts,
+                        // 'SubAccounts' => $SubAccounts,
                         'TypesAccounts' => $TypesAccountName,
                         'currentDateTime' => $currentDateTime,
                         'LIABILITIes_OPPONENtsAccountType_id' => $LIABILITIes_OPPONENtsAccountType_id,

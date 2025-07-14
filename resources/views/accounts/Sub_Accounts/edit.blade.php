@@ -24,8 +24,8 @@
             <div class="mb-2">
                 <label class="labelSale" for="Main_id">الحساب الرئيسي</label>
                 <select dir="ltr" class="input-field select2 inputSale" id="Main_id" name="Main_id">
-                    @forelse($MainAccounts as $MainAccount)
-                    <option @selected($SubAccount->main_id==$MainAccount['main_account_id']) value="{{$MainAccount['main_account_id']}}">{{$MainAccount['account_name']}}</option>
+                    @forelse($main_accounts as $main_account)
+                    <option @selected($SubAccount->main_id==$main_account->main_account_id) value="{{$main_account->main_account_id}}">{{$main_account->account_name}}</option>
                     @empty
                     @endforelse
                 </select>

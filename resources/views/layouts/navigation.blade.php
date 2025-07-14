@@ -1,4 +1,4 @@
-<nav x-data="{ open: false, notificationOpen: false }" class="bg-white dark:bg-gray-800 border-b border-gray-300 dark:border-gray-700 h-[55px]">
+ <nav x-data="{ open: false, notificationOpen: false }" class="bg-white dark:bg-gray-800 border-b border-gray-300 dark:border-gray-700 h-[55px]">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
         <div class="flex justify-between h-16">
@@ -35,14 +35,14 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                         </svg>
-                        @if ($operations->count() > 0)
+                        {{-- @if ($operations->count() > 0)
                             <span id="not">
                                 <span
                                     class="absolute top-0 right-0 inline-block w-2 h-2 bg-red-600   animate-ping rounded-full"></span>
                                 <span
                                     class="absolute top-0 right-0 inline-block w-2 h-2 bg-red-600  rounded-full"></span>
                             </span>
-                        @endif
+                        @endif --}}
 
                     </button>
                 </div>
@@ -153,7 +153,7 @@
                     </svg>
                 </button>
             </div>
-            {{-- <div class="bg-white rounded-lg shadow-md p-6">
+             <div class="bg-white rounded-lg shadow-md p-6">
                 <h2 class="text-xl font-bold text-red-600 mb-4 border-b pb-2">المنتجات المنتهية أو المقاربة للانتهاء
                 </h2>
 
@@ -215,8 +215,8 @@
                         لا توجد منتجات منتهية أو مقاربة للانتهاء
                     </div>
                 @endif
-            </div> --}}
-            <div class="container mx-auto p-4" x-data="operations">
+            </div> 
+              <div class="container mx-auto p-4" x-data="operations">
                 <h1 class="text-2xl font-bold text-gray-800 mb-6">سجل العمليات</h1>
 
                 <!-- زر "مسح الكل" -->
@@ -264,7 +264,7 @@
                         </template>
                     </ul>
                 </div>
-            </div>
+            </div> 
 </nav>
 
 <script>
@@ -326,5 +326,5 @@
                 }
             },
         }));
-    });
-</script>
+    }); 
+</script> 

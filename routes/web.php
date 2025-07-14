@@ -1,7 +1,5 @@
 <?php
 
-use App\Enum\AccountType;
-use App\Enum\PaymentType;
 use App\Http\Controllers\CustomerCoctroller;
 use App\Http\Controllers\HomeCoctroller;
 use App\Http\Controllers\AccountCoctroller;
@@ -13,13 +11,13 @@ use App\Http\Controllers\Accounts\TreeAccountController;
 use App\Http\Controllers\ArtController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\bondController\BondController;
-use App\Http\Controllers\bondController\exchangeController\ExchangeController;
 use App\Http\Controllers\bondController\receipController\All_Receipt_BondController;
 use App\Http\Controllers\bondController\receipController\ReceipController;
 use App\Http\Controllers\chartController\ChartController;
 use App\Http\Controllers\DailyRestrictionController\RestrictionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DatabaseController;
+use App\Http\Controllers\EquipmentMaintenanceController;
 use App\Http\Controllers\FixedAssetsController;
 use App\Http\Controllers\generalEntrieController;
 use App\Http\Controllers\GitController;
@@ -30,17 +28,17 @@ use App\Http\Controllers\invoicesController\AllBillsController;
 use App\Http\Controllers\LocksFinancialPeriods\LocksFinancialPeriodsController;
 use App\Http\Controllers\OperationController;
 use App\Http\Controllers\PaymentCoctroller;
-use App\Http\Controllers\SaleCoctroller;
-
-// use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\ProductBomController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\settingController\SettingController;
 use App\Http\Controllers\SupplierCoctroller;
 use App\Http\Controllers\productController\CategoryController;
 use App\Http\Controllers\productController\ProductCoctroller;
+use App\Http\Controllers\ProductionOrderController;
+use App\Http\Controllers\ProductionSystem\ProductionLineController;
+use App\Http\Controllers\ProductionSystem\ProductionStageController;
 use App\Http\Controllers\purchases\PurchaseController;
 use App\Http\Controllers\refundsController\purchasesController\Purchase_RefundController;
-use App\Http\Controllers\refundsController\saleController\RefundController as SaleControllerRefundController;
 use App\Http\Controllers\refundsController\salesController\Sale_RefundController;
 use App\Http\Controllers\reportsConreoller;
 use App\Http\Controllers\RouteClearController;
@@ -57,21 +55,15 @@ use App\Http\Controllers\SyncController;
 use App\Http\Controllers\Transfers\TransferController;
 use App\Http\Controllers\UserPermissionController;
 use App\Http\Controllers\UsersController\UsersController;
-use App\Livewire\Counter;
-use App\Livewire\GeneralEntrieComponent;
+
 use App\Models\AccountingPeriod;
 use App\Models\Currency;
 use App\Models\DailyEntrie;
-use App\Models\DefaultSupplier;
-use App\Models\GeneralEntrie;
-use App\Models\MainAccount;
+
 use App\Models\PaymentBond;
-use App\Models\PurchaseInvoice;
-use App\Models\Sale;
-use App\Models\SaleInvoice;
+
 use App\Models\SubAccount;
-use Carbon\Carbon;
-use GuzzleHttp\Psr7\Request;
+
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -101,6 +93,55 @@ Route::post('/backup1', [BackupController::class, 'createBackup'])->name('backup
 Route::middleware(['auth'])->group(function () {
     Route::get('/all-products/{id}/show', [ProductCoctroller::class, 'allProducts'])->name('all-products');
     Route::get('/all-products/{id}/print', [ProductCoctroller::class, 'print'])->name('report.print');
+
+
+    // صيانة المعدات
+        Route::get('/equipment-maintenance/index', [EquipmentMaintenanceController::class, 'index'])->name('equipment-maintenance.index');
+        Route::get('/equipment-maintenance/create', [EquipmentMaintenanceController::class, 'create'])->name('equipment-maintenance.create');
+        Route::post('/equipment-maintenance/store', [EquipmentMaintenanceController::class, 'store'])->name('equipment-maintenance.store');
+
+    Route::get('equipment-maintenance/{equipmentMaintenance}', [EquipmentMaintenanceController::class, 'show'])->name('equipment-maintenance.show');
+    Route::post('equipment-maintenance/{equipmentMaintenance}/start', [EquipmentMaintenanceController::class, 'startMaintenance'])->name('equipment-maintenance.start');
+    Route::post('equipment-maintenance/{equipmentMaintenance}/complete', [EquipmentMaintenanceController::class, 'completeMaintenance'])->name('equipment-maintenance.complete');
+    Route::patch('equipment-maintenance/{equipmentMaintenance}/cancel', [EquipmentMaintenanceController::class, 'cancelMaintenance'])->name('equipment-maintenance.cancel');
+
+    Route::get('/production-system/dashboard', [ProductionLineController::class, 'dashboard'])->name('production_system.dashboard');
+
+    Route::get('/production_lines/create', [ProductionLineController::class, 'create'])->name('production_lines.create');
+    Route::post('/production_lines/store', [ProductionLineController::class, 'store'])->name('production_lines.store');
+    Route::get('/production_lines/{production_line}/show', [ProductionLineController::class, 'show'])->name('production_lines.show');
+    Route::get('/production_lines/{production_line}/edit', [ProductionLineController::class, 'edit'])->name('production_lines.edit');
+    Route::delete('/production_lines/{id}/destroy', [ProductionLineController::class, 'destroy'])->name('production_lines.destroy');
+
+    Route::get('/product-boms/index', [ProductBomController::class, 'index'])->name('product-boms.index');
+    Route::get('/product-boms/create', [ProductBomController::class, 'create'])->name('product-boms.create');
+    Route::post('/product-boms/store', [ProductBomController::class, 'store'])->name('product-boms.store');
+    Route::post('/product-boms/update', [ProductBomController::class, 'update'])->name('product-boms.update');
+    Route::get('/product-boms/{id}/show', [ProductBomController::class, 'show'])->name('product-boms.show');
+    Route::get('/product-boms/{id}/edit', [ProductBomController::class, 'edit'])->name('product-boms.edit');
+    Route::get('/product-boms/{id}/destroy', [ProductBomController::class, 'destroy'])->name('product-boms.destroy');
+    Route::get('/get-product-boms/{id}', [ProductBomController::class, 'getProductBoms'])->name('getProductBoms');
+
+
+ 
+    Route::get('/production-stages/index', [ProductionStageController::class, 'index'])->name('production-stages.index');
+    Route::get('/production-stages/create', [ProductionStageController::class, 'create'])->name('production-stages.create');
+    Route::post('/production-stages/store', [ProductionStageController::class, 'store'])->name('production-stages.store');
+        Route::get('/production-stages/{productionStage}/show', [ProductionStageController::class, 'show'])->name('production-stages.show');
+    Route::get('/production-stages/{productionStage}/edit', [ProductionStageController::class, 'edit'])->name('production-stages.edit');
+    Route::delete('/production-stages/{id}/destroy', [ProductionStageController::class, 'destroy'])->name('production-stages.destroy');
+    Route::put('production-stages/{productionStage}/toggle-status', [ProductionStageController::class, 'toggleStatus'])->name('production-stages.toggle-status');
+    // أوامر الإنتاج
+    Route::get('/production_orders/index', [ProductionOrderController::class, 'index'])->name('production_orders.index');
+    Route::get('/production-orders/create', [ProductionOrderController::class, 'create'])->name('production-orders.create');
+    Route::post('/production-orders/store', [ProductionOrderController::class, 'store'])->name('production_orders.store');
+    Route::get('/production-orders/{productionOrder}', [ProductionOrderController::class, 'show'])->name('production-orders.show');
+    Route::get('/production-orders/{productionOrder}/edit', [ProductionOrderController::class, 'edit'])->name('production-orders.edit');
+    Route::put('/production-orders/{productionOrder}', [ProductionOrderController::class, 'update'])->name('production-orders.update');
+    Route::delete('/production-orders/{productionOrder}', [ProductionOrderController::class, 'destroy'])->name('production-orders.destroy');
+    Route::post('/production-orders/{productionOrder}/change-status', [ProductionOrderController::class, 'changeStatus'])->name('production-orders.change-status');
+
+
     Route::get('/products', [ProductCoctroller::class, 'index'])->name('products.index');
     Route::get('/products/create', [ProductCoctroller::class, 'create'])->name('products.create');
     Route::post('/products/store', [ProductCoctroller::class, 'store'])->name('products.store');

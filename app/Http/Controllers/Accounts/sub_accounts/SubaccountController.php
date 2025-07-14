@@ -20,7 +20,6 @@ use Illuminate\Support\Facades\DB;
 
 class SubaccountController extends Controller
 {
-    //
 
     public function create()
     {
@@ -38,12 +37,12 @@ class SubaccountController extends Controller
             ['TypesAccountName' => Deportatton::REVENUE, 'id' => AccountType::REVENUE],
         ];
 
-        $MainAccounts = MainAccount::all();
+        $main_accounts = MainAccount::all();
         $curr = Currency::all();
         $cu = CurrencySetting::first();
 
         return view('accounts.Sub_Accounts.create-sub-account', [
-            'MainAccounts' => $MainAccounts,
+            'main_accounts' => $main_accounts,
             'TypesAccounts' => $TypesAccountName,
             'Deportattons' => $dataDeportattons,
             'curr' => $curr,
@@ -60,7 +59,6 @@ class SubaccountController extends Controller
 
     public function store(Request $request)
     {
-        $MainAccounts = MainAccount::all();
         $sub_name = $request->sub_name;
 
         $account_nametExists = SubAccount::where('sub_name', $sub_name)->exists();
@@ -96,7 +94,7 @@ class SubaccountController extends Controller
     }
     public function edit($id)
     {
-        $MainAccounts = MainAccount::all();
+        $main_accounts = MainAccount::all();
         $SubAccount = SubAccount::where('sub_account_id', $id)->first();
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
         $transaction_type = "رصيد افتتاحي";
@@ -109,7 +107,7 @@ class SubaccountController extends Controller
         $cu = CurrencySetting::first();
 
 
-        return view('accounts.Sub_Accounts.edit', compact('SubAccount', 'Getentrie_id', 'MainAccounts', 'currs', 'cu'));
+        return view('accounts.Sub_Accounts.edit', compact('SubAccount', 'Getentrie_id', 'main_accounts', 'currs', 'cu'));
     }
     public function update(Request $request)
     {

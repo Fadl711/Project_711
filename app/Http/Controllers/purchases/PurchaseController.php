@@ -41,6 +41,10 @@ class PurchaseController extends Controller
   
     public function create() {
         $Currency_name=Currency::all();
+        $PaymentType = PaymentType::cases();
+         $transaction_types = TransactionType::cases();
+
+
     
             $allSubAccounts = SubAccount::all();
             $main_accounts = MainAccount::all();
@@ -48,6 +52,8 @@ class PurchaseController extends Controller
                  ['AllSubAccounts'=>$allSubAccounts,
                 'Currency_name'=>$Currency_name,
                 'main_accounts'=>$main_accounts,
+                'PaymentType'=>$PaymentType,
+                'transaction_types'=>$transaction_types,
             ]);
         return view('Purchases.create');
     }
@@ -75,7 +81,7 @@ class PurchaseController extends Controller
     {
         $transaction_type=(int)$request->transaction_type;
         
-                                if (in_array($transaction_type, [1,2,3])){
+                                if (in_array($transaction_type, [1,2])){
              $validator = Validator::make($request->all(), [
             'Payment_type' => 'required|numeric',
             'transaction_type' => 'required',
@@ -92,7 +98,7 @@ class PurchaseController extends Controller
         ]);
 
         }
-                                if (in_array($transaction_type, [8,9,10])){
+                                if (in_array($transaction_type, [8,9,10,3])){
              $validator = Validator::make($request->all(), [
             'transaction_type' => 'required',
             'main_account_debit_id' => 'required|numeric',
