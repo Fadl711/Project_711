@@ -96,9 +96,9 @@ Route::middleware(['auth'])->group(function () {
 
 
     // صيانة المعدات
-        Route::get('/equipment-maintenance/index', [EquipmentMaintenanceController::class, 'index'])->name('equipment-maintenance.index');
-        Route::get('/equipment-maintenance/create', [EquipmentMaintenanceController::class, 'create'])->name('equipment-maintenance.create');
-        Route::post('/equipment-maintenance/store', [EquipmentMaintenanceController::class, 'store'])->name('equipment-maintenance.store');
+    Route::get('/equipment-maintenance/index', [EquipmentMaintenanceController::class, 'index'])->name('equipment-maintenance.index');
+    Route::get('/equipment-maintenance/create', [EquipmentMaintenanceController::class, 'create'])->name('equipment-maintenance.create');
+    Route::post('/equipment-maintenance/store', [EquipmentMaintenanceController::class, 'store'])->name('equipment-maintenance.store');
 
     Route::get('equipment-maintenance/{equipmentMaintenance}', [EquipmentMaintenanceController::class, 'show'])->name('equipment-maintenance.show');
     Route::post('equipment-maintenance/{equipmentMaintenance}/start', [EquipmentMaintenanceController::class, 'startMaintenance'])->name('equipment-maintenance.start');
@@ -123,11 +123,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/get-product-boms/{id}', [ProductBomController::class, 'getProductBoms'])->name('getProductBoms');
 
 
- 
+
     Route::get('/production-stages/index', [ProductionStageController::class, 'index'])->name('production-stages.index');
     Route::get('/production-stages/create', [ProductionStageController::class, 'create'])->name('production-stages.create');
     Route::post('/production-stages/store', [ProductionStageController::class, 'store'])->name('production-stages.store');
-        Route::get('/production-stages/{productionStage}/show', [ProductionStageController::class, 'show'])->name('production-stages.show');
+    Route::get('/production-stages/{productionStage}/show', [ProductionStageController::class, 'show'])->name('production-stages.show');
     Route::get('/production-stages/{productionStage}/edit', [ProductionStageController::class, 'edit'])->name('production-stages.edit');
     Route::delete('/production-stages/{id}/destroy', [ProductionStageController::class, 'destroy'])->name('production-stages.destroy');
     Route::put('production-stages/{productionStage}/toggle-status', [ProductionStageController::class, 'toggleStatus'])->name('production-stages.toggle-status');
