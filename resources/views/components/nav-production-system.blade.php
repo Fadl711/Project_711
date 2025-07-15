@@ -11,6 +11,13 @@
             class="ajax-link py-2 px-4 {{ Request::is('production_orders/index') ? '   border-b-2  font-bold text-xl pointer-events-none opacity-50' : 'border-b-0' }} border-white hover:text-blue-600">
             أوامر الإنتاج
         </a>
+        <a href="{{ route('inventory-transactions.index') }}"
+            class=" py-2 px-4 {{ Request::is('inventory-transactions/index') ? '   border-b-2  font-bold text-xl pointer-events-none opacity-50' : 'border-b-0' }} border-white hover:text-blue-600">
+حركات المخزون
+        </a>
+        <a href="{{ route('raw-material-transactions.index') }}"
+            class=" py-2 px-4 {{ Request::is('raw-material-transactions/index') ? '   border-b-2  font-bold text-xl pointer-events-none opacity-50' : 'border-b-0' }} border-white hover:text-blue-600">
+حركات المواد الخام        </a>
         <a href="{{ route('product-boms.index') }}"
             class="ajax-link py-2 px-4 {{ Request::is('product-boms/index') ? '   border-b-2  font-bold text-xl pointer-events-none opacity-50' : 'border-b-0' }} border-white hover:text-blue-600">
             مكونات المنتج

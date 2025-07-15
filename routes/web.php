@@ -23,6 +23,7 @@ use App\Http\Controllers\generalEntrieController;
 use App\Http\Controllers\GitController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\InventoryTransactionController;
 use App\Http\Controllers\InvoicePurchaseController;
 use App\Http\Controllers\invoicesController\AllBillsController;
 use App\Http\Controllers\LocksFinancialPeriods\LocksFinancialPeriodsController;
@@ -38,6 +39,7 @@ use App\Http\Controllers\ProductionOrderController;
 use App\Http\Controllers\ProductionSystem\ProductionLineController;
 use App\Http\Controllers\ProductionSystem\ProductionStageController;
 use App\Http\Controllers\purchases\PurchaseController;
+use App\Http\Controllers\RawMaterialTransactionController;
 use App\Http\Controllers\refundsController\purchasesController\Purchase_RefundController;
 use App\Http\Controllers\refundsController\salesController\Sale_RefundController;
 use App\Http\Controllers\reportsConreoller;
@@ -59,7 +61,7 @@ use App\Http\Controllers\UsersController\UsersController;
 use App\Models\AccountingPeriod;
 use App\Models\Currency;
 use App\Models\DailyEntrie;
-
+use App\Models\InventoryTransaction;
 use App\Models\PaymentBond;
 
 use App\Models\SubAccount;
@@ -94,7 +96,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/all-products/{id}/show', [ProductCoctroller::class, 'allProducts'])->name('all-products');
     Route::get('/all-products/{id}/print', [ProductCoctroller::class, 'print'])->name('report.print');
 
-
+Route::get('/raw-material-transactions/index',[ RawMaterialTransactionController::class,'index'])->name('raw-material-transactions.index');
+Route::get('/raw-material-transactions/create',[ RawMaterialTransactionController::class,'create'])->name('raw-material-transactions.create');
+Route::post('/raw-material-transactions/store', [RawMaterialTransactionController::class,'store'])->name('raw-material-transactions.store');
+// routes/web.php
+Route::get('/raw-material-transactions/{id}/show', [RawMaterialTransactionController::class, 'show'])
+    ->name('raw-material-transactions.show');
+        Route::get('/raw-material-transactions/{id}edit',[ RawMaterialTransactionController::class,'edit'])->name('raw-material-transactions.edit');
+Route::get('/raw-material-transactions/{id}destroy', [RawMaterialTransactionController::class,'destroy'])->name('raw-material-transactions.destroy');
     // صيانة المعدات
     Route::get('/equipment-maintenance/index', [EquipmentMaintenanceController::class, 'index'])->name('equipment-maintenance.index');
     Route::get('/equipment-maintenance/create', [EquipmentMaintenanceController::class, 'create'])->name('equipment-maintenance.create');
@@ -113,13 +122,20 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/production_lines/{production_line}/edit', [ProductionLineController::class, 'edit'])->name('production_lines.edit');
     Route::delete('/production_lines/{id}/destroy', [ProductionLineController::class, 'destroy'])->name('production_lines.destroy');
 
+    Route::get('/inventory-transactions/index', [InventoryTransactionController::class, 'index'])->name('inventory-transactions.index');
+    Route::get('/inventory-transactions/create', [InventoryTransactionController::class, 'create'])->name('inventory-transactions.create');
+    Route::post('/inventory-transactions/store', [InventoryTransactionController::class, 'store'])->name('inventory-transactions.store');
+    Route::get('/inventory-transactions/{id}/edit', [InventoryTransactionController::class, 'edit'])->name('inventory-transactions.edit');
+    Route::delete('/inventory-transactions/{id}/destroy', [InventoryTransactionController::class, 'destroy'])->name('inventory-transactions.destroy');
+    Route::get('/inventory-transactions/{id}/show', [InventoryTransactionController::class, 'show'])->name('inventory-transactions.show');
+
     Route::get('/product-boms/index', [ProductBomController::class, 'index'])->name('product-boms.index');
     Route::get('/product-boms/create', [ProductBomController::class, 'create'])->name('product-boms.create');
     Route::post('/product-boms/store', [ProductBomController::class, 'store'])->name('product-boms.store');
     Route::post('/product-boms/update', [ProductBomController::class, 'update'])->name('product-boms.update');
     Route::get('/product-boms/{id}/show', [ProductBomController::class, 'show'])->name('product-boms.show');
     Route::get('/product-boms/{id}/edit', [ProductBomController::class, 'edit'])->name('product-boms.edit');
-    Route::get('/product-boms/{id}/destroy', [ProductBomController::class, 'destroy'])->name('product-boms.destroy');
+    Route::delete('/product-boms/{id}/destroy', [ProductBomController::class, 'destroy'])->name('product-boms.destroy');
     Route::get('/get-product-boms/{id}', [ProductBomController::class, 'getProductBoms'])->name('getProductBoms');
 
 

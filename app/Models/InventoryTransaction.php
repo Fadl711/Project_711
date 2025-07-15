@@ -21,6 +21,16 @@ class InventoryTransaction extends Model
         'created_by',
         'notes'
     ];
+     const TRANSACTION_TYPES = [
+        'receipt' => 'استلام مواد خام',
+        'issue' => 'صرف مواد للإنتاج',
+        'return' => 'إرجاع فائض',
+        'product_in' => 'إدخال منتج نهائي',
+        'waste_out' => 'إخراج مخلفات'
+    ];
+    protected $casts = [
+    'transaction_date' => 'datetime',
+];
 
     public function productionOrder()
     {

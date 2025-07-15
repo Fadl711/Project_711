@@ -25,7 +25,7 @@
         <span class="block sm:inline">{{ session('error') }}</span>
     </div>
 @endif
-    <div class="max-w-3xl mx-auto">
+    <div class="mx-auto">
         <div class="bg-white rounded-lg shadow-md p-2">
             <h2 class="text-xl font-bold text-gray-800 mb-4">إنشاء أمر إنتاج جديد</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">

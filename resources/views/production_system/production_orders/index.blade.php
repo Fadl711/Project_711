@@ -4,7 +4,7 @@
         <div class="flex justify-between items-center mb-8">
             <h1 class="text-2xl font-bold text-gray-800">أوامر الإنتاج</h1>
             <a href="{{ route('production-orders.create') }}"
-                class="ajax-link bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                class=" bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
                 إنشاء أمر جديد
             </a>
         </div>
