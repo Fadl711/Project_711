@@ -88,53 +88,77 @@
             $('#grantAllPermissions').on('click', function() {
                 if (!selectedUserId) return;
 
-                if (confirm('هل أنت متأكد من منح جميع الصلاحيات لهذا المستخدم؟')) {
-                    $.ajax({
-                        url: '{{ route('grant.all.permissions') }}',
-                        method: 'POST',
-                        data: {
-                            user_id: selectedUserId,
-                            _token: '{{ csrf_token() }}'
-                        },
-                        success: function(response) {
-                            if (response.success) {
-                                loadUserPermissionsTable(selectedUserId);
-                                alert('تم منح جميع الصلاحيات بنجاح');
-                            } else {
-                                alert(response.message || 'حدث خطأ أثناء منح الصلاحيات');
+                Swal.fire({
+                    title: 'تأكيد',
+                    text: 'هل أنت متأكد من منح جميع الصلاحيات لهذا المستخدم؟',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'نعم',
+                    cancelButtonText: 'إلغاء'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '{{ route('grant.all.permissions') }}',
+                            method: 'POST',
+                            data: {
+                                user_id: selectedUserId,
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    loadUserPermissionsTable(selectedUserId);
+                                    Swal.fire('نجاح', 'تم منح جميع الصلاحيات بنجاح',
+                                        'success');
+                                } else {
+                                    Swal.fire('خطأ', response.message ||
+                                        'حدث خطأ أثناء منح الصلاحيات', 'error');
+                                }
+                            },
+                            error: function() {
+                                Swal.fire('خطأ', 'حدث خطأ أثناء منح الصلاحيات',
+                                'error');
                             }
-                        },
-                        error: function() {
-                            alert('حدث خطأ أثناء منح الصلاحيات');
-                        }
-                    });
-                }
+                        });
+                    }
+                });
             });
 
             $('#deleteAllPermissions').on('click', function() {
                 if (!selectedUserId) return;
 
-                if (confirm('هل أنت متأكد من حذف جميع الصلاحيات لهذا المستخدم؟')) {
-                    $.ajax({
-                        url: '{{ route('delete.all.permissions') }}',
-                        method: 'POST',
-                        data: {
-                            user_id: selectedUserId,
-                            _token: '{{ csrf_token() }}'
-                        },
-                        success: function(response) {
-                            if (response.success) {
-                                loadUserPermissionsTable(selectedUserId);
-                                alert('تم حذف جميع الصلاحيات بنجاح');
-                            } else {
-                                alert(response.message || 'حدث خطأ أثناء حذف الصلاحيات');
+                Swal.fire({
+                    title: 'تأكيد',
+                    text: 'هل أنت متأكد من حذف جميع الصلاحيات لهذا المستخدم؟',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'نعم',
+                    cancelButtonText: 'إلغاء'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '{{ route('delete.all.permissions') }}',
+                            method: 'POST',
+                            data: {
+                                user_id: selectedUserId,
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    loadUserPermissionsTable(selectedUserId);
+                                    Swal.fire('نجاح', 'تم حذف جميع الصلاحيات بنجاح',
+                                        'success');
+                                } else {
+                                    Swal.fire('خطأ', response.message ||
+                                        'حدث خطأ أثناء حذف الصلاحيات', 'error');
+                                }
+                            },
+                            error: function() {
+                                Swal.fire('خطأ', 'حدث خطأ أثناء حذف الصلاحيات',
+                                'error');
                             }
-                        },
-                        error: function() {
-                            alert('حدث خطأ أثناء حذف الصلاحيات');
-                        }
-                    });
-                }
+                        });
+                    }
+                });
             });
 
             $('#select1').on('change', function() {
@@ -154,11 +178,12 @@
                             loadUserPermissionsTable(selectedUserId);
                             $('#select1').val('');
                         } else {
-                            alert(response.message || 'حدث خطأ أثناء إضافة الصلاحية');
+                            Swal.fire('خطأ', response.message || 'حدث خطأ أثناء إضافة الصلاحية',
+                                'error');
                         }
                     },
                     error: function() {
-                        alert('حدث خطأ أثناء إضافة الصلاحية');
+                        Swal.fire('خطأ', 'حدث خطأ أثناء إضافة الصلاحية', 'error');
                     }
                 });
             });
@@ -179,7 +204,7 @@
                         }
                     },
                     error: function() {
-                        alert('حدث خطأ أثناء تحميل بيانات المستخدم');
+                        Swal.fire('خطأ', 'حدث خطأ أثناء تحميل بيانات المستخدم', 'error');
                     }
                 });
             }
@@ -200,7 +225,7 @@
                         }
                     },
                     error: function() {
-                        alert('حدث خطأ أثناء تحميل جدول الصلاحيات');
+                        Swal.fire('خطأ', 'حدث خطأ أثناء تحميل جدول الصلاحيات', 'error');
                     }
                 });
             }

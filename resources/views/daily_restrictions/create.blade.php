@@ -85,14 +85,19 @@
                             class="select2 w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sel">
                             <option value="" selected>اختر نوع المستند</option>
                             @foreach ($transaction_types as $transactionType)
-                                                    @if ($transactionType->value ==1 || $transactionType->value ==2 || $transactionType->value ==3 || $transactionType->value ==8 || $transactionType->value ==9 || $transactionType->value ==10 )
-
-                                <option value="{{ $transactionType->value }}"
-                                    @isset($DailyEntrie->daily_entries_type)
+                                @if (
+                                    $transactionType->value == 1 ||
+                                        $transactionType->value == 2 ||
+                                        $transactionType->value == 3 ||
+                                        $transactionType->value == 8 ||
+                                        $transactionType->value == 9 ||
+                                        $transactionType->value == 10)
+                                    <option value="{{ $transactionType->value }}"
+                                        @isset($DailyEntrie->daily_entries_type)
                                     @if ($DailyEntrie->daily_entries_type == $transactionType->label()) selected @endif
                                 @endisset>
-                                    {{ $transactionType->label() }}
-                                </option>
+                                        {{ $transactionType->label() }}
+                                    </option>
                                 @endif
                             @endforeach
                         </select>
@@ -297,8 +302,8 @@
             });
 
             // فتح الحقل الفرعي للمدين عند التحميل
-            $('#sub_account_debit_id').select2('open');
-
+            /*             $('#sub_account_debit_id').select2('open');
+             */
             // منع إرسال النموذج عند الضغط على Enter
             $('#dailyRestrictionsForm').on('keydown', function(event) {
                 if (event.key === 'Enter') {

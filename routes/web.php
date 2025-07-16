@@ -96,14 +96,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/all-products/{id}/show', [ProductCoctroller::class, 'allProducts'])->name('all-products');
     Route::get('/all-products/{id}/print', [ProductCoctroller::class, 'print'])->name('report.print');
 
-Route::get('/raw-material-transactions/index',[ RawMaterialTransactionController::class,'index'])->name('raw-material-transactions.index');
-Route::get('/raw-material-transactions/create',[ RawMaterialTransactionController::class,'create'])->name('raw-material-transactions.create');
-Route::post('/raw-material-transactions/store', [RawMaterialTransactionController::class,'store'])->name('raw-material-transactions.store');
-// routes/web.php
-Route::get('/raw-material-transactions/{id}/show', [RawMaterialTransactionController::class, 'show'])
-    ->name('raw-material-transactions.show');
-        Route::get('/raw-material-transactions/{id}edit',[ RawMaterialTransactionController::class,'edit'])->name('raw-material-transactions.edit');
-Route::get('/raw-material-transactions/{id}destroy', [RawMaterialTransactionController::class,'destroy'])->name('raw-material-transactions.destroy');
+    Route::get('/raw-material-transactions/index', [RawMaterialTransactionController::class, 'index'])->name('raw-material-transactions.index');
+    Route::get('/raw-material-transactions/create', [RawMaterialTransactionController::class, 'create'])->name('raw-material-transactions.create');
+    Route::post('/raw-material-transactions/store', [RawMaterialTransactionController::class, 'store'])->name('raw-material-transactions.store');
+    // routes/web.php
+    Route::get('/raw-material-transactions/{id}/show', [RawMaterialTransactionController::class, 'show'])
+        ->name('raw-material-transactions.show');
+    Route::get('/raw-material-transactions/{id}edit', [RawMaterialTransactionController::class, 'edit'])->name('raw-material-transactions.edit');
+    Route::get('/raw-material-transactions/{id}destroy', [RawMaterialTransactionController::class, 'destroy'])->name('raw-material-transactions.destroy');
     // صيانة المعدات
     Route::get('/equipment-maintenance/index', [EquipmentMaintenanceController::class, 'index'])->name('equipment-maintenance.index');
     Route::get('/equipment-maintenance/create', [EquipmentMaintenanceController::class, 'create'])->name('equipment-maintenance.create');
@@ -329,7 +329,7 @@ Route::get('/raw-material-transactions/{id}destroy', [RawMaterialTransactionCont
     Route::get('/restrictions/create/Currency', [RestrictionController::class, 'createCurrency'])->name('restrictions.createCurrency');
     Route::get('/restrictions/index', [RestrictionController::class, 'index'])->name('restrictions.index');
     Route::get('/restrictions/all_restrictions_show/{id}', [RestrictionController::class, 'all_restrictions_show'])->name('all_restrictions_show');
-    Route::get('/restrictions/all_restrictions_show_1', [RestrictionController::class, 'all_restrictions_show_1'])->name('all_restrictions_show_1');
+    Route::get('/restrictions/pages', [RestrictionController::class, 'pages'])->name('restrictions.pages');
     Route::get('/restrictions/{id}/edit', [RestrictionController::class, 'edit'])->name('restrictions.edit');
     Route::get('/restrictions/{id}', [RestrictionController::class, 'show'])->name('restrictions.show');
     Route::get('/restrictions/{id}/print', [RestrictionController::class, 'print'])->name('restrictions.print');
@@ -339,7 +339,6 @@ Route::get('/raw-material-transactions/{id}destroy', [RawMaterialTransactionCont
     Route::post('/daily_restrictions/stor', [RestrictionController::class, 'stor'])->name('daily_restrictions.stor');
     Route::put('/daily_restrictions/{id}', [RestrictionController::class, 'update'])->name('daily_restrictions.update');
     Route::delete('/daily_restrictions/{id1}', [RestrictionController::class, 'destroy'])->name('daily_restrictions.destroy');
-    Route::get('/daily_restrictions/search', [RestrictionController::class, 'search'])->name('search.daily_restrictions');
     Route::get('/general_entries/show', [generalEntrieController::class, 'show'])->name('general_entries.show');
 
     Route::get('/general/{id}/ledger/{accounting_id}', [TransferController::class, 'general_ledger'])->name('general.ledger');

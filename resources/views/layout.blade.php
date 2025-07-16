@@ -73,8 +73,6 @@
     <script src="{{ asset('assets\js\alpinejs\dist\cdn.min.js') }}" defer></script>
 
     <script>
-           
-
         window.Laravel = {!! json_encode(['baseUrl' => url('/')]) !!};
         setInterval(() => {
             fetch(`${window.Laravel.baseUrl}/ping`)

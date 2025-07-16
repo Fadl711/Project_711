@@ -22,6 +22,7 @@ use App\Models\User;
 use App\Models\UserPermission;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
@@ -84,20 +85,33 @@ class AppServiceProvider extends ServiceProvider
 
 
 
-        // $expiringProducts = Product::whereNotNull('expiry_date')
-        //     ->where('expiry_date', '<=', Carbon::now()->addMonth())
-        //     ->get();
-        // $operations = Operation::with('user')
-        //     ->where('is_seen', 0)
-        //     ->latest()
-        //     ->take(25) // تحديد العدد الأقصى
-        //     ->get();
-        // $products = Product::all();
 
-        $products = 0;
-        if (isset($products)) {
-            View::share(['expiringProducts' => null, 'operations' => null]);
-        }
+
+        View::composer('layouts.navigation', function ($view) {
+
+            // إذا الكاش غير موجود، حدّثه أول مرة
+
+            $operations = Operation::with('user')
+                ->where('is_seen', 0)
+                ->latest()
+                ->take(25) // تحديد العدد الأقصى
+                ->get();
+
+
+
+            if (!Cache::has('expiring_products')) {
+                $expiringProducts = Product::whereNotNull('expiry_date')
+                    ->where('expiry_date', '<=', Carbon::now()->addMonth())
+                    ->take(25)
+                    ->get();
+
+                Cache::put('expiring_products', $expiringProducts, now()->addDay());
+            }
+
+            $view->with(['expiringProducts' => Cache::get('expiring_products'), 'operations' => $operations]);
+        });
+
+
         $accountClasses = AccountClass::cases();
         // $PaymentType = PaymentType::cases();
         // $transactionTypes = TransactionType::cases();

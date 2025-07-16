@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>فاتورة مبيعات</title>
     <link href="{{ asset('css/tailwind.css') }}" rel="stylesheet">
-     <script src="{{ asset('assets/js/jquery/dist/jquery.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery/dist/jquery.min.js') }}"></script>
     <style>
         /* تخصيص للطباعة */
         @media print {
@@ -207,25 +207,25 @@
                 <thead class=" ">
                     <tr class="bg-blue-100 ">
 
-                       
-                        <th class="px-2 text-left   " >
+
+                        <th class="px-2 text-left   ">
                             <p class="font-">المبلغ المستحق</p>
-                        </th>
-                        <th class="px-2 text-right w-[70%] " >
-                            {{ number_format($net_total_after_discount) ?? 0 }}
                             <p class="text-sm">{{ $priceInWords }}</p>
+                        </th>
+                        <th class="px-2 text-right w-[70%] ">
+                            {{ number_format($net_total_after_discount) ?? 0 }}
                         </th>
 
                     </tr>
                     @php
                         $sum1 = $Sum_amount - $Sale_CostSum;
                     @endphp
-                    <tr  id="Sumamount" class="bg-blue-100 ">
+                    <tr id="Sumamount" class="bg-blue-100 ">
 
                         @if ($sum1 > 0)
                             <th class="px-2 text-left w-[50%] ">
-                              رصيد سابق
-                                </th>
+                                رصيد سابق
+                            </th>
                             <th class="px-2 text-right 30">
 
                                 @if (isset($sum1) && $sum1 > 0)
@@ -244,14 +244,14 @@
                         @endif
 
                     </tr>
-                    @if ($payment_type == 'أجل'&& $sum1 > 0)
-                        <tr  id="Sumamount" class="bg-blue-100 ">
+                    @if ($payment_type == 'أجل' && $sum1 > 0)
+                        <tr id="Sumamount" class="bg-blue-100 ">
                             @php
                                 $Sum_amount;
                             @endphp
 
-                            <th  id="Sumamount" class="px-2 text-left w-[20%]">
-                               الجمالي رصيد </th>
+                            <th id="Sumamount" class="px-2 text-left w-[20%]">
+                                اجمالي الرصيد </th>
 
                             <th id="sum_amount" class="px-2 text-right">
                                 @if (isset($Sum_amount) && $Sum_amount > 0)
@@ -295,27 +295,27 @@
         </div>
         <!-- زر الطباعة -->
         <div class="mt-4 no-print">
-                  <button id="sumamount" type="button" class="px-4 py-2    rounded-lg shadow-md hover:bg-blue-600">
-الرصيد السابق           </button>
+            <button id="sumamount" type="button" class="px-4 py-2    rounded-lg shadow-md hover:bg-blue-600">
+                الرصيد السابق </button>
             <button onclick="printAndClose()"
                 class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">طباعة</button>
-               
-            <script>
-                $(document).ready(function(){
-                     $("#sumamount").click(function(){
 
-                                    $("tr[id='Sumamount']").toggleClass("hidden");
+            <script>
+                $(document).ready(function() {
+                    $("#sumamount").click(function() {
+
+                        $("tr[id='Sumamount']").toggleClass("hidden");
 
                     });
 
-                   } );
+                });
+
                 function printAndClose() {
                     window.print(); // أمر الطباعة
                     setTimeout(() => {
                         window.close(); // الإغلاق بعد بدء الطباعة
                     }, 500); // فترة الانتظار نصف ثانية فقط
                 };
-                   
             </script>
             <button onclick="closeWindow()" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700">إلغاء
                 الطباعة</button>

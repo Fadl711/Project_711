@@ -94,49 +94,37 @@
                 </tr>
             </thead>
             <tbody id="products-table">
-                @forelse ($eail as $eai)
-                    @php
-
-                        $resultDebit1 = $suba->where('sub_account_id', $eai->account_debit_id)->first();
-                        $resultDebit = $resultDebit1
-                            ? $mainc->where('main_account_id', $resultDebit1->main_id)->first()
-                            : 'تم الحذف';
-
-                        $resultCredit1 = $suba->where('sub_account_id', $eai->account_credit_id)->first();
-                        $resultCredit = $resultCredit1
-                            ? $mainc->where('main_account_id', $resultCredit1->main_id)->first()
-                            : 'تم الحذف';
-                    @endphp
-                    <tr class="hover:bg-gray-50 transition-colors duration-200" id="row-{{ $eai->entrie_id }}">
-                        <td class="border-b py-3 px-2 text-center">{{ $eai->entrie_id }}</td>
-                        <td class="border-b py-3 px-2 text-center">{{ $eai->daily_entries_type }}</td>
+                @forelse ($dailyEntries as $dailyEntrie)
+                    <tr class="hover:bg-gray-50 transition-colors duration-200" id="row-{{ $dailyEntrie->entrie_id }}">
+                        <td class="border-b py-3 px-2 text-center">{{ $dailyEntrie->entrie_id }}</td>
+                        <td class="border-b py-3 px-2 text-center">{{ $dailyEntrie->daily_entries_type }}</td>
                         <td class="border-b py-3 px-2 text-right bg-gray-100 font-medium">
-                            {{ $resultDebit1->sub_name ?? '' }}
+                            {{ $dailyEntrie->debitAccount->sub_name ?? '' }}
                         </td>
                         <td class="border-b py-3 px-2 text-right bg-gray-100 font-semibold">
-                            {{ number_format($eai->amount_debit, 2) }}
+                            {{ number_format($dailyEntrie->amount_debit, 2) }}
                         </td>
                         <td class="border-b py-3 px-2 text-right bg-red-100 font-medium">
-                            {{ $resultCredit1->sub_name ?? '' }}
+                            {{ $dailyEntrie->creditAccount->sub_name ?? '' }}
                         </td>
                         <td class="border-b py-3 px-2 text-right bg-red-100 font-semibold">
-                            {{ number_format($eai->amount_credit, 2) }}
+                            {{ number_format($dailyEntrie->amount_credit, 2) }}
                         </td>
                         <td class="border-b py-3 px-2 text-right">
-                            <div>{{ $eai->statement }}</div>
-                            @if ($eai->invoice_id)
+                            <div>{{ $dailyEntrie->statement }}</div>
+                            @if ($dailyEntrie->invoice_id)
                                 <div class="mt-1">
                                     <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-0.5 rounded">
-                                        رقم المستند: {{ $eai->invoice_id }}
+                                        رقم المستند: {{ $dailyEntrie->invoice_id }}
                                     </span>
                                 </div>
                             @endif
                         </td>
-                        <td class="border-b py-3 px-2 text-center">{{ $eai->currency_name }}</td>
-                        <td class="border-b py-3 px-2 text-center">{{ $eai->created_at->format('Y-m-d') }}</td>
-                        <td class="border-b py-3 px-2 text-center">{{ $eai->updated_at->format('Y-m-d') }}</td>
+                        <td class="border-b py-3 px-2 text-center">{{ $dailyEntrie->currency_name }}</td>
+                        <td class="border-b py-3 px-2 text-center">{{ $dailyEntrie->created_at->format('Y-m-d') }}</td>
+                        <td class="border-b py-3 px-2 text-center">{{ $dailyEntrie->updated_at->format('Y-m-d') }}</td>
                         <td class="border-b py-3 px-2 text-center">
-                            @if ($eai->status == 'مرحل')
+                            @if ($dailyEntrie->status == 'مرحل')
                                 <span
                                     class="inline-flex items-center text-nowrap px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                     مرحل
@@ -148,10 +136,10 @@
                                 </span>
                             @endif
                         </td>
-                        <td class="border-b py-3 px-2 text-center">{{ $eai->user->name }}</td>
+                        <td class="border-b py-3 px-2 text-center">{{ $dailyEntrie->user->name }}</td>
                         <td class="border-b py-3 px-2">
                             <div class="flex justify-center space-x-2 rtl:space-x-reverse">
-                                <a href="{{ route('restrictions.show', $eai->entrie_id) }}"
+                                <a href="{{ route('restrictions.show', $dailyEntrie->entrie_id) }}"
                                     class="text-[#2430d3] hover:bg-blue-50 p-2 rounded-full transition-colors duration-200"
                                     title="عرض">
                                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -162,7 +150,7 @@
                                             d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                     </svg>
                                 </a>
-                                <a href="{{ route('restrictions.edit', $eai->entrie_id) }}"
+                                <a href="{{ route('restrictions.edit', $dailyEntrie->entrie_id) }}"
                                     class="text-[#2430d3] hover:bg-blue-50 p-2 rounded-full transition-colors duration-200"
                                     title="تحرير">
                                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -173,7 +161,7 @@
                                 </a>
                                 <button type="button"
                                     class="text-red-600 hover:bg-red-50 p-2 rounded-full transition-colors duration-200 delete-payment"
-                                    data-id="{{ $eai->entrie_id }}" title="حذف">
+                                    data-id="{{ $dailyEntrie->entrie_id }}" title="حذف">
                                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -192,6 +180,7 @@
                 @endforelse
             </tbody>
         </table>
+        {{ $dailyEntries->links() }}
     </div>
 
     <script>
