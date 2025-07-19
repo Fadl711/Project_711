@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('equipment_maintenances', function (Blueprint $table) {
             $table->id();
+          $table->integer('accounting_period_id')->unsigned();
+
  $table->foreignId('line_id')->constrained('production_lines')->comment('خط الإنتاج');
     $table->string('equipment_code')->comment('كود المعدة');
     $table->enum('maintenance_type', ['preventive', 'corrective', 'predictive', 'breakdown'])->comment('نوع الصيانة');

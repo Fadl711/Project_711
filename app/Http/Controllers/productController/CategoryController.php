@@ -35,10 +35,11 @@ class CategoryController extends Controller
     ->exists()) {
             return response()->json(['error' => 'الاسم موجود مسبقاً'], 422);
         }
+        // dd($request->Categorieid);
         Category::updateOrCreate(
             [
+                'categorie_id' => $request->Categorieid??$request->Categorie_id,
                 'product_id' => $request->product_id,
-                'categorie_id' => $request->Categorie_id,
             ],
             [
             'Categorie_name' => $request->cate,
@@ -47,7 +48,7 @@ class CategoryController extends Controller
             'Quantityprice' => $request->Quantityprice,
             'User_id' => auth()->id(),
         ]);
-        if($request->Categorie_id)
+        if($request->Categorieid|| $request->Categorie_id)
         {
                 return response()->json([
                     'success' => true,
@@ -62,7 +63,7 @@ class CategoryController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => ' تم تعديل الصنف بنجاح  .',
+            'message' => ' تم حفظ الوحدة بنجاح  .',
         ]);
         // return back();
     }

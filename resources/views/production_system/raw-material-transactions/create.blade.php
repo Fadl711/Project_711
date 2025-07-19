@@ -17,11 +17,11 @@
                 <div>
                     <label for="production_order_id" class="block text-sm font-medium text-gray-700">أمر الإنتاج</label>
                     <select id="production_order_id" name="production_order_id" required
-                            class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                            class="mt-1 block select2 w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                         <option value="">اختر أمر الإنتاج</option>
                         @foreach($productionOrders as $order)
                             <option value="{{ $order->id }}" {{ old('production_order_id') == $order->id ? 'selected' : '' }}>
-                                {{ $order->order_number }} - {{ $order->product->product_name }}
+                                {{ $order->order_number }} -{{$order->id }} - {{ $order->product->product_name }}
                             </option>
                         @endforeach
                     </select>
@@ -34,7 +34,7 @@
                 <div>
                     <label for="material_id" class="block text-sm font-medium text-gray-700">المادة الخام</label>
                     <select id="material_id" name="material_id" required
-                            class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                            class="mt-1 select2 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                         <option value="">اختر المادة الخام</option>
                         @foreach($materials as $material)
                             <option value="{{ $material->product_id }}"  {{ old('material_id') == $material->product_id ? 'selected' : '' }}>
@@ -106,11 +106,11 @@
                 <div>
                     <label for="warehouse_id" class="block text-sm font-medium text-gray-700">المخزن</label>
                     <select id="warehouse_id" name="warehouse_id" required
-                            class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                            class="mt-1 select2 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                         <option value="">اختر المخزن</option>
                         @foreach($warehouses as $warehouse)
                             <option value="{{ $warehouse->sub_account_id }}" {{ old('warehouse_id') == $warehouse->sub_account_id ? 'selected' : '' }}>
-                                {{ $warehouse->sub_name }}
+                                {{ $warehouse->sub_name }}_{{ $warehouse->name_the_known }}
                             </option>
                         @endforeach
                     </select>
@@ -122,7 +122,7 @@
                 <div>
                     <label for="location_id" class="block text-sm font-medium text-gray-700">الموقع (اختياري)</label>
                     <select id="location_id" name="location_id"
-                            class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                            class="mt-1 select2 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                         <option value="">اختر الموقع</option>
                         @foreach($locations as $location)
                             <option value="{{ $location->sub_account_id }}" {{ old('location_id') == $location->sub_account_id ? 'selected' : '' }}>
@@ -139,7 +139,7 @@
                 <div>
                     <label for="issued_by" class="block text-sm font-medium text-gray-700">مسؤول الصرف</label>
                     <select id="issued_by" name="issued_by" required
-                            class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                            class=" select2 mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                         <option value="">اختر المسؤول</option>
                         @foreach($users as $user)
                             <option value="{{ $user->id }}" {{ old('issued_by') == $user->id ? 'selected' : '' }}>

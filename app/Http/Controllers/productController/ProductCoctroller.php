@@ -29,8 +29,11 @@ class ProductCoctroller extends Controller
     public function create()
     {
         $curr = Currency::all();
+                    $products = Product::all();
 
-        return view('products.create', ['curr' => $curr]);
+
+        return view('products.create', ['curr' => $curr,
+    'products' => $products]);
     }
     private function convertArabicNumbersToEnglish($value)
     {
@@ -94,8 +97,15 @@ class ProductCoctroller extends Controller
          $warehouseName = SubAccount::where('sub_account_id', $warehouse_to_id)->value('sub_name');
           $productname = " تقرير  مخزني   لكل الاصناف في   " . "  " . $warehouseName;
           $allQuantityCosts = DB::table('products')
+              ->leftJoin('categories', 'products.Categorie_id', '=', 'categories.categorie_id') 
+
     ->select([
         'products.product_id','products.product_name','products.Purchase_price',
+        'categories.Purchase_price as unit_price ',
+        'categories.Categorie_name  as category_name',
+        'categories.Quantityprice  as unit_quantity'
+,
+
     DB::raw('COALESCE(saleQuantity4.sum_quantity, 0) as saleQuantity4'),
         DB::raw('COALESCE(saleQuantity5.sum_quantity, 0) as saleQuantity5'),
         DB::raw('COALESCE(warehouseFromQuantity3.sum_quantity, 0) as warehouseFromQuantity3'),
@@ -110,14 +120,14 @@ class ProductCoctroller extends Controller
         $join->on('products.product_id', '=', 'saleQuantity5.product_id')
              ->addBinding([$warehouse_to_id, $accountingPeriod->accounting_period_id]);
     })
-    ->leftJoin(DB::raw('(SELECT product_id, SUM(quantity) as sum_quantity FROM purchases WHERE transaction_type IN (3,9,10) AND warehouse_from_id = ? AND accounting_period_id = ? GROUP BY product_id) as warehouseFromQuantity3'), function($join) use ($warehouse_to_id, $accountingPeriod) {
+    ->leftJoin(DB::raw('(SELECT product_id, SUM(Quantityprice) as sum_quantity FROM purchases WHERE transaction_type IN (3,9,10) AND warehouse_from_id = ? AND accounting_period_id = ? GROUP BY product_id) as warehouseFromQuantity3'), function($join) use ($warehouse_to_id, $accountingPeriod) {
         $join->on('products.product_id', '=', 'warehouseFromQuantity3.product_id')
              ->addBinding([$warehouse_to_id, $accountingPeriod->accounting_period_id]);
     })
-    ->leftJoin(DB::raw('(SELECT product_id, SUM(quantity) as sum_quantity FROM purchases WHERE transaction_type = 2 GROUP BY product_id) as warehouseFromQuantity'), function($join) {
+    ->leftJoin(DB::raw('(SELECT product_id, SUM(Quantityprice) as sum_quantity FROM purchases WHERE transaction_type = 2 GROUP BY product_id) as warehouseFromQuantity'), function($join) {
         $join->on('products.product_id', '=', 'warehouseFromQuantity.product_id');
     })
-    ->leftJoin(DB::raw('(SELECT product_id, SUM(quantity) as sum_quantity FROM purchases WHERE transaction_type IN (1, 6, 3, 7,8) AND warehouse_to_id = ? AND accounting_period_id = ? GROUP BY product_id) as purchaseToQuantity'), function($join) use ($warehouse_to_id, $accountingPeriod) {
+    ->leftJoin(DB::raw('(SELECT product_id, SUM(Quantityprice) as sum_quantity FROM purchases WHERE transaction_type IN (1, 6, 3, 7,8) AND warehouse_to_id = ? AND accounting_period_id = ? GROUP BY product_id) as purchaseToQuantity'), function($join) use ($warehouse_to_id, $accountingPeriod) {
         $join->on('products.product_id', '=', 'purchaseToQuantity.product_id')
              ->addBinding([$warehouse_to_id, $accountingPeriod->accounting_period_id]);
     })
@@ -183,7 +193,7 @@ if ( $Quantit == "QuantityCosts") {
                  ->where('warehouse_to_id',$warehouse_to_id)
                  ->where('accounting_period_id', $accountingPeriod->accounting_period_id);
         }
-    ], 'quantity')
+    ], 'Quantityprice')
     ->first(); 
 $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_at)->format('Y-m-d');
                         $accountingPeriod = Carbon::now()->format('Y-m-d');
@@ -486,46 +496,46 @@ $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_a
 
                     $categories = Category::where('product_id', $product_id)->first();
                     $SupplierData = SubAccount::where('sub_account_id', $Supplier->sub_account_id)->first();
-                    $purchaseToQuantity = Purchase::where('product_id', $product_id)
-                        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-                        ->where('Supplier_id', $Supplier->sub_account_id)
-                        ->whereIn('transaction_type', [1, 6,7,8])
-                        ->sum('quantity');
+                    // $purchaseToQuantity = Purchase::where('product_id', $product_id)
+                    //     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                    //     ->where('Supplier_id', $Supplier->sub_account_id)
+                    //     ->whereIn('transaction_type', [1, 6,7,8])
+                    //     ->sum('quantity');
 
-                    $lastPurchase = Purchase::where('product_id', $product_id)
-                        ->where('Supplier_id', $Supplier->sub_account_id)
-                        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-                        ->whereIn('transaction_type', [1, 6])
-                        ->sum('Purchase_price');
+                    // $lastPurchase = Purchase::where('product_id', $product_id)
+                    //     ->where('Supplier_id', $Supplier->sub_account_id)
+                    //     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                    //     ->whereIn('transaction_type', [1, 6])
+                    //     ->sum('Purchase_price');
 
-                    $warehouseFromQuantity = Purchase::where('product_id', $product_id)
-                        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-                        ->where('transaction_type', 2)
-                        ->where('Supplier_id', $Supplier->sub_account_id)
-                        ->sum('quantity');
+                    // $warehouseFromQuantity = Purchase::where('product_id', $product_id)
+                    //     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                    //     ->where('transaction_type', 2)
+                    //     ->where('Supplier_id', $Supplier->sub_account_id)
+                    //     ->sum('quantity');
 
-                    $warehouseFromQuantity3 = Purchase::where('product_id', $product_id)
-                        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-                        ->where('transaction_type', 3)
-                        ->where('Supplier_id', $Supplier->sub_account_id)
-                        ->sum('quantity');
+                    // $warehouseFromQuantity3 = Purchase::where('product_id', $product_id)
+                    //     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                    //     ->where('transaction_type', 3)
+                    //     ->where('Supplier_id', $Supplier->sub_account_id)
+                    //     ->sum('quantity');
 
-                    $saleQuantity5 = Sale::where('product_id', $product_id)
-                        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-                        ->where('transaction_type', 5)
-                        ->where('supplier_id', $Supplier->sub_account_id)
-                        ->sum('quantity');
-                    $astsaleQuantity = Sale::where('product_id', $product_id)
-                        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-                        ->where('transaction_type', 5)
-                        ->where('supplier_id', $Supplier->sub_account_id)
-                        ->sum('Selling_price');
+                    // $saleQuantity5 = Sale::where('product_id', $product_id)
+                    //     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                    //     ->where('transaction_type', 5)
+                    //     ->where('supplier_id', $Supplier->sub_account_id)
+                    //     ->sum('quantity');
+                    // $astsaleQuantity = Sale::where('product_id', $product_id)
+                    //     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                    //     ->where('transaction_type', 5)
+                    //     ->where('supplier_id', $Supplier->sub_account_id)
+                    //     ->sum('Selling_price');
 
-                    $saleQuantity4 = Sale::where('product_id', $product_id)
-                        ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-                        ->where('transaction_type', 4)
-                        ->where('supplier_id', $Supplier->sub_account_id)
-                        ->sum('quantity');
+                    // $saleQuantity4 = Sale::where('product_id', $product_id)
+                    //     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+                    //     ->where('transaction_type', 4)
+                    //     ->where('supplier_id', $Supplier->sub_account_id)
+                    //     ->sum('quantity');
                     $SumQuantity = ($purchaseToQuantity + $saleQuantity4) - $warehouseFromQuantity - $warehouseFromQuantity3 - $saleQuantity4;
                     // تخزين البيانات في مصفوفة
                     if ($purchaseToQuantity) {
@@ -595,18 +605,20 @@ $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_a
         'products.product_id',
         'products.product_name',
         'products.Purchase_price',
+        'products.Categorie_id',
+
         'sub_accounts.sub_account_id',
         'sub_accounts.sub_name',
         // حركات المشتريات
-        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type IN (1, 6) THEN purchases.quantity ELSE 0 END), 0) as purchaseToQuantity'),
+        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type IN (1, 6) THEN purchases.Quantityprice ELSE 0 END), 0) as purchaseToQuantity'),
         DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type IN (1,6) THEN purchases.Quantityprice ELSE 0 END), 0) as lastQuantity'),
-                DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 3 THEN purchases.quantity ELSE 0 END), 0) as warehouseFromQuantity3'),
-        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type IN (1, 6) THEN purchases.quantity ELSE 0 END), 0) as lastPurchase'),
+                DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 3 THEN purchases.Quantityprice ELSE 0 END), 0) as warehouseFromQuantity3'),
+        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type IN (1, 6) THEN purchases.Quantityprice ELSE 0 END), 0) as lastPurchase'),
         DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type IN (1, 6) THEN purchases.Total ELSE 0 END), 0) as lastTotal'),
-        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 2 THEN purchases.quantity ELSE 0 END), 0) as returnPurchaseToQuantity'),
-        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 8 THEN purchases.quantity ELSE 0 END), 0) as excess_quantities'),
-        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 9 THEN purchases.quantity ELSE 0 END), 0) as missing_quantities'),
-        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 10 THEN purchases.quantity ELSE 0 END), 0) as damaged_quantity'),
+        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 2 THEN purchases.Quantityprice ELSE 0 END), 0) as returnPurchaseToQuantity'),
+        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 8 THEN purchases.Quantityprice ELSE 0 END), 0) as excess_quantities'),
+        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 9 THEN purchases.Quantityprice ELSE 0 END), 0) as missing_quantities'),
+        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 10 THEN purchases.Quantityprice ELSE 0 END), 0) as damaged_quantity'),
 
         // حركات المبيعات
         DB::raw('COALESCE(SUM(CASE WHEN sales.transaction_type = 5 THEN sales.quantity ELSE 0 END), 0) as saleQuantity5'),
@@ -629,6 +641,8 @@ $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_a
         'products.product_id',
         'products.product_name',
         'products.Purchase_price',
+                'products.Categorie_id',
+
         'sub_accounts.sub_account_id',
         'sub_accounts.sub_name'
     )
@@ -663,18 +677,20 @@ $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_a
         'products.product_id',
         'products.product_name',
         'products.Purchase_price',
+                'products.Categorie_id',
+
         'sub_accounts.sub_account_id',
         'sub_accounts.sub_name',
         // حركات المشتريات
-        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type IN (1, 6) THEN purchases.quantity ELSE 0 END), 0) as purchaseToQuantity'),
+        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type IN (1, 6) THEN purchases.Quantityprice ELSE 0 END), 0) as purchaseToQuantity'),
         DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type IN (1,6) THEN purchases.Quantityprice ELSE 0 END), 0) as lastQuantity'),
-                DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 3 THEN purchases.quantity ELSE 0 END), 0) as warehouseFromQuantity3'),
-        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type IN (1, 6) THEN purchases.quantity ELSE 0 END), 0) as lastPurchase'),
+                DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 3 THEN purchases.Quantityprice ELSE 0 END), 0) as warehouseFromQuantity3'),
+        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type IN (1, 6) THEN purchases.Quantityprice ELSE 0 END), 0) as lastPurchase'),
         DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type IN (1, 6) THEN purchases.Total ELSE 0 END), 0) as lastTotal'),
-        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 2 THEN purchases.quantity ELSE 0 END), 0) as returnPurchaseToQuantity'),
-        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 8 THEN purchases.quantity ELSE 0 END), 0) as excess_quantities'),
-        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 9 THEN purchases.quantity ELSE 0 END), 0) as missing_quantities'),
-        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 10 THEN purchases.quantity ELSE 0 END), 0) as damaged_quantity'),
+        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 2 THEN purchases.Quantityprice ELSE 0 END), 0) as returnPurchaseToQuantity'),
+        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 8 THEN purchases.Quantityprice ELSE 0 END), 0) as excess_quantities'),
+        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 9 THEN purchases.Quantityprice ELSE 0 END), 0) as missing_quantities'),
+        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 10 THEN purchases.Quantityprice ELSE 0 END), 0) as damaged_quantity'),
 
         // حركات المبيعات
         DB::raw('COALESCE(SUM(CASE WHEN sales.transaction_type = 5 THEN sales.quantity ELSE 0 END), 0) as saleQuantity5'),
@@ -699,6 +715,8 @@ $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_a
         'products.product_id',
         'products.product_name',
         'products.Purchase_price',
+        'products.Categorie_id',
+
         'sub_accounts.sub_account_id',
         'sub_accounts.sub_name'
     )
@@ -743,18 +761,19 @@ $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_a
         'products.product_id',
         'products.product_name',
         'products.Purchase_price',
+        'products.Categorie_id',
         'sub_accounts.sub_account_id',
         'sub_accounts.sub_name',
         // حركات المشتريات
-        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type IN (1, 6) THEN purchases.quantity ELSE 0 END), 0) as purchaseToQuantity'),
+        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type IN (1, 6) THEN purchases.Quantityprice ELSE 0 END), 0) as purchaseToQuantity'),
         DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type IN (1,6) THEN purchases.Quantityprice ELSE 0 END), 0) as lastQuantity'),
-        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 3 THEN purchases.quantity ELSE 0 END), 0) as warehouseFromQuantity3'),
-        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type IN (1, 6) THEN purchases.quantity ELSE 0 END), 0) as lastPurchase'),
+        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 3 THEN purchases.Quantityprice ELSE 0 END), 0) as warehouseFromQuantity3'),
+        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type IN (1, 6) THEN purchases.Quantityprice ELSE 0 END), 0) as lastPurchase'),
         DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type IN (1, 6) THEN purchases.Total ELSE 0 END), 0) as lastTotal'),
-        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 2 THEN purchases.quantity ELSE 0 END), 0) as returnPurchaseToQuantity'),
-        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 8 THEN purchases.quantity ELSE 0 END), 0) as excess_quantities'),
-        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 9 THEN purchases.quantity ELSE 0 END), 0) as missing_quantities'),
-        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 10 THEN purchases.quantity ELSE 0 END), 0) as damaged_quantity'),
+        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 2 THEN purchases.Quantityprice ELSE 0 END), 0) as returnPurchaseToQuantity'),
+        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 8 THEN purchases.Quantityprice ELSE 0 END), 0) as excess_quantities'),
+        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 9 THEN purchases.Quantityprice ELSE 0 END), 0) as missing_quantities'),
+        DB::raw('COALESCE(SUM(CASE WHEN purchases.transaction_type = 10 THEN purchases.Quantityprice ELSE 0 END), 0) as damaged_quantity'),
         // حركات المبيعات
         DB::raw('COALESCE(SUM(CASE WHEN sales.transaction_type = 5 THEN sales.quantity ELSE 0 END), 0) as saleQuantity5'),
         DB::raw('COALESCE(SUM(CASE WHEN sales.transaction_type = 5 THEN sales.Selling_price ELSE 0 END), 0) as astsaleQuantity'),
@@ -778,6 +797,9 @@ $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_a
         'products.product_id',
         'products.product_name',
         'products.Purchase_price',
+        'products.Categorie_id',
+
+
         'sub_accounts.sub_account_id',
         'sub_accounts.sub_name'
     )
@@ -789,44 +811,44 @@ $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_a
         $productData = Product::where('product_id', $productname)->first();
 
         $warehouseName = SubAccount::where('sub_account_id', $warehouse_to_id)->value('sub_name');
-        $categories = Category::where('product_id', $productData->product_id)
+        $categories = Category::where()
             ->first();
 
         if (!$productData) {
             return response()->json(['success' => false, 'message' => 'المنتج غير موجود']);
         }
         // حساب الكميات بناءً على نوع المعاملة والمخزن
-        $purchaseToQuantity = Purchase::where('product_id', 758)
-            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-            ->whereIn('transaction_type', [1, 6, 3, 7,8])
-            ->sum('quantity');
+        // $purchaseToQuantity = Purchase::where('product_id', 758)
+        //     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        //     ->whereIn('transaction_type', [1, 6, 3, 7,8])
+        //     ->sum('Quantityprice');
 
-        $warehouseFromQuantity = Purchase::where('product_id', $productname)
-            ->where('warehouse_from_id', $warehouse_to_id)
-            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-            ->where('transaction_type', 2)
-            ->sum('quantity');
+        // $warehouseFromQuantity = Purchase::where('product_id', $productname)
+        //     ->where('warehouse_from_id', $warehouse_to_id)
+        //     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        //     ->where('transaction_type', 2)
+        //     ->sum('Quantityprice');
 
-        $warehouseFromQuantity3 = Purchase::where('product_id', $productname)
-            ->where('warehouse_from_id', $warehouse_to_id)
-            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-            ->where('transaction_type', 3)
-            ->sum('quantity');
+        // $warehouseFromQuantity3 = Purchase::where('product_id', $productname)
+        //     ->where('warehouse_from_id', $warehouse_to_id)
+        //     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        //     ->where('transaction_type', 3)
+        //     ->sum('Quantityprice');
 
-        $saleQuantity5 = Sale::where('product_id', $productname)
-            ->where('warehouse_to_id', $warehouse_to_id)
-            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-            ->where('transaction_type', 5)
-            ->sum('quantity');
+        // $saleQuantity5 = Sale::where('product_id', $productname)
+        //     ->where('warehouse_to_id', $warehouse_to_id)
+        //     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        //     ->where('transaction_type', 5)
+        //     ->sum('quantity');
 
-        $saleQuantity4 = Sale::where('product_id', $productname)
-            ->where('warehouse_to_id', $warehouse_to_id)
-            ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-            ->where('transaction_type', 4)
-            ->sum('quantity');
+        // $saleQuantity4 = Sale::where('product_id', $productname)
+        //     ->where('warehouse_to_id', $warehouse_to_id)
+        //     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
+        //     ->where('transaction_type', 4)
+        //     ->sum('quantity');
 
 
-        $productPurchase = ($purchaseToQuantity + $saleQuantity5) - $warehouseFromQuantity - $warehouseFromQuantity3 - $saleQuantity4;
+        // $productPurchase = ($purchaseToQuantity + $saleQuantity5) - $warehouseFromQuantity - $warehouseFromQuantity3 - $saleQuantity4;
 
         $accountingPeriod = $accountingPeriod->created_at;
         if ($Quantit == "Quantityonly") {
@@ -843,13 +865,19 @@ $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_a
     public function store(Request $request)
     {
 
+        
         if (!$request->product_name) {
             return response()->json([
                 'success' => false,
                 'message' => 'يجب عليك تحديد اسم المنتج.'
             ]);
         }
-
+        if (!$request->producid && !$request->cate  ) {
+            return response()->json([
+                'success' => false,
+                'message' => 'يجب عليك ان شاء   وحدة.'
+            ]);
+        }
         // dd($request->product_name);
 
         // تحويل الأرقام العربية إلى الإنجليزية
@@ -939,6 +967,7 @@ $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_a
         // التحقق من كمية المنتج وإنشاء سجل في جدول المشتريات
         if ($request->cate) {
             $Post = new Category;
+           
             $Post->Categorie_name = $request->cate;
             $Post->product_id = $produc->product_id;
             $Post->Purchase_price = $produc->Purchase_price;
@@ -946,6 +975,9 @@ $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_a
             $Post->Quantityprice = $request->Quantityprice ?? 1;
             $Post->user_id = $request->user_id;
             $Post->save();
+             $ProductNew->update([
+                                'Categorie_id' => $Post->categorie_id,
+             ]);
             if (!$Post->save()) {
                 return response()->json([
                     'success' => false,

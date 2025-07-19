@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('line_efficiencies', function (Blueprint $table) {
             $table->id();
+                        $table->integer('accounting_period_id')->unsigned();
+
  $table->integer('line_id')->comment('خط الإنتاج');
     $table->date('analysis_date')->comment('تاريخ التحليل');
     $table->enum('time_period', ['shift', 'day', 'week', 'month'])->comment('نوع الفترة');

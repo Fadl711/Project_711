@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ProductionOrder;
 use App\Models\Product;
 use App\Models\ProductionLine;
+use App\Models\RawMaterialTransaction;
 use App\Models\Sale;
 use App\Models\SaleInvoice;
 use Illuminate\Http\Request;
@@ -70,14 +71,23 @@ class ProductionOrderController extends Controller
     // عرض تفاصيل أمر الإنتاج
     public function show(ProductionOrder $productionOrder)
     {
+         $rawMaterialTransaction = RawMaterialTransaction::with([
+            'productionOrder', 
+            'material', 
+            'warehouse',
+            'issuedByUser'
+        ])
+        ->where('production_order_id',$productionOrder->id )->get();
         return view('production_system.production_orders.show', [
             'order' => $productionOrder->load([
                 'product',
                 'line',
                 'creator',
                 'approver'
-            ])
+            ]),'rawMaterialTransaction'=>$rawMaterialTransaction,
+
         ]);
+
     }
 
     // عرض نموذج تعديل أمر إنتاج

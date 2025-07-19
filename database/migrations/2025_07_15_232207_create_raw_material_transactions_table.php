@@ -12,9 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('raw_material_transactions', function (Blueprint $table) {
-    $table->id()->comment('المعرف الفريد للحركة');
-    $table->integer('production_order_id')
-          ->comment('أمر الإنتاج المرتبط');
+            $table->id()->comment('المعرف الفريد للحركة');
+            $table->integer('production_order_id')
+            ->comment('أمر الإنتاج المرتبط');
+            $table->integer('accounting_period_id')->unsigned();
     $table->integer('material_id')
     ->comment('المادة الخام');
     // الكميات
@@ -31,7 +32,8 @@ return new class extends Migration
     $table->integer('location_id')->nullable()
           ->comment('موقع الصرف');
     
-    // التتبع
+    // التتبع   
+
     $table->integer('issued_by')->comment('مسؤول الصرف');
     $table->timestamp('issue_date')->useCurrent()->comment('تاريخ الصرف');
     $table->integer('received_by')->nullable()

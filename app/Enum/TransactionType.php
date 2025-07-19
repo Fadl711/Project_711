@@ -18,13 +18,16 @@ enum TransactionType: int
     //  تحويل مخزني = 3;
     //  مبيعات = 4;
     //  مردود مبيعات = 5;
+
+   
+
     case Settlement_of_excess_quantities = 8;
     case Settlement_of_missing_quantities = 9;
     case Damaged_quantity = 10;
     case SELL_CURRENCY = 11;
     case CURRENCY_CONVeERSION = 12;
     case BUY_CURRENCY = 13;
-
+    
     public function label(): string
     {
         return match($this) {
@@ -40,6 +43,7 @@ enum TransactionType: int
             self::SELL_CURRENCY => 'بيع عمله',
             self::CURRENCY_CONVeERSION => 'تحويل عمله',
             self::BUY_CURRENCY => 'شراء عمله',
+         
             
         };
 

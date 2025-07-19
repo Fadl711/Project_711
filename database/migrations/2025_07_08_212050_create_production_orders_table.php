@@ -14,6 +14,8 @@ return new class extends Migration
         // 3. جدول أوامر الإنتاج
         Schema::create('production_orders', function (Blueprint $table) {
     $table->id();
+                $table->integer('accounting_period_id')->unsigned();
+
     $table->string('order_number')->unique()->comment('رقم أمر الإنتاج الفريد');
     $table->integer('product_id')->comment('المنتج المطلوب تصنيعه');
     $table->integer('line_id')->comment('خط الإنتاج');

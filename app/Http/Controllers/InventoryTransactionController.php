@@ -2,8 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Enum\PaymentType;
+use App\Enum\TransactionType;
+use App\Enum\InventoryTransactionNnum;
+// use App\InventoryTransactionNnum;
+// use App\InventoryTransaction as AppInventoryTransaction;
+use App\Models\Currency;
 use App\Models\InventoryTransaction;
 use App\Models\InventoryItem;
+use App\Models\MainAccount;
 use App\Models\Product;
 use App\Models\Warehouse;
 use App\Models\ProductionOrder;
@@ -50,12 +57,29 @@ class InventoryTransactionController extends Controller
 
     public function create()
     {
+            $Currency_name=Currency::all();
+        $PaymentType = PaymentType::cases();
+         $transaction_types = InventoryTransactionNnum::cases();
+
+
+    
+            $allSubAccounts = SubAccount::all();
+            $main_accounts = MainAccount::all();
+
+                
+
         $items = Product::all();
         $warehouses = SubAccount::where('account_class',3)->get();
         $productionOrders = ProductionOrder::all();
         $types = InventoryTransaction::TRANSACTION_TYPES;
 
-        return view('production_system.inventory-transactions.create', compact('items', 'warehouses', 'productionOrders', 'types'));
+
+        return view('production_system.inventory-transactions.create', ['AllSubAccounts'=>$allSubAccounts,
+                'Currency_name'=>$Currency_name,
+                'main_accounts'=>$main_accounts,
+                'PaymentType'=>$PaymentType,
+                'transaction_types'=>$transaction_types,
+        ], compact('items', 'warehouses', 'productionOrders', 'types'));
     }
 
     public function store(Request $request)

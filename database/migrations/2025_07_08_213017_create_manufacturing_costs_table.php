@@ -21,6 +21,8 @@ return new class extends Migration
         'energy',
         'depreciation', 'other']
           )->comment('نوع التكلفة');
+                      $table->integer('accounting_period_id')->unsigned();
+
     $table->decimal('amount', 15, 2)->comment('المبلغ');
     $table->integer('gl_account_id')->nullable()->comment('حساب دفتر الأستاذ');
     $table->date('cost_date')->comment('تاريخ التكلفة');

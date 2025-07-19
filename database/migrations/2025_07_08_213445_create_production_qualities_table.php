@@ -25,6 +25,8 @@ return new class extends Migration
     $table->integer('inspector_id')->comment('employeesمفتش الجودة');
     $table->integer('approved_by')->nullable()->comment('المدير المعتمد');
     $table->timestamp('inspection_time')->useCurrent()->comment('وقت الفحص');
+     $table->integer('accounting_period_id')->unsigned();
+
     $table->timestamps();    
     });
     }

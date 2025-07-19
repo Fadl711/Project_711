@@ -59,6 +59,10 @@ class ProductionOrder extends Model
     {
         return $this->hasMany(ManufacturingCost::class, 'production_order_id');
     }
+    public function rawMaterialTransaction()
+    {
+        return $this->hasMany(RawMaterialTransaction::class, 'production_order_id');
+    }
 
     public function qualityChecks()
     {

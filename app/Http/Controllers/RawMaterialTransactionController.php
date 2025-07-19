@@ -38,7 +38,6 @@ class RawMaterialTransactionController extends Controller
     $warehouses = SubAccount::select(['sub_account_id', 'name_the_known', 'sub_name'])
        ->where('account_class', 3)->get();
         $users = User::all();
-        
         return view('production_system.raw-material-transactions.create', ['locations'=>$warehouses], compact(
             'productionOrders',
             'materials',
@@ -65,6 +64,7 @@ class RawMaterialTransactionController extends Controller
         ]);
 
         $validated['total_cost'] = $validated['actual_quantity'] * $validated['unit_cost'];
+        $validated['location_id'] = $validated['warehouse_id'] ;
 try{
      $RawMaterial =  RawMaterialTransaction::create($validated);
            return response()->json(['success' => 'تم تسجيل حركة المواد الخام بنجاح', 'entrie_id' => $RawMaterial->id]);

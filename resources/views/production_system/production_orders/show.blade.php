@@ -96,6 +96,40 @@
                         @endif
                     </div>
                 </div>
+                <div class="space-y-4">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">معلومات حركة المواد الخام</h3>
+                    
+            <table class=" divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">أمر الإنتاج</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">المادة</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الكمية الفعلية</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">التكلفة</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">المخزن</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">مسؤول الصرف</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">تاريخ الصرف</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @foreach($rawMaterialTransaction as $transaction)
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ $transaction->productionOrder->order_number }}</td>
+                        {{-- <td class="px-6 py-4 whitespace-nowrap">{{ $transaction->transaction_id }}</td> --}}
+                        <td class="px-6 py-4 whitespace-nowrap">{{ $transaction->material->product_name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ $transaction->actual_quantity }} {{ $transaction->material->unit }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ number_format($transaction->total_cost, 2) }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ $transaction->warehouse->sub_name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ $transaction->issuedByUser->sub_name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ $transaction->issue_date->format('Y-m-d') }}</td>
+                      
+                          
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+       
+    </div>
             </div>
 
             <!-- أزرار التحكم -->

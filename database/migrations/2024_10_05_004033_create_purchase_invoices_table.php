@@ -20,8 +20,8 @@ return new class extends Migration
             $table->integer('User_id')->unsigned();
             $table->integer('Invoice_type')->nullable()->comment('1: نقداً, 2: أجل, 3: تحويل بنكي, 4: شيك');
             $table->integer('Currency_id')->unsigned()->nullable();
-            $table->string('currency_symbol')->unique()->nullable();
             $table->decimal('exchange_rate',8,2)->unsigned()->nullable();
+            $table->string('currency_symbol')->unique()->nullable();
             $table->unsignedTinyInteger('transaction_type')->comment('يحدد نوع المعاملة');
             $table->integer('Supplier_id')->unsigned()->nullable();
             $table->integer('accounting_period_id')->unsigned();

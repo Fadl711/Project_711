@@ -36,7 +36,6 @@
         <div class="w-full   py-1">
             <form id="invoicePurchases" action="{{ route('invoicePurchases.store') }}" method="POST" >
                 @csrf
-              
                 <div class="flex gap-1">
                     <div class="flex gap-4">
                         @foreach ($PaymentType as $index => $item)
@@ -156,10 +155,15 @@
                     <select name="Categorie_name" id="Categorie_name" dir="ltr" class="input-field select2 inputSale" >
                     </select>
                 </div>
+                   <div class="">
+                    <label for="QuantityCategorie" class="labelSale">قياس الوحده </label>
+                    <input type="number" name="QuantityCategorie" id="QuantityCategorie" placeholder="0" class="inputSale quantity-field english-numbers" required />
+                </div>
                 <div class="">
                     <label for="Quantity" class="labelSale">الكمية</label>
                     <input type="number" name="Quantity" id="Quantity" placeholder="0" class="inputSale quantity-field english-numbers" required />
                 </div>
+                
             </div>
             <div class="flex gap-1 px-1">
                 <div class="">
@@ -173,7 +177,7 @@
                 </div>
                 <div class="">
                     <label for="TotalPurchase" class="labelSale">الاجمالي</label>
-                    <input type="text" name="TotalPurchase" id="TotalPurchase" placeholder="0" class="inputSale total-field" required />
+                    <input type="text" name="TotalPurchase" id="TotalPurchase" placeholder="0" class="inputSale " required />
                 </div>
             </div>
             <div class="flex gap-1 px-1">
@@ -199,11 +203,15 @@
                     <label for="QuantityPurchase" class="labelSale"> الكمية المتوفره</label>
                     <input type="number" name="QuantityPurchase" id="QuantityPurchase" placeholder="0" class="inputSale english-numbers"   />
                 </div>
-                <div class="px-1">
-                    <label for="note" class="labelSale">الوصف</label>
-                    <textarea name="note" id="note"  class="inputSale"></textarea>
+                <div class="">
+                    <label for="QuantityCate" class="labelSale ">  المتوفره بالحبة</label>
+                    <input type="number" name="QuantityCate" id="QuantityCate" placeholder="0" class="inputSale english-numbers"   />
+                </div>
             </div>
-            </div>
+            <div class="px-1">
+                <label for="note" class="labelSale">الوصف</label>
+                <textarea name="note" id="note"  class="inputSale"></textarea>
+        </div>
             <div class="flex px-1 gap-1">
                 <div>
                 <label for="purchase_invoice_id" class="labelSale">رقم الفاتورة</label>
@@ -447,6 +455,36 @@ else{
  
 <script >
 $(document).ready(function () {
+        $('.select2').select2({
+        placeholder: 'اختر عنصر',
+        allowClear: true
+    });
+       $('#Quantity, #Purchase_price ,#Selling_price').on('input', function() {
+        const quantity = parseFloat($('#Quantity').val()) || 0;
+        const unitCost = parseFloat($('#Purchase_price').val()) || 0;
+        const cost = parseFloat($('#Cost').val()) || 0;
+        const selling_price = parseFloat($('#Selling_price').val()) || 0;
+        $('#TotalPurchase').val((quantity * unitCost).toFixed(2));
+      const loss=  $('#Profit').val(selling_price-(unitCost + cost).toFixed(2)); 
+        if (loss < 0) {
+            $('#Profit').val(loss).trigger('change');
+            var ff= $('#Profit');
+            ff.css({
+                'background-color': '#fee2e2', // لون 
+                'color': '#991b1b',            // لون 
+                'font-weight': 'bold',        // 
+                'border-color': '#991b1b',    // (اختياري) لإضافة تنسيق للحواف
+            });
+            $('#Profit').val(loss).trigger('change');
+        } //   
+        // إزالة تنسيق الخسارة
+        else {
+            $('#Profit').addClass('inputSale');
+            $('#Profit').val('').trigger('change'); // تحديث القيمة
+
+        }
+    });
+
 
 $(document).on('keydown', function (event) {
     let currentInvoiceId = $('#purchase_invoice_id').val();
@@ -842,12 +880,14 @@ console.log('Focused on Quantity'); // للتأكد من التركيز
 
 function getUnitPriceCategorie(mainAccountId,categoryName)
 {
+            const QuantityCate=  $('#QuantityCate').val();
 
 if (mainAccountId!==null) {
 const baseUrl = "{{ url('/GetProduct') }}";
 $.ajax({
     url: `${baseUrl}/${mainAccountId}/price?mainAccountId=${mainAccountId}&Categoriename=${categoryName}`,
     type: 'GET',
+    
     dataType: 'json',
     success: function(response) {
         if (response.product) {
@@ -856,6 +896,10 @@ $.ajax({
             $('#Purchase_price').val(response.product.Purchase_price).trigger('change');
             $('#QuantityCategorie').val(response.product.Quantityprice).trigger('change');
             $('#Selling_price').val(response.product.Selling_price).trigger('change');
+            $('#QuantityPurchase').val(QuantityCate/response.product.Quantityprice).trigger('change');
+          
+
+                
         } else {
             console.error('لم يتم العثور على المنتج أو السعر غير متوفر.');
         }
@@ -869,8 +913,10 @@ $.ajax({
 
 $('#product_id').on('change', function() { // عند تغيير المنتج المختار في القائمة
 var productId = $(this).val(); // الحصول على قيمة المنتج المختار
-var account_debitid = $('#account_debitid').val(); // الحصول على قيمة المنتج المختار
+var account_debitid = $('#account_debitid').val(); 
 
+            setTimeout(() => {}, 100);
+            $('#Categorie_name').select2('open');
 if (productId) { // تحقق من وجود منتج محدد
     
     $.ajax({
@@ -879,9 +925,12 @@ if (productId) { // تحقق من وجود منتج محدد
         method: 'GET',
         success: function(product) {
 
-            displayProductDetails(product);
-            setTimeout(() => {}, 100);
-            $('#Categorie_name').select2('open'); // فتح قائمة الفئات
+             displayProductDetails(product);
+                setTimeout(() => {
+                }, 100);
+                $('#Categorie_name').select2('open');
+
+ // فتح قائمة الفئات
         },
         error: function(xhr) {
             console.error('Error:', xhr.responseText); // عرض الخطأ إذا حدث خطأ في الاستدعاء
@@ -941,89 +990,113 @@ error: function(xhr) {
 };
 }
 
-function displayProductDetails(product) {
-const invoiceInput = $('#sales_invoice_id');
-var   Categorie_name=$('#Categorie_name');
-if (invoiceInput.length) {
-// التأكد من أن العناصر موجودة قبل تحديثها
-if ($('#Barcode').length) {
-    $('#Barcode').val(product.Barcode).trigger('change');
-}
 
-if ($('#product_name').length) {
-    $('#product_name').val(product.product_name).trigger('change');
-}
-if ($('#Selling_price').length) {
-    $('#Selling_price').val(product.Selling_price).trigger('change');
-}
-if ($('#Purchase_price').length) {
-    $('#Purchase_price').val(product.Purchase_price).trigger('change');
-}
-if ($('#QuantityPurchase').length) 
-    {
-    $('#QuantityPurchase').val(product.QuantityPurchase).trigger('change');
-}
-if ($('#discount_rate').length) {
-    const discountSelect = $('#discount_rate');
-    discountSelect.empty();
-    if (product.Regular_discount && product.Special_discount) {
-        const discountOptions = `
-        <option value="">لم يتم التحديد  </option>
-            <option value="${product.Regular_discount}">الخصم العادي: ${product.Regular_discount}%</option>
-            <option value="${product.Special_discount}">الخصم الخاص: ${product.Special_discount}%</option>
-        `;
-        discountSelect.append(discountOptions);
-    } else {
-        discountSelect.append('<option value="">لا توجد خصومات متاحة</option>');
+  function displayProductDetails(product) {
+    const invoiceInput = $('#purchase_invoice_id,#sales_invoice_id');
+    var   Categorie_name=$('#Categorie_name');
+    if (invoiceInput.length) {
+        // التأكد من أن العناصر موجودة قبل تحديثها
+        // if ($('#Barcode').length) {
+        //     $('#Barcode').val(product.Barcode).trigger('change');
+        // }
+
+        // if ($('#product_name').length) {
+        //     $('#product_name').val(product.product_name).trigger('change');
+        // }
+        if ($('#Selling_price').length) {
+            $('#Selling_price').val(product.Selling_price).trigger('change');
+        }
+        if ($('#Purchase_price').length) {
+            $('#Purchase_price').val(product.Purchase_price).trigger('change');
+        }
+        if ($('#QuantityPurchase').length) 
+            {
+            $('#QuantityPurchase').val(product.QuantityPurchase).trigger('change');
+        }
+        if ($('#QuantityCate').length) 
+        {
+        $('#QuantityCate').val(product.QuantityPurchase).trigger('change');
+    
+    }
+        if ($('#Discount_earned').length) {
+       
+                     $('#Discount_earned').val(product.Regular_discount).trigger('change');
+
+        }
+        
+        // if ($('#created_at').length) {
+        //     $('#created_at').val(product.created_at).trigger('change');
+        // }
+       // تعبئة قائمة الفئات (الوحدات)
+       const categorieSelect = $('#Categorie_name');
+       categorieSelect.empty();
+        // تفريغ القائمة السابقة
+        console.time('Select2 Initialization');
+    product.Categorie_names.forEach(categorie => {
+        $('#Categorie_name').append(new Option(categorie.Categorie_name, categorie.categorie_id));
+    });
+    
+    categorieSelect.append( `<option selected  value=""></option>`);
+        $('#Categorie_name').select2(); 
+        // إعادة التهيئة بعد الإضافة
+        
+        console.timeEnd('Select2 Initialization'); // عرض الوقت المستغرق
+        
+        // حساب التمويز بين البيع والشراء
+        var profit = 0;
+        if (product.Selling_price > 0 && product.Purchase_price > 0) {
+            profit = product.Selling_price - product.Purchase_price; // حساب التمويز بين البيع والشراء
+            profit = profit; // تقريب النتيجة إلى خانتين عشريتين
+        }
+        // إضافة التمويز إلى حقل الربح
+        if ($('#Profit').length) {
+            $('#Profit').val(profit).trigger('change');
+        }
+
+        // حساب التكلفة
+        var Yr_cost = parseFloat($('#Yr_cost').val()) || 0; 
+        // $Yr_cost=  $('#Yr_cost').val(); // عرض النتيجة
+        // جلب القيمة من الحقل كرقم عشري
+        if (!isNaN(Yr_cost) && Yr_cost > 0 && product.Purchase_price > 0) {
+            var cost = Yr_cost * product.Purchase_price; 
+            
+            // حساب التكلفة
+            cost = cost.toFixed(2); // تقريب النتيجة لخانتين عشريتين
+            $('#Cost').val(cost).trigger('change'); // إضافة النتيجة
+        } else {
+            $('#Cost').val(''); // في حال وجود خطأ أو قيم غير صالحة، يتم تفريغ الحقل
+        }
     }
 }
+function emptyData(){
+                  $('#product_name,#total_price,#loss,#Quantityprice,#QuantityCategorie,#TotalPurchase').val('');
+                      $('#Barcode').val('');
+                      $('#InventoryId').val('');
+                      $('#Quantity').val('');
+                      $('#Purchase_price').val('');
+                      $('#Selling_price').val('');
+                      $('#Total').val('');
+                      $('#TotalPurchase').val('');
+                      $('#Cost').val('');
+                      $('#Discount_earned').val('');
+                      $('#Profit').val('');
+                      $('#Exchange_rate').val('');
+                      $('#product_id').val('');
+                      $('#note').val('');
+                      $('#QuantityPurchase').val('');
+                      $('#Categorie_name').val('');
+                      $('#discount_rate').val('');
+                      $('#total_discount_rate').val('');
+                      $('#purchase_id,#sale_id').val('');
+                      $('#product_id').select2('open');
 
-if ($('#created_at').length) {
-    $('#created_at').val(product.created_at).trigger('change');
-}
-// تعبئة قائمة الفئات (الوحدات)
-const categorieSelect = $('#Categorie_name');
-categorieSelect.empty();
-// تفريغ القائمة السابقة
-console.time('Select2 Initialization');
-product.Categorie_names.forEach(categorie => {
-$('#Categorie_name').append(new Option(categorie.Categorie_name, categorie.categorie_id));
-});
 
-categorieSelect.append( `<option selected  value=""></option>`);
-$('#Categorie_name').select2(); // إعادة التهيئة بعد الإضافة
-
-console.timeEnd('Select2 Initialization'); // عرض الوقت المستغرق
-
-// حساب التمويز بين البيع والشراء
-var profit = 0;
-if (product.Selling_price > 0 && product.Purchase_price > 0) {
-    profit = product.Selling_price - product.Purchase_price; // حساب التمويز بين البيع والشراء
-    profit = profit; // تقريب النتيجة إلى خانتين عشريتين
-}
-// إضافة التمويز إلى حقل الربح
-if ($('#Profit').length) {
-    $('#Profit').val(profit).trigger('change');
-}
-
-// حساب التكلفة
-var Yr_cost = parseFloat($('#Yr_cost').val()) || 0; 
-// $Yr_cost=  $('#Yr_cost').val(); // عرض النتيجة
-// جلب القيمة من الحقل كرقم عشري
-if (!isNaN(Yr_cost) && Yr_cost > 0 && product.Purchase_price > 0) {
-    var cost = Yr_cost * product.Purchase_price; 
-    
-    // حساب التكلفة
-    cost = cost.toFixed(2); // تقريب النتيجة لخانتين عشريتين
-    $('#Cost').val(cost).trigger('change'); // إضافة النتيجة
-} else {
-    $('#Cost').val(''); // في حال وجود خطأ أو قيم غير صالحة، يتم تفريغ الحقل
-}
-}
-}
+                   
+  };
+ 
     </script>
 {{-- <script src="{{url('purchases/purchases.js')}}"></script> --}}
-<script src="{{ url('purchases.js') }}"></script>
+{{-- <script src="{{ url('purchases.js') }}"></script> --}}
 
 <style>
     .alert-success {

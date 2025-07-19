@@ -41,6 +41,7 @@ class PurchaseController extends Controller
   
     public function create() {
         $Currency_name=Currency::all();
+        $products=Product::all();
         $PaymentType = PaymentType::cases();
          $transaction_types = TransactionType::cases();
 
@@ -52,10 +53,12 @@ class PurchaseController extends Controller
                  ['AllSubAccounts'=>$allSubAccounts,
                 'Currency_name'=>$Currency_name,
                 'main_accounts'=>$main_accounts,
+                'products'=>$products,
                 'PaymentType'=>$PaymentType,
                 'transaction_types'=>$transaction_types,
             ]);
-        return view('Purchases.create');
+
+        // return view('Purchases.create');
     }
   
 
@@ -80,8 +83,9 @@ class PurchaseController extends Controller
     public function store(Request $request)
     {
         $transaction_type=(int)$request->transaction_type;
-        
-                                if (in_array($transaction_type, [1,2])){
+        // dd();
+
+          if (in_array($transaction_type, [1,2])){
              $validator = Validator::make($request->all(), [
             'Payment_type' => 'required|numeric',
             'transaction_type' => 'required',
@@ -98,7 +102,7 @@ class PurchaseController extends Controller
         ]);
 
         }
-                                if (in_array($transaction_type, [8,9,10,3])){
+        if (in_array($transaction_type, [3,4,5,6,7,8,9,10,11])){
              $validator = Validator::make($request->all(), [
             'transaction_type' => 'required',
             'main_account_debit_id' => 'required|numeric',
@@ -114,7 +118,8 @@ class PurchaseController extends Controller
         }
        
      
-        if ($validator->fails()) {
+        if ($validator->fails())
+             {
             return response()->json([
                 'success' => false,
                 'errors' => $validator->errors()->messages()
@@ -182,6 +187,7 @@ class PurchaseController extends Controller
         // التحقق من صحة الحقول
         $validator = Validator::make($request->all(), [
             'account_debitid' => 'required',
+            'QuantityCategorie' => 'required',
             'Quantity' => 'required|numeric|min:1',
         ]);
         if ($validator->fails()) {
@@ -292,12 +298,14 @@ class PurchaseController extends Controller
         $categorieId = Category::where('product_id', $request->product_id)
         ->where('categorie_id', $request->Categorie_name)
         ->orwhere('Categorie_name', $request->Categorie_name)
-        ->value('Categorie_name');
+        ->first();
+                        // dd($categorieId->Quantityprice);
+
         // إنشاء أو تحديث سجل الشراء
         $purchase = Purchase::updateOrCreate(
             [
                 'Product_name' => $Product->product_name,
-                'categorie_id' => $categorieId,
+                'categorie_id' => $categorieId->Categorie_name,
                 'product_id' => $Product->product_id,
 
                 'Purchase_invoice_id' => $purchaseInvoice->purchase_invoice_id,
@@ -306,10 +314,11 @@ class PurchaseController extends Controller
             [
                 'Supplier_id' => $supplier_id,
                 'Barcode' => $Product->Barcode ?? 0,
-                'quantity' => $request->Quantity,
+                'quantity' => $request->Quantity ,
+                
                 'Purchase_price' => $purchasePrice,
                 'Selling_price' => $Selling_price,
-                'Quantityprice' => $request->Quantity,
+                'Quantityprice' =>$request->Quantity * $request->QuantityCategorie,
                 'Total' => $TotalPurchase,
                 'Cost' => $Cost,
                 'Currency_id' => $purchaseInvoice->Currency_id ??null,
@@ -403,19 +412,19 @@ public function search(Request $request)
 ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
 ->where('warehouse_to_id', $warehouse_to_id)
 ->whereIn('transaction_type', [1, 6, 3,7,8])
-->sum('quantity');
+->sum('Quantityprice');
 
 $warehouseFromQuantity = Purchase::where('product_id', $id)
     ->where('warehouse_from_id', $warehouse_to_id)
     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
     ->where('transaction_type', 2)
-    ->sum('quantity');
+    ->sum('Quantityprice');
    
 $warehouseFromQuantity3 = Purchase::where('product_id', $id)
     ->where('warehouse_from_id', $warehouse_to_id)
     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
     ->whereIn('transaction_type', [3,9,10])
-    ->sum('quantity');
+    ->sum('Quantityprice');
 
 $saleQuantity5 = Sale::where('product_id', $id)
     ->where('warehouse_to_id', $warehouse_to_id)
