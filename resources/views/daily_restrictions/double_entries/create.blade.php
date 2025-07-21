@@ -1,195 +1,140 @@
-@extends('daily_restrictions.index')
+@extends('layout')
+@section('conm')
 
-@section('restrictions')
     <style>
-        /* تحسينات التصميم */
+        /* تثبيت الأرقام بالإنجليزية */
+        .english-numbers {
+            font-feature-settings: 'tnum';
+            direction: ltr;
+            unicode-bidi: plaintext;
+        }
+
+        td {
+            text-align: right;
+        }
+
+        .select2-container--default .select2-dropdown {
+            width: 400px;
+            /* ارتفاع العنصر الأساسي */
+
+            max-width: 400px;
+            /* ارتفاع القائمة */
+        }
+
         .select2-container--default .select2-selection--single {
             height: 40px;
+            /* ارتفاع العنصر الأساسي */
             line-height: 45px;
+
         }
 
         .select2-container--default .select2-selection__rendered {
             padding-top: 5px;
-        }
-
-        /* إصلاح مشكلة الـ scroll */
-        .scrollable-container {
-            max-height: 65vh;
-            overflow-y: auto;
-            scrollbar-width: thin;
-            scrollbar-color: #c5c5c5 #f1f1f1;
-        }
-
-        .scrollable-container::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .scrollable-container::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        .scrollable-container::-webkit-scrollbar-thumb {
-            background-color: #c5c5c5;
-            border-radius: 10px;
-        }
-
-        .scrollable-container::-webkit-scrollbar-thumb:hover {
-            background: #a8a8a8;
-        }
-
-        /* تحسينات التصميم العامة */
-        .bg-gray-50 {
-            padding: 1rem;
-            border-radius: 0.5rem;
-        }
-
-        .input-field {
-            border: 1px solid #d1d5db;
-            border-radius: 0.375rem;
-            padding: 0.5rem 1rem;
-            width: 100%;
-        }
-
-        .input-field:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-        }
-
-        button {
-            transition: all 0.2s ease-in-out;
+            /* تحسين النصوص */
         }
     </style>
-
-    <!-- إضافة مكتبة SweetAlert -->
-
-    <form id="dailyRestrictionsForm" method="POST" class="space-y-6">
-        @csrf
-        <div class="container mx-auto px-4">
-            <div class="flex gap-4">
-                @foreach ($PaymentType as $index => $item)
-                    <div class="flex">
-                        <label for="" class="labelSale">{{ $item->label() }}</label>
-                        <input type="radio" name="payment_type" class=" " value="{{ $item->value }}"
-                            {{ isset($DailyEntrie->invoice_type) && $DailyEntrie->invoice_type == $item->value ? 'checked' : ($index === 0 ? 'checked' : '') }}
-                            required>
-                    </div>
-                @endforeach
-            </div>
-            <!-- Form Layout -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="space-y-4 grid grid-cols-2 md:grid-cols-2 gap-4">
-                    <div class="mt-3">
-                        <label for="Invoice_type" class="block text-gray-700 font-medium ">نوع المستند</label>
-                        <select id="Invoice_type" name="Invoice_type" dir="rtl"
-                            class="select2 w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sel">
-                            <option value="" selected>اختر نوع المستند</option>
-                            @foreach ($transaction_types as $transactionType)
-                                @if (
-                                    $transactionType->value == 1 ||
-                                        $transactionType->value == 2 ||
-                                        $transactionType->value == 3 ||
-                                        $transactionType->value == 8 ||
-                                        $transactionType->value == 9 ||
-                                        $transactionType->value == 10)
-                                    <option value="{{ $transactionType->value }}"
-                                        @isset($DailyEntrie->daily_entries_type)
-                                    @if ($DailyEntrie->daily_entries_type == $transactionType->label()) selected @endif
-                                @endisset>
-                                        {{ $transactionType->label() }}
-                                    </option>
-                                @endif
+    <div id="successMessage" class="hidden fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg"
+        role="alert">
+        <p class="font-bold">تم بنجاح!</p>
+    </div>
+    <div id="errorMessage" style="display: none;" class="alert alert-danger"></div>
+    <div id="successMessage" style="display: none;" class="alert alert-success"></div>
+    <div class=" px-1  bg-white rounded-xl ">
+        <div class=" flex">
+            <div class="w-full   py-1">
+                <form id="invoicePurchases" action="{{ route('double_entry.storeOrUpdate') }}" method="POST">
+                    @csrf
+                    <div class="flex gap-1">
+                        <div class="flex gap-4">
+                            @foreach ($PaymentType as $index => $item)
+                                <div class="flex">
+                                    <label for="" class="labelSale">{{ $item->label() }}</label>
+                                    <input type="radio" name="Payment_type" value="{{ $item->value }}"
+                                        {{ $index === 0 ? 'checked' : '' }} required>
+                                </div>
                             @endforeach
-                        </select>
+                        </div>
                     </div>
-                    <div>
-                        <label for="Invoice_id" class="block text-gray-700 font-medium ">رقم المستند</label>
-                        <select id="Invoice_id" name="Invoice_id" dir="rtl"
-                            class="select2 w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sel">
-                            <option value="" selected>اختر رقم المستند</option>
-                            @isset($DailyEntrie->invoice_id)
-                                <option value="{{ $DailyEntrie->invoice_id }}" selected>{{ $DailyEntrie->invoice_id }}</option>
-                            @endisset
-                        </select>
-                    </div>
-                </div>
-                <!-- حساب المدين -->
-                <div class="bg-gray-50 rounded-lg border border-gray-200 scrollable-container">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-3">المدين</h3>
-                    <div class="space-y-3">
+                    <div class=" text-right grid grid-cols-2 md:grid-cols-4 gap-1">
                         <div>
-                            <label for="account_debit_id" class="block font-medium mb-1">حساب المدين/الرئيسي</label>
-                            <select name="account_debit_id" id="account_debit_id" dir="ltr" class="input-field select2"
-                                required>
-                                <option value="" selected>اختر الحساب</option>
-                                @isset($main)
-                                    @foreach ($main as $main_account)
-                                        <option @selected($main_account->main_account_id == $sub_account_debit->main_id) value="{{ $main_account->main_account_id }}">
-                                            {{ $main_account->account_name }}-{{ $main_account->main_account_id }}</option>
-                                    @endforeach
-                                @endisset
+                            <label for="main_account_debit_id" class="main_accountdebit  labelSale"> حساب التصدير </label>
+                            <select required name="main_account_debit_id" id="main_account_debit_id"
+                                class="input-field  select2 inputSale" required>
                                 @isset($main_accounts)
-                                    @foreach ($main_accounts as $main_account)
-                                        <option value="{{ $main_account->main_account_id }}">
-                                            {{ $main_account->account_name }}-{{ $main_account->main_account_id }}</option>
+                                    <option value="{{ null }}" selected>اختر الحساب</option>
+                                    @foreach ($main_accounts as $mainAccount)
+                                        <option value="{{ $mainAccount->main_account_id }}">
+                                            {{ $mainAccount->account_name }}-{{ $mainAccount->main_account_id }}</option>
                                     @endforeach
                                 @endisset
                             </select>
                         </div>
-                        <div>
-                            <label for="sub_account_debit_id" class="block font-medium mb-1">حساب المدين/الفرعي</label>
-                            <select name="sub_account_debit_id" id="sub_account_debit_id" dir="ltr"
-                                class="input-field select2">
-                                <option value="" selected>اختر الحساب الفرعي</option>
-                                @isset($DailyEntrie->account_debit_id)
-                                    <option value="{{ $DailyEntrie->account_debit_id }}" selected>
-                                        {{ $sub_account_debit->sub_name }} </option>
-                                @endisset
-                            </select>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- حساب الدائن -->
-                <div class="bg-gray-50 rounded-lg border border-gray-200 scrollable-container">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-3">الدائن</h3>
-                    <div class="space-y-3">
                         <div>
-                            <label for="account_Credit_id" class="block font-medium mb-1">حساب الدائن/الرئيسي</label>
-                            <select name="account_Credit_id" id="account_Credit_id" class="input-field select2" required>
-                                <option value="" selected>اختر الحساب</option>
-                                @isset($main)
-                                    @foreach ($main as $main_account)
-                                        <option @selected($main_account->main_account_id == $sub_account_Credit->main_id) value="{{ $main_account->main_account_id }}">
-                                            {{ $main_account->account_name }}-{{ $main_account->main_account_id }}</option>
-                                    @endforeach
-                                @endisset
-                                @isset($main_accounts)
-                                    @foreach ($main_accounts as $main_account)
-                                        <option value="{{ $main_account->main_account_id }}">
-                                            {{ $main_account->account_name }}-{{ $main_account->main_account_id }}</option>
+                            <label for="sub_account_debit_id" class="labelSale  sub_account_debit_id "> تحديد الدائن</label>
+                            <select name="sub_account_debit_id" id="sub_account_debit_id"
+                                class="input-field select2 inputSale" required>
+                                <option value="" selected>اختر الحساب الفرعي</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="Statement" class="labelSale"> البيان</label>
+                            <input type="text" name="Statement" id="Statement" class="inputSale" />
+                        </div>
+                        @auth
+                            <input type="hidden" name="User_id" id="User_id" value="{{ Auth::user()->id }}">
+                        @endauth
+                        <div>
+                            <label for="Currency_id" class="labelSale">عملة الفاتورة</label>
+                            <select id="Currency_id" class="inputSale input-field " name="Currency_id">
+                                @isset($Currency_name)
+                                    @foreach ($Currency_name as $cur)
+                                        <option @isset($cu) @selected($cur->currency_id == $cu->Currency_id)@endisset
+                                            value="{{ $cur->currency_id }}">{{ $cur->currency_name }}</option>
                                     @endforeach
                                 @endisset
                             </select>
                         </div>
-                        <div>
-                            <label for="sub_account_Credit_id" class="block font-medium mb-1">حساب الدائن/الفرعي</label>
-                            <select name="sub_account_Credit_id" id="sub_account_Credit_id" class="input-field select2">
-                                <option value="" selected>اختر الحساب الفرعي</option>
-                                @isset($DailyEntrie->account_credit_id)
-                                    <option value="{{ $DailyEntrie->account_credit_id }}" selected>
-                                        {{ $sub_account_Credit->sub_name }} </option>
-                                @endisset
-                            </select>
+                        <div id="newInvoice1" style="display: block">
+                            <button id="newInvoice" class="inputSale flex font-bold">
+                                اضافة الفاتورة
+                            </button>
                         </div>
                     </div>
-                </div>
+                </form>
             </div>
-
-            <!-- تفاصيل إضافية -->
-            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mt-4">
-                <h3 class="text-lg font-semibold text-center mb-4">تفاصيل إضافية</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        </div>
+    </div>
+    <div class="flex max-md:block p-1 ">
+        <div class="min-w-[30%] border-x bg-white   rounded-xl">
+            <form id="ajaxForm">
+                @csrf
+                <div>
+                    <!-- حساب الدائن -->
+                    <div class="bg-gray-50 rounded-lg border border-gray-200 scrollable-container">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">الدائن</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label for="account_Credit_id" class="block font-medium mb-1">حساب الدائن/الرئيسي</label>
+                                <select name="account_Credit_id" id="account_Credit_id" class="input-field select2"
+                                    required>
+                                    <option value="" selected>اختر الحساب</option>
+                                    @foreach ($main_accounts as $main_account)
+                                        <option value="{{ $main_account->main_account_id }}">
+                                            {{ $main_account->account_name }}-{{ $main_account->main_account_id }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <input type='hidden' id="saveData_debit_id" name="sub_account_debit_id">
+                            <div>
+                                <label for="sub_account_Credit_id" class="block font-medium mb-1">حساب الدائن/الفرعي</label>
+                                <select name="sub_account_Credit_id" id="sub_account_Credit_id" class="input-field select2">
+                                    <option value="" selected>اختر الحساب الفرعي</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                     <div>
                         <label for="Amount_debit" class="block font-medium mb-2">المبلغ المدين</label>
                         <input name="Amount_debit" id="Amount_debit" type="text" class="input-field"
@@ -201,15 +146,9 @@
                     <div>
                         <label for="Currency_name" class="block font-medium mb-2">العملة</label>
                         <select dir="ltr" id="Currency_name" class="input-field" name="Currency_name">
-                            @isset($currs)
-                                <option selected value="{{ $currs->currency_name }} ">{{ $currs->currency_name }}</option>
-                            @endisset
-                            @isset($curr)
-                                @foreach ($curr as $cur)
-                                    <option value="{{ $cur->currency_name }}"
-                                        @isset($cu)
-                                            @selected($cur->currency_id == $cu->Currency_id)
-                                        @endisset>
+                            @isset($Currency_name)
+                                @foreach ($Currency_name as $cur)
+                                    <option value="{{ $cur->currency_name }}">
                                         {{ $cur->currency_name }}
                                     </option>
                                 @endforeach
@@ -226,342 +165,856 @@
 
                 <div class="mt-4">
                     <label for="Statement" class="block font-medium mb-2">البيان</label>
-                    <textarea name="Statement" id="Statement" class="block w-full border rounded-md p-3" rows="3"
-                        placeholder="أدخل البيان هنا..." onblur="this.value = this.value.trim();">
-                        @isset($DailyEntrie->statement)
-{{ $DailyEntrie->statement }}
-@endisset
+                    <textarea name="Statement" id="Statement" class="block w-full border rounded-md p-3" rows="3">
+
                     </textarea>
                 </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                    <div class="flex justify-center">
-                        <button type="submit" id="submitButton"
-                            class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            {{ $submitButton ?? ' حفظ القيد' }}
-                        </button>
-                    </div>
-
-                    <div>
-                        <label for="entrie_id" class="block font-medium mb-2">رقم القيد</label>
-                        <input name="entrie_id" id="entrie_id" type="number" class="input-field"
-                            @isset($DailyEntrie->entrie_id)
-                                value="{{ $DailyEntrie->entrie_id }}"
-                            @endisset>
-                    </div>
-
-                    <div>
-                        <form action="{{ route('daily_restrictions.stor') }}" method="POST"
-                            enctype="multipart/form-data">
-                            @csrf
-                            <div>
-                                <label for="page_id" class="block font-medium mb-2">رقم الصفحة</label>
-                                @auth
-                                    @isset($dailyPage->page_id)
-                                        <input type="text" name="page_id" id="page_id" class="input-field"
-                                            value="{{ $dailyPage['page_id'] }}">
-                                    @endisset
-                                @endauth
-                            </div>
-                            <button type="submit"
-                                class="mt-2 px-4 py-1 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">
-                                إنشاء صفحة جديدة
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
-                @auth
-                    <input type="hidden" name="User_id" value="{{ Auth::user()->id }}">
-                @endauth
-            </div>
         </div>
-    </form>
+    </div>
 
-    <script src="{{ url('payments.js') }}"></script>
+
+    <span class="textNav mr-1"> حذف</span>
+    </button>
+    </div>
+    <div class="col-span-6 sm:col-span-3 mt-2 px-4">
+        <button class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700" id="saveButton">اضافة
+        </button>
+    </div>
+    </div>
+    <div class="flex" id="printEndSave">
+        <div class="flex flex-col">
+            @auth
+                <input type="hidden" name="User_id" value="{{ Auth::user()->id }}" />
+            @endauth
+        </div>
+
+
+    </div>
+    </form>
+    <div class="container mx-auto  " id="mainAccountsTable">
+        <div class="w-full overflow-y-auto   bg-white">
+            <table id="mainAccountsTable" class="w-full mb-4 text-sm">
+                <thead>
+                    <tr class="bg-blue-100">
+                        <th class=" px-2 py-1  tagTd">م</th>
+                        <th class=" px-2 py-1  tagTd">اسم الصنف</th>
+                        <th class=" px-2 py-1  tagTd"> الوحدة</th>
+                        <th class=" px-2 py-1  tagTd">الكمية</th>
+                        <th class=" px-2 py-1  tagTd">السعر الشراء</th>
+                        <th class=" px-2 py-1  tagTd">التكلفة</th>
+                        <th class=" px-2 py-1  tagTd">المخزن</th>
+                        <th class=" px-2 py-1  tagTd">الإجمالي</th>
+                        <th class=" px-2 py-1  tagTd"></th>
+                        <th class=" px-2 py-1  tagTd "></th>
+                    </tr>
+                </thead>
+                <tbody>
+            </table>
+        </div>
+    </div>
+    </div>
+
+    <button onclick="openInvoiceWindow(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح
+        الفاتورة</button>
+    <script>
+        function openInvoiceWindow(e) {
+            const successMessage = $('#successMessage');
+            const invoiceField = document.getElementById('purchase_invoice_id').value; // الحصول على قيمة حقل رقم الفاتورة
+            if (invoiceField) {
+                e.preventDefault(); // منع تحديث الصفحة
+                const url = `{{ route('invoicePurchases.print', ':invoiceField') }}`.replace(':invoiceField',
+                    invoiceField); // استبدال القيمة في الرابط
+
+                window.open(url, '_blank', 'width=600,height=800'); // فتح الرابط مع استبدال القيمة
+            } else {
+
+                successMessage.text('لا توجد فاتورة').show();
+                setTimeout(() => {
+                    successMessage.hide();
+                }, 3000);
+            }
+
+        }
+    </script>
+    <button onclick="openAndPrintInvoice2(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح
+        وطباعة الفاتورة</button>
+    <div id="successMessage" style="display:none;" class="text-red-500 font-semibold mt-2"></div>
+    </div>
 
     <script>
-        $(document).ready(function() {
-            // تفعيل Select2
-            $('.select2').select2();
+        function openAndPrintInvoice2(e) {
+            const successMessage = $('#successMessage');
+            const invoiceField = document.getElementById('purchase_invoice_id').value; // الحصول على قيمة حقل رقم الفاتورة
+            if (invoiceField) {
+                e.preventDefault(); // منع تحديث الصفحة
+                const url = `{{ route('invoicePurchases.print', ':invoiceField') }}`.replace(':invoiceField',
+                    invoiceField); // استبدال القيمة في الرابط
+                // فتح الرابط في نافذة جديدة
+                const newWindow = window.open(url, '_blank', 'width=600,height=800');
 
-            // تنسيق المبالغ المالية
-            $('#Amount_debit').on('input', function() {
-                let value = $(this).val();
-                value = value.replace(/[^0-9.]/g, '');
-                const parts = value.split('.');
-                if (parts.length > 2) {
-                    value = parts[0] + '.' + parts.slice(1).join('');
+                // التأكد من أن النافذة فتحت بنجاح
+                if (newWindow) {
+                    newWindow.onload = function() {
+                        setTimeout(() => {
+                            newWindow.print(); // طباعة المحتوى بعد تحميله
+                            newWindow.close(); // إغلاق النافذة بعد الطباعة
+                        }, 1000); // تأخير بسيط للسماح بتحميل المحتوى
+                    };
+                } else {
+                    successMessage.text('تعذر فتح النافذة. يرجى التحقق من إعدادات المتصفح.').show();
+                    setTimeout(() => {
+                        successMessage.hide(); // إخفاء الرسالة بعد 3 ثوانٍ
+                    }, 3000);
                 }
-                if (value) {
-                    let [integer, decimal] = value.split('.');
-                    integer = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                    value = decimal ? integer + '.' + decimal : integer;
-                }
-                $(this).val(value);
-            });
+            } else {
+                successMessage.text('لا توجد فاتورة').show(); // عرض الرسالة
+                setTimeout(() => {
+                    successMessage.hide(); // إخفاء الرسالة بعد 3 ثوانٍ
+                }, 3000);
+            }
+        }
+    </script>
+    <script>
+        $(function() {
+            const form = $('#invoicePurchases'),
+                submitButton = $('#newInvoice'),
+                saveData_debit_id = $('#saveData_debit_id'),
+                successMessage = $('#successMessage'),
+                errorMessage = $('#errorMessage'),
+                transaction_type = $('.transaction_type'),
+                invoiceField = $('#purchase_invoice_id'),
+                supplierField = $('#supplier_name'),
+                main_accountdebit = $('.main_accountdebit'),
+                sub_account_debit_id = $('.sub_account_debit_id'),
+                supplier_id = $('.supplier_id'),
+                product_id = $('.product_id'),
+                csrfToken = $('input[name="_token"]').val();
 
-            // فتح الحقل الفرعي للمدين عند التحميل
-            /*             $('#sub_account_debit_id').select2('open');
-             */
-            // منع إرسال النموذج عند الضغط على Enter
-            $('#dailyRestrictionsForm').on('keydown', function(event) {
-                if (event.key === 'Enter') {
-                    event.preventDefault();
-                }
-            });
 
-            // معالجة إرسال النموذج
-            $('#submitButton').click(function(event) {
-                event.preventDefault();
-                const entrie_id = $('#entrie_id').val();
-
-                // إظهار مؤشر التحميل
-                Swal.fire({
-                    title: 'جارٍ المعالجة',
-                    html: 'يرجى الانتظار أثناء حفظ البيانات...',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
-
-                var formData = $('#dailyRestrictionsForm').serialize();
+            submitButton.click(function(e) {
+                e.preventDefault();
+                submitButton.prop('disabled', true).text('جاري الإرسال...');
+                // إخفاء الرسائل السابقة
+                successMessage.hide();
+                errorMessage.hide();
+                const formData = new FormData(form[0]);
 
                 $.ajax({
-                    url: '{{ route('daily_restrictions.store') }}',
-                    method: 'POST',
-                    data: formData,
-                    success: function(data) {
-                        Swal.close();
+                        url: '{{ route('double_entry.storeOrUpdate') }}',
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                    })
 
-                        if (data.success) {
-                            Swal.fire({
-                                title: 'نجاح!',
-                                text: data.success,
-                                icon: 'success',
-                                timer: 3000,
-                                showConfirmButton: false
-                            });
+                    .done(function(response) {
+                        if (response.account_debit_id) {
+                            // تحديث الحقول وإظهار رسالة النجاح
+                            saveData_debit_id.val(response.account_debit_id)
 
-                            if (entrie_id) {
-                                var invoiceField = data.entrie_id;
-                                const url =
-                                    `{{ route('restrictions.print', ':invoiceField') }}`
-                                    .replace(':invoiceField', invoiceField);
-                                window.open(url, '_blank', 'width=600,height=800');
-
-                                setTimeout(() => {
-                                    window.location.href =
-                                        '{{ route('restrictions.create') }}';
-                                }, 1000);
-                            }
-
-                            $('#Amount_debit').val("");
-                            $('#sub_account_debit_id').select2('open');
                         } else {
-                            Swal.fire({
-                                title: 'خطأ!',
-                                text: data.errorMessage || 'حدث خطأ غير متوقع',
-                                icon: 'error',
-                                timer: 3000,
-                                showConfirmButton: false
+                            errorMessage.text(response.message || 'حدث خطأ غير معروف.').show();
+                        }
+                    })
+                    .fail(function(xhr) {
+                        if (xhr.status === 422) {
+                            const errors = xhr.responseJSON.errors;
+                            const firstErrorField = Object.keys(errors)[0];
+                            const firstErrorMessage = errors[firstErrorField][0];
+
+                            // إظهار الرسالة مع اسم الحقل
+                            errorMessage.html(`<strong>${firstErrorMessage}</strong>`).show();
+
+                            // تسليط الضوء على الحقل الخاطئ
+                            const errorField = $(`[name="${firstErrorField}"]`);
+                            errorField.focus();
+
+                            // فتح `select2` إذا كان الحقل من نوع `select2`
+                            if (errorField.hasClass('select2')) {
+                                errorField.select2('open');
+                            }
+                        } else {
+                            errorMessage.text('حدث خطأ أثناء إرسال الطلب. حاول مرة أخرى لاحقاً.')
+                                .show();
+                        }
+                    })
+                    .always(function() {
+                        submitButton.prop('disabled', false).text('إضافة الفاتورة');
+                    });
+            });
+        });
+    </script>
+
+    <script>
+        $('#account_Credit_id').on('change', function() {
+            const mainAccountId = $(this).val();
+            $('#sub_account_Credit_id').empty();
+            $('#account_Credit_id').select2('close');
+
+            if (mainAccountId) {
+                $.ajax({
+                    url: '{{ route('sub-accounts', ':mainAccountId') }}'.replace(
+                        ':mainAccountId', mainAccountId),
+                    type: 'GET',
+                    dataType: 'json',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(data) {
+                        const subAccountOptions = data.map(subAccount =>
+                            `<option value="${subAccount.sub_account_id}">${subAccount.sub_name}</option>`
+                        ).join('');
+
+                        $('#sub_account_Credit_id').append(subAccountOptions);
+                        $('#sub_account_Credit_id').select2('destroy').select2();
+                        $('#sub_account_Credit_id').select2('open');
+                    },
+                    error: function() {
+                        Swal.fire({
+                            title: 'خطأ!',
+                            text: 'حدث خطأ أثناء جلب الحسابات الفرعية.',
+                            icon: 'error',
+                            timer: 3000,
+                            showConfirmButton: false
+                        });
+                    }
+                });
+            }
+        });
+
+        // التنقل بين الحقول
+        $('#sub_account_debit_id').on('change', function() {
+            $('#account_Credit_id').select2('open');
+        });
+
+        $('#sub_account_Credit_id').on('change', function() {
+            $('#Amount_debit').focus();
+        });
+        $(document).ready(function() {
+            $('.select2').select2({
+                placeholder: 'اختر عنصر',
+                allowClear: true
+            });
+
+
+
+
+
+            function CsrfToken() {
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+            }
+
+            function fetchPurchasesByInvoice(url, currentInvoiceId) {
+                if (!currentInvoiceId) {
+                    console.error('Invoice ID is empty!');
+                    event.preventDefault();
+
+                    alert('يرجى إدخال رقم الفاتورة.');
+
+                    return;
+                }
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    data: {
+                        purchase_invoice_id: currentInvoiceId
+                    },
+                    success: function(data) {
+
+
+                        $('#purchase_invoice_id').val(data.last_invoice_id);
+                        $('#mainAccountsTable tbody').empty();
+
+                        if (data.sales && data.sales.length > 0) {
+                            displayPurchases(data.sales);
+
+
+
+                            $('#Supplier_id').empty(); // لتفريغ الخيارات القديمة
+                            data.suppliers.forEach(supplier => {
+                                $('#Supplier_id').append(new Option(supplier.sub_name, supplier
+                                    .sub_account_id));
                             });
+
+                            $('#Supplier_id').append(
+                                `<option selected  value="${data.SupplierId}">${data.Supplier_name}</option>`
+                            );
+                            $('#transaction_type').empty(); // لتفريغ الخيارات القديمة
+
+                            // إضافة الخيارات الجديدة
+                            data.TransactionTypes.forEach(TransactionType => {
+                                $('#transaction_type').append(new Option(TransactionType.label,
+                                    TransactionType.value));
+                            });
+
+
+                            $('#transaction_type').append(
+                                `<option selected  value="${data.transaction_valueType}">${data.transaction_typelabel}</option>`
+                            );
+
+                        } else {
+                            alert(data.message || 'لا توجد مبيعات مرتبطة بهذه الفاتورة.');
                         }
                     },
                     error: function(xhr) {
-                        Swal.close();
-
-                        if (xhr.status === 422) {
-                            const errors = xhr.responseJSON.errors;
-                            let errorMessages = '';
-
-                            for (const field in errors) {
-                                errorMessages += `${errors[field][0]}<br>`;
-                                const inputField = $(`#${field}`);
-                                const parentDiv = inputField.closest('div');
-                                parentDiv.find('.error-message').remove();
-                                inputField.addClass('border-red-500');
-                                parentDiv.append(
-                                    `<div class="error-message text-red-500 text-sm mt-1">${errors[field][0]}</div>`
-                                );
-                            }
-
-                            Swal.fire({
-                                title: 'خطأ في التحقق',
-                                html: errorMessages,
-                                icon: 'error',
-                                timer: 5000,
-                                showConfirmButton: true
-                            });
-                        } else {
-                            Swal.fire({
-                                title: 'خطأ!',
-                                text: 'حدث خطأ أثناء الحفظ. يرجى المحاولة لاحقًا.',
-                                icon: 'error',
-                                timer: 3000,
-                                showConfirmButton: false
-                            });
-                        }
+                        console.error('AJAX Error:', xhr.status, xhr.statusText, xhr.responseText);
+                        alert('حدث خطأ أثناء جلب البيانات. يرجى المحاولة لاحقًا.');
                     }
                 });
-            });
-
-            // إزالة رسائل الخطأ عند التعديل
-            $('select, input').on('input change', function() {
-                const parentDiv = $(this).closest('div');
-                $(this).removeClass('border-red-500');
-                parentDiv.find('.error-message').remove();
-            });
-
-            // عند اختيار الحساب الرئيسي (المدين)
-            $('#account_debit_id').on('change', function() {
-                $(this).select2('close');
-                const mainAccountId = $(this).val();
-                $('#sub_account_debit_id').empty();
-
-                if (mainAccountId) {
-                    $.ajax({
-                        url: '{{ route('sub-accounts', ':mainAccountId') }}'.replace(
-                            ':mainAccountId', mainAccountId),
-                        type: 'GET',
-                        dataType: 'json',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        success: function(data) {
-                            const subAccountOptions = data.map(subAccount =>
-                                `<option value="${subAccount.sub_account_id}">${subAccount.sub_name}</option>`
-                            ).join('');
-
-                            $('#sub_account_debit_id').append(subAccountOptions);
-                            $('#sub_account_debit_id').select2('destroy').select2();
-                            $('#sub_account_debit_id').select2('open');
-                        },
-                        error: function() {
-                            Swal.fire({
-                                title: 'خطأ!',
-                                text: 'حدث خطأ أثناء جلب الحسابات الفرعية.',
-                                icon: 'error',
-                                timer: 3000,
-                                showConfirmButton: false
-                            });
-                        }
-                    });
-                }
-            });
-
-            // عند اختيار الحساب الرئيسي (الدائن)
-            $('#account_Credit_id').on('change', function() {
-                const mainAccountId = $(this).val();
-                $('#sub_account_Credit_id').empty();
-                $('#account_Credit_id').select2('close');
-
-                if (mainAccountId) {
-                    $.ajax({
-                        url: '{{ route('sub-accounts', ':mainAccountId') }}'.replace(
-                            ':mainAccountId', mainAccountId),
-                        type: 'GET',
-                        dataType: 'json',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        success: function(data) {
-                            const subAccountOptions = data.map(subAccount =>
-                                `<option value="${subAccount.sub_account_id}">${subAccount.sub_name}</option>`
-                            ).join('');
-
-                            $('#sub_account_Credit_id').append(subAccountOptions);
-                            $('#sub_account_Credit_id').select2('destroy').select2();
-                            $('#sub_account_Credit_id').select2('open');
-                        },
-                        error: function() {
-                            Swal.fire({
-                                title: 'خطأ!',
-                                text: 'حدث خطأ أثناء جلب الحسابات الفرعية.',
-                                icon: 'error',
-                                timer: 3000,
-                                showConfirmButton: false
-                            });
-                        }
-                    });
-                }
-            });
-
-            // التنقل بين الحقول
-            $('#sub_account_debit_id').on('change', function() {
-                $('#account_Credit_id').select2('open');
-            });
-
-            $('#sub_account_Credit_id').on('change', function() {
-                $('#Amount_debit').focus();
-            });
-
-            // عند تغيير نوع المستند
-            $('#Invoice_type').on('change', function() {
-                const Invoice_typeId = $(this).val();
-                $(this).select2('close');
-
-                if (!Invoice_typeId) {
-                    return;
-                }
-
-                // إظهار مؤشر التحميل
-                Swal.fire({
-                    title: 'جارٍ التحميل',
-                    text: 'جلب أرقام الفواتير...',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
-
-                GetInvoiceNumber(Invoice_typeId);
-            });
-        });
-
-        // جلب أرقام الفواتير
-        function GetInvoiceNumber(Invoice_typeId) {
-            const Invoice_number = $('#Invoice_id');
-
-            if (!Invoice_typeId) {
-                Swal.fire({
-                    title: 'تحذير!',
-                    text: 'يرجى اختيار نوع المستند أولاً.',
-                    icon: 'warning',
-                    timer: 3000,
-                    showConfirmButton: false
-                });
-                return;
             }
 
-            $.ajax({
-                url: "{{ url('/invoice_purchases/') }}/" + Invoice_typeId + "/GetInvoiceNumber",
-                type: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    Swal.close();
-                    Invoice_number.empty();
 
-                    const purchase_invoice = data.map(invoice =>
-                        `<option value="${invoice.purchase_invoice_id ?? invoice.sales_invoice_id}">
-                            ${invoice.purchase_invoice_id ?? invoice.sales_invoice_id}
-                        </option>`
-                    ).join('');
 
-                    Invoice_number.append(purchase_invoice);
-                    Invoice_number.select2('open');
-                },
-                error: function(xhr) {
-                    Swal.fire({
-                        title: 'خطأ!',
-                        text: 'حدث خطأ أثناء جلب أرقام الفواتير. يرجى المحاولة لاحقًا.',
-                        icon: 'error',
-                        timer: 3000,
-                        showConfirmButton: false
+            $(document).on('click', '.delete-payment', function(e) {
+                e.preventDefault();
+                var successMessage = $('#successMessage'); // الرسالة الناجحة
+                var errorMessage = $('#errorMessage'); // الرسالة الخطأ
+                const Total_invoice = $('#Total_invoice'); // إجمالي الفاتورة
+
+                let paymentId = $(this).data('id');
+                // let url = `/purchases/${paymentId}`; // تصحيح مسار الحذف
+
+                if (confirm('هل أنت متأكد أنك تريد حذف هذا الصنف؟')) {
+                    $.ajax({
+                        url: "{{ url('/purchases/') }}/" +
+                            paymentId, // استدعاء API بناءً على product_id
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                        },
+                        success: function(response) {
+                            if (response.status === 'success') {
+                                // إخفاء السند من الواجهة
+                                $('#row-' + paymentId).fadeOut(); // إخفاء الصف
+                                // تحديث إجمالي الفاتورة
+                                $('#Total_invoice').val(response.Purchasesum || '0');
+                            } else {
+                                errorMessage.text(response.message || 'حدث خطأ أثناء الحذف.')
+                                    .show();
+                                setTimeout(() => errorMessage.hide(), 3000);
+                            }
+                        },
+                        error: function(error) {
+                            console.error('Error deleting payment bond:', error.responseText);
+                            alert('حدث خطأ أثناء الحذف. يرجى المحاولة لاحقًا.');
+                        }
                     });
                 }
             });
+            $('#account_debitid').on('change', function() {
+                $(this).select2('close');
+                $('#product_id').select2('open');
+            });
+            $('#Supplier_id').on('change', function() {
+                const receipt_number = $('#Receipt_number');
+                $('#Receipt_number').focus(); // تركيز المؤشر على الحقل
+                $('#Supplier_id').select2('close');
+            });
+            const Product_name = $('#product_name');
+            const form = $('#ajaxForm');
+            const inputs = $('.input-field'); // تحديد جميع الحقول
+            const selectedPaymentType = $('input[name="Payment_type"]');
+            selectedPaymentType.focus();
+            form.on('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault(); // منع الحفظ عند الضغط على زر Enter
+                }
+            });
+            // استدعاء وظيفة الحفظ عند الضغط على زر +
+
+            $('#saveButton').click(function() {
+                saveData(event); // استدعاء دالة الحفظ
+            });
+            $(document).on('keydown', function(event) {
+                if (event.key === '+') {
+                    event.preventDefault();
+                    saveData(event); // استدعاء دالة الحفظ
+                }
+            });
+
+            function saveData(event) {
+                event.preventDefault(); // منع تحديث الصفحة
+
+                const form = $('#ajaxForm'); // تخزين العنصر في متغير
+                const formData = new FormData(form[0]);
+
+                const selectedPaymentType = $('input[name="Payment_type"]:checked').val();
+                formData.append('Payment_type', selectedPaymentType ||
+                    ''); // إضافة القيمة المختارة أو قيمة فارغة إذا لم يتم اختيار شيء
+                formData.append('Receipt_number', $('#Receipt_number').val() || ''); // إضافة رقم الإيصال
+
+                $.ajax({
+                    url: '{{ route('double_entry.store') }}', // المسار الخاص بك
+                    type: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: formData,
+                    processData: false, // ضروري مع FormData
+                    contentType: false, // ضروري مع FormData
+                    success: function(data) {
+                        if (data.success) {
+                            $('#errorMessage').hide(); // تأكد من وجود عنصر بهذا المعرف
+                            $('#successMessage').removeClass('hidden').text(data.message);
+
+                            // إخفاء التنبيه بعد 3 ثوانٍ
+                            setTimeout(() => {
+                                $('#successMessage').addClass('hidden');
+                            }, 3000);
+
+                            addToTable(data.dailyEntrie);
+                            $('#Total_invoice').val(data.Purchasesum);
+                            emptyData();
+                        } else {
+                            // إظهار رسالة عند وجود نفس الاسم
+                            $('#errorMessage').show().text(data.message);
+                            setTimeout(() => {
+                                $('#errorMessage').hide();
+                            }, 5000);
+                            $('#Product_name').focus(); // تأكد من وجود عنصر بهذا المعرف
+                        }
+                    },
+                    error: function(xhr) {
+                        const errorMsg = xhr.responseJSON ? xhr.responseJSON.message :
+                            'حدث خطأ أثناء الإرسال.';
+                        $('#errorMessage').show().text(errorMsg);
+                        setTimeout(() => {
+                            $('#errorMessage').hide();
+                        }, 8000);
+                        $('#Product_name').focus(); // تأكد من وجود عنصر بهذا المعرف
+                    }
+                });
+            }
+
+            // تأكد من إضافة حدث `keydown` على النموذج
+            $('#ajaxForm').on('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault(); // منع الحفظ عند الضغط على زر Enter
+                }
+            });
+
+            function editData(id) {
+
+                $.ajax({
+                    url: "{{ url('/purchases/') }}/" + id,
+                    type: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    // استدعاء API بناءً على product_id
+                    success: function(data) {
+                        $('#product_id').val(data.product_id);
+                        $('#Barcode').val(data.Barcode);
+                        $('#Quantity').val(data.quantity);
+                        $('#Purchase_price').val(data.Purchase_price);
+                        $('#Selling_price').val(data.Selling_price);
+                        $('#Total').val(data.Total);
+                        $('#Cost').val(data.Cost);
+                        $('#Discount_earned').val(data.Discount_earned);
+                        $('#Profit').val(data.Profit);
+                        $('#Exchange_rate').val(data.Exchange_rate);
+                        $('#product_id').val(data.product_id);
+                        $('#Total_cost').val(data.Total_cost);
+                        $('#note').val(data.note);
+                        $('#purchase_invoice_id').val(data.Purchase_invoice_id);
+                        $('#supplier_name').val(data.Supplier_id);
+                        $('#purchase_id').val(data.purchase_id);
+                        $('#Categorie_name').val(data.categorie_id);
+
+                        categorie_name.empty();
+                        const subAccountOptions =
+                            `
+              <option value="${data.categorie_id}">${data.categorie_id}</option>`;
+
+                        // إضافة الخيارات الجديدة إلى القائمة الفرعية
+                        categorie_name.append(subAccountOptions);
+
+
+                    },
+                    error: function(xhr, status, error) {
+                        // console.error("خطأ في جلب بيانات التعديل:", error);
+                        errorMessage.show().text(data.message);
+                        setTimeout(() => {
+                            errorMessage.hide();
+                        }, 5000);
+                    }
+                });
+            }
+
+            function displayPurchases(sales) {
+                let uniqueInvoices = new Set(); // Set لتخزين الفواتير الفريدة
+                let rows = ''; // متغير لتخزين الصفوف
+                $('#mainAccountsTable tbody').empty(); // تنظيف الجدول
+                sales.forEach(function(purchase) {
+                    // إضافة شرط للتأكد من عدم تكرار البيانات
+                    if (!uniqueInvoices.has(purchase.purchase_id)) {
+                        uniqueInvoices.add(purchase.purchase_id);
+                        rows += `
+                <tr id="row-${purchase.purchase_id}">
+                    <td class="text-right tagTd">${purchase.Barcode}</td>
+                    <td class="text-right tagTd">${purchase.Product_name}</td>
+                    <td class="text-right tagTd">${purchase.categorie_id}</td>
+                    <td class="text-right tagTd">${purchase.quantity}</td>
+                    <td class="text-right tagTd">${purchase.Purchase_price}</td>
+                    <td class="text-right tagTd">${purchase.Cost}</td>
+                    <td class="text-right tagTd">${purchase.warehouse_to_id}</td>
+                    <td class="text-right tagTd">${purchase.Total}</td>
+                    <td class="flex">
+                        <button class="" onclick="editData(${purchase.purchase_id})">
+                                           <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
+</svg>
+                        </button>
+<a href="#" class="text-red-600 hover:underline delete-payment" data-id="${purchase.purchase_id}" >حذف</a>
+
+                    </td>
+                </tr>
+            `;
+                    }
+                });
+                $('#mainAccountsTable tbody').append(rows);
+            }
+
+            function addToTable(account) {
+                const rowId = `#row-${account.entrie_id}`;
+                const tableBody = $('#mainAccountsTable tbody');
+
+                // التحقق مما إذا كان الصف موجودًا بالفعل
+                if ($(rowId).length) {
+                    // تحديث الصف في الجدول بناءً على القيم الجديدة
+                    $(`${rowId} td:nth-child(1)`).text(account.entrie_id);
+                    $(`${rowId} td:nth-child(2)`).text(account.account_credit_id);
+                    $(`${rowId} td:nth-child(3)`).text(account.account_debit_id);
+                    /*                     $(`${rowId} td:nth-child(4)`).text(account.quantity ? Number(account.quantity)
+                                            .toLocaleString() : '0');
+                                        $(`${rowId} td:nth-child(5)`).text(account.Purchase_price ? Number(account.Purchase_price)
+                                            .toLocaleString() : '0');
+                                        $(`${rowId} td:nth-child(6)`).text(account.Cost ? Number(account.Cost).toLocaleString() : '0');
+                                        $(`${rowId} td:nth-child(7)`).text(account.warehouse_to_id ?
+                                            Number(account.warehouse_to_id).toLocaleString() :
+                                            (account.warehouse_from_id ? Number(account.warehouse_from_id).toLocaleString() : '0'));
+                                        $(`${rowId} td:nth-child(8)`).text(account.Total ? Number(account.Total).toLocaleString() :
+                                            '0'); */
+                } else {
+                    // إنشاء صف جديد إذا لم يكن موجودًا
+                    const newRow = `
+            <tr id="row-${account.purchase_id}">
+                <td class="text-right tagTd">${account.entrie_id}</td>
+                <td class="text-right tagTd">${account.account_credit_id}</td>
+                <td class="text-right tagTd">${account.account_debit_id}</td>
+        `;
+                    tableBody.append(newRow); // إضافة الصف الجديد
+                }
+            }
+
+            function CsrfToken() {
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+            }
+
+            $(document).on('click', '#delete_invoice', function(e) {
+                e.preventDefault();
+                const invoiceId = $('#purchase_invoice_id').val(); // الحصول على معرف الفاتورة من الحقل
+                if (!invoiceId) {
+                    $('#errorMessage').show().text('لم يتم العثور على معرف الفاتورة.');
+                    setTimeout(() => {
+                        $('#errorMessage').hide();
+                    }, 5000);
+                    return;
+                }
+                // تأكيد الحذف
+                if (!confirm('هل أنت متأكد من حذف الفاتورة وجميع المشتريات المرتبطة بها؟')) {
+                    return;
+                }
+                // إرسال طلب الحذف باستخدام Ajax
+                $.ajax({
+                    url: "{{ url('/purchase-invoices/') }}/" + invoiceId, // مسار الحذف
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            successMessage.show().text(response.message);
+                            setTimeout(() => {
+                                successMessage.hide();
+                                window.location
+                                    .reload(); // إعادة تحميل الصفحة بعد إخفاء الرسالة
+                            }, 5000);
+                        } else {
+                            $('#errorMessage').show().text(response.message);
+                            setTimeout(() => {
+                                $('#errorMessage').hide();
+                            }, 5000);
+                        }
+                    },
+                    error: function(xhr) {
+                        $('#errorMessage').show().text(xhr.responseJSON.message);
+                        setTimeout(() => {
+                            $('#errorMessage').hide();
+                        }, 5000);
+                    }
+                });
+            });
+        });
+        $(document).ready(function() {
+
+            $('#Categorie_name').on('change', function() {
+                const Categoriename = $(this).val();
+                var mainAccountId = $('#product_id').val();
+                $('#TotalPurchase,#Profit').val('');
+                getUnitPriceCategorie(mainAccountId, Categoriename);
+                $(this).select2('close');
+                setTimeout(function() {
+                    $('#Quantity').focus();
+                    console.log('Focused on Quantity'); // للتأكد من التركيز
+                }, 10);
+
+            });
+
+            function getUnitPriceCategorie(mainAccountId, categoryName) {
+                const QuantityCate = $('#QuantityCate').val();
+
+                if (mainAccountId !== null) {
+                    const baseUrl = "{{ url('/GetProduct') }}";
+                    $.ajax({
+                        url: `${baseUrl}/${mainAccountId}/price?mainAccountId=${mainAccountId}&Categoriename=${categoryName}`,
+                        type: 'GET',
+
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.product) {
+
+                                //    displayProductDetails(response.product);
+                                $('#Purchase_price').val(response.product.Purchase_price).trigger(
+                                    'change');
+                                $('#QuantityCategorie').val(response.product.Quantityprice).trigger(
+                                    'change');
+                                $('#Selling_price').val(response.product.Selling_price).trigger(
+                                    'change');
+                                $('#QuantityPurchase').val(QuantityCate / response.product
+                                    .Quantityprice).trigger('change');
+
+
+
+                            } else {
+                                console.error('لم يتم العثور على المنتج أو السعر غير متوفر.');
+                            }
+                        },
+                        error: function(xhr) {
+                            console.error('حدث خطأ في الحصول على المنتج.', xhr.responseText);
+                        }
+                    });
+                };
+            }
+
+            $('#product_id').on('change', function() { // عند تغيير المنتج المختار في القائمة
+                var productId = $(this).val(); // الحصول على قيمة المنتج المختار
+                var account_debitid = $('#account_debitid').val();
+
+                setTimeout(() => {}, 100);
+                $('#Categorie_name').select2('open');
+                if (productId) { // تحقق من وجود منتج محدد
+
+                    $.ajax({
+                        url: "{{ url('/api/products/search/') }}/?id=" + productId +
+                            "/&account_debitid=" +
+                            account_debitid, // استدعاء API بناءً على product_id
+
+                        method: 'GET',
+                        success: function(product) {
+
+                            displayProductDetails(product);
+                            setTimeout(() => {}, 100);
+                            $('#Categorie_name').select2('open');
+
+                            // فتح قائمة الفئات
+                        },
+                        error: function(xhr) {
+                            console.error('Error:', xhr
+                                .responseText); // عرض الخطأ إذا حدث خطأ في الاستدعاء
+                        }
+                    });
+                } else {
+                    $('#productDetails').hide(); // إخفاء التفاصيل إذا لم يتم اختيار منتج
+                }
+            });
+        });
+        $('#account_debitid').on('change', function() {
+            $(this).select2('close');
+            $('#product_id').select2('open');
+        });
+
+        $('#main_account_debit_id').on('change', function() {
+            const mainAccountId = $(this).val(); // الحصول على ID الحساب الرئيسي
+            showAccounts(mainAccountId);
+            setTimeout(() => {
+                $('#main_account_debit_id').select2('close'); // إغلاق حقل الحساب الرئيسي بشكل صحيح
+                $('#sub_account_debit_id').select2('open');
+            }, 1000);
+
+        });
+
+        function showAccounts(mainAccountId) {
+            if (mainAccountId) {
+                var sub_account_debit_id = $('#sub_account_debit_id');
+            }
+
+            if (mainAccountId !== null) {
+
+                $.ajax({
+                    url: "{{ url('/main-accounts/') }}/" + mainAccountId +
+                        "/sub-accounts", // استخدام القيم الديناميكية
+
+                    type: 'GET',
+                    dataType: 'json',
+
+                    success: function(data) {
+                        sub_account_debit_id.empty();
+                        const subAccountOptions = data.map(subAccount =>
+                            `<option value="${subAccount.sub_account_id}">${subAccount.sub_name}</option>`
+                        ).join('');
+
+                        // إضافة الخيارات الجديدة إلى القائمة الفرعية
+                        sub_account_debit_id.append(subAccountOptions);
+                        sub_account_debit_id.select2('destroy').select2();
+
+                        // إعادة تهيئة Select2 بعد إضافة الخيارات
+                    },
+                    error: function(xhr) {
+                        console.error('حدث خطأ في الحصول على الحسابات الفرعية.', xhr.responseText);
+                    }
+                });
+            };
         }
+
+
+        function displayProductDetails(product) {
+            const invoiceInput = $('#purchase_invoice_id,#sales_invoice_id');
+            var Categorie_name = $('#Categorie_name');
+            if (invoiceInput.length) {
+                // التأكد من أن العناصر موجودة قبل تحديثها
+                // if ($('#Barcode').length) {
+                //     $('#Barcode').val(product.Barcode).trigger('change');
+                // }
+
+                // if ($('#product_name').length) {
+                //     $('#product_name').val(product.product_name).trigger('change');
+                // }
+                if ($('#Selling_price').length) {
+                    $('#Selling_price').val(product.Selling_price).trigger('change');
+                }
+                if ($('#Purchase_price').length) {
+                    $('#Purchase_price').val(product.Purchase_price).trigger('change');
+                }
+                if ($('#QuantityPurchase').length) {
+                    $('#QuantityPurchase').val(product.QuantityPurchase).trigger('change');
+                }
+                if ($('#QuantityCate').length) {
+                    $('#QuantityCate').val(product.QuantityPurchase).trigger('change');
+
+                }
+                if ($('#Discount_earned').length) {
+
+                    $('#Discount_earned').val(product.Regular_discount).trigger('change');
+
+                }
+
+                // if ($('#created_at').length) {
+                //     $('#created_at').val(product.created_at).trigger('change');
+                // }
+                // تعبئة قائمة الفئات (الوحدات)
+                const categorieSelect = $('#Categorie_name');
+                categorieSelect.empty();
+                // تفريغ القائمة السابقة
+                console.time('Select2 Initialization');
+                product.Categorie_names.forEach(categorie => {
+                    $('#Categorie_name').append(new Option(categorie.Categorie_name, categorie.categorie_id));
+                });
+
+                categorieSelect.append(`<option selected  value=""></option>`);
+                $('#Categorie_name').select2();
+                // إعادة التهيئة بعد الإضافة
+
+                console.timeEnd('Select2 Initialization'); // عرض الوقت المستغرق
+
+                // حساب التمويز بين البيع والشراء
+                var profit = 0;
+                if (product.Selling_price > 0 && product.Purchase_price > 0) {
+                    profit = product.Selling_price - product.Purchase_price; // حساب التمويز بين البيع والشراء
+                    profit = profit; // تقريب النتيجة إلى خانتين عشريتين
+                }
+                // إضافة التمويز إلى حقل الربح
+                if ($('#Profit').length) {
+                    $('#Profit').val(profit).trigger('change');
+                }
+
+                // حساب التكلفة
+                var Yr_cost = parseFloat($('#Yr_cost').val()) || 0;
+                // $Yr_cost=  $('#Yr_cost').val(); // عرض النتيجة
+                // جلب القيمة من الحقل كرقم عشري
+                if (!isNaN(Yr_cost) && Yr_cost > 0 && product.Purchase_price > 0) {
+                    var cost = Yr_cost * product.Purchase_price;
+
+                    // حساب التكلفة
+                    cost = cost.toFixed(2); // تقريب النتيجة لخانتين عشريتين
+                    $('#Cost').val(cost).trigger('change'); // إضافة النتيجة
+                } else {
+                    $('#Cost').val(''); // في حال وجود خطأ أو قيم غير صالحة، يتم تفريغ الحقل
+                }
+            }
+        }
+
+        function emptyData() {
+            $('#product_name,#total_price,#loss,#Quantityprice,#QuantityCategorie,#TotalPurchase').val('');
+            $('#Barcode').val('');
+            $('#InventoryId').val('');
+            $('#Quantity').val('');
+            $('#Purchase_price').val('');
+            $('#Selling_price').val('');
+            $('#Total').val('');
+            $('#TotalPurchase').val('');
+            $('#Cost').val('');
+            $('#Discount_earned').val('');
+            $('#Profit').val('');
+            $('#Exchange_rate').val('');
+            $('#product_id').val('');
+            $('#note').val('');
+            $('#QuantityPurchase').val('');
+            $('#Categorie_name').val('');
+            $('#discount_rate').val('');
+            $('#total_discount_rate').val('');
+            $('#purchase_id,#sale_id').val('');
+            $('#product_id').select2('open');
+
+
+
+        };
     </script>
+    {{-- <script src="{{url('purchases/purchases.js')}}"></script> --}}
+    {{-- <script src="{{ url('purchases.js') }}"></script> --}}
+
+    <style>
+        .alert-success {
+            color: green;
+            font-weight: bold;
+        }
+
+        .alert-errorMessage {
+            color: rgb(212, 50, 50);
+            font-weight: bold;
+        }
+    </style>
+
+
 @endsection

@@ -342,6 +342,8 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/daily_restrictions/{id1}', [RestrictionController::class, 'destroy'])->name('daily_restrictions.destroy');
     Route::get('/general_entries/show', [generalEntrieController::class, 'show'])->name('general_entries.show');
     Route::get('/double_entries/create', [DoubleEntryController::class, 'create'])->name('double_entries.create');
+    Route::post('/double_entries/storeOrUpdate', [DoubleEntryController::class, 'storeOrUpdate'])->name('double_entry.storeOrUpdate');
+    Route::post('/double_entries/store', [DoubleEntryController::class, 'store'])->name('double_entry.store');
 
     Route::get('/general/{id}/ledger/{accounting_id}', [TransferController::class, 'general_ledger'])->name('general.ledger');
     Route::get('/general/ledger/{accounting_id}', [TransferController::class, 'general'])->name('general');

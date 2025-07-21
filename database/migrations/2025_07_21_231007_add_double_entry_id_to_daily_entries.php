@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('daily_entries', function (Blueprint $table) {
-            $table->integer('double_entry_id');
-            //
+            $table->integer('double_entry_id')->nullable();
         });
     }
 
@@ -23,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('daily_entries', function (Blueprint $table) {
-            $table->integer('double_entry_id')->nullable();
+            //
         });
     }
 };
