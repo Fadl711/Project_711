@@ -112,7 +112,7 @@
                         <td class="text-right tagTd">
                             {{ $SubAccount->mainAccount ? $SubAccount->mainAccount->accountTypeLabel() : 'N/A' }}
                         </td>
-                   
+
                         <td class="text-right tagTd">{{ $SubAccount->user->name }}</td>
                         <td class="text-right tagTd">{{ $SubAccount->created_at }}</td>
                         <td class="text-right tagTd">{{ $SubAccount->updated_at }}</td>
