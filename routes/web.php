@@ -17,6 +17,7 @@ use App\Http\Controllers\chartController\ChartController;
 use App\Http\Controllers\DailyRestrictionController\RestrictionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DatabaseController;
+use App\Http\Controllers\DoubleEntryController;
 use App\Http\Controllers\EquipmentMaintenanceController;
 use App\Http\Controllers\FixedAssetsController;
 use App\Http\Controllers\generalEntrieController;
@@ -351,6 +352,9 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/daily_restrictions/{id}', [RestrictionController::class, 'update'])->name('daily_restrictions.update');
     Route::delete('/daily_restrictions/{id1}', [RestrictionController::class, 'destroy'])->name('daily_restrictions.destroy');
     Route::get('/general_entries/show', [generalEntrieController::class, 'show'])->name('general_entries.show');
+    Route::get('/double_entries/create', [DoubleEntryController::class, 'create'])->name('double_entries.create');
+    Route::post('/double_entries/storeOrUpdate', [DoubleEntryController::class, 'storeOrUpdate'])->name('double_entry.storeOrUpdate');
+    Route::post('/double_entries/store', [DoubleEntryController::class, 'store'])->name('double_entry.store');
 
     Route::get('/general/{id}/ledger/{accounting_id}', [TransferController::class, 'general_ledger'])->name('general.ledger');
     Route::get('/general/ledger/{accounting_id}', [TransferController::class, 'general'])->name('general');

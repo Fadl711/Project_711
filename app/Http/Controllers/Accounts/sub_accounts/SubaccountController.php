@@ -212,7 +212,7 @@ class SubaccountController extends Controller
     public function allShow()
     {
         // $SubAccounts[]=null;
-        $SubAccounts = SubAccount::with('mainAccount')->get();
+        $SubAccounts = SubAccount::with('mainAccount','user')->get();
         /*
         foreach ($SubAccounts as $s){
             if ($s->sub_account_id==5)

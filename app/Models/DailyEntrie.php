@@ -28,6 +28,7 @@ class DailyEntrie extends Model
         'status',
         'daily_entries_type',
         'exchange_rate',
+        'double_entry_id'
     ];
     // تحديد أنواع الحقول
     protected $casts = [
