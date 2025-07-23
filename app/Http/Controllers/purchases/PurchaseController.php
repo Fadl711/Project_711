@@ -96,13 +96,13 @@ class PurchaseController extends Controller
             'Payment_type.required' => 'حقل نوع الدفع مطلوب.',
             'transaction_type.required' => 'حقل نوع المعاملة مطلوب.',
             'Supplier_id.required' => 'حقل اسم المورد مطلوب.',
-            'main_account_debit_id.required' => 'حقل حساب التصدير مطلوب.',
+            'main_account_debit_id.required' => 'حقل الحساب  مطلوب.',
             'Currency_id.required' => 'حقل  العملة الفاتورة مطلوب.',
-            'Supplier_id' => 'حساب التصدير  غير موجود.',
+            'Supplier_id' => 'الحساب  غير موجود.',
         ]);
 
         }
-        if (in_array($transaction_type, [3,4,5,6,7,8,9,10,11])){
+        if (in_array($transaction_type, [3])){
              $validator = Validator::make($request->all(), [
             'transaction_type' => 'required',
             'main_account_debit_id' => 'required|numeric',
@@ -112,6 +112,16 @@ class PurchaseController extends Controller
             'transaction_type.required' => 'حقل نوع المعاملة مطلوب.',
             'main_account_debit_id.required' => 'حقل حساب التصدير مطلوب.',
             'sub_account_debit_id.required' => 'حقل حساب التصدير مطلوب.',
+            'Currency_id.required' => 'حقل  العملة الفاتورة مطلوب.',
+        ]);
+
+        }
+        if (in_array($transaction_type, [4,5,6,7,8,9,10,14,15,16,17,18,19,20])){
+             $validator = Validator::make($request->all(), [
+            'transaction_type' => 'required',
+            'Currency_id' => 'required|numeric',
+        ], [
+            'transaction_type.required' => 'حقل نوع المعاملة مطلوب.',
             'Currency_id.required' => 'حقل  العملة الفاتورة مطلوب.',
         ]);
 
@@ -188,12 +198,24 @@ class PurchaseController extends Controller
         $validator = Validator::make($request->all(), [
             'account_debitid' => 'required',
             'QuantityCategorie' => 'required',
-            'Quantity' => 'required|numeric|min:1',
+            'Quantity' => 'required',
         ]);
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
                 'message' => $validator->errors()->first(),
+            ], 422);
+        }
+        if ($request->Quantity <=0 ) {
+            return response()->json([
+                'success' => false,
+                'message' => 'يجب ان تكون الكمية اكبر من 0',
+            ], 422);
+        }
+        if ($request->QuantityCategorie <=0 ) {
+            return response()->json([
+                'success' => false,
+                'message' => 'يجب ان تكون قياس الوحدة اكبر من 0',
             ], 422);
         }
     
@@ -218,17 +240,68 @@ class PurchaseController extends Controller
         $warehouse_to_id = $warehouse_from_id = $account_id = null;
         $Product = Product::where('product_id', $request->product_id)->first();
         $Productquantity =0;
-        switch ($transactionType) {
-            case 1: // عملية دخول المخزون
-             $Productquantity=   $Product->Quantity + $request->Quantity;
 
+        switch ($transactionType) {
+
+            case 1: // عملية دخول المخزون
+                $Productquantity= $Product->Quantity +  ($request->Quantity * $request->QuantityCategorie);
                 $supplier_id= $purchaseInvoice->Supplier_id;
                 $warehouse_to_id = $request->account_debitid;
                 $account_id = $purchaseInvoice->account_id;
                 $warehouse_from_id = null;
                 break;
+
+                 case 15: //'توريد مخزني'
+                $Productquantity= $Product->Quantity +  ($request->Quantity * $request->QuantityCategorie);
+                $supplier_id= $purchaseInvoice->Supplier_id??null;
+                $warehouse_to_id = $request->account_debitid;
+                $account_id = $purchaseInvoice->account_id;
+                $warehouse_from_id =null;
+                break;
+                 case 16: //'إدخال منتج نهائي'
+                $Productquantity= $Product->Quantity +  ($request->Quantity * $request->QuantityCategorie);
+                $supplier_id= $purchaseInvoice->Supplier_id ?? null;
+                $warehouse_to_id = $request->account_debitid;
+                $account_id = $purchaseInvoice->account_id;
+                $warehouse_from_id =null;
+                break;
+                 case 17: // 'استلام مواد خام'
+                $Productquantity= $Product->Quantity +  ($request->Quantity * $request->QuantityCategorie);
+                $supplier_id= $purchaseInvoice->Supplier_id ?? null;
+                $warehouse_to_id = $request->account_debitid;
+                $account_id = $purchaseInvoice->account_id;
+                $warehouse_from_id =null;
+                break;
+          case 14: // 'صرف  مخزني'
+                $Productquantity=   $Product->Quantity -  ($request->Quantity * $request->QuantityCategorie);
+                $supplier_id= $purchaseInvoice->Supplier_id??null;
+                $warehouse_from_id = $request->account_debitid;
+            $account_id = $purchaseInvoice->account_id ?? null;
+            $warehouse_to_id = null;
+                break;
+          case 18: // 'صرف مواد للإنتاج'
+                $Productquantity=   $Product->Quantity -  ($request->Quantity * $request->QuantityCategorie);
+                $supplier_id= $purchaseInvoice->Supplier_id??null;
+                $warehouse_from_id = $request->account_debitid;
+            $account_id = $purchaseInvoice->account_id ??null;
+            $warehouse_to_id = null;
+                break;
+          case 19: // 'استهلاك'
+                $Productquantity=   $Product->Quantity -  ($request->Quantity * $request->QuantityCategorie);
+                $supplier_id= $purchaseInvoice->Supplier_id;
+                $warehouse_from_id = $request->account_debitid;
+            $account_id = $purchaseInvoice->account_id;
+            $warehouse_to_id = null;
+                break;
+          case 20: // 'إخراج مخلفات'
+                $Productquantity=   $Product->Quantity -  ($request->Quantity * $request->QuantityCategorie);
+                $supplier_id= $purchaseInvoice->Supplier_id;
+                $warehouse_from_id = $request->account_debitid;
+            $account_id = $purchaseInvoice->account_id;
+            $warehouse_to_id = null;
+                break;
           case 2: // عملية خروج المخزون
-                $Productquantity=   $Product->Quantity - $request->Quantity;
+                $Productquantity=   $Product->Quantity -  ($request->Quantity * $request->QuantityCategorie);
                 $supplier_id= $purchaseInvoice->Supplier_id;
                 $warehouse_from_id = $request->account_debitid;
             $account_id = $purchaseInvoice->account_id;
@@ -243,30 +316,28 @@ class PurchaseController extends Controller
                     ]);
                 }
                 $supplier_id= $purchaseInvoice->Supplier_id;
-                $Productquantity=   $Product->Quantity - $request->Quantity;
+                $Productquantity=   $Product->Quantity -  ($request->Quantity * $request->QuantityCategorie);
                 $warehouse_to_id = $request->account_debitid;
                 $warehouse_from_id = $purchaseInvoice->account_id;
                 $account_id = null;
                 break;
             case 8: // عملية دخول  الزائدة الى المخزون
-             $Productquantity=   $Product->Quantity + $request->Quantity;
+             $Productquantity=   $Product->Quantity +  ($request->Quantity * $request->QuantityCategorie);
 
                 $supplier_id= $purchaseInvoice->Supplier_id ;
                 $warehouse_to_id = $request->account_debitid;
                 $account_id = $purchaseInvoice->account_id;
                 $warehouse_from_id = null;
                 break;
-        
-          
             case 9: // عملية خروج الكميات التالفة
-                $Productquantity=$Product->Quantity - $request->Quantity;
+                $Productquantity=$Product->Quantity - ($request->Quantity * $request->QuantityCategorie);
                 $supplier_id= $purchaseInvoice->Supplier_id ??null;
                 $warehouse_from_id = $request->account_debitid;
             $account_id = $purchaseInvoice->account_id;
             $warehouse_to_id = null;
                 break;
             case 10: // عملية خروج الكميات التالفة
-                $Productquantity=$Product->Quantity - $request->Quantity;
+                $Productquantity=$Product->Quantity -  ($request->Quantity * $request->QuantityCategorie);
                 $supplier_id= $purchaseInvoice->Supplier_id ??null;
                 $warehouse_from_id = $request->account_debitid;
             $account_id = $purchaseInvoice->account_id;
@@ -411,7 +482,7 @@ public function search(Request $request)
  $purchaseToQuantity = Purchase::where('product_id', $id)
 ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
 ->where('warehouse_to_id', $warehouse_to_id)
-->whereIn('transaction_type', [1, 6, 3,7,8])
+->whereIn('transaction_type', [1, 6, 3,7,8,15,16,17])
 ->sum('Quantityprice');
 
 $warehouseFromQuantity = Purchase::where('product_id', $id)
@@ -423,7 +494,7 @@ $warehouseFromQuantity = Purchase::where('product_id', $id)
 $warehouseFromQuantity3 = Purchase::where('product_id', $id)
     ->where('warehouse_from_id', $warehouse_to_id)
     ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
-    ->whereIn('transaction_type', [3,9,10])
+    ->whereIn('transaction_type', [3,9,10,14,18,19,20])
     ->sum('Quantityprice');
 
 $saleQuantity5 = Sale::where('product_id', $id)
@@ -460,6 +531,7 @@ $productPurchase =( $purchaseToQuantity+$saleQuantity5 )- $warehouseFromQuantity
             'QuantityPurchase'=> $productPurchase,
             'Categorie_names' => $categories, // أسماء الفئات كقائمة
         ];
+           return response()->json($product);
         // تحويل الأرقام العربية إلى إنجليزية
         $product['Barcode'] = $this->convertArabicNumbersToEnglish($product['Barcode']);
         $product['Selling_price'] = $this->convertArabicNumbersToEnglish($product['Selling_price']);
@@ -468,6 +540,8 @@ $productPurchase =( $purchaseToQuantity+$saleQuantity5 )- $warehouseFromQuantity
         $product['quantity'] = $this->convertArabicNumbersToEnglish($product['Quantity']);
         $product['QuantityPurchase'] = $this->convertArabicNumbersToEnglish($product['QuantityPurchase']);
         $product['Special_discount'] = $this->convertArabicNumbersToEnglish($product['Special_discount']);
+            // dd(77);
+
         return response()->json($product); // إرجاع تفاصيل المنتج إذا تم العثور عليه
     }
 
@@ -524,13 +598,19 @@ public function destroy($id)
 public function print($id)
 {
     $DataPurchaseInvoice = PurchaseInvoice::where('purchase_invoice_id', $id)->first();
-    $SubAccount = SubAccount::where('sub_account_id', $DataPurchaseInvoice->Supplier_id ??$DataPurchaseInvoice->account_id)->first();
+   
     $UserName = User::where('id', $DataPurchaseInvoice->User_id)->pluck('name')->first();
-
     if (!$UserName) {
         $UserName = 'اسم غير موجود';
     }
-        $SubName = SubAccount::all();
+    $SubName = SubAccount::all();
+    $SubAccount = SubAccount::where('sub_account_id', $DataPurchaseInvoice->Supplier_id ??$DataPurchaseInvoice->account_id)->first();
+    if($SubAccount){
+
+  
+
+
+
     if($SubAccount->account_class===1)
     {
         $AccountClassName="العميل";
@@ -547,7 +627,10 @@ public function print($id)
     {
         $AccountClassName="الحساب";
     }
-    
+      }
+      else{
+         $AccountClassName="";
+      }
 
     $DataPurchase = Purchase::where('Purchase_invoice_id', $id)->get();
     $Categorys = Category::all();

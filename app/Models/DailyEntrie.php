@@ -65,7 +65,10 @@ class DailyEntrie extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
-
+  public function manufacturingCosts()
+    {
+        return $this->belongsTo(ManufacturingCost::class, 'invoice_id');
+    }
     // علاقة مع جدول general_journal
     public function dailyPage()
     {

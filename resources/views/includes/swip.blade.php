@@ -1,5 +1,5 @@
 
-<div class="max-w-40">
+<div class="max-w-40 print:hidden ">
 <div class="">
     <div class=" divNav">
         <ul class="list-none ">

@@ -48,14 +48,13 @@
                 </div>
 
                 <!-- الكميات -->
+                <div class=" grid grid-cols-3 gap-1">
                 <div>
                     <label for="planned_quantity" class="block text-sm font-medium text-gray-700">الكمية المخططة</label>
                     <div class="mt-1 relative rounded-md shadow-sm">
-                        <input type="number" step="0.001" id="planned_quantity" name="planned_quantity" value="{{ old('planned_quantity') }}" required
-                               class="block w-full pr-12 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                            <span class="text-gray-500 sm:text-sm" id="planned_quantity_unit">--</span>
-                        </div>
+                        <input type="number" step="0.001" id="planned_quantity" placeholder="0" name="planned_quantity" value="{{ old('planned_quantity') }}" required
+                               class="block w-full border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                       
                     </div>
                     @error('planned_quantity')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -65,17 +64,28 @@
                 <div>
                     <label for="actual_quantity" class="block text-sm font-medium text-gray-700">الكمية الفعلية</label>
                     <div class="mt-1 relative rounded-md shadow-sm">
-                        <input type="number" step="0.001" id="actual_quantity" name="actual_quantity" value="{{ old('actual_quantity') }}" required
-                               class="block w-full pr-12 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                            <span class="text-gray-500 sm:text-sm" id="actual_quantity_unit">--</span>
-                        </div>
+                        <input type="number" step="0.001" id="actual_quantity" name="actual_quantity" placeholder="0" value="{{ old('actual_quantity') }}" required
+                               class="block w-full  border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                       
                     </div>
                     @error('actual_quantity')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
-
+                <div>
+                    <label for="returned_quantity" class="block text-sm font-medium text-gray-700">الكمية المرتجعة</label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <input type="number" step="0.001" id="returned_quantity" name="returned_quantity" value="{{ old('returned_quantity') }}" required
+                               class="block w-full pr-12 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm" id="actual_returned_quantity">--</span>
+                        </div>
+                    </div>
+                    @error('returned_quantity')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+</div>
                 <!-- التكلفة -->
                 <div>
                     <label for="unit_cost" class="block text-sm font-medium text-gray-700">التكلفة للوحدة</label>
@@ -89,7 +99,9 @@
                     @error('unit_cost')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
+                
                 </div>
+                
 
                 <div>
                     <label for="total_cost" class="block text-sm font-medium text-gray-700">التكلفة الإجمالية</label>

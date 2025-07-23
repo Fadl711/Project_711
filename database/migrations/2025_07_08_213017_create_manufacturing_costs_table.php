@@ -30,7 +30,9 @@ return new class extends Migration
     $table->json('details')->nullable()->comment('تفاصيل إضافية');
     $table->integer('created_by')->comment('مسجل التكلفة');
     $table->timestamps();
-    $table->index(['production_order_id', 'cost_type'])->comment('فهرس لتحليل التكاليف');        });
+    $table->index(['production_order_id', 'cost_type'])->comment('فهرس لتحليل التكاليف'); 
+    
+       });
     }
 
     /**

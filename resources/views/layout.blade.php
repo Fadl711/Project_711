@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'app') }}</title>
     <link href="{{ asset('assets/css/select2.min.css') }}" rel="stylesheet">
 
 
@@ -56,7 +56,7 @@
     <!-- Scripts -->
 </head>
 
-<body class="justify-center bg-[#f1efefc9] overflow-hidden">
+<body class="justify-center bg-white overflow-hidden">
     @include('layouts.navigation')
     <div class="flex max-h-screen">
 

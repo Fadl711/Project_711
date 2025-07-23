@@ -21,11 +21,7 @@
        
 @isset($allQuantityonly)
         @foreach ($allQuantityonly as $index => $item)
-        {{-- @dd($item->product_name) --}}
-            {{-- @if (!in_array($item->product_id, $displayedProducts)) --}}
-                {{-- @php
-                    $displayedProducts[] = $item->product_id;
-                @endphp --}}
+       
                   @php
                  $sum_quantity= (float)($item->purchaseToQuantity+$item->saleQuantity5)-$item->warehouseFromQuantity-$item->warehouseFromQuantity3 -$item->saleQuantity4 ?? 0; 
              @endphp

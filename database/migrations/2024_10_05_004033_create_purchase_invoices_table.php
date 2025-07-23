@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('purchase_invoices', function (Blueprint $table) {
             $table->increments('purchase_invoice_id')->unsigned();
             $table->integer('Receipt_number')->unsigned()->nullable();
-            $table->decimal('Total_invoice', 15, 2)->nullable();
-            $table->decimal('Total_cost', 15, 2)->nullable();
-            $table->decimal('Paid',15, 2)->nullable();
+            $table->decimal('Total_invoice', 15, 3)->nullable();
+            $table->decimal('Total_cost', 15, 3)->nullable();
+            $table->decimal('Paid',15, 3)->nullable();
             $table->integer('User_id')->unsigned();
             $table->integer('Invoice_type')->nullable()->comment('1: نقداً, 2: أجل, 3: تحويل بنكي, 4: شيك');
             $table->integer('Currency_id')->unsigned()->nullable();
-            $table->decimal('exchange_rate',8,2)->unsigned()->nullable();
+            $table->decimal('exchange_rate',8,3)->unsigned()->nullable();
             $table->string('currency_symbol')->unique()->nullable();
             $table->unsignedTinyInteger('transaction_type')->comment('يحدد نوع المعاملة');
             $table->integer('Supplier_id')->unsigned()->nullable();

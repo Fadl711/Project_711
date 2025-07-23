@@ -11,11 +11,9 @@
     td{
       text-align: right;
     }
-   
 .select2-container--default .select2-dropdown {
             width: 400px; /* ارتفاع العنصر الأساسي */
-
-    max-width: 400px; /* ارتفاع القائمة */
+            max-width: 400px; /* ارتفاع القائمة */
 }
 .select2-container--default .select2-selection--single {
     height: 40px; /* ارتفاع العنصر الأساسي */
@@ -54,7 +52,7 @@
                          <option selected value="{{ null }}">{{"حدد نوع العملية "}}</option>
 
                             @foreach ($transaction_types as $transactionType)
-                                @if (in_array($transactionType->value, [1,2,3,8,9,10]))
+                                @if (in_array($transactionType->value, [1,2,3]))
                                     <option value="{{ $transactionType->value }}">{{ $transactionType->label() }}</option>
                                 @endif
                             @endforeach

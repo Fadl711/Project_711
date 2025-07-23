@@ -120,14 +120,14 @@ class ProductCoctroller extends Controller
         $join->on('products.product_id', '=', 'saleQuantity5.product_id')
              ->addBinding([$warehouse_to_id, $accountingPeriod->accounting_period_id]);
     })
-    ->leftJoin(DB::raw('(SELECT product_id, SUM(Quantityprice) as sum_quantity FROM purchases WHERE transaction_type IN (3,9,10) AND warehouse_from_id = ? AND accounting_period_id = ? GROUP BY product_id) as warehouseFromQuantity3'), function($join) use ($warehouse_to_id, $accountingPeriod) {
+    ->leftJoin(DB::raw('(SELECT product_id, SUM(Quantityprice) as sum_quantity FROM purchases WHERE transaction_type IN (3,9,10,14,18,19,20) AND warehouse_from_id = ? AND accounting_period_id = ? GROUP BY product_id) as warehouseFromQuantity3'), function($join) use ($warehouse_to_id, $accountingPeriod) {
         $join->on('products.product_id', '=', 'warehouseFromQuantity3.product_id')
              ->addBinding([$warehouse_to_id, $accountingPeriod->accounting_period_id]);
     })
     ->leftJoin(DB::raw('(SELECT product_id, SUM(Quantityprice) as sum_quantity FROM purchases WHERE transaction_type = 2 GROUP BY product_id) as warehouseFromQuantity'), function($join) {
         $join->on('products.product_id', '=', 'warehouseFromQuantity.product_id');
     })
-    ->leftJoin(DB::raw('(SELECT product_id, SUM(Quantityprice) as sum_quantity FROM purchases WHERE transaction_type IN (1, 6, 3, 7,8) AND warehouse_to_id = ? AND accounting_period_id = ? GROUP BY product_id) as purchaseToQuantity'), function($join) use ($warehouse_to_id, $accountingPeriod) {
+    ->leftJoin(DB::raw('(SELECT product_id, SUM(Quantityprice) as sum_quantity FROM purchases WHERE transaction_type IN (1, 3,6,7,8,15,16,17) AND warehouse_to_id = ? AND accounting_period_id = ? GROUP BY product_id) as purchaseToQuantity'), function($join) use ($warehouse_to_id, $accountingPeriod) {
         $join->on('products.product_id', '=', 'purchaseToQuantity.product_id')
              ->addBinding([$warehouse_to_id, $accountingPeriod->accounting_period_id]);
     })
@@ -177,7 +177,7 @@ if ( $Quantit == "QuantityCosts") {
     ], 'quantity')
     ->withSum([
         'purchases as warehouseFromQuantity3' => function($query) use ($warehouse_to_id,$accountingPeriod) {
-            $query->whereIn('transaction_type', [3,9,10])
+            $query->whereIn('transaction_type', [3,9,10,18,19,20,14])
                  ->where('warehouse_from_id',$warehouse_to_id)
                      ->where('accounting_period_id', $accountingPeriod->accounting_period_id);
         },
@@ -189,7 +189,7 @@ if ( $Quantit == "QuantityCosts") {
             ;
         },
         'purchases as purchaseToQuantity' => function($query) use ($warehouse_to_id,$accountingPeriod) {
-            $query->whereIn('transaction_type', [1,3, 6, 7,8])
+            $query->whereIn('transaction_type', [1, 6, 3,7,8,15,16,17])
                  ->where('warehouse_to_id',$warehouse_to_id)
                  ->where('accounting_period_id', $accountingPeriod->accounting_period_id);
         }
@@ -197,15 +197,16 @@ if ( $Quantit == "QuantityCosts") {
     ->first(); 
 $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_at)->format('Y-m-d');
                         $accountingPeriod = Carbon::now()->format('Y-m-d');
+                       $sub_name= SubAccount::where('sub_account_id',$warehouse_to_id)->value('sub_name');
 
                         if ($Quantit == "Quantityonly") {
-                 $Myanalysis="تقرير مخزني - الكمية المتوفرة  - "." "."من ".$accountingPeriodCreatedAtFormatted." "."الى " . $accountingPeriod  ;
+                 $Myanalysis="تقرير مخزني - الكمية المتوفرة  - "." "."من ".$accountingPeriodCreatedAtFormatted." "."الى " . $accountingPeriod  . " "."في مخزن ".$sub_name??' '.$warehouse_to_id??'' ;
                  $firstQuantityonly= $firstQuantityCosts;
                  //allQuantityonly
                  return view('report.print', compact('firstQuantityonly', 'productname', 'accountingPeriod', 'Myanalysis'))->render(); // إرجاع المحتوى كـ HTML
                 }
                 if ( $Quantit == "QuantityCosts") {
-                 $Myanalysis="تقرير مخزني - الكمية والتكاليف - "." "."من ".$accountingPeriodCreatedAtFormatted." "."الى " . $accountingPeriod  ;
+                 $Myanalysis="تقرير مخزني - الكمية والتكاليف - "." "."من ".$accountingPeriodCreatedAtFormatted." "."الى " . $accountingPeriod  . " "."في مخزن ".$sub_name??' '.$warehouse_to_id??'';
             return view('report.print', compact('firstQuantityCosts', 'productname', 'Myanalysis', 'accountingPeriod'))->render(); // إرجاع المحتوى كـ HTML
         }
         
