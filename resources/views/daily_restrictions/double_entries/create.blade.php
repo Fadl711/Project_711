@@ -105,139 +105,124 @@
             </div>
         </div>
     </div>
-    <div class="flex max-md:block p-1 ">
-        <div class="min-w-[30%] border-x bg-white   rounded-xl">
+    <div class="flex flex-col md:flex-row gap-4 p-4">
+        <!-- النموذج -->
+        <div class="w-full md:w-1/2 bg-white rounded-xl p-4 shadow">
             <form id="ajaxForm">
                 @csrf
-                <div>
+                <div class="space-y-4">
                     <!-- حساب الدائن -->
-                    <div class="bg-gray-50 rounded-lg border border-gray-200 scrollable-container">
+                    <div class="bg-gray-50 rounded-lg border border-gray-200 p-4">
                         <h3 class="text-lg font-semibold text-gray-800 mb-3">الدائن</h3>
-                        <div class="space-y-3">
-                            <div>
-                                <label for="account_Credit_id" class="block font-medium mb-1">حساب الدائن/الرئيسي</label>
-                                <select name="account_Credit_id" id="account_Credit_id" class="input-field select2"
-                                    required>
-                                    <option value="" selected>اختر الحساب</option>
-                                    @foreach ($main_accounts as $main_account)
-                                        <option value="{{ $main_account->main_account_id }}">
-                                            {{ $main_account->account_name }}-{{ $main_account->main_account_id }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <input type='hidden' id="saveData_debit_id" name="sub_account_debit_id">
-                            <div>
-                                <label for="sub_account_Credit_id" class="block font-medium mb-1">حساب الدائن/الفرعي</label>
-                                <select name="sub_account_Credit_id" id="sub_account_Credit_id" class="input-field select2">
-                                    <option value="" selected>اختر الحساب الفرعي</option>
-                                </select>
-                            </div>
+
+                        <!-- الحساب الرئيسي -->
+                        <div>
+                            <label for="account_Credit_id" class="block font-medium mb-1">حساب الدائن/الرئيسي</label>
+                            <select name="account_Credit_id" id="account_Credit_id" class="input-field select2 w-full" required>
+                                <option value="" selected>اختر الحساب</option>
+                                @foreach ($main_accounts as $main_account)
+                                    <option value="{{ $main_account->main_account_id }}">
+                                        {{ $main_account->account_name }} - {{ $main_account->main_account_id }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- الحساب الفرعي -->
+                        <input type="hidden" id="saveData_debit_id" name="sub_account_debit_id">
+                        <div class="mt-3">
+                            <label for="sub_account_Credit_id" class="block font-medium mb-1">حساب الدائن/الفرعي</label>
+                            <select name="sub_account_Credit_id" id="sub_account_Credit_id" class="input-field select2 w-full">
+                                <option value="" selected>اختر الحساب الفرعي</option>
+                            </select>
                         </div>
                     </div>
+
+                    <!-- المبلغ -->
                     <div>
                         <label for="Amount_debit" class="block font-medium mb-2">المبلغ المدين</label>
-                        <input name="Amount_debit" id="Amount_debit" type="text" class="input-field"
-                            placeholder="أدخل المبلغ"
+                        <input name="Amount_debit" id="Amount_debit" type="text" class="input-field w-full" placeholder="أدخل المبلغ"
                             value="{{ !empty($DailyEntrie->amount_debit) ? number_format($DailyEntrie->amount_debit, 0, '.', ',') : (!empty($DailyEntrie->amount_credit) ? number_format($DailyEntrie->amount_credit, 0, '.', ',') : '') }}"
                             required>
                     </div>
 
+                    <!-- العملة -->
                     <div>
                         <label for="Currency_name" class="block font-medium mb-2">العملة</label>
-                        <select dir="ltr" id="Currency_name" class="input-field" name="Currency_name">
+                        <select dir="ltr" id="Currency_name" class="input-field w-full" name="Currency_name">
                             @isset($Currency_name)
                                 @foreach ($Currency_name as $cur)
-                                    <option value="{{ $cur->currency_name }}">
-                                        {{ $cur->currency_name }}
-                                    </option>
+                                    <option value="{{ $cur->currency_name }}">{{ $cur->currency_name }}</option>
                                 @endforeach
                             @endisset
                         </select>
                     </div>
 
+                    <!-- سعر الصرف -->
                     <div>
                         <label for="exchange_rate" class="block font-medium mb-2">سعر الصرف</label>
-                        <input id="exchange_rate" class="input-field" name="exchange_rate" type="number"
+                        <input id="exchange_rate" class="input-field w-full" name="exchange_rate" type="number"
                             value="{{ isset($DailyEntrie->exchange_rate) ? number_format($DailyEntrie->exchange_rate, 2, '.', ',') : 1 }}">
                     </div>
+
+                    <!-- البيان -->
+                    <div>
+                        <label for="Statement" class="block font-medium mb-2">البيان</label>
+                        <textarea name="Statement" id="Statement" class="w-full border rounded-md p-3" rows="3"></textarea>
+                    </div>
+
+                    <!-- زر الحفظ -->
+                    <div class="text-left">
+                        <button class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700" id="saveButton">
+                            إضافة
+                        </button>
+                    </div>
+
+                    @auth
+                        <input type="hidden" name="User_id" value="{{ Auth::user()->id }}" />
+                    @endauth
                 </div>
-
-                <div class="mt-4">
-                    <label for="Statement" class="block font-medium mb-2">البيان</label>
-                    <textarea name="Statement" id="Statement" class="block w-full border rounded-md p-3" rows="3">
-
-                    </textarea>
-                </div>
-        </div>
-    </div>
-
-
-    <span class="textNav mr-1"> حذف</span>
-    </button>
-    </div>
-    <div class="col-span-6 sm:col-span-3 mt-2 px-4">
-        <button class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700" id="saveButton">اضافة
-        </button>
-    </div>
-    </div>
-    <div class="flex" id="printEndSave">
-        <div class="flex flex-col">
-            @auth
-                <input type="hidden" name="User_id" value="{{ Auth::user()->id }}" />
-            @endauth
+            </form>
         </div>
 
+        <div class="container mx-auto  " id="mainAccountsTable">
+            <div class="w-full overflow-y-auto max-h-[80vh]  bg-white">
+                <table id="mainAccountsTable"   class="w-full mb-4 text-sm">
+                    <thead >
+                        <tr class="bg-blue-100">
+                            <th class=" px-2 py-1  tagTd">م</th>
+                            <th class=" px-2 py-1  tagTd">اسم الحساب</th>
+                            <th class=" px-2 py-1  tagTd"> البيان</th>
+                            <th class=" px-2 py-1  tagTd">المبلغ</th>
 
-    </div>
-    </form>
-    <div class="container mx-auto  " id="mainAccountsTable">
-        <div class="w-full overflow-y-auto   bg-white">
-            <table id="mainAccountsTable" class="w-full mb-4 text-sm">
-                <thead>
-                    <tr class="bg-blue-100">
-                        <th class=" px-2 py-1  tagTd">م</th>
-                        <th class=" px-2 py-1  tagTd">اسم الصنف</th>
-                        <th class=" px-2 py-1  tagTd"> الوحدة</th>
-                        <th class=" px-2 py-1  tagTd">الكمية</th>
-                        <th class=" px-2 py-1  tagTd">السعر الشراء</th>
-                        <th class=" px-2 py-1  tagTd">التكلفة</th>
-                        <th class=" px-2 py-1  tagTd">المخزن</th>
-                        <th class=" px-2 py-1  tagTd">الإجمالي</th>
-                        <th class=" px-2 py-1  tagTd"></th>
-                        <th class=" px-2 py-1  tagTd "></th>
-                    </tr>
-                </thead>
-                <tbody>
-            </table>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                </table>
         </div>
-    </div>
-    </div>
+        <button onclick="openInvoiceWindow(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح الفاتورة</button>
+        <script>
+            function openInvoiceWindow(e) {
+        const successMessage= $('#successMessage');
+        const invoiceField = document.getElementById('purchase_invoice_id').value; // الحصول على قيمة حقل رقم الفاتورة
+        if(invoiceField){
+            e.preventDefault(); // منع تحديث الصفحة
+        const url = `{{ route('invoicePurchases.print', ':invoiceField') }}`.replace(':invoiceField', invoiceField); // استبدال القيمة في الرابط
 
-    <button onclick="openInvoiceWindow(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح
-        الفاتورة</button>
-    <script>
-        function openInvoiceWindow(e) {
-            const successMessage = $('#successMessage');
-            const invoiceField = document.getElementById('purchase_invoice_id').value; // الحصول على قيمة حقل رقم الفاتورة
-            if (invoiceField) {
-                e.preventDefault(); // منع تحديث الصفحة
-                const url = `{{ route('invoicePurchases.print', ':invoiceField') }}`.replace(':invoiceField',
-                    invoiceField); // استبدال القيمة في الرابط
-
-                window.open(url, '_blank', 'width=600,height=800'); // فتح الرابط مع استبدال القيمة
-            } else {
-
-                successMessage.text('لا توجد فاتورة').show();
-                setTimeout(() => {
-                    successMessage.hide();
-                }, 3000);
-            }
-
+        window.open(url, '_blank', 'width=600,height=800'); // فتح الرابط مع استبدال القيمة
         }
+    else{
+
+        successMessage.text('لا توجد فاتورة').show();
+                          setTimeout(() => {
+                          successMessage.hide();
+                          }, 3000);
+    }
+
+    }
     </script>
-    <button onclick="openAndPrintInvoice2(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح
-        وطباعة الفاتورة</button>
+    <button onclick="openAndPrintInvoice2(event)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">فتح وطباعة الفاتورة</button>
     <div id="successMessage" style="display:none;" class="text-red-500 font-semibold mt-2"></div>
     </div>
 
