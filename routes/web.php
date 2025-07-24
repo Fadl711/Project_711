@@ -165,9 +165,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/products/{product}/edit', [ProductCoctroller::class, 'edit'])->name('products.edit');
     Route::put('/products/{product}', [ProductCoctroller::class, 'update'])->name('products.update');
     Route::delete('/products/{product}', [ProductCoctroller::class, 'destroy'])->name('products.destroy');
-    Route::get('/search', [ProductCoctroller::class, 'search'])->name('search.products');
     Route::get('/GetProduct/{categoryId}/price', [CategoryController::class, 'getUnitPrice'])->name('price.getUnitPrice');
-
+    Route::post('/products/{product}/update-default-category', [ProductCoctroller::class, 'updateDefaultCategory'])->name('products.update-default-category');
     Route::get('/products/{id}/Category', [CategoryController::class, 'create'])->name('Category.create');
     Route::post('/Category/store', [CategoryController::class, 'store'])->name('Category.store');
     Route::get('/Category/{Category}/edit', [CategoryController::class, 'edit'])->name('Category.edit');
@@ -326,9 +325,9 @@ Route::middleware(['auth'])->group(function () {
     // Route::delete('/exchanges/{exchange}', [ExchangeController::class, 'destroy'])->name('exchange.destroy');
     // Route::post('/exchange/stor', [ReceipController::class, 'stor'])->name('exchange.stor');
 
+    Route::get('/restrictions/index', [RestrictionController::class, 'index'])->name('restrictions.index');
     Route::get('/restrictions/create', [RestrictionController::class, 'create'])->name('restrictions.create');
     Route::get('/restrictions/create/Currency', [RestrictionController::class, 'createCurrency'])->name('restrictions.createCurrency');
-    Route::get('/restrictions/index', [RestrictionController::class, 'index'])->name('restrictions.index');
     Route::get('/restrictions/all_restrictions_show/{id}', [RestrictionController::class, 'all_restrictions_show'])->name('all_restrictions_show');
     Route::get('/restrictions/pages', [RestrictionController::class, 'pages'])->name('restrictions.pages');
     Route::get('/restrictions/{id}/edit', [RestrictionController::class, 'edit'])->name('restrictions.edit');
@@ -343,6 +342,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/general_entries/show', [generalEntrieController::class, 'show'])->name('general_entries.show');
     Route::get('/double_entries/create', [DoubleEntryController::class, 'create'])->name('double_entries.create');
     Route::post('/double_entries/storeOrUpdate', [DoubleEntryController::class, 'storeOrUpdate'])->name('double_entry.storeOrUpdate');
+    Route::get('/double_entries/{id}', [DoubleEntryController::class, 'show'])->name('double_entry.show');
     Route::post('/double_entries/store', [DoubleEntryController::class, 'store'])->name('double_entry.store');
 
     Route::get('/general/{id}/ledger/{accounting_id}', [TransferController::class, 'general_ledger'])->name('general.ledger');
