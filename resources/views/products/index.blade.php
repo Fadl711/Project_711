@@ -24,6 +24,20 @@
         [data-tooltip]:hover::before {
             display: block;
         }
+
+        .default-unit-select {
+            width: 100px;
+            padding: 5px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            transition: all 0.3s;
+        }
+
+        .default-unit-select:focus {
+            border-color: #4a90e2;
+            outline: none;
+            box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+        }
     </style>
     <div id="successMessage" class="hidden fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg"
         role="alert">
@@ -53,6 +67,7 @@
                     <th scope="col" class="leading-2 tagHt ">رقم المنتج</th>
                     <th scope="col" class="leading-2 tagHt ">الباركود</th>
                     <th scope="col" class="leading-2 tagHt  ">اسم الصنف</th>
+                    <th scope="col" class="leading-2 tagHt  "> الوحدة الافتراضية</th>
                     <th scope="col" class="leading-2 tagHt ">الكمية</th>
                     <th scope="col" class="leading-2 tagHt ">سعر الشراء</th>
                     <th scope="col" class="leading-2 tagHt ">سعر البيع</th>
@@ -65,13 +80,23 @@
 
                 </tr>
             </thead>
-            <tbody id='products-table' class="divide-y divide-gray-300 ">
+            <tbody id="products-table" class="divide-y divide-gray-300 ">
                 @foreach ($prod as $pro)
                     <tr class="bg-white transition-all duration-500 hover:bg-gray-50" id="row-{{ $pro->product_id }}">
 
                         <td class="tagTd ">{{ $pro->product_id }}</td>
                         <td class="tagTd ">{{ $pro->Barcode }}</td>
                         <td class="tagTd  ">{{ $pro->product_name }}</td>
+                        <td class="tagTd  ">
+                            <select class="sel default-unit-select " data-product-id="{{ $pro->Categorie_id }}">
+                                @foreach ($pro->categories as $unit)
+                                    <option value="{{ $unit->categorie_id }}"
+                                        {{ $pro->Categorie_id == $unit->categorie_id ? 'selected' : '' }}>
+                                        {{ $unit->Categorie_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </td>
                         <td class="tagTd ">{{ $pro->Quantity }}</td>
                         <td class="tagTd ">{{ $pro->Purchase_price }}</td>
                         <td class="tagTd ">{{ $pro->Selling_price }}</td>
@@ -97,7 +122,7 @@
 
                                         <path fill-rule="evenodd"
                                             d="M19.846 4.318a2.148 2.148 0 0 0-.437-.692 2.014 2.014 0 0 0-.654-.463 1.92 1.92 0 0 0-1.544 0 2.014 2.014 0 0 0-.654.463l-.546.578 2.852 3.02.546-.579a2.14 2.14 0 0 0 .437-.692 2.244 2.244 0 0 0 0-1.635ZM17.45 8.721 14.597 5.7 9.82 10.76a.54.54 0 0 0-.137.27l-.536 2.84c-.07.37.239.696.588
-                                                                        .622l2.682-.567a.492.492 0 0 0 .255-.145l4.778-5.06Z"
+                                                                                                                                                                                                            .622l2.682-.567a.492.492 0 0 0 .255-.145l4.778-5.06Z"
                                             clip-rule="evenodd" />
                                     </svg>
                                 </a>
@@ -193,33 +218,66 @@
         });
 
         $(document).ready(function() {
+            window.Laravel = {!! json_encode(['baseUrl' => url('/')]) !!};
 
-            $('#search').on('keyup', function() {
-                var searchValue = $(this).val();
-                if (searchValue !== '') {
-                    $.ajax({
-                        type: 'GET',
-                        url: '{{ route('search.products') }}',
-                        data: {
-                            search: searchValue
-                        },
-                        success: function(data) {
-                            $('#products-table').html(data);
+            $('.default-unit-select').change(function() {
+                var productId = $(this).closest('tr').find('td:first').text().trim();
+                var unitId = $(this).val();
+
+                $.ajax({
+                    url: `${window.Laravel.baseUrl}/products/${productId}/update-default-category`,
+                    method: 'POST',
+                    data: {
+                        unit_id: unitId,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                position: "top-start",
+                                icon: "success",
+                                title: "تم تغير الوحدة الأفتراضية بنجاح",
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        } else {
+                            Swal.fire({
+                                position: "top-start",
+                                icon: "error",
+                                title: "حصل خطأ",
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
                         }
-                    });
-                } else {
-                    // إذا كان الحقل فارغًا، أرجع جميع المنتجات
-                    $.ajax({
-                        type: 'GET',
-                        url: '{{ route('search.products') }}',
-                        data: {
-                            search: ''
-                        },
-                        success: function(data) {
-                            $('#products-table').html(data);
-                        }
-                    });
-                }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            position: "top-start",
+                            icon: "error",
+                            title: "حصل خطأ حاول مره اخر",
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                });
+            });
+        });
+
+        $(document).ready(function() {
+
+            const searchInput = document.getElementById("search");
+            const tableRows = document.querySelectorAll("#products-table tr");
+
+            searchInput.addEventListener("keyup", function() {
+                const searchTerm = this.value.trim().toLowerCase();
+
+                tableRows.forEach(function(row) {
+                    const product = row.children[2]?.textContent.trim().toLowerCase() || "";
+
+                    const match =
+                        product.includes(searchTerm);
+                    row.style.display = match ? "" : "none";
+                });
             });
         });
     </script>

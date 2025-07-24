@@ -1,6 +1,6 @@
 <nav class="w-full px-2 py-1">
     <ul
-        class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2
+        class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2
                container mx-auto relative shadow rounded
                bg-gradient-to-t from-indigo-900 to-indigo-600
                 text-right">
@@ -24,6 +24,16 @@
                       {{ Route::is('restrictions.pages') ? 'border-b-2 font-bold' : 'border-b-0' }}
                       border-white">
                 القيود
+            </a>
+        </li>
+        <li class="text-center lg:text-right">
+            <a href="{{ route('double_entries.create') }}"
+                class="block py-3 px-4 text-white hover:bg-indigo-700
+                      transition-colors duration-200
+                      text-sm md:text-base
+                      {{ Route::is('double_entries.create') ? 'border-b-2 font-bold' : 'border-b-0' }}
+                      border-white">
+                قيد مزدوج
             </a>
         </li>
         <li class="text-center lg:text-right">

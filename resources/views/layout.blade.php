@@ -56,8 +56,7 @@
     <!-- Scripts -->
 </head>
 
-<body class="justify-center bg-white overflow-hidden">
-<body class="justify-center bg-[#f1efefc9] ">
+<body class="justify-center bg-[#f1efefc9] overflow-hidden ">
     @include('layouts.navigation')
     <div class="flex max-h-screen">
 

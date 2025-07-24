@@ -46,20 +46,29 @@ class DoubleEntryController extends Controller
             ]
         );
     }
+    public function show($id)
+    {
+        $doubleEntry = Double_entry::with('double_entries', 'creditAccount', 'debitAccount')->find($id);
+        return view('daily_restrictions.double_entries.show_dobule', compact('doubleEntry'));
+    }
     public function storeOrUpdate(Request $request)
     {
+        $request->validate(
+            [
+                'typeAccount' => 'required',
+            ]
+        );
         $Double_entry = Double_entry::create([
             'account_debit_id' => $request->sub_account_debit_id,
             'Statement' => $request->Statement,
             'User_id' => Auth::user()->id,
-            'currency_id' => $request->currency_id,
+            'account_type' => $request->typeAccount,
         ]);
         return response()->json($Double_entry);
     }
 
     public function store(Request $request)
     {
-
         $dailyPageId = DailyEntrie::where('entrie_id', $request->entrie_id)->first();
         /*  if ($dailyPageId) {
             if (! $user->canModify('القيود')) {
@@ -122,7 +131,13 @@ class DoubleEntryController extends Controller
         $Invoice_id = null;
         $Payment_type = $defaultPaymentType;
 
-
+        if ($request->sub_account_type == "دائن") {
+            $debit = $validated['sub_account_debit_id'];
+            $credit = $validated['sub_account_Credit_id'];
+        } else if ($request->sub_account_type == "مدين") {
+            $credit = $validated['sub_account_debit_id'];
+            $debit = $validated['sub_account_Credit_id'];
+        }
 
         // // إنشاء القيد اليومي
         $dailyEntrie = DailyEntrie::updateOrCreate(
@@ -133,14 +148,14 @@ class DoubleEntryController extends Controller
             ],
             [
                 'double_entry_id'
-                => $validated['sub_account_debit_id'],
+                => $request->saveData_debit_id,
                 'invoice_id' => $Invoice_id ?? null,
                 'daily_page_id' => $dailyPage->page_id ?? $dailyPageId->daily_page_id,
                 'daily_entries_type' => $invoice_type ?? $Payment_type,
-                'account_debit_id' => $validated['sub_account_debit_id'],
+                'account_debit_id' => $debit,
                 'amount_credit' => $Amount_debit,
                 'amount_debit' =>  $Amount_debit,
-                'account_credit_id' => $validated['sub_account_Credit_id'],
+                'account_credit_id' => $credit,
                 'exchange_rate' => $validated['exchange_rate'],
                 'statement' => $validated['Statement']  ?? "قيد يومي",
                 'invoice_type' => $request->payment_type,
@@ -150,6 +165,7 @@ class DoubleEntryController extends Controller
                 'status' => 'غير مرحل',
             ]
         );
+        $dailyEntrie->load('creditAccount', 'debitAccount');
 
         return response()->json(['success' => 'تم حفظ القيد بنجاح', 'dailyEntrie' => $dailyEntrie]);
     }
