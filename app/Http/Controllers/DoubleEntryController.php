@@ -51,24 +51,46 @@ class DoubleEntryController extends Controller
         $doubleEntry = Double_entry::with('double_entries', 'creditAccount', 'debitAccount')->find($id);
         return view('daily_restrictions.double_entries.show_dobule', compact('doubleEntry'));
     }
+    public function edit($id)
+    {
+        $DailyEntrie = DailyEntrie::where('entrie_id', $id)->first();
+        return response()->json($DailyEntrie);
+    }
     public function storeOrUpdate(Request $request)
     {
+
+
         $request->validate(
             [
                 'typeAccount' => 'required',
             ]
         );
-        $Double_entry = Double_entry::create([
-            'account_debit_id' => $request->sub_account_debit_id,
-            'Statement' => $request->Statement,
-            'User_id' => Auth::user()->id,
-            'account_type' => $request->typeAccount,
-        ]);
+        $Double_entry = Double_entry::updateOrCreate(
+            ['id' => $request->saveData_debit_id2],
+            [
+                'account_debit_id' => $request->sub_account_debit_id,
+                'Statement' => $request->Statement,
+                'User_id' => Auth::user()->id,
+                'account_type' => $request->typeAccount,
+            ]
+        );
         return response()->json($Double_entry);
     }
 
-    public function store(Request $request)
+
+    public function destroy($id)
     {
+        DailyEntrie::where('entrie_id', $id)->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'تم حذف البيانات بنجاح.',
+        ]);
+    }
+    public function store(Request $request)
+
+    {
+
         $dailyPageId = DailyEntrie::where('entrie_id', $request->entrie_id)->first();
         /*  if ($dailyPageId) {
             if (! $user->canModify('القيود')) {
@@ -169,5 +191,4 @@ class DoubleEntryController extends Controller
 
         return response()->json(['success' => 'تم حفظ القيد بنجاح', 'dailyEntrie' => $dailyEntrie]);
     }
-    public function delete() {}
 }
