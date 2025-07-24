@@ -354,7 +354,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/double_entries/create', [DoubleEntryController::class, 'create'])->name('double_entries.create');
     Route::post('/double_entries/storeOrUpdate', [DoubleEntryController::class, 'storeOrUpdate'])->name('double_entry.storeOrUpdate');
     Route::get('/double_entries/{id}', [DoubleEntryController::class, 'show'])->name('double_entry.show');
+    Route::get('/double_entry_edit/{id}', [DoubleEntryController::class, 'edit'])->name('double_entry.edit');
     Route::post('/double_entries/store', [DoubleEntryController::class, 'store'])->name('double_entry.store');
+    Route::delete('/double_entry_delete/{id}', [DoubleEntryController::class, 'destroy'])->name('double_entry.delete');
+
 
     Route::get('/general/{id}/ledger/{accounting_id}', [TransferController::class, 'general_ledger'])->name('general.ledger');
     Route::get('/general/ledger/{accounting_id}', [TransferController::class, 'general'])->name('general');
