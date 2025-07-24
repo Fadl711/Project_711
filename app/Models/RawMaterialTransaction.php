@@ -10,7 +10,6 @@ class RawMaterialTransaction extends Model
     use HasFactory;
 
     protected $primaryKey = 'transaction_id';
-    
     protected $fillable = [
         'production_order_id',
         'material_id',
@@ -26,7 +25,6 @@ class RawMaterialTransaction extends Model
         'return_date',
         'notes'
     ];
-
     protected $casts = [
         'issue_date' => 'datetime',
         'return_date' => 'datetime',

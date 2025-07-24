@@ -25,7 +25,7 @@ return new class extends Migration
     
     // التكلفة
     $table->decimal('unit_cost', 15, 5)->comment('التكلفة للوحدة');
-    $table->decimal('total_cost', 15, 2)->comment('التكلفة الإجمالية');
+    $table->decimal('total_cost', 15, 3)->comment('التكلفة الإجمالية');
     
     // المخزن
     $table->integer('warehouse_id')->nullable()->comment('مخزن الصرف');

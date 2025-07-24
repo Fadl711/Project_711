@@ -16,19 +16,18 @@ return new class extends Migration
             $table->string('Product_name');
             $table->integer('product_id');
             $table->bigInteger('Barcode')->unsigned()->nullable(); // إضافة العمود Barcode
-            $table->decimal('Purchase_price', 15, 2)->nullable();
-            $table->decimal('Selling_price', 15, 2)->nullable();
-            $table->decimal('Total', 15, 2);
-            $table->decimal('Cost' ,15, 2)->nullable();
-            $table->decimal('Discount_earned', 15, 2)->nullable();
-            $table->decimal('Profit', 15, 2)->nullable();
-            $table->decimal('Exchange_rate', 15, 2)->nullable();
+            $table->decimal('Purchase_price', 15, 3)->nullable();
+            $table->decimal('Selling_price', 15, 3)->nullable();
+            $table->decimal('Total', 15, 5);
+            $table->decimal('Cost' ,15, 3)->nullable();
+            $table->decimal('Discount_earned', 15, 3)->nullable();
+            $table->decimal('Profit', 15, 3)->nullable();
+            $table->decimal('Exchange_rate', 15, 3)->nullable();
             $table->string('note')->nullable();
             $table->integer('Currency_id')->unsigned()->nullable();
             $table->integer('User_id')->unsigned();
-            $table->decimal('quantity',9,2)->default(0)->comment('كمية المنتج في المعاملة');
-            $table->decimal('Quantityprice', 9, 2)->comment('كمية المنتج  المباعه حسب الوحدة');
-
+            $table->decimal('quantity',15,3)->default(0)->comment('كمية المنتج في المعاملة');
+            $table->decimal('Quantityprice', 15, 5)->comment('كمية المنتج  المباعه حسب الوحدة');
             $table->integer('Purchase_invoice_id')->nullable()->unsigned();
             $table->integer('accounting_period_id')->unsigned();
             $table->unsignedTinyInteger('transaction_type')->comment('نوع المعاملة: 1 للشراء، 2 للبيع، 3 للترحيل المخزني');

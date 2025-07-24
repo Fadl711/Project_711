@@ -28,6 +28,7 @@ use App\Http\Controllers\InventoryTransactionController;
 use App\Http\Controllers\InvoicePurchaseController;
 use App\Http\Controllers\invoicesController\AllBillsController;
 use App\Http\Controllers\LocksFinancialPeriods\LocksFinancialPeriodsController;
+use App\Http\Controllers\ManufacturingCostController;
 use App\Http\Controllers\OperationController;
 use App\Http\Controllers\PaymentCoctroller;
 use App\Http\Controllers\ProductBomController;
@@ -63,6 +64,7 @@ use App\Models\AccountingPeriod;
 use App\Models\Currency;
 use App\Models\DailyEntrie;
 use App\Models\InventoryTransaction;
+use App\Models\ManufacturingCost;
 use App\Models\PaymentBond;
 
 use App\Models\SubAccount;
@@ -123,12 +125,21 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/production_lines/{production_line}/edit', [ProductionLineController::class, 'edit'])->name('production_lines.edit');
     Route::delete('/production_lines/{id}/destroy', [ProductionLineController::class, 'destroy'])->name('production_lines.destroy');
 
-    Route::get('/inventory-transactions/index', [InventoryTransactionController::class, 'index'])->name('inventory-transactions.index');
-    Route::get('/inventory-transactions/create', [InventoryTransactionController::class, 'create'])->name('inventory-transactions.create');
-    Route::post('/inventory-transactions/store', [InventoryTransactionController::class, 'store'])->name('inventory-transactions.store');
-    Route::get('/inventory-transactions/{id}/edit', [InventoryTransactionController::class, 'edit'])->name('inventory-transactions.edit');
-    Route::delete('/inventory-transactions/{id}/destroy', [InventoryTransactionController::class, 'destroy'])->name('inventory-transactions.destroy');
-    Route::get('/inventory-transactions/{id}/show', [InventoryTransactionController::class, 'show'])->name('inventory-transactions.show');
+    Route::get('/manufacturing_costs/index', [ManufacturingCostController::class, 'index'])->name('manufacturing-costs.index');
+    Route::get('/manufacturing_costs/create', [ManufacturingCostController::class, 'create'])->name('manufacturing-costs.create');
+    Route::post('/manufacturing_costs/store', [ManufacturingCostController::class, 'store'])->name('manufacturing-costs.store');
+    Route::get('/manufacturing_costs/{manufacturingCost}/edit', [ManufacturingCostController::class, 'edit'])->name('manufacturing-costs.edit');
+    Route::get('/manufacturing_costs/{manufacturingCost}/show', [ManufacturingCostController::class, 'show'])->name('manufacturing-costs.show');
+    Route::get('/manufacturing_costs/analysis', [ManufacturingCostController::class, 'costAnalysis'])->name('manufacturing-costs.analysis');
+
+
+
+    Route::get('/inventory-transactions/index', [InventoryTransactionController::class, 'create'])->name('inventory-transactions.index');
+    // Route::get('/inventory-transactions/create', [InventoryTransactionController::class, 'create'])->name('inventory-transactions.create');
+    // Route::post('/inventory-transactions/store', [InventoryTransactionController::class, 'store'])->name('inventory-transactions.store');
+    // Route::get('/inventory-transactions/{id}/edit', [InventoryTransactionController::class, 'edit'])->name('inventory-transactions.edit');
+    // Route::delete('/inventory-transactions/{id}/destroy', [InventoryTransactionController::class, 'destroy'])->name('inventory-transactions.destroy');
+    // Route::get('/inventory-transactions/{id}/show', [InventoryTransactionController::class, 'show'])->name('inventory-transactions.show');
 
     Route::get('/product-boms/index', [ProductBomController::class, 'index'])->name('product-boms.index');
     Route::get('/product-boms/create', [ProductBomController::class, 'create'])->name('product-boms.create');

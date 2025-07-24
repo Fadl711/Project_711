@@ -67,8 +67,7 @@ class ProductionOrderController extends Controller
 }
     }
 
-    // عرض تفاصيل أمر إنتاج
-    // عرض تفاصيل أمر الإنتاج
+ 
     public function show(ProductionOrder $productionOrder)
     {
          $rawMaterialTransaction = RawMaterialTransaction::with([
@@ -78,10 +77,12 @@ class ProductionOrderController extends Controller
             'issuedByUser'
         ])
         ->where('production_order_id',$productionOrder->id )->get();
+      $manufacturingCosts=  RawMaterialTransaction::where('production_order_id',$productionOrder->id)->get();
         return view('production_system.production_orders.show', [
             'order' => $productionOrder->load([
                 'product',
                 'line',
+                'manufacturingCosts',
                 'creator',
                 'approver'
             ]),'rawMaterialTransaction'=>$rawMaterialTransaction,

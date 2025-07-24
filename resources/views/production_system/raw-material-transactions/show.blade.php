@@ -1,7 +1,7 @@
 @extends('production_system.index')
 @section('productionSystem')
 <div class="container px-4 py-5 mx-auto">
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex justify-between print:hidden items-center mb-6">
         <h1 class="text-2xl font-bold text-gray-800">تفاصيل حركة المواد الخام #{{ $rawMaterialTransaction->transaction_id }}</h1>
         <a href="{{ route('raw-material-transactions.index') }}" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
             رجوع
@@ -15,7 +15,7 @@
             </h3>
         </div>
         <div class="px-4 py-5 sm:p-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 md:grid-cols-2 gap-4">
                 <div>
                     <p class="text-sm font-medium text-gray-500">أمر الإنتاج</p>
                     <p class="mt-1 text-sm text-gray-900">
@@ -112,7 +112,7 @@
         </div>
         @endif
 
-        <div class="px-4 py-4 bg-gray-50 flex justify-end">
+        <div class="px-4 print:hidden py-4 bg-gray-50 flex justify-end">
             <a href="{{ route('raw-material-transactions.edit', $rawMaterialTransaction->id) }}" class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700 mr-2">
                 تعديل
             </a>

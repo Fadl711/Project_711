@@ -56,6 +56,7 @@ class RawMaterialTransactionController extends Controller
             'material_id' => 'required|',
             'planned_quantity' => 'required|numeric|min:0',
             'actual_quantity' => 'required|numeric|min:0',
+            'returned_quantity' => 'nullable|numeric|min:0',
             'unit_cost' => 'required|numeric|min:0',
             'warehouse_id' => 'required|',
             'location_id' => 'nullable|',
@@ -123,6 +124,7 @@ try{
             'material_id' => 'required|exists:inventory_items,id',
             'planned_quantity' => 'required|numeric|min:0',
             'actual_quantity' => 'required|numeric|min:0',
+
             'unit_cost' => 'required|numeric|min:0',
             'warehouse_id' => 'required|exists:warehouses,id',
             'location_id' => 'nullable|exists:warehouse_locations,id',

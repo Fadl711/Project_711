@@ -37,12 +37,10 @@ class InventoryTransactionController extends Controller
         if ($request->filled('warehouse')) {
             $query->where('warehouse_id', $request->warehouse);
         }
-
         // الفلترة حسب التاريخ
         if ($request->filled('start_date')) {
             $query->where('transaction_date', '>=', $request->start_date);
         }
-
         if ($request->filled('end_date')) {
             $query->where('transaction_date', '<=', $request->end_date);
         }
@@ -50,37 +48,30 @@ class InventoryTransactionController extends Controller
         $transactions = $query->paginate(25);
 
         $warehouses = SubAccount::all();
-        $types = InventoryTransaction::TRANSACTION_TYPES;
+                 $types = TransactionType::cases();
+
 
         return view('production_system.inventory-transactions.index', compact('transactions', 'warehouses', 'types'));
     }
-
-    public function create()
-    {
-            $Currency_name=Currency::all();
+      public function create() {
+        $Currency_name=Currency::all();
+        $products=Product::all();
         $PaymentType = PaymentType::cases();
-         $transaction_types = InventoryTransactionNnum::cases();
+         $transaction_types = TransactionType::cases();
 
 
     
             $allSubAccounts = SubAccount::all();
             $main_accounts = MainAccount::all();
-
-                
-
-        $items = Product::all();
-        $warehouses = SubAccount::where('account_class',3)->get();
-        $productionOrders = ProductionOrder::all();
-        $types = InventoryTransaction::TRANSACTION_TYPES;
-
-
-        return view('production_system.inventory-transactions.create', ['AllSubAccounts'=>$allSubAccounts,
+                return view('production_system.inventory-transactions.create',
+                 ['AllSubAccounts'=>$allSubAccounts,
                 'Currency_name'=>$Currency_name,
                 'main_accounts'=>$main_accounts,
+                'products'=>$products,
                 'PaymentType'=>$PaymentType,
                 'transaction_types'=>$transaction_types,
-        ], compact('items', 'warehouses', 'productionOrders', 'types'));
-    }
+            ]);
+        }
 
     public function store(Request $request)
     {
