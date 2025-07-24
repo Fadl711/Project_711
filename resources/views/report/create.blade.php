@@ -70,14 +70,12 @@
         <select name="list" id="list" class="input-field select2 inputSale" required>
             <option value="" selected>اختر نوع التقرير</option>
             @foreach([
-
             //   'summary' => ' كشف كلي',
               'detail' => ' كشف تحليلي',
               'dailyRestrictions' => ' كشف القيود',
               'dailyRestrictionsSelected' => ' كشف القيود  للحساب المحدد',
               'FullDisclosureOfSubAccounts' => 'كشف كلي الحسابات الفرعية قبل الترحيل',
               'FullDisclosureOfAccounts' => 'كشف  كلي للحسابات  قبل الترحيل',
-
               'Disclosure_of_all_sub_accounts_after_migration' => 'كشف كلي الحسابات الفرعية بعد الترحيل',
               'Full_disclosure_of_accounts_after_migration' => 'كشف  كلي للحسابات  بعد الترحيل',
 

@@ -89,6 +89,12 @@
                         <td class="tagTd  ">{{ $pro->product_name }}</td>
                         <td class="tagTd  ">
                             <select class="sel default-unit-select " data-product-id="{{ $pro->Categorie_id }}">
+                                @if(!$pro->Categorie_id)
+                                <option value="{{null}}">
+                                    اختر وحدة
+                                </option>
+                                    
+                                @endif
                                 @foreach ($pro->categories as $unit)
                                     <option value="{{ $unit->categorie_id }}"
                                         {{ $pro->Categorie_id == $unit->categorie_id ? 'selected' : '' }}>

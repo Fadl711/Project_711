@@ -16,17 +16,16 @@ enum TransactionType: int
     //   عرض سعر = 6; في جدول مبيعات
     //   كمية مرحلة = 7; في جدول مشتريات
     //  شراء = 1;
-    // مردود مشتريات= 2;
+    //  مردود مشتريات= 2;
     //  تحويل مخزني = 3;
     //  مبيعات = 4;
     //  مردود مبيعات = 5;
-    case Settlement_of_excess_quantities = 8;
-    case Settlement_of_missing_quantities = 9;
+    case Settlement_of_excess_quantities = 8 ;
+    case Settlement_of_missing_quantities = 9 ;
     case Damaged_quantity = 10;
     case SELL_CURRENCY = 11;
     case CURRENCY_CONVeERSION = 12;
     case BUY_CURRENCY = 13;
-
 
     case product_in = 16;
     case receipt = 17;

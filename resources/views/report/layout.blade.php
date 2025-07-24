@@ -21,7 +21,6 @@
               <a href="{{route('salesReport.create')}}" class="sm:px-3 border-b-2 {{ Request::is('salesReport/create') ? 'text-blue-700 border-blue-700' : 'text-gray-600' }} border-transparent   dark:text-gray-400 pb-1.5">تقارير ارباح وخسائر الاصناف</a>
               <a href="{{route('report.salesReport')}}" class="sm:px-3 border-b-2 {{ Request::is('salesReport') ? 'text-blue-700 border-blue-700' : 'text-gray-600' }} border-transparent dark:text-gray-400 pb-1.5">تقارير المبيعات</a>
               <a href="#" class="sm:px-3 border-b-2 border-transparent text-gray-600 dark:text-gray-400 pb-1.5 ">تقارير</a>
-           
             </div>
           </div>
         </div>
@@ -53,12 +52,17 @@
                     <select name="Quantit"  id="Quantit" class="input-field select2 w-full border border-gray-300 rounded-lg p-2 text-right" required>
                         <option value="" selected>اختر النوع</option>
                         @foreach([
-                                            'inventoryList' => 'امر جرد',
+                                            // 'inventoryList' => 'امر جرد',
 
                             'Quantityonly' => 'الكمية',
+                            //    'QuantityNotAvailable' => 'كمية غير متوفرة',
                                   'QuantityCosts' => 'الكمية والتكاليف',
                                   'QuantityCostsSupplier' => 'الكمية والتكاليف حسب حركة الموردين',
-                                  'QuantitySupplier' => 'الكمية حسب حركة الموردين'] as $key => $label)
+                                  'QuantitySupplier' => 'الكمية حسب حركة الموردين',
+                                //   'SettlementOfExcessQuantities' => 'تسوية الكميات الزائدة ',
+                                //   'SettlementOfMissingQuantities' => 'تسوية الكميات الناقصة ',
+                                //   'SettlementOfDamagedQuantities' => 'تسوية الكميات التالفة ',
+                                  ] as $key => $label)
                             <option value="{{ $key }}">{{ $label }}</option>
                         @endforeach
                     </select>
