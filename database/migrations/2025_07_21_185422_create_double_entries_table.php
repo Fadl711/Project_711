@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('double_entries', function (Blueprint $table) {
             $table->id();
-            $table->integer('account_debit_id');
+            $table->integer('account_id');
             $table->text('Statement')->nullable();
             $table->unsignedInteger('User_id');
             $table->integer('currency_id')->nullable();
+            $table->integer('accounting_period_id')->unsigned();
             $table->timestamps();
         });
     }

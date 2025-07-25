@@ -214,7 +214,7 @@
 
                     <label class="inline" for="">رقم القيد</label>
                     <input class="w-1/2 rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                        id="entrie_id" type="number">
+                       name="entrie_id" id="entrie_id" type="number">
                 </div>
                 <button type="submit"
                     class="inline-block px-8 py-3 bg-emerald-600 hover:bg-emerald-700	 text-white text-lg font-semibold rounded-lg shadow-md transition duration-200"
@@ -391,7 +391,7 @@
                             })
 
                             .done(function(Double_entry) {
-                                if (Double_entry.account_debit_id) {
+                                if (Double_entry.account_id) {
                                     console.log(Double_entry);
                                     if (saveData_debit_id.val() == null || saveData_debit_id.val() == "") {
                                         var message = "تم إنشاء قيد مزدوج بنجاح";
@@ -402,7 +402,7 @@
                                     // تحديث الحقول وإظهار رسالة النجاح
                                     saveData_debit_id.val(Double_entry.id);
                                     $('#saveData_debit_id2').val(Double_entry.id);
-                                    fadl.val(Double_entry.account_debit_id);
+                                    fadl.val(Double_entry.account_id);
                                     sub_account_type.val(Double_entry.account_type);
                                     $('#account_Credit_id_label').text(
                                         `حساب ${Double_entry.account_type == "دائن" ? 'مدين' : "دائن"} / الرئيسي`

@@ -1,16 +1,11 @@
 {
   "resources/css/app.css": {
-<<<<<<< HEAD
-    "file": "assets/app-y0ApwMJj.css",
-    "file": "assets/app-DhvuY7lu.css",
-=======
-    "file": "assets/app-B6FPwZmL.css",
->>>>>>> 524b17f1497995ee2c1839ea72a18512e3a8aca4
+    "file": "assets/app-BU1Xjh2c.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-DjwA4cWv.js",
+    "file": "assets/app-Dpy3YExH.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true

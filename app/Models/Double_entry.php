@@ -8,10 +8,11 @@ class Double_entry extends Model
 {
     protected $table = 'double_entries';
     protected $fillable = [
-        'account_debit_id',
+        'account_id',
         'Statement',
         'User_id',
         'account_type',
+        'accounting_period_id',
     ];
     public function double_entries()
     {
@@ -19,13 +20,13 @@ class Double_entry extends Model
     }
     public function debitAccount()
     {
-        return $this->belongsTo(SubAccount::class, 'account_debit_id', 'sub_account_id');
+        return $this->belongsTo(SubAccount::class, 'account_id', 'sub_account_id');
     }
 
     // علاقة مع جدول sub_accounts - الحساب الدائن
     public function creditAccount()
     {
-        return $this->belongsTo(SubAccount::class, 'account_debit_id', 'sub_account_id');
+        return $this->belongsTo(SubAccount::class, 'account_id', 'sub_account_id');
     }
     public function user()
     {
