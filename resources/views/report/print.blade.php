@@ -97,6 +97,9 @@
 @isset($QuantityCostsSupplier)
 @include('components.storesData.Quantity-Costs-Supplier')
 @endisset
+@isset($SelecetQuantityCostsSupplier)
+@include('components.storesData.Quantity-Costs-Supplier')
+@endisset
 @isset($QuantitySupplier)
 @include('components.storesData.Quantity-Supplier')
 @endisset

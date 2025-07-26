@@ -35,10 +35,16 @@ class Product extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public function categories()
+  public function category()
     {
-        return $this->hasMany(Category::class, 'product_id', 'product_id');
+        return $this->belongsTo(Category::class, 'Categorie_id', 'categorie_id');
     }
+ public function categories()
+    {
+        return $this->hasMany(Category::class, 'product_id');
+    }
+    // يمكن الاحتفاظ بهذا كعلاقة احتياطية إذا لزم الأمر
+   
 
     public function scopeExpiringSoon($query)
     {

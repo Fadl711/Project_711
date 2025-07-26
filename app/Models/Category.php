@@ -21,8 +21,12 @@ class Category extends Model
         'user_id',
 
     ];
+    // public function products()
+    // {
+    //     return $this->hasMany(Product::class, 'Categorie_id');
+    // }
     public function products()
     {
-        return $this->hasMany(Product::class, 'Categorie_id');
+        return $this->hasMany(Product::class, 'Categorie_id', 'categorie_id');
     }
 }

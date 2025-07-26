@@ -5,10 +5,9 @@
     <table class="w-full text-sm  bg-white ">
         
         <tr class="bg-blue-100">
-            <th class="text-right">رقم الصنف</th>
+            <th class="text-right">  رقم الصنف</th>
             <th class="text-right">اسم الصنف</th>
             <th class="text-right"> الوحدة</th>
-            <th class="text-right">  وصف الصنف</th>
             <th class="text-right">المخزن</th>
             <th class="text-right">الكمية المتوفره</th>
             </tr>
