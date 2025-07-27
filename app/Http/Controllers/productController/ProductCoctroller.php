@@ -68,13 +68,22 @@ class ProductCoctroller extends Controller
             'Quantit' => 'nullable|',
             'DisplayMethod' => 'nullable|string|max:255',
         ]);
-        $warehouse_to_id = $validated['warehouseid'];
+                $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+
+      $warehouse_to_id =   (int)$validated['warehouseid'];
         // $accountingPeriod =$validated['accountingPeriodData'];
         $warehouse_to_id = $this->convertArabicNumbersToEnglish($warehouse_to_id);
         $productname = $validated['productname'];
         $productname = $this->convertArabicNumbersToEnglish($productname);
         $Quantit = $validated['Quantit'];
         $DisplayMethod = $validated['DisplayMethod'];
+
+        if ($Quantit == "ExcessQuantitiesCostsAllStores" ) {
+            return   $this->allQuantityCosts($warehouse_to_id, $accountingPeriod, $Quantit);
+        }
+        if ($Quantit == "ExcessQuantitiesCostsFristStore" ) {
+            return   $this->allQuantityCosts($warehouse_to_id, $accountingPeriod, $Quantit);
+        }
 
         if ($Quantit === "QuantityCostsSupplier") {
             return $this->QuantityAndCostsAccordingToSuppliersMovement($warehouse_to_id, $productname, $Quantit, $DisplayMethod);
@@ -83,14 +92,18 @@ class ProductCoctroller extends Controller
             return $this->QuantityAndCostsAccordingToSuppliersMovement($warehouse_to_id, $productname, $Quantit, $DisplayMethod);
         }
 
-        if ($validated['Quantit'] === "QuantityCosts") {
+        if ($validated['Quantit'] === "QuantityCosts" ) {
             return $this->ShowAllProducts($warehouse_to_id, $productname, $Quantit, $DisplayMethod);
         }
+        if ($validated['Quantit'] === "QuantityNotAvailable") {
+            return $this->ShowAllProducts($warehouse_to_id, $productname, $Quantit, $DisplayMethod);
+        }
+        // يي
         if ($validated['Quantit'] === "Incomplete") {
             return $this->ShowAllProducts($warehouse_to_id, $productname, $Quantit, $DisplayMethod);
         }
 
-        if ($validated['Quantit'] === "Quantityonly") {
+        if ($validated['Quantit'] === "Quantityonly" || $validated['Quantit'] === "QuantityAllStores" || $validated['Quantit'] === "QuantityCostsAllStores" || $validated['Quantit'] === "ExcessQuantitiesCostsAllStores"  ) {
             return $this->ShowAllProducts($warehouse_to_id, $productname, $Quantit, $DisplayMethod);
         }
         if ($validated['Quantit'] === "inventoryList") {
@@ -99,11 +112,13 @@ class ProductCoctroller extends Controller
 
         if ($validated['DisplayMethod'] === "ShowAllProducts") {
             if ($validated['Quantit'] === "QuantityCosts") {
+                dd(22);
                 return $this->QuantityAndCostsAccordingToSuppliersMovement($warehouse_to_id, $productname, $Quantit, $DisplayMethod);
             }
         }
         if ($validated['DisplayMethod'] === "SelectedProduct") {
             if ($validated['Quantit'] === "QuantityCosts") {
+                dd(22);
                 return $this->Quantityonly($warehouse_to_id, $productname, $Quantit, $DisplayMethod);
             }
         }
@@ -112,26 +127,96 @@ class ProductCoctroller extends Controller
 {
     $warehouseName = SubAccount::where('sub_account_id', $warehouse_to_id)->value('sub_name');
     $productname = "تقرير مخزني لكل الاصناف في " . $warehouseName;
+$warehouse_ids = SubAccount::where('account_class', 3)
+    ->pluck('sub_account_id')
+    ->toArray();
 
-    // بناء الاستعلام الأساسي
-    $query = Product::query()
-        ->leftJoin('categories', 'products.Categorie_id', '=', 'categories.categorie_id')
-        ->select([
-            'products.product_id',
-            'products.product_name',
-            'products.Purchase_price',
-            'categories.Purchase_price as unit_price',
-            'categories.Categorie_name as category_name',
-            'categories.Quantityprice as unit_quantity',
-            DB::raw('COALESCE(saleQuantity4.sum_quantity, 0) as saleQuantity4'),
-            DB::raw('COALESCE(saleQuantity5.sum_quantity, 0) as saleQuantity5'),
-            DB::raw('COALESCE(warehouseFromQuantity3.sum_quantity, 0) as warehouseFromQuantity3'),
-            DB::raw('COALESCE(warehouseFromQuantity.sum_quantity, 0) as warehouseFromQuantity'),
-            DB::raw('COALESCE(purchaseToQuantity.sum_quantity, 0) as purchaseToQuantity')
-        ]);
+// بناء الاستعلام الأساسي
+$query = Product::query()
+    ->leftJoin('categories', 'products.Categorie_id', '=', 'categories.categorie_id')
+    ->select([
+        'products.product_id',
+        'products.product_name',
+        'products.Purchase_price',
+        'categories.Purchase_price as unit_price',
+        'categories.Categorie_name as category_name',
+        'categories.Quantityprice as unit_quantity',
+        DB::raw('COALESCE(saleQuantity4.sum_quantity, 0) as saleQuantity4'),
+        DB::raw('COALESCE(saleQuantity5.sum_quantity, 0) as saleQuantity5'),
+        DB::raw('COALESCE(warehouseFromQuantity3.sum_quantity, 0) as warehouseFromQuantity3'),
+        DB::raw('COALESCE(warehouseFromQuantity.sum_quantity, 0) as warehouseFromQuantity'),
+        DB::raw('COALESCE(purchaseToQuantity.sum_quantity, 0) as purchaseToQuantity')
+    ]);
+
+if ($Quantit == "QuantityAllStores" ||$Quantit == "QuantityNotAvailable" || $Quantit == "QuantityCostsAllStores" || $Quantit=== "ExcessQuantitiesCostsAllStores" ) {
+    // dd(22);    // إضافة الجداول الفرعية مع معالجة خاصة لعامل IN
+    $query->leftJoin(DB::raw('(SELECT product_id, SUM(quantity) as sum_quantity 
+        FROM sales 
+        WHERE transaction_type = 4 
+        AND warehouse_to_id IN ('.implode(',', array_fill(0, count($warehouse_ids), '?')).') 
+        AND accounting_period_id = ? 
+        GROUP BY product_id) as saleQuantity4'), 
+        function ($join) use ($warehouse_ids, $accountingPeriod) {
+            $join->on('products.product_id', '=', 'saleQuantity4.product_id');
+            $bindings = array_merge($warehouse_ids, [$accountingPeriod->accounting_period_id]);
+            $join->addBinding($bindings, 'join');
+        })
+        ->leftJoin(DB::raw('(SELECT product_id, SUM(quantity) as sum_quantity 
+        FROM sales 
+        WHERE transaction_type = 5 
+        AND warehouse_to_id IN ('.implode(',', array_fill(0, count($warehouse_ids), '?')).') 
+        AND accounting_period_id = ? 
+        GROUP BY product_id) as saleQuantity5'), 
+        function ($join) use ($warehouse_ids, $accountingPeriod) {
+            $join->on('products.product_id', '=', 'saleQuantity5.product_id');
+            $bindings = array_merge($warehouse_ids, [$accountingPeriod->accounting_period_id]);
+            $join->addBinding($bindings, 'join');
+        })
+        ->leftJoin(DB::raw('(SELECT product_id, SUM(Quantityprice) as sum_quantity 
+        FROM purchases 
+        WHERE transaction_type IN (1, 3, 6, 7, 8, 15, 16, 17) 
+        AND warehouse_to_id IN ('.implode(',', array_fill(0, count($warehouse_ids), '?')).') 
+        AND accounting_period_id = ? 
+        GROUP BY product_id) as purchaseToQuantity'), 
+        function ($join) use ($warehouse_ids, $accountingPeriod) {
+            $join->on('products.product_id', '=', 'purchaseToQuantity.product_id');
+            $bindings = array_merge($warehouse_ids, [$accountingPeriod->accounting_period_id]);
+            $join->addBinding($bindings, 'join');
+        });
+
+    // الجداول الفرعية التي لا تستخدم IN
+    $query->leftJoin(DB::raw('(SELECT product_id, SUM(Quantityprice) as sum_quantity 
+        FROM purchases 
+        WHERE transaction_type = 2 
+        AND warehouse_from_id IN ('.implode(',', array_fill(0, count($warehouse_ids), '?')).')
+        AND accounting_period_id = ? 
+        GROUP BY product_id) as warehouseFromQuantity'), 
+        function ($join) use ($warehouse_ids, $accountingPeriod) {
+            $join->on('products.product_id', '=', 'warehouseFromQuantity.product_id');
+            $bindings = array_merge($warehouse_ids, [$accountingPeriod->accounting_period_id]);
+            $join->addBinding($bindings, 'join');
+        })
+        ->leftJoin(DB::raw('(SELECT product_id, SUM(Quantityprice) as sum_quantity 
+        FROM purchases 
+        WHERE transaction_type IN (3,9,10,14,18,19,20)
+        AND warehouse_from_id IN ('.implode(',', array_fill(0, count($warehouse_ids), '?')).')
+        AND accounting_period_id = ? 
+        GROUP BY product_id) as warehouseFromQuantity3'), 
+        function ($join) use ($warehouse_ids, $accountingPeriod) {
+            $join->on('products.product_id', '=', 'warehouseFromQuantity3.product_id');
+            $bindings = array_merge($warehouse_ids, [$accountingPeriod->accounting_period_id]);
+            $join->addBinding($bindings, 'join');
+        });
+}
+    else{
+
 
     // إضافة الجداول الفرعية
-    $query->leftJoin(DB::raw('(SELECT product_id, SUM(quantity) as sum_quantity FROM sales WHERE transaction_type = 4 AND warehouse_to_id = ? AND accounting_period_id = ? GROUP BY product_id) as saleQuantity4'), 
+    $query->leftJoin(DB::raw('(SELECT product_id, SUM(quantity) as sum_quantity 
+    FROM sales WHERE transaction_type = 4
+     AND warehouse_to_id = ?
+      AND accounting_period_id = ? 
+      GROUP BY product_id) as saleQuantity4'), 
         function ($join) use ($warehouse_to_id, $accountingPeriod) {
             $join->on('products.product_id', '=', 'saleQuantity4.product_id')
                 ->addBinding([$warehouse_to_id, $accountingPeriod->accounting_period_id]);
@@ -141,22 +226,39 @@ class ProductCoctroller extends Controller
             $join->on('products.product_id', '=', 'saleQuantity5.product_id')
                 ->addBinding([$warehouse_to_id, $accountingPeriod->accounting_period_id]);
         })
-        ->leftJoin(DB::raw('(SELECT product_id, SUM(Quantityprice) as sum_quantity FROM purchases WHERE transaction_type IN (3,9,10,14,18,19,20) AND warehouse_from_id = ? AND accounting_period_id = ? GROUP BY product_id) as warehouseFromQuantity3'), 
+        ->leftJoin(DB::raw('(SELECT product_id, SUM(Quantityprice) as sum_quantity
+         FROM purchases WHERE transaction_type IN (3,9,10,14,18,19,20) 
+         AND warehouse_from_id = ? 
+        AND accounting_period_id = ?
+         GROUP BY product_id) as warehouseFromQuantity3'), 
         function ($join) use ($warehouse_to_id, $accountingPeriod) {
             $join->on('products.product_id', '=', 'warehouseFromQuantity3.product_id')
                 ->addBinding([$warehouse_to_id, $accountingPeriod->accounting_period_id]);
         })
-        ->leftJoin(DB::raw('(SELECT product_id, SUM(Quantityprice) as sum_quantity FROM purchases WHERE transaction_type = 2 GROUP BY product_id) as warehouseFromQuantity'), 
-        function ($join) {
-            $join->on('products.product_id', '=', 'warehouseFromQuantity.product_id');
+        ->leftJoin(DB::raw('(SELECT product_id, SUM(Quantityprice) as sum_quantity
+         FROM purchases WHERE transaction_type = 2
+         AND warehouse_from_id = ? 
+        AND accounting_period_id = ?
+         GROUP BY product_id) as warehouseFromQuantity'), 
+        function ($join) use ($warehouse_to_id, $accountingPeriod) {
+            $join->on('products.product_id', '=', 'warehouseFromQuantity.product_id')
+                ->addBinding([$warehouse_to_id, $accountingPeriod->accounting_period_id]);
         })
-        ->leftJoin(DB::raw('(SELECT product_id, SUM(Quantityprice) as sum_quantity FROM purchases WHERE transaction_type IN (1, 3, 6, 7, 8,15,16,17) AND warehouse_to_id = ? AND accounting_period_id = ? GROUP BY product_id) as purchaseToQuantity'), 
+      
+        ->leftJoin(DB::raw('(SELECT product_id, SUM(Quantityprice) as sum_quantity
+         FROM purchases WHERE transaction_type IN (1, 3, 6, 7, 8,15,16,17)
+          AND warehouse_to_id = ?
+           AND accounting_period_id = ? 
+          GROUP BY product_id) as purchaseToQuantity'), 
         function ($join) use ($warehouse_to_id, $accountingPeriod) {
             $join->on('products.product_id', '=', 'purchaseToQuantity.product_id')
                 ->addBinding([$warehouse_to_id, $accountingPeriod->accounting_period_id]);
         });
+        }
 
     $allQuantityCosts = $query->get();
+
+
 
     $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_at)->format('Y-m-d');
     $accountingPeriod = Carbon::now()->format('Y-m-d');
@@ -165,12 +267,33 @@ class ProductCoctroller extends Controller
         $Myanalysis = "تقرير مخزني - الكمية والتكاليف - من " . $accountingPeriodCreatedAtFormatted . " الى " . $accountingPeriod;
         return view('report.print', compact('allQuantityCosts', 'productname', 'Myanalysis', 'accountingPeriod'))->render();
     } 
+    if ($Quantit == "QuantityCostsAllStores") {
+        $Myanalysis = "تقرير مخزني - الكمية والتكاليف المتوفرة في جميع المخازن - من " . $accountingPeriodCreatedAtFormatted . " الى " . $accountingPeriod;
+        return view('report.print', compact('allQuantityCosts', 'productname', 'Myanalysis', 'accountingPeriod'))->render();
+    } 
+    if ($Quantit == "ExcessQuantitiesCostsFristStore") {
+        $Myanalysis = "تقرير مخزني -  الكميات والتكاليف الزائدة  او لم تدخل النظام عند الشراء والتي تم بيعها - من  مخزن : ".$warehouseName ." - من " . $accountingPeriodCreatedAtFormatted . " الى " . $accountingPeriod;
+        return view('report.print',['excessQuantitiesCostsAllStores'=>$allQuantityCosts] ,compact( 'productname', 'Myanalysis', 'accountingPeriod'))->render();
+    } 
+    if ($Quantit == "ExcessQuantitiesCostsAllStores") {
+        $Myanalysis = "تقرير مخزني -  الكميات والتكاليف الزائدة  او لم تدخل النظام عند الشراء والتي تم بيعها - من جميع المخازن - من " . $accountingPeriodCreatedAtFormatted . " الى " . $accountingPeriod;
+        return view('report.print',['excessQuantitiesCostsAllStores'=>$allQuantityCosts] ,compact( 'productname', 'Myanalysis', 'accountingPeriod'))->render();
+    } 
     
     if ($Quantit == "Quantityonly") {
-        $allQuantityonly = $allQuantityCosts;
         $Myanalysis = "تقرير مخزني - الكميات المتوفرة - " . $accountingPeriod;
         return view('report.print',['allQuantityonly'=>$allQuantityCosts] ,compact( 'productname', 'Myanalysis', 'accountingPeriod'))->render();
     }
+    if ($Quantit == "QuantityAllStores") {
+        $Myanalysis = "تقرير مخزني -  الكميات المتوفرة في جميع المخازن- " . $accountingPeriod;
+        return view('report.print',['allQuantityonly'=>$allQuantityCosts] ,compact( 'productname', 'Myanalysis', 'accountingPeriod'))->render();
+    }
+    if ($Quantit == "QuantityNotAvailable") {
+
+        $Myanalysis = "تقرير مخزني - للكميات  الغير متوفرة في جميع المخازن - " . $accountingPeriod;
+        return view('report.print',['QuantityNotAvailable'=>$allQuantityCosts] ,compact( 'productname', 'Myanalysis', 'accountingPeriod'))->render();
+    }
+
 }
     public function selectedProduct($warehouse_to_id, $accountingPeriod, $productname, $Quantit)
     {
@@ -211,17 +334,62 @@ class ProductCoctroller extends Controller
                 }
             ], 'Quantityprice')
             ->first();
+
         $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_at)->format('Y-m-d');
-        $accountingPeriod = Carbon::now()->format('Y-m-d');
+        $accountingPeri = Carbon::now()->format('Y-m-d');
 
         if ($Quantit == "Quantityonly") {
-            $Myanalysis = "تقرير مخزني - الكمية المتوفرة  - " . " " . "من " . $accountingPeriodCreatedAtFormatted . " " . "الى " . $accountingPeriod;
-            $firstQuantityonly = $firstQuantityCosts;
+            $Myanalysis = "تقرير مخزني - الكمية المتوفرة  - " . " " . "من " . $accountingPeriodCreatedAtFormatted . " " . "الى " . $accountingPeri;
             //allQuantityonly
-            return view('report.print', compact('firstQuantityonly', 'productname', 'accountingPeriod', 'Myanalysis'))->render(); // إرجاع المحتوى كـ HTML
+            return view('report.print', ['firstQuantityonly'=>$firstQuantityCosts] , compact( 'productname', 'accountingPeriod', 'Myanalysis'))->render(); // إرجاع المحتوى كـ HTML
+        }
+        if ($Quantit == "QuantityAvailableInAllStores") {
+        $firstQuantityCosts = Product::where('product_id', (int)$productname)
+
+            ->with(['categories','sales', 'purchases' => function ($query) use ($accountingPeriod, $warehouse_to_id) {
+                $query->where('accounting_period_id', $accountingPeriod->accounting_period_id);
+            }])
+            ->withSum([
+                'sales as saleQuantity4' => function ($query)  use ($warehouse_to_id, $accountingPeriod) {
+                    $query->where('transaction_type', 4)
+                        ->where('warehouse_to_id', '!=' ,null)
+                        ->where('accounting_period_id', $accountingPeriod->accounting_period_id);
+                },
+                'sales as saleQuantity5' => function ($query)  use ($warehouse_to_id, $accountingPeriod) {
+                    $query->where('transaction_type', 5)
+                        ->where('warehouse_to_id',  '!=' ,null)
+                        ->where('accounting_period_id', $accountingPeriod->accounting_period_id);
+                }
+            ], 'quantity')
+            ->withSum([
+                'purchases as warehouseFromQuantity3' => function ($query) use ($warehouse_to_id, $accountingPeriod) {
+                    $query->whereIn('transaction_type', [3,9,10,14,18,19,20])
+                        ->where('warehouse_from_id', '!=' ,null)
+                        ->where('accounting_period_id', $accountingPeriod->accounting_period_id);
+                },
+                'purchases as warehouseFromQuantity' => function ($query) use ($warehouse_to_id, $accountingPeriod) {
+                    $query->where('transaction_type', 2)
+                        ->where('warehouse_from_id', '!=' ,null)
+
+
+                    ;
+                },
+                'purchases as purchaseToQuantity' => function ($query) use ($warehouse_to_id, $accountingPeriod) {
+                    $query->whereIn('transaction_type', [1, 3, 6, 7, 8,15,16,17])
+                        ->where('warehouse_to_id', '!=' ,null)
+                        ->where('accounting_period_id', $accountingPeriod->accounting_period_id);
+                }
+            ], 'Quantityprice')
+            ->first();
+
+
+
+            $Myanalysis = "تقرير مخزني - الكمية المتوفرة في جميع المخازن  - " . " " . "من " . $accountingPeriodCreatedAtFormatted . " " . "الى " . $accountingPeri;
+            //allQuantityonly
+            return view('report.print', ['firstQuantityonly'=>$firstQuantityCosts] , compact( 'productname', 'accountingPeriod', 'Myanalysis'))->render(); // إرجاع المحتوى كـ HTML
         }
         if ($Quantit == "QuantityCosts") {
-            $Myanalysis = "تقرير مخزني - الكمية والتكاليف - " . " " . "من " . $accountingPeriodCreatedAtFormatted . " " . "الى " . $accountingPeriod;
+            $Myanalysis = "تقرير مخزني - الكمية والتكاليف - " . " " . "من " . $accountingPeriodCreatedAtFormatted . " " . "الى " . $accountingPeri;
             return view('report.print', compact('firstQuantityCosts', 'productname', 'Myanalysis', 'accountingPeriod'))->render(); // إرجاع المحتوى كـ HTML
         }
     }
@@ -239,7 +407,11 @@ class ProductCoctroller extends Controller
 
 
         $warehouseName = SubAccount::where('sub_account_id', $warehouse_to_id)->value('sub_name');
-        if ($DisplayMethod == "ShowAllProducts") {
+        if ($DisplayMethod == "ShowAllProducts" ) {
+            return   $this->allQuantityCosts($warehouse_to_id, $accountingPeriod, $Quantit);
+        }
+        
+        if ($DisplayMethod == "QuantityNotAvailable") {
             return   $this->allQuantityCosts($warehouse_to_id, $accountingPeriod, $Quantit);
         }
 
@@ -330,7 +502,6 @@ class ProductCoctroller extends Controller
         'categories.Quantityprice'
     ])
     ->orderBy('products.product_name')
-    ->orderBy('sub_accounts.sub_name')
     ->get();
 
 
@@ -358,11 +529,8 @@ class ProductCoctroller extends Controller
 
         $accountingPeriod = Carbon::now()->format('Y-m-d');
         if ($Quantit == "Incomplete") {
-            // dd($inventoryData);
-
             return view('report.print', compact('QuantityIncomplete', 'productname', 'Myanalysis', 'accountingPeriod'))->render(); // إرجاع المحتوى كـ HTML
         }
-
         if ($Quantit == "inventoryList") {
             if ($DisplayMethod == "ShowAllProducts") {
                 $productname = "امر جرد لكل الاصناف  " . " في المخزن: " . $warehouseName;
@@ -384,7 +552,6 @@ class ProductCoctroller extends Controller
 
     public function QuantityAndCostsAccordingToSuppliersMovement($warehouse_to_id, $productname, $Quantit, $DisplayMethod)
     {
-
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
         $warehouseName = SubAccount::where('sub_account_id', $warehouse_to_id)->value('sub_name');
     $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_at)->format('Y-m-d');
@@ -395,27 +562,16 @@ class ProductCoctroller extends Controller
         if ($Quantit == "QuantitySupplier") {
             $Myanalysis = "للكمية  حسب حركة الموردين من تاريخ ". "من " . $accountingPeriodCreatedAtFormatted . " " . "الى " . $accountingPeriod;;
         }
-
-
         if ($DisplayMethod == "ShowAllProducts") {
             return   $this->QuantityCostsSupplier($warehouse_to_id, $productname, $Quantit, $DisplayMethod);
         }
         if ($DisplayMethod == "SelectedProduct") {
-
-            // إرجاع المحتوى كـ HTML
-
             return   $this->QuantitySupplier($warehouse_to_id, $productname, $Quantit, $DisplayMethod);
-
-
-
-
             if ($Quantit == "QuantityCostsSupplier") {
-
                 return view('report.print', compact('QuantityCostsSupplier', 'productname', 'Myanalysis', 'accountingPeriod'))->render(); // إرجاع المحتوى كـ HTML
             }
             if ($Quantit == "QuantitySupplier") {
                 return view('report.print', compact('QuantitySupplier', 'productname', 'Myanalysis', 'accountingPeriod'))->render(); // إرجاع المحتوى كـ HTML
-
             }
             }
        

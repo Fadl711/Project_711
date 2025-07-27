@@ -85,10 +85,16 @@
 @isset($allQuantityonly)
 @include('components.storesData.all-Quantit-yonly')
 @endisset
+@isset($QuantityNotAvailable)
+@include('components.storesData.all-Quantit-yonly')
+@endisset
 @isset($firstQuantityonly)
 @include('components.storesData.all-Quantit-yonly')
 @endisset
 @isset($allQuantityCosts)
+@include('components.storesData.all-Quantity-Costs')
+@endisset
+@isset($excessQuantitiesCostsAllStores)
 @include('components.storesData.all-Quantity-Costs')
 @endisset
 @isset($firstQuantityCosts)

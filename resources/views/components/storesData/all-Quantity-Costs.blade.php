@@ -16,9 +16,13 @@
            @endphp
     @isset($allQuantityCosts)
             @foreach ($allQuantityCosts as $index => $item)
+            @php
+$sum_quantity= (float)($item->purchaseToQuantity+$item->saleQuantity5)-$item->warehouseFromQuantity-$item->warehouseFromQuantity3 -$item->saleQuantity4 ?? 0; 
 
+            @endphp
+
+    @if ($sum_quantity > 0)
                @php
-                                $sum_quantity= (float)($item->purchaseToQuantity+$item->saleQuantity5)-$item->warehouseFromQuantity-$item->warehouseFromQuantity3 -$item->saleQuantity4 ?? 0; 
 
     $unit_quantity = $item->unit_quantity ?? $item->categories->first()->Quantityprice ;
     $Purchase_price = $item->unit_price ?? $item->categories->first()->Purchase_price;
@@ -31,13 +35,67 @@
     $remainder = fmod($sum_quantity, $divisor);
     $PurchaseTotal=$sumquantity * $Purchase_price;
                       $Purchase_priceTotal += $PurchaseTotal;
-
 @endphp
-                @if ($sum_quantity)
+            
                     
                     <tr class="border-b border-gray-200 hover:bg-gray-100" >
                         <td class="text-center"> 
-                             <span>{{ $index + 1 }}</span>-
+                          
+                            {{ $item->product_id }}
+                            
+                            -0101  
+                           
+                        </td>
+                        <td class="text-right">{{ $item->product_name  }}</td>
+<td class="text-center">
+    {{ $category_name ?? '' }}
+</td>                  
+                   
+<td class="text-center @if($sumquantity < 0) bg-green-300 @endif">
+   @if($category_name && $unit_quantity>1)
+    @if($remainder != 0)
+    <span class=" text-red-700 mt-1">
+     {{ $remainder }}. 
+    </span>
+
+    @endif
+       @endif
+ {{ floor($sumquantity) }}
+</td>
+        <td class="text-center">{{ number_format($Purchase_price?? 0) }}</td>
+                    <td class="text-center">{{ number_format($PurchaseTotal) }}</td>
+                </tr>
+
+             @endif
+          @endforeach
+       @endisset
+    @isset($excessQuantitiesCostsAllStores)
+            @foreach ($excessQuantitiesCostsAllStores as $index => $item)
+            @php
+$sum_quantity= (float)($item->purchaseToQuantity+$item->saleQuantity5)-$item->warehouseFromQuantity-$item->warehouseFromQuantity3 -$item->saleQuantity4 ?? 0; 
+
+            @endphp
+
+    @if ($sum_quantity < 0)
+               @php
+
+    $unit_quantity = $item->unit_quantity ?? $item->categories->first()->Quantityprice ;
+    $Purchase_price = $item->unit_price ?? $item->categories->first()->Purchase_price;
+    $category_name = $item->category_name?? $item->categories->first()->Categorie_name;
+    // تجنب القسمة على صفر
+    $divisor = $unit_quantity != 0 ? $unit_quantity : 1;
+    // حساب الكمية مع الكسور
+    $sumquantity = $sum_quantity / $divisor;
+    // حساب الباقي مع الكسور
+    $remainder = fmod($sum_quantity, $divisor);
+    $PurchaseTotal=$sumquantity * $Purchase_price;
+                      $Purchase_priceTotal += $PurchaseTotal;
+@endphp
+            
+                    
+                    <tr class="border-b border-gray-200 hover:bg-gray-100" >
+                        <td class="text-center"> 
+                          
                             {{ $item->product_id }}
                             
                             -0101  
@@ -69,8 +127,11 @@
    @isset($firstQuantityCosts)
           @php
                  $sum_quantity= (float)($firstQuantityCosts->purchaseToQuantity+$firstQuantityCosts->saleQuantity5)-$firstQuantityCosts->warehouseFromQuantity-$firstQuantityCosts->warehouseFromQuantity3 -$firstQuantityCosts->saleQuantity4 ?? 0;
-                     $categorie= $firstQuantityCosts->category;
-               $category_name= $categorie->Categorie_name; 
+                   $unit_quantity = $firstQuantityCosts->category->Quantityprice ?? $firstQuantityCosts->categories->first()->Quantityprice ;
+                   $Purchase_price = $firstQuantityCosts->category->Purchase_price ?? $firstQuantityCosts->categories->first()->Purchase_price ;
+    $category_name = $firstQuantityCosts->category->Categorie_name?? $firstQuantityCosts->categories->first()->Categorie_name;
+
+
              @endphp
                  <tr class="border-b border-gray-200 hover:bg-gray-100" >
                      <td class="text-center">{{ $firstQuantityCosts->product_id }} 
@@ -79,8 +140,6 @@
                     <td class="text-right">{{  $firstQuantityCosts->product_name  }}</td>
                     <td class="text-center">{{ $category_name ?? '' }}</td>
                     @php
-    $unit_quantity = $categorie->Quantityprice ?? 1;
-    $Purchase_price = $categorie->Purchase_price ?? $firstQuantityCosts->Purchase_price;
     // تجنب القسمة على صفر
     $divisor = $unit_quantity != 0 ? $unit_quantity : 1;
     // حساب الكمية مع الكسور

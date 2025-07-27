@@ -27,7 +27,7 @@
         <h1 class="text-center text-2xl font-bold mb-6">تقرير المخزني</h1>
         <form id="Account" method="POST" class="mb-2">
             @csrf
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-white p-4 rounded-lg shadow-md ">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-1 bg-white p-2 rounded-lg shadow-md ">
                 <div>
                     <label for="warehouse_id" class="block text-sm font-semibold mb-1">المخزن</label>
                     <select name="warehouse_id" id="warehouse_id" class="input-field select2 w-full border border-gray-300 rounded-lg p-2" required>
@@ -54,11 +54,15 @@
                         @foreach([
                                             // 'inventoryList' => 'امر جرد',
 
-                            'Quantityonly' => 'الكمية',
-                            //    'QuantityNotAvailable' => 'كمية غير متوفرة',
-                                  'QuantityCosts' => 'الكمية والتكاليف',
-                                  'QuantityCostsSupplier' => 'الكمية والتكاليف حسب حركة الموردين',
-                                  'QuantitySupplier' => 'الكمية حسب حركة الموردين',
+                                            'Quantityonly' => 'الكمية المتوفرة',
+                                            'QuantityCosts' => 'الكمية والتكاليف',
+                                            'QuantityAllStores' => 'الكمية المتوفرة في جميع المخازن',
+                                            'QuantityNotAvailable' => 'الكمية الغير متوفرة في جميع المخازن',
+                                            'QuantityCostsAllStores' => 'الكمية والتكاليف المتوفرة في جميع المخازن',
+                                            'QuantityCostsSupplier' => 'الكمية والتكاليف حسب حركة الموردين',
+                                            'QuantitySupplier' => 'الكمية حسب حركة الموردين',
+                                            'ExcessQuantitiesCostsAllStores' => ' الكميات والتكاليف الزائدة او لم تدخل النظام عند الشراء والتي تم بيعها - من جميع المخازن',
+                                            'ExcessQuantitiesCostsFristStore' => ' الكميات والتكاليف الزائدة او لم تدخل النظام عند الشراء والتي تم بيعها - من  المخزن المحدد',
                                 //   'SettlementOfExcessQuantities' => 'تسوية الكميات الزائدة ',
                                 //   'SettlementOfMissingQuantities' => 'تسوية الكميات الناقصة ',
                                 //   'SettlementOfDamagedQuantities' => 'تسوية الكميات التالفة ',

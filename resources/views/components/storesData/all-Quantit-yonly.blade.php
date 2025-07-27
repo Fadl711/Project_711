@@ -4,7 +4,14 @@
 
                 <th class="text-center">رقم الصنف</th>
                 <th class="text-right">اسم الصنف</th>
+                @isset ($allQuantityonly  )
+                    
                 <th class="text-center"> الوحدة</th>
+                @endisset
+                @isset ( $firstQuantityonly )
+                    
+                <th class="text-center"> الوحدة</th>
+                @endisset
                 <th class="text-center">الكمية المتوفره</th>
          
             </tr>
@@ -41,7 +48,7 @@
 
 @endphp
                 <tr class="border-b border-gray-200 hover:bg-gray-100" >
-                    <td class="text-center"> {{ $index + 1 }} -{{ $item->product_id }}
+                    <td class="text-center"> {{ $item->product_id }}
                                                 -0101  
                 </td>
                     <td class="text-right">{{ $item->product_name  }}</td>
@@ -66,11 +73,46 @@
             @endif
              @endforeach
                           @endisset
+       
+@isset($QuantityNotAvailable)
+        @foreach ($QuantityNotAvailable as $index => $item)
+       
+                  @php
+          $sum_quantity= (float)($item->purchaseToQuantity+$item->saleQuantity5)-$item->warehouseFromQuantity-$item->warehouseFromQuantity3 -$item->saleQuantity4 ?? 0; 
+             @endphp
+                @if ($sum_quantity==0)
+                  
+    
+
+
+                <tr class="border-b border-gray-200 hover:bg-gray-100" >
+                    <td class="text-center"> {{ $item->product_id }}
+                                                -0101  
+                </td>
+                    <td class="text-right">{{ $item->product_name  }}</td>
+                 
+
+
+<td class="">
+  
+    <span class=" text-red-700 mt-1">
+      {{ $sum_quantity??0 }}
+    </span>
+
+
+</td>
+                </tr>
+                @endif
+             @endforeach
+                          @endisset
              @isset($firstQuantityonly)
               @php
+
+              
                  $sum_quantity= (float)($firstQuantityonly->purchaseToQuantity+$firstQuantityonly->saleQuantity5)-$firstQuantityonly->warehouseFromQuantity-$firstQuantityonly->warehouseFromQuantity3 -$firstQuantityonly->saleQuantity4 ?? 0; 
-           $categorie= $firstQuantityonly->category;
-               $category_name= $categorie->Categorie_name;
+
+                       $unit_quantity = $firstQuantityonly->category->Quantityprice ?? $firstQuantityonly->categories->first()->Quantityprice ;
+    $category_name = $firstQuantityonly->category->Categorie_name?? $firstQuantityonly->categories->first()->Categorie_name;
 
           
              @endphp
@@ -79,7 +121,7 @@
                     <td class="text-right">{{  $firstQuantityonly->product_name  }}</td>
                     <td class="text-center">   {{ $category_name?? '' }}</td>
 @php
-    $unit_quantity =  $categorie->Quantityprice ?? 1;
+    $unit_quantity =  $unit_quantity?? 1;
     // تجنب القسمة على صفر
     $divisor = $unit_quantity != 0 ? $unit_quantity : 1;
     // حساب الكمية مع الكسور
@@ -97,6 +139,7 @@
   {{floor($sumquantity)}}
 </td> 
                 </tr>
+                
              @endisset
         </tbody>
     </table>
