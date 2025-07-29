@@ -2,18 +2,18 @@
 @section('conm')
 <x-navbar_accounts/>
 
-<div class="container mx-auto p-6" dir="rtl">
+<div class=" mx-auto p-1" dir="rtl">
     <h1 class="text-2xl font-bold mb-6 text-gray-800">شجرة الحسابات</h1>
 
     <!-- Account Types Table with Fixed Height and Scroll -->
-    <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+    <div class="bg-white rounded-lg shadow-md overflow-hidden mb-4">
         <div class="max-h-[calc(100vh-200px)] overflow-y-auto">
             <table class="min-w-full">
                 <tbody class="bg-white">
                     @foreach (\App\Enum\AccountType::cases() as $type)
                         <!-- Account Type Row -->
                         <tr class="account-type-row hover:bg-gray-50 cursor-pointer transition-colors border-b sticky top-0 bg-white z-10" data-type="{{ $type->value }}">
-                            <td class="px-6 py-4" colspan="4">
+                            <td class="px-2 py-2" colspan="4">
                                 <div class="flex items-center">
                                     <span class="w-4 h-4 rounded-sm mr-2" style="background-color: {{ match($type->value) {
                                         1 => '#4ade80',  // أصول متداولة
@@ -40,6 +40,7 @@
                                 } }}">
                                     <table class="min-w-full">
                                         <tbody class="main-accounts-body">
+                                           
                                         </tbody>
                                     </table>
                                 </div>
@@ -87,13 +88,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         tr.dataset.id = account.main_account_id;
 
                         tr.innerHTML = `
-                            <td class="pr-16 py-3">
+                            <td class="pr-3 py-1">
                                 <div class="flex items-center">
-                                    <span class="text-gray-800">${account.main_account_id} - ${account.account_name}</span>
-                                    <div class="mr-auto flex gap-4">
-                                        <span class="text-gray-600">مدين: ${account.debit_balance || 0}</span>
-                                        <span class="text-gray-600">دائن: ${account.credit_balance || 0}</span>
-                                    </div>
+                                    <span class="text-gray-800 font-bold text-sm">${account.main_account_id} - ${account.account_name}</span>
+                                 
                                 </div>
                             </td>
                         `;
@@ -141,19 +139,92 @@ document.addEventListener('DOMContentLoaded', function() {
 
                                     subAccounts.forEach(sub => {
                                         const subTr = document.createElement('tr');
-                                        subTr.className = 'hover:bg-gray-50 transition-colors border-b';
+                                        subTr.className = 'hover:bg-gray-50 transition-colors bg-gray-50 border border-b text-xs';
+                                        const sumAmount= sub.debtoramount-sub.creditoramount;
+                                        const sumAmounts= sub.total_debits-sub.total_credits;
+                                       const sumAmountd= sub.total_debitd-sub.total_creditd;        
+                                       
+                                       const subT= document.createElement('tr');
+    subT.innerHTML = `
+        <th colspan="3" class="mb-6 bg-green-500 text-center border text-white  rounded-md "> اسم الحساب  : ${sub.sub_account_id} - ${sub.sub_name}</th>
+   
+        `;
+    subBody.appendChild(subT);
                                         subTr.innerHTML = `
-                                            <td class="pr-24 py-3">
-                                                <div class="flex items-center">
-                                                    <span class="text-gray-800">${sub.sub_account_id} - ${sub.sub_name}</span>
-                                                    <div class="mr-auto flex gap-4">
-                                                        <span class="text-gray-600">مدين: ${sub.debtor_amount || 0}</span>
-                                                        <span class="text-gray-600">دائن: ${sub.creditor_amount || 0}</span>
-                                                    </div>
-                                                </div>
-                                            </td>
+                                            <th class="pr-6 border">مدين</th>
+                                            <th class="pr-6 border">دائن</th>
+                                            <th class="pr-6 border">رصيد</th>
                                         `;
-                                        subBody.appendChild(subTr);
+                                                                                subBody.appendChild(subTr);
+                     
+
+if(sub.debtoramount != 0 || sub.creditoramount != 0) {
+const subTr2 = document.createElement('tr');
+    subTr2.innerHTML = `
+        <td class="pr-6 border">${formatNumber(sub.debtoramount) || 0}</td>
+        <td class="pr-6 border">${formatNumber(sub.creditoramount) || 0}</td>
+        <td class="pr-6 border">${formatCurrency(sumAmount, 'ريال يمني')}</td>    `;
+    subBody.appendChild(subTr2);
+}
+
+
+
+
+
+                                        if(sub.total_debits!=0 || sub.total_credits!=0){
+const subTr3 = document.createElement('tr');
+
+                                        subTr3.innerHTML = `
+        <td class="pr-6 border">${formatNumber(sub.total_debits) || 0}</td>
+        <td class="pr-6 border">${formatNumber(sub.total_credits) || 0}</td>
+        <td class="pr-6 border">${formatCurrency(sumAmounts, 'ريال سعودي')}</td> 
+                                        `;
+                                        subBody.appendChild(subTr3);
+                                        }
+                                        if(sub.total_creditd!=0 || sub.total_debitd!=0){
+const subTr4 = document.createElement('tr');
+
+                                        subTr4.innerHTML = `
+        <td class="pr-6 border">${formatNumber(sub.total_debitd) || 0}</td>
+        <td class="pr-6 border">${formatNumber(sub.total_creditd) || 0}</td>
+        <td class="pr-6 border">${formatCurrency(sumAmountd, 'دولار امريكي')}</td> 
+                                        `;
+                                        subBody.appendChild(subTr4);
+                                        }
+
+function formatCurrency(number, currency , removeNegative = true) {
+    if(isNaN(number) || number === null || number === undefined) {
+        return `0 ${currency}`;
+    }
+    
+    let num = parseFloat(number);
+    const isNegative = num < 0;
+    if (removeNegative) {
+        num = Math.abs(num);
+    }
+    
+    const formatted = new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2
+    }).format(num);
+    
+    return isNegative ? `دائن ${formatted} ${currency}` : `مدين ${formatted} ${currency}`;
+}
+  function formatNumber(number, removeNegative = true) {
+    let num = parseFloat(number);
+    if (removeNegative) {
+        num = Math.abs(num);
+    }
+    const hasDecimal = num % 1 !== 0;
+    
+    return new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: hasDecimal ? 2 : 0,
+        maximumFractionDigits: 2
+    }).format(num);
+}
+
+                                      
+                                     
                                     });
                                 } catch (error) {
                                     console.error('Error fetching sub accounts:', error);

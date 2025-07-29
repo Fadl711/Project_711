@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Model;
 class MainAccount extends Model
 {
     use HasFactory;
+       protected $table = 'main_accounts';
+        protected $primaryKey = 'main_account_id';
     protected $fillable = [
         'main_account_id',
         'Nature_account',
@@ -22,8 +24,7 @@ class MainAccount extends Model
          'AccountClass',
 
         ];
-        protected $table = 'main_accounts';
-        protected $primaryKey = 'main_account_id';
+     
 
         public function subAccounts()
         {

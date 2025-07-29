@@ -221,7 +221,8 @@ if ($Quantit == "QuantityAllStores" ||$Quantit == "QuantityNotAvailable" || $Qua
             $join->on('products.product_id', '=', 'saleQuantity4.product_id')
                 ->addBinding([$warehouse_to_id, $accountingPeriod->accounting_period_id]);
         })
-        ->leftJoin(DB::raw('(SELECT product_id, SUM(quantity) as sum_quantity FROM sales WHERE transaction_type = 5 AND warehouse_to_id = ? AND accounting_period_id = ? GROUP BY product_id) as saleQuantity5'), 
+        ->leftJoin(
+            DB::raw('(SELECT product_id, SUM(quantity) as sum_quantity FROM sales WHERE transaction_type = 5 AND warehouse_to_id = ? AND accounting_period_id = ? GROUP BY product_id) as saleQuantity5'), 
         function ($join) use ($warehouse_to_id, $accountingPeriod) {
             $join->on('products.product_id', '=', 'saleQuantity5.product_id')
                 ->addBinding([$warehouse_to_id, $accountingPeriod->accounting_period_id]);
@@ -770,7 +771,7 @@ if ($Quantit == "QuantityAllStores" ||$Quantit == "QuantityNotAvailable" || $Qua
             'categories.Categorie_name',
             'categories.Quantityprice'
         )
-        ->orderBy('sub_accounts.sub_name')
+        ->orderBy('products.product_id')
         ->get();
 
   $accountingPeriodCreatedAtFormatted = Carbon::parse($accountingPeriod->created_at)->format('Y-m-d');

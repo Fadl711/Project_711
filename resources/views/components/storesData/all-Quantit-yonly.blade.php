@@ -58,13 +58,11 @@
 
 
 <td class="text-center @if($sumquantity < 0) bg-green-300 @endif">
-    @if($category_name ) 
     @if($remainder != 0)
     <span class=" text-red-700 mt-1">
       {{ $remainder }}. 
     </span>
 
-    @endif
       @endif
         {{ floor($sumquantity) }}
 
