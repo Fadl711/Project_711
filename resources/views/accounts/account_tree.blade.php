@@ -139,21 +139,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
                                     subAccounts.forEach(sub => {
                                         const subTr = document.createElement('tr');
-                                        subTr.className = 'hover:bg-gray-50 transition-colors bg-gray-50 border border-b text-xs';
+                                        subTr.className = 'hover:bg-gray-50 transition-colors bg-gray-50 border border-b font-bold';
                                         const sumAmount= sub.debtoramount-sub.creditoramount;
                                         const sumAmounts= sub.total_debits-sub.total_credits;
                                        const sumAmountd= sub.total_debitd-sub.total_creditd;        
                                        
                                        const subT= document.createElement('tr');
     subT.innerHTML = `
-        <th colspan="3" class="mb-6 bg-green-500 text-center border text-white  rounded-md "> اسم الحساب  : ${sub.sub_account_id} - ${sub.sub_name}</th>
+        <th colspan="3" class="mb-6  bg-emerald-400 text-center border text-white  rounded-md "> اسم الحساب  : ${sub.sub_account_id} - ${sub.sub_name}</th>
+      
    
         `;
     subBody.appendChild(subT);
                                         subTr.innerHTML = `
-                                            <th class="pr-6 border">مدين</th>
-                                            <th class="pr-6 border">دائن</th>
-                                            <th class="pr-6 border">رصيد</th>
+                                            <th class="pr-6 border  font-bold">مدين</th>
+                                            <th class="pr-6 border  font-bold">دائن</th>
+                                            <th class="pr-6 border  font-bold">رصيد</th>
                                         `;
                                                                                 subBody.appendChild(subTr);
                      
@@ -161,9 +162,9 @@ document.addEventListener('DOMContentLoaded', function() {
 if(sub.debtoramount != 0 || sub.creditoramount != 0) {
 const subTr2 = document.createElement('tr');
     subTr2.innerHTML = `
-        <td class="pr-6 border">${formatNumber(sub.debtoramount) || 0}</td>
-        <td class="pr-6 border">${formatNumber(sub.creditoramount) || 0}</td>
-        <td class="pr-6 border">${formatCurrency(sumAmount, 'ريال يمني')}</td>    `;
+        <td class="pr-6 border font-bold">${formatNumber(sub.debtoramount) || 0}</td>
+        <td class="pr-6 border font-bold">${formatNumber(sub.creditoramount) || 0}</td>
+        <td class="pr-6 border font-bold">${formatCurrency(sumAmount, 'ريال يمني')}</td>    `;
     subBody.appendChild(subTr2);
 }
 
@@ -175,9 +176,9 @@ const subTr2 = document.createElement('tr');
 const subTr3 = document.createElement('tr');
 
                                         subTr3.innerHTML = `
-        <td class="pr-6 border">${formatNumber(sub.total_debits) || 0}</td>
-        <td class="pr-6 border">${formatNumber(sub.total_credits) || 0}</td>
-        <td class="pr-6 border">${formatCurrency(sumAmounts, 'ريال سعودي')}</td> 
+        <td class="pr-6 border font-bold">${formatNumber(sub.total_debits) || 0}</td>
+        <td class="pr-6 border font-bold">${formatNumber(sub.total_credits) || 0}</td>
+        <td class="pr-6 border font-bold">${formatCurrency(sumAmounts, 'ريال سعودي')}</td> 
                                         `;
                                         subBody.appendChild(subTr3);
                                         }
@@ -185,9 +186,9 @@ const subTr3 = document.createElement('tr');
 const subTr4 = document.createElement('tr');
 
                                         subTr4.innerHTML = `
-        <td class="pr-6 border">${formatNumber(sub.total_debitd) || 0}</td>
-        <td class="pr-6 border">${formatNumber(sub.total_creditd) || 0}</td>
-        <td class="pr-6 border">${formatCurrency(sumAmountd, 'دولار امريكي')}</td> 
+        <td class="pr-6 border  font-bold">${formatNumber(sub.total_debitd) || 0}</td>
+        <td class="pr-6 border  font-bold">${formatNumber(sub.total_creditd) || 0}</td>
+        <td class="pr-6 border  font-bold">${formatCurrency(sumAmountd, 'دولار امريكي')}</td> 
                                         `;
                                         subBody.appendChild(subTr4);
                                         }
@@ -210,6 +211,7 @@ function formatCurrency(number, currency , removeNegative = true) {
     
     return isNegative ? `دائن ${formatted} ${currency}` : `مدين ${formatted} ${currency}`;
 }
+
   function formatNumber(number, removeNegative = true) {
     let num = parseFloat(number);
     if (removeNegative) {

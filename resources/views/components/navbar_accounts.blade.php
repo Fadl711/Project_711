@@ -1,4 +1,4 @@
-<nav class=" shadow-md bg-white ">
+<nav class=" shadow-md bg-white print:hidden ">
     <div
         class="flex justify-evenly  text-sm  2xl:w-full items-center px-4 p-2  bg-gradient-to-t text-white from-indigo-900 to-indigo-600 rounded-md shadow-sm font-medium capitalize hover:text-blue-600">
         <a href="{{ route('Main_Account.create') }}"
