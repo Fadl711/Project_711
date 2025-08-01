@@ -426,6 +426,10 @@ class RestrictionController extends Controller
             }
         }
         $main = MainAccount::all();
+        // $main_accounts = MainAccount::all();
+        // $curr = Currency::all();
+        $PaymentType = PaymentType::cases();
+        $transaction_types = TransactionType::cases();
         $Debitsub_account_id = SubAccount::where('sub_account_id', $DailyEntrie->account_debit_id)->first();
         $Creditsub_account_id = SubAccount::where('sub_account_id', $DailyEntrie->account_credit_id)->first();
         $currs = Currency::where('currency_name', $DailyEntrie->currency_name)->first();
@@ -457,6 +461,8 @@ class RestrictionController extends Controller
                 'sub_account_debit' => $Debitsub_account_id,
                 'sub_account_Credit' => $Creditsub_account_id->sub_name,
                 'curr' => $curr,
+                'PaymentType' => $PaymentType,
+                'transaction_types' => $transaction_types,
                 'currs' => $currs,
                 'dailyPage' => $dailyPage,
                 'submitButton' => 'تعديل القيد',
@@ -470,6 +476,9 @@ class RestrictionController extends Controller
             'sub_account_debit' => $Debitsub_account_id,
             'sub_account_Credit' => $Creditsub_account_id,
             'currs' => $currs,
+            'PaymentType' => $PaymentType,
+            'transaction_types' => $transaction_types,
+
             'submitButton' => 'تعديل القيد',
         ]);
     }

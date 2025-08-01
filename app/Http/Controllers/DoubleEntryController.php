@@ -51,6 +51,11 @@ class DoubleEntryController extends Controller
         $doubleEntry = Double_entry::with('double_entries', 'creditAccount', 'debitAccount')->find($id);
         return view('daily_restrictions.double_entries.show_dobule', compact('doubleEntry'));
     }
+    public function allDoubleEntries()
+    {
+        $doubleEntries = Double_entry::with('double_entries', 'creditAccount', 'debitAccount')->get()->sortDesc();
+        return view('daily_restrictions.double_entries.all_double_entries', compact('doubleEntries'));
+    }
     public function edit($id)
     {
         $DailyEntrie = DailyEntrie::where('entrie_id', $id)->first();
@@ -65,15 +70,13 @@ class DoubleEntryController extends Controller
                 'typeAccount' => 'required',
             ]
         );
-                $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
+        $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
 
         $Double_entry = Double_entry::updateOrCreate(
             ['id' => $request->saveData_debit_id2],
             [
                 'account_id' => $request->sub_account_debit_id,
                 'Statement' => $request->Statement,
-               'accounting_period_id' => $accountingPeriod->accounting_period_id,
-
                 'User_id' => Auth::user()->id,
                 'account_type' => $request->typeAccount,
             ]
@@ -84,13 +87,17 @@ class DoubleEntryController extends Controller
 
     public function destroy($id)
     {
-        DailyEntrie::where('entrie_id', $id)->delete();
+        $double_entry = Double_entry::findOrFail($id);
+        $double_entry->double_entries()->delete();
+        $double_entry->delete();
 
         return response()->json([
-            'status' => 'success',
-            'message' => 'تم حذف البيانات بنجاح.',
+            'success' =>
+            'تم حذف القيد المزدوج وقيوده بنجاح'
         ]);
     }
+
+
     public function store(Request $request)
 
     {
@@ -112,8 +119,8 @@ class DoubleEntryController extends Controller
 
             Operation::createOpertion($dailyPageId->entrie_id, 'تعديل', $dailyPageId->getTranslatedType(), $message);
         } */
-       $Amount_debit = $this->removeCommas(number_format($request->Amount_debit));
-    //    dd((int)$request->sub_account_debit_id );
+        $Amount_debit = $this->removeCommas(number_format($request->Amount_debit));
+        //    dd((int)$request->sub_account_debit_id );
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
         // $validated = $request->validate([
         //     'sub_account_debit_id' => 'required|',
@@ -153,17 +160,11 @@ class DoubleEntryController extends Controller
             }
         }
         // تحديد النوع الافتراضي
-        $defaultPaymentType = 'قيد';
+        $defaultPaymentType = 'قيد مزدوج';
         $Invoice_id = null;
         $Payment_type = $defaultPaymentType;
 
-        if ($request->sub_account_type == "دائن") {
-            $credit = (int)$request->sub_account_debit_id;
-            $debit = (int)$request->sub_account_Credit_id;
-        } else if ($request->sub_account_type == "مدين") {
-            $debit = (int)$request->sub_account_debit_id;
-            $credit = (int)$request->sub_account_Credit_id;
-        }
+
 
         // // إنشاء القيد اليومي
         $dailyEntrie = DailyEntrie::updateOrCreate(
@@ -178,15 +179,15 @@ class DoubleEntryController extends Controller
                 'invoice_id' => $Invoice_id ?? null,
                 'daily_page_id' => $dailyPage->page_id ?? $dailyPageId->daily_page_id,
                 'daily_entries_type' => $invoice_type ?? $Payment_type,
-                'account_debit_id' => $debit,
+                'account_debit_id' => $request->sub_account_type == "دائن" ? $request->sub_account_debit_id : $request->sub_account_Credit_id,
                 'amount_credit' => $Amount_debit,
                 'amount_debit' =>  $Amount_debit,
-                'account_credit_id' => $credit,
+                'account_credit_id' => $request->sub_account_type == "مدين" ? $request->sub_account_debit_id : $request->sub_account_Credit_id,
                 'exchange_rate' => number_format($request->exchange_rate),
                 'statement' => $request->Statement  ?? "قيد يومي",
                 'invoice_type' => (int)$request->payment_type,
                 'currency_name' => $request->Currency_name,
-                 'user_id' => Auth::user()->id,
+                'user_id' => Auth::user()->id,
 
                 'status_debit' => 'غير مرحل',
                 'status' => 'غير مرحل',
