@@ -34,13 +34,7 @@
             /* تحسين النصوص */
         }
     </style>
-    <div id="successMessage" class="hidden fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg"
-        role="alert">
-        <p class="font-bold">تم بنجاح!</p>
-    </div>
-    <div id="errorMessage" style="display: none;" class="alert alert-danger"></div>
-    <div id="successMessage" style="display: none;" class="alert alert-success"></div>
-    <div class="px-2 bg-white rounded-xl shadow-md">
+    <div class="px-2 bg-white rounded-xl shadow-md mx-4">
         <div class="flex">
             <div class="w-full py-2">
                 <form id="invoicePurchases" action="{{ route('double_entry.storeOrUpdate') }}" method="POST">
@@ -115,14 +109,14 @@
         </div>
     </div>
 
-    <div class="flex flex-col md:flex-row gap-4 p-4">
+    <div class="flex flex-col md:flex-row gap-4 p-2">
         <!-- النموذج -->
 
-        <form id="ajaxForm" class="bg-white shadow-xl rounded-2xl p-6 space-y-3">
+        <form id="ajaxForm" class="bg-white shadow-xl rounded-2xl p-3 space-y-3">
             @csrf
 
             <!-- نوع الدفع -->
-            <div class="flex flex-wrap gap-4">
+            {{--             <div class="flex flex-wrap gap-4">
                 @foreach ($PaymentType as $index => $item)
                     <label class="flex items-center space-x-2 text-gray-700">
                         <input type="radio" name="Payment_type" value="{{ $item->value }}"
@@ -131,13 +125,12 @@
                         <span>{{ $item->label() }}</span>
                     </label>
                 @endforeach
-            </div>
+            </div> --}}
             <!-- حساب الدائن -->
             <div class="bg-gray-50 rounded-xl border border-gray-200 p-3">
                 <h3 id="h3Account" class="text-lg font-bold text-gray-800 mb-4"></h3>
 
                 <input type="hidden" id="fadl" name="sub_account_debit_id">
-                <input type="hidden" id="saveData_debit_id" name="saveData_debit_id">
                 <input type="hidden" id="sub_account_type" name="sub_account_type">
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -167,7 +160,7 @@
             </div>
 
             <!-- العملة وسعر الصرف والمبلغ -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <!-- العملة -->
                 <div>
                     <label for="Currency_name" class="block text-gray-700 font-medium mb-2">العملة</label>
@@ -186,7 +179,7 @@
                     <label for="exchange_rate" class="block text-gray-700 font-medium mb-2">سعر الصرف</label>
                     <input id="exchange_rate" name="exchange_rate" type="number"
                         class="w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                        value="{{ isset($DailyEntrie->exchange_rate) ? number_format($DailyEntrie->exchange_rate, 2, '.', ',') : 1 }}">
+                        value="1">
                 </div>
 
                 <!-- المبلغ -->
@@ -201,26 +194,38 @@
             </div>
 
             <!-- البيان -->
-            <div>
-                <label for="Statement" class="block text-gray-700 font-medium mb-2">البيان</label>
-                <textarea name="Statement" id="Statement" rows="3"
-                    class="w-full rounded-lg border border-gray-300 shadow-sm p-3 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="أدخل البيان هنا..."></textarea>
-            </div>
+
 
             <!-- زر الحفظ -->
-            <div class="flex gap-x-2">
+            <div class="grid  grid-cols-2 gap-x-2">
                 <div>
-
-                    <label class="inline" for="">رقم القيد</label>
-                    <input class="w-1/2 rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                       name="entrie_id" id="entrie_id" type="number">
+                    <label for="Statement" class="block text-gray-700 font-medium mb-2">البيان</label>
+                    <textarea name="Statement" id="Statement" rows="3"
+                        class="w-full rounded-lg border border-gray-300 shadow-sm p-3 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="أدخل البيان هنا..."></textarea>
                 </div>
-                <button type="submit"
-                    class="inline-block px-8 py-3 bg-emerald-600 hover:bg-emerald-700	 text-white text-lg font-semibold rounded-lg shadow-md transition duration-200"
-                    id="saveButton">
-                    إضافة القيد
-                </button>
+                <div class="grid  items-center justify-center space-y-0 ">
+                    <div class="mt-2">
+
+                        <button type="submit"
+                            class="p-2  bg-emerald-600 hover:bg-emerald-700 w-full	 text-white text-lg font-semibold rounded-lg shadow-md transition duration-200"
+                            id="saveButton">
+                            إضافة القيد
+                        </button>
+                    </div>
+                    <div class="flex space-x-1">
+                        <label class="inline" for="">رقم القيد</label>
+                        <input class="w-1/2 rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            name="entrie_id" id="entrie_id" type="number">
+                        <label class="inline" for="">رقم القيد المزدوج</label>
+                        <input type="number" id="saveData_debit_id" name="saveData_debit_id"
+                            class="w-1/2 rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+
+
+                    </div>
+
+                </div>
+
 
             </div>
 
@@ -236,13 +241,12 @@
                     <thead>
                         <tr class="bg-blue-100">
                             <th class=" px-2 py-1  tagTd">م</th>
-                            <th class=" px-2 py-1  tagTd">اسم الحساب</th>
-                            <th class=" px-2 py-1  tagTd">اسم الحساب</th>
-                            <th class=" px-2 py-1  tagTd"> البيان</th>
+                            <th id="fadl1" class=" px-2 py-1  tagTd">اسم الحساب</th>
+                            <th id="fadl2" class=" px-2 py-1  tagTd">اسم الحساب</th>
                             <th class=" px-2 py-1  tagTd"> العملة</th>
                             <th class=" px-2 py-1  tagTd">المبلغ</th>
-                            <th class=" px-2 py-1  tagTd"></th>
-                            <th class=" px-2 py-1  tagTd "></th>
+                            <th class=" px-2 py-1  tagTd"> البيان</th>
+                            <th class=" py-1  tagTd">تعديل-حذف</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -323,8 +327,9 @@
                             $('#sub_account_Credit_id').val(DailyEntrie.account_credit_id);
                             $('#Currency_name').val(DailyEntrie.currency_name);
                             $('#Amount_debit').val(DailyEntrie.amount_debit);
-                            $('#exchange_rate').val(DailyEntrie.Selling_price);
                             $('#Statement').val(DailyEntrie.statement)
+                            $('#saveButton').text("")
+                            $('#saveButton').text("تعديل القيد")
                         },
                         error: function(xhr, status, error) {
                             // console.error("خطأ في جلب بيانات التعديل:", error);
@@ -360,13 +365,18 @@
 
                             label.text(''); // مسح النص أولًا
                             label1.text(''); // مسح النص أولًا
-
+                            $('#fadl1').text('');
+                            $('#fadl2').text('');
                             if (type === "مدين") {
                                 label.text('اختار حساب/المدين الرئيسي');
                                 label1.text('اختار حساب/المدين الفرعي');
+                                $('#fadl1').text('اسم الحساب المدين')
+                                $('#fadl2').text('اسم الحساب الدائن')
                             } else if (type === "دائن") {
                                 label.text('اختار حساب/الدائن الرئيسي');
                                 label1.text('اختار حساب/الدائن الفرعي');
+                                $('#fadl2').text('اسم الحساب المدين')
+                                $('#fadl1').text('اسم الحساب الدائن')
                             }
                         });
                     });
@@ -532,18 +542,18 @@
                         });
                         if (result.isConfirmed) {
                             $.ajax({
-                                url: "{{ url('/double_entry_delete/') }}/" +
+                                url: "{{ url('/daily_restrictions/') }}/" +
                                     paymentId, // استدعاء API بناءً على product_id
                                 method: 'DELETE',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                                 },
                                 success: function(response) {
-                                    if (response.status === 'success') {
+                                    if (response.success) {
                                         Swal.fire({
                                             position: "top-start",
                                             title: 'تم الحذف!',
-                                            text: response.data ??
+                                            text: response.message ??
                                                 'تمت عملية الحذف بنجاح',
                                             icon: 'success',
                                             timer: 1500,
@@ -553,16 +563,26 @@
                                         $('#row-' + paymentId).fadeOut(); // إخفاء الصف
                                         // تحديث إجمالي الفاتورة
                                     } else {
-                                        errorMessage.text(response.message ||
-                                                'حدث خطأ أثناء الحذف.')
-                                            .show();
-                                        setTimeout(() => errorMessage.hide(), 3000);
+                                        Swal.fire({
+                                            title: 'خطأ !',
+                                            text: response.message ??
+                                                'خطأ   ',
+                                            icon: 'erorr',
+                                            timer: 1500,
+                                            showConfirmButton: true
+                                        });
                                     }
                                 },
                                 error: function(error) {
+                                    Swal.fire({
+                                        title: 'خطأ !',
+                                        text: 'حدث خطأ أثناء الحذف. يرجى المحاولة لاحقًا.',
+                                        icon: 'erorr',
+                                        timer: 1500,
+                                        showConfirmButton: true
+                                    });
                                     console.error('Error deleting payment bond:', error
                                         .responseText);
-                                    alert('حدث خطأ أثناء الحذف. يرجى المحاولة لاحقًا.');
                                 }
                             });
                         }
@@ -591,12 +611,7 @@
                     $('#saveButton').click(function() {
                         saveData(event); // استدعاء دالة الحفظ
                     });
-                    $(document).on('keydown', function(event) {
-                        if (event.key === '+') {
-                            event.preventDefault();
-                            saveData(event); // استدعاء دالة الحفظ
-                        }
-                    });
+
 
                     function saveData(event) {
                         event.preventDefault(); // منع تحديث الصفحة
@@ -620,7 +635,8 @@
                                 if (data.success) {
                                     $('#errorMessage').hide(); // تأكد من وجود عنصر بهذا المعرف
                                     $('#successMessage').removeClass('hidden').text(data.success);
-
+                                    $('#saveButton').text("")
+                                    $('#saveButton').text("اضافة القيد")
                                     // إخفاء التنبيه بعد 3 ثوانٍ
                                     setTimeout(() => {
                                         $('#successMessage').addClass('hidden');
@@ -629,21 +645,30 @@
                                     addToTable(data.dailyEntrie);
                                     emptyData();
                                 } else {
+                                    Swal.fire({
+                                        title: '!?خطأ',
+                                        text: data.message ??
+                                            '!?هناك مشكلة',
+                                        icon: 'erorr',
+                                        timer: 1500,
+                                        showConfirmButton: true
+                                    });
+                                    // إخفاء السند من الواجه
                                     // إظهار رسالة عند وجود نفس الاسم
-                                    $('#errorMessage').show().text(data.message);
-                                    setTimeout(() => {
-                                        $('#errorMessage').hide();
-                                    }, 5000);
                                 }
                             },
                             error: function(xhr) {
                                 const errorMsg = xhr.responseJSON ? xhr.responseJSON.message :
                                     'حدث خطأ أثناء الإرسال.';
-                                $('#errorMessage').show().text(errorMsg);
-                                setTimeout(() => {
-                                    $('#errorMessage').hide();
-                                }, 8000);
-                                $('#Product_name').focus(); // تأكد من وجود عنصر بهذا المعرف
+                                Swal.fire({
+                                    title: '!?~خطأ',
+                                    text: errorMsg ??
+                                        '!?هناك مشكلة~',
+                                    icon: 'erorr',
+                                    timer: 1500,
+                                    showConfirmButton: true
+                                });
+                                // تأكد من وجود عنصر بهذا المعرف
                             }
                         });
                     }
@@ -657,39 +682,7 @@
 
 
 
-                    function displayPurchases(sales) {
-                        let uniqueInvoices = new Set(); // Set لتخزين الفواتير الفريدة
-                        let rows = ''; // متغير لتخزين الصفوف
-                        $('#mainAccountsTable tbody').empty(); // تنظيف الجدول
-                        sales.forEach(function(purchase) {
-                            // إضافة شرط للتأكد من عدم تكرار البيانات
-                            if (!uniqueInvoices.has(purchase.purchase_id)) {
-                                uniqueInvoices.add(purchase.purchase_id);
-                                rows += `
-                <tr id="row-${purchase.purchase_id}">
-                    <td class="text-right tagTd">${purchase.Barcode}</td>
-                    <td class="text-right tagTd">${purchase.Product_name}</td>
-                    <td class="text-right tagTd">${purchase.categorie_id}</td>
-                    <td class="text-right tagTd">${purchase.quantity}</td>
-                    <td class="text-right tagTd">${purchase.Purchase_price}</td>
-                    <td class="text-right tagTd">${purchase.Cost}</td>
-                    <td class="text-right tagTd">${purchase.warehouse_to_id}</td>
-                    <td class="text-right tagTd">${purchase.Total}</td>
-                    <td class="flex">
-                        <button class="" onclick="editData(${purchase.purchase_id})">
-                                           <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
-</svg>
-                        </button>
-<a href="#" class="text-red-600 hover:underline delete-payment" data-id="${purchase.purchase_id}" >حذف</a>
 
-                    </td>
-                </tr>
-            `;
-                            }
-                        });
-                        $('#mainAccountsTable tbody').append(rows);
-                    }
 
                     function addToTable(account) {
                         const rowId = `#row-${account.entrie_id}`;
@@ -701,8 +694,9 @@
                             $(`${rowId} td:nth-child(1)`).text(account.entrie_id);
                             $(`${rowId} td:nth-child(2)`).text(account.credit_account.sub_name || '--');
                             $(`${rowId} td:nth-child(3)`).text(account.debit_account.sub_name || '--');
-                            $(`${rowId} td:nth-child(4)`).text(account.amount_credit || '0');
-                            $(`${rowId} td:nth-child(5)`).text(account.statement || '');
+                            $(`${rowId} td:nth-child(4)`).text(account.currency_name);
+                            $(`${rowId} td:nth-child(5)`).text(account.amount_credit || '0');
+                            $(`${rowId} td:nth-child(6)`).text(account.statement || '');
                         } else {
                             // إنشاء صف جديد
                             const newRow = `
@@ -719,7 +713,7 @@
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
                         </svg>
                     </button>
-                    <a href="#" class="text-red-600 hover:underline delete-payment" data-id="${account.entrie_id}" >حذف</a>
+                    <a href="#" class="text-red-600 hover:underline delete-payment" data-id="${account.entrie_id}" ><svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#fb0404"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M10 11V17" stroke="#ff0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M14 11V17" stroke="#ff0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M4 7H20" stroke="#ff0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M6 7H12H18V18C18 19.6569 16.6569 21 15 21H9C7.34315 21 6 19.6569 6 18V7Z" stroke="#ff0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z" stroke="#ff0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg></a>
 
                 </td>
             </tr>

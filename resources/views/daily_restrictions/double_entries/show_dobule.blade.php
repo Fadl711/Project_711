@@ -136,7 +136,9 @@
             <div>
                 <p>تاريخ القيد: {{ \Carbon\Carbon::parse($doubleEntry->created_at)->format('Y/m/d') }}</p>
                 <p>رقم القيد: {{ $doubleEntry->id }}</p>
-                <p>رقم المرجع: {{ $doubleEntry->double_entries->first()->daily_page_id }}</p>
+                <p>رقم المرجع:
+                    {{ $doubleEntry->double_entries->count() >= 1 ? $doubleEntry->double_entries->first()->daily_page_id : ' ' }}
+                </p>
             </div>
             <div>
                 <p>
@@ -148,8 +150,9 @@
                 </p>
                 <p>المبلغ:
                     <span id="maont2">
-                        {{ number_format($doubleEntry->double_entries->sum('amount_credit')) }}
-                        <span class="font-normal">{{ $doubleEntry->double_entries->first()->currency_name }}</span>
+                        {{ $doubleEntry->double_entries->count() >= 1 ? number_format($doubleEntry->double_entries->sum('amount_credit')) : 0 }}
+                        <span
+                            class="font-normal">{{ $doubleEntry->double_entries->count() >= 1 ? $doubleEntry->double_entries->first()->currency_name : ' ' }}</span>
                     </span>
                 </p>
                 <p>البيان: {{ $doubleEntry->Statement }}</p>
@@ -162,24 +165,27 @@
                     <tr>
                         <th class="col-no">م</th>
                         <th class="col-account">اسم الحساب
-                            /{{ $doubleEntry->account_type == 'دائن' ? 'المدين' : 'الدائن' }}</th>
-                        <th class="col-amount">{{ $doubleEntry->account_type == 'دائن' ? 'مدسن' : 'دائن' }}</th>
+                            {{ $doubleEntry->account_type == 'دائن' ? 'المدين' : 'الدائن' }}</th>
+                        <th class="col-amount">{{ $doubleEntry->account_type == 'دائن' ? 'مدين' : 'دائن' }}</th>
                         <th class="col-currency">العملة</th>
                         <th class="col-statement">البيان</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($doubleEntry->double_entries as $dailyEntry)
-                        <tr>
-                            <td>1</td>
-                            <td>
-                                {{ $doubleEntry->account_type !== 'دائن' ? $dailyEntry->debitAccount->sub_name : $dailyEntry->creditAccount->sub_name }}
-                            </td>
-                            <td>{{ number_format($dailyEntry->amount_debit) }}</td>
-                            <td>{{ $dailyEntry->currency_name }}</td>
-                            <td>{{ $dailyEntry->statement }}</td>
-                        </tr>
-                    @endforeach
+                    @if ($doubleEntry->double_entries->count() >= 1)
+
+                        @foreach ($doubleEntry->double_entries as $dailyEntry)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>
+                                    {{ $doubleEntry->account_type == 'دائن' ? $dailyEntry->creditAccount->sub_name : $dailyEntry->debitAccount->sub_name }}
+                                </td>
+                                <td>{{ number_format($dailyEntry->amount_debit) }}</td>
+                                <td>{{ $dailyEntry->currency_name }}</td>
+                                <td>{{ $dailyEntry->statement }}</td>
+                            </tr>
+                        @endforeach
+                    @endif
                 </tbody>
             </table>
         </div>
