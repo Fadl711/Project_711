@@ -211,7 +211,6 @@ class AccountCoctroller extends Controller
                 'invoice_id' => $entry->invoice_id ?? null,
                 'currency_name' => $entry->currency_name ?? '',
                 'exchange_rate' => $entry->exchange_rate ?? 1,
-
                 'user_id' => auth()->id(),
             ],
         );
@@ -234,6 +233,23 @@ class AccountCoctroller extends Controller
         try {
             $accountingPeriod = AccountingPeriod::where('is_closed', false)->first();
             $entries = DailyEntrie::where('accounting_period_id', $accountingPeriod->accounting_period_id)->get();
+        //     $query=DailyEntrie::query()
+        //     ->select([
+        // 'daily_entries.entrie_id',
+        // 'daily_entries.account_debit_id',
+        //  'daily_entries.daily_entries_type',
+        //  'daily_entries.account_credit_id',
+        //  'daily_entries.invoice_type',
+        //  'daily_entries.invoice_id',
+        //  'daily_entries.statement',
+        //  'daily_entries.entrie_id',
+        //  'daily_entries.currency_name',
+        //  'daily_entries.exchange_rate',
+        //  'daily_entries.created_at',
+         
+
+        //     ]);
+
             if ($entries->isEmpty()) {
                 return response()->json(['error' => 'لا توجد قيود غير مرحل لترحيلها.'], 404);
             }

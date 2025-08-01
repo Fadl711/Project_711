@@ -23,11 +23,22 @@
         <div id="errorMessage">{{ $massg }}</div>
     @endisset
 
-    <form id="dailyRestrictionsForm" method="POST" action="{{ route('transfer_restrictions.optional') }}" class="space-y">
+    <form id="dailyRestrictionsForm" method="get" action="{{ route('transfer_restrictions.optional') }}" class="space-y">
         @csrf
         <div class="container space-y-2">
             <div class="shadow-lg grid grid-cols-3 md:grid-cols-6 rounded-lg bg-white px-1">
                 <!-- طريقة الترحيل -->
+                <div id="the_way_of">
+                    <label for="month_number" class="block font-medium text-center"> الاشهر</label>
+                    <select name="month_number" id="month_number"
+                        class="block select2 inputSale p-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300">
+                        <option value="">اختياري</option>
+                        @foreach($months as $month)                   
+                        <option value="{{ $month['month_number'] }}">  {{ $month['month_number'] }}-{{ $month['name'] }}</option>
+                        @endforeach
+
+ </select>
+                </div>
                 <div id="the_way_of">
                     <label for="the_way_of_deportation" class="block font-medium text-center">طريقة الترحيل</label>
                     <select name="the_way_of_deportation" id="the_way_of_deportation"
@@ -36,6 +47,7 @@
                         <option selected value="all">الكل</option>
                     </select>
                 </div>
+             
 
                 <!-- اختيار الحسابات الرئيسية -->
                 <div class="px-1" id="main_account">

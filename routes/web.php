@@ -202,9 +202,9 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/Default_warehouse/{id}/destroy', [default_customerController::class, 'destroyWarehouse'])->name('default_warehouse.destroy');
     Route::post('Default_financial/store', [default_customerController::class, 'storeFinancial'])->name('default_financial.store');
     Route::delete('/Default_financial/{id}/destroy', [default_customerController::class, 'destroyFinancial'])->name('default_financial.destroy');
-    Route::get('/customers', [CustomerCoctroller::class, 'index'])->name('customers.index');
-    Route::get('/customers/create', [CustomerCoctroller::class, 'create'])->name('customers.create');
-    Route::post('/customers/store', [CustomerCoctroller::class, 'store'])->name('customers.store');
+    // Route::get('/customers', [CustomerCoctroller::class, 'index'])->name('customers.index');
+    // Route::get('/customers/create', [CustomerCoctroller::class, 'create'])->name('customers.create');
+    // Route::post('/customers/store', [CustomerCoctroller::class, 'store'])->name('customers.store');
 
     Route::get('/general_entries/show', [generalEntrieController::class, 'show'])->name('general_entries.show');
     Route::get('/customers/show', [CustomerCoctroller::class, 'show'])->name('customers.show');
@@ -363,7 +363,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/general/ledger/{accounting_id}', [TransferController::class, 'general'])->name('general');
     Route::get('/transfer_restrictions/create', [TransferController::class, 'create'])->name('transfer_restrictions.create');
     Route::get('/transfer_restrictions/index', [TransferController::class, 'index'])->name('transfer_restrictions.index');
-    Route::post('/transfer_restrictions/optional', [TransferController::class, 'optional'])->name('transfer_restrictions.optional');
+    Route::get('/transfer_restrictions/optional', [TransferController::class, 'optional'])->name('transfer_restrictions.optional');
+    Route::get('/transfer_restrictions/optional', [TransferController::class, 'optional'])->name('transfer_restrictions.optional');
     Route::get('/transfer_restrictions/record', [TransferController::class, 'record'])->name('transfer_restrictions.record');
     Route::post('/transfer_restrictions/store', [AccountCoctroller::class, 'store'])->name('transfer_restrictions.store');
 

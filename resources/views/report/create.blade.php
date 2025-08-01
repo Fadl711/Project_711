@@ -1,7 +1,8 @@
 @extends('layout')
-
 @section('conm')
-<h1>تقرير كشف حساب</h1>
+<x-navbar_accounts/>
+
+<h1> كشف حساب</h1>
 
 <form id="Account" method="POST" class="mb-2">
     @csrf

@@ -63,9 +63,9 @@
 
     <!-- إضافة مكتبة SweetAlert -->
 
-    <form id="dailyRestrictionsForm" method="POST" class="space-y-6">
+    <form id="dailyRestrictionsForm" method="POST" class="space-y-1">
         @csrf
-        <div class="container mx-auto px-4">
+        <div class="container mx-auto px-2">
             <div class="flex gap-4">
                 @foreach ($PaymentType as $index => $item)
                     <div class="flex">
@@ -78,8 +78,8 @@
             </div>
             <!-- Form Layout -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="space-y-4 grid grid-cols-2 md:grid-cols-2 gap-4">
-                    <div class="mt-3">
+                <div class="space-y-1 grid grid-cols-2 md:grid-cols-2 gap-2">
+                    <div class="mt-1">
                         <label for="Invoice_type" class="block text-gray-700 font-medium ">نوع المستند</label>
                         <select id="Invoice_type" name="Invoice_type" dir="rtl"
                             class="select2 w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sel">
@@ -105,7 +105,7 @@
                     <div>
                         <label for="Invoice_id" class="block text-gray-700 font-medium ">رقم المستند</label>
                         <select id="Invoice_id" name="Invoice_id" dir="rtl"
-                            class="select2 w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sel">
+                            class="select2 w-full border border-gray-300 rounded-lg p-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sel">
                             <option value="" selected>اختر رقم المستند</option>
                             @isset($DailyEntrie->invoice_id)
                                 <option value="{{ $DailyEntrie->invoice_id }}" selected>{{ $DailyEntrie->invoice_id }}</option>
@@ -115,8 +115,8 @@
                 </div>
                 <!-- حساب المدين -->
                 <div class="bg-gray-50 rounded-lg border border-gray-200 scrollable-container">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-3">المدين</h3>
-                    <div class="space-y-3">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-1">المدين</h3>
+                    <div class="space-y-1">
                         <div>
                             <label for="account_debit_id" class="block font-medium mb-1">حساب المدين/الرئيسي</label>
                             <select name="account_debit_id" id="account_debit_id" dir="ltr" class="input-field select2"
@@ -152,8 +152,8 @@
 
                 <!-- حساب الدائن -->
                 <div class="bg-gray-50 rounded-lg border border-gray-200 scrollable-container">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-3">الدائن</h3>
-                    <div class="space-y-3">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-1">الدائن</h3>
+                    <div class="space-y-1">
                         <div>
                             <label for="account_Credit_id" class="block font-medium mb-1">حساب الدائن/الرئيسي</label>
                             <select name="account_Credit_id" id="account_Credit_id" class="input-field select2" required>
@@ -187,11 +187,11 @@
             </div>
 
             <!-- تفاصيل إضافية -->
-            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mt-4">
+            <div class="bg-white p-4 rounded-lg border border-gray-200 mt-1">
                 <h3 class="text-lg font-semibold text-center mb-4">تفاصيل إضافية</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                        <label for="Amount_debit" class="block font-medium mb-2">المبلغ المدين</label>
+                        <label for="Amount_debit" class="block font-medium mb-1">المبلغ المدين</label>
                         <input name="Amount_debit" id="Amount_debit" type="text" class="input-field"
                             placeholder="أدخل المبلغ"
                             value="{{ !empty($DailyEntrie->amount_debit) ? number_format($DailyEntrie->amount_debit, 0, '.', ',') : (!empty($DailyEntrie->amount_credit) ? number_format($DailyEntrie->amount_credit, 0, '.', ',') : '') }}"
@@ -233,11 +233,111 @@
 @endisset
                     </textarea>
                 </div>
+              
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+    <div id="status"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputField = document.getElementById('Statement');
+            const startBtn = document.getElementById('startBtn');
+            const statusDiv = document.getElementById('status');
+            
+            // التحقق من دعم API التعرف على الصوت
+            const isSpeechRecognitionSupported = 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
+            
+            if (!isSpeechRecognitionSupported) {
+                startBtn.disabled = true;
+                statusDiv.textContent = "عذرًا، التعرف على الصوت غير مدعوم في متصفحك الحالي. يرجى استخدام متصفح حديث مثل Chrome أو Edge.";
+                statusDiv.className = 'error';
+                return;
+            }
+            
+            // تهيئة التعرف على الصوت
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'ar-SA'; // اللغة العربية - السعودية
+            recognition.interimResults = false;
+            
+            recognition.onstart = function() {
+                statusDiv.textContent = "جاري الاستماع... قل البيان الآن";
+                statusDiv.className = 'listening';
+                startBtn.textContent = "جاري التسجيل...";
+                inputField.placeholder = "جاري الاستماع...";
+            };
+            
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                inputField.value = transcript;
+                statusDiv.textContent = `تم تعبئة الحقل تلقائياً بـ: "${transcript}"`;
+                statusDiv.className = 'success';
+                inputField.placeholder = "ضف  بيان جديد";
+            };
+            
+            recognition.onerror = function(event) {
+                statusDiv.textContent = `حدث خطأ: ${event.error}`;
+                statusDiv.className = 'error';
+                startBtn.textContent = "التحدث لملء الحقل";
+                inputField.placeholder = "قل  البيان الجديد";
+            };
+            
+            recognition.onend = function() {
+                startBtn.textContent = "التحدث لملء الحقل";
+                inputField.placeholder = "قل البيان  الجديد";
+            };
+            
+         // حدث زر البدء بالصوت
+startBtn.addEventListener('click', function(event) {
+    event.preventDefault();
+    recognition.start();
+});
+
+// حدث الضغط على مفاتيح الاختصار (Alt + S أو Alt + س)
+document.addEventListener('keydown', function(event) {
+    // التحقق من Alt مع أي من الحروف التالية:
+    // - s (الإنجليزية)
+    // - س (العربية)
+    // - keyCode 83 (S) أو 1587 (س) للتوافق مع المتصفحات القديمة
+    if (event.altKey && !event.ctrlKey && !event.shiftKey && (
+        event.key.toLowerCase() === 's' || 
+        event.key === 'س' || 
+        event.keyCode === 83 || 
+        event.keyCode === 1587
+    )) {
+        event.preventDefault();
+        recognition.start();
+        
+        // إضافة رسالة توضيحية للمستخدم
+        const statusDiv = document.getElementById('status');
+        if (statusDiv) {
+            statusDiv.textContent = "تم تفعيل التسجيل الصوتي باستخدام Alt+S/س";
+            statusDiv.className = 'success';
+            setTimeout(() => {
+                if (statusDiv.textContent.includes("Alt+S/س")) {
+                    statusDiv.textContent = "جاري الاستماع... قل اسم الحساب الآن";
+                    statusDiv.className = 'listening';
+                }
+            }, 2000);
+        }
+    }
+});
+            // تركيز على حقل الإدخال عند النقر عليه مع رسالة توجيهية
+            inputField.addEventListener('focus', function(event) {
+                                            event.preventDefault();
+                statusDiv.textContent = "اضغط على زر 'التحدث لملء الحقل' وأذكر اسم الحساب صوتياً";
+                statusDiv.className = '';
+            });
+        });
+    </script>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-1">
+                      <div class="button-container">
+                    
+        <button id="startBtn" class=" bg-red-600 text-white py-2 rounded-md ">التحدث لملء الحقل  البيان</button>
+    </div>
                     <div class="flex justify-center">
                         <button type="submit" id="submitButton"
-                            class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            class=" bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
                             {{ $submitButton ?? ' حفظ القيد' }}
                         </button>
                     </div>

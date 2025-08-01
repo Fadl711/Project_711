@@ -12,16 +12,20 @@
 </style>
 
 <div class="bg-gray-100 dark:bg-gray-900 dark:text-white text-gray-600 h-screen  overflow-hidden text-sm">
-
         <div class="flex-grow bg-white dark:bg-gray-900 overflow-y-auto">
           <div class="sm:px-7 sm:pt-7  pt-4 flex flex-col sm:w-full border-b border-gray-200 bg-white dark:bg-gray-900 dark:text-white dark:border-gray-800 sticky top-0">
             <div class="flex items-center space-x-3 sm:mt-7 mt-4  sm:text-lg">
-              <a href="{{route('report.create')}}" class="sm:px-3 border-b-2 {{ Request::is('report/create') ? 'dark:alert("gamal")  text-blue-700 border-blue-700 ' : 'text-gray-600' }}   border-transparent  dark:text-white dark:border-white pb-1.5 ">كشف حساب</a>
-              <a href="{{route('report.inventoryReport')}}" class="sm:px-3 border-b-2 border-transparent {{ Request::is('inventoryReport') ? 'text-blue-700 border-blue-700' : 'text-gray-600' }} dark:text-gray-400 pb-1.5"> تقارير المخازن </a>
+              {{-- <a href="{{route('report.create')}}" class="sm:px-3 border-b-2 {{ Request::is('report/create') ? 'dark:alert("gamal")  text-blue-700 border-blue-700 ' : 'text-gray-600' }}   border-transparent  dark:text-white dark:border-white pb-1.5 ">كشف حساب</a> --}}
+              {{-- <a href="{{route('report.inventoryReport')}}" class="sm:px-3 border-b-2 border-transparent {{ Request::is('inventoryReport') ? 'text-blue-700 border-blue-700' : 'text-gray-600' }} dark:text-gray-400 pb-1.5"> تقارير المخازن </a> --}}
+                 <a href="{{ route('inventory-transactions.index') }}"
+            class=" py-2 px-4 {{ Request::is('inventory-transactions/index') ? '   border-b-2  font-bold text-xl pointer-events-none opacity-50' : 'border-b-0' }} border-white hover:text-blue-600">
+حركات المخزون
+        </a>
               <a href="{{route('salesReport.create')}}" class="sm:px-3 border-b-2 {{ Request::is('salesReport/create') ? 'text-blue-700 border-blue-700' : 'text-gray-600' }} border-transparent   dark:text-gray-400 pb-1.5">تقارير ارباح وخسائر الاصناف</a>
-              <a href="{{route('report.salesReport')}}" class="sm:px-3 border-b-2 {{ Request::is('salesReport') ? 'text-blue-700 border-blue-700' : 'text-gray-600' }} border-transparent dark:text-gray-400 pb-1.5">تقارير المبيعات</a>
-              <a href="#" class="sm:px-3 border-b-2 border-transparent text-gray-600 dark:text-gray-400 pb-1.5 ">تقارير</a>
+              {{-- <a href="{{route('report.salesReport')}}" class="sm:px-3 border-b-2 {{ Request::is('salesReport') ? 'text-blue-700 border-blue-700' : 'text-gray-600' }} border-transparent dark:text-gray-400 pb-1.5">تقارير المبيعات</a> --}}
+              {{-- <a href="#" class="sm:px-3 border-b-2 border-transparent text-gray-600 dark:text-gray-400 pb-1.5 ">تقارير</a> --}}
             </div>
+
           </div>
         </div>
         <h1 class="text-center text-2xl font-bold mb-6">تقرير المخزني</h1>

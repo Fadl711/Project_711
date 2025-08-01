@@ -10,6 +10,12 @@
         <a href="{{ route('subAccounts.allShow') }}"
             class="py-2 px-4 {{ Request::is('accounts/subAccount/allShow') ? '   border-b-2  font-bold text-xl' : 'border-b-0' }} border-white hover:text-blue-600">
             الحسابات الفرعية</a>
+        <a href="{{ route('report.create') }}"
+            class="py-2 px-4 {{ Request::is('report/create') ? '   border-b-2  font-bold text-xl' : 'border-b-0' }} border-white hover:text-blue-600">
+          كشف الحسابات 
+        </a>
+
+           
         <a href=" {{ route('index_account_tree') }}"
             class="py-2 px-4 {{ Request::is('accounts/account_tree/index_account_tree') ? '   border-b-2  font-bold text-xl' : 'border-b-0' }} border-white hover:text-blue-600">شجرة
             الحسابات</a>
@@ -17,6 +23,7 @@
             class="py-2 px-4 {{ Request::is('accounts/review-budget') ? '   border-b-2  font-bold text-xl' : 'border-b-0' }} border-white hover:text-blue-600">
             مراجعة الحسابات
         </a>
+        
         {{--                       <button onclick="AccountBalancing()"  id="Accountbalancing"  type="submit" class="py-2  px-4 {{ Request::is('accounts/Main_Account/create') ? '   border-b-2   text-[#0a0aeec6]' : 'border-b-0' }} border-[#0a0aeec6]   leading-none rounded hover:bg-gray-50"  > ترصيد الحسابات</button>
  --}}
     </div>

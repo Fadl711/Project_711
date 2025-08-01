@@ -36,10 +36,14 @@ class TransferController extends Controller
     }
     public function create(){
         $mainAccounts=MainAccount::all();
-        $entries = session('entries',  []); // ستكون فارغة إذا لم تكن موجودة
+        $entries = session('entries',  []); 
+        // ستكون فارغة إذا لم تكن موجودة
+                $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
 
+  $months = $accountingPeriod->getMonthsInPeriod();
+//   dd(  $months);
     // return view('transfer_restrictions.create', compact('entries','mainAccounts'));
-        return view('transfer_restrictions.create',['mainAccounts'=>$mainAccounts,'entries'=>     $entries ]);
+        return view('transfer_restrictions.create',['mainAccounts'=>$mainAccounts,'entries'=>$entries,'months'=>$months ]);
     }
     public function index(){
         $accountingPeriod=AccountingPeriod::all();
@@ -65,7 +69,7 @@ class TransferController extends Controller
     
             // جلب الحساب الرئيسي
             $mainAccount = MainAccount::first(); // أو استخدم الطريقة المناسبة لجلب الحساب الرئيسي
-    
+
             // تمرير جميع المعطيات المطلوبة
             return $this->prepareResponse($entries, $mainAccount, $date, $TypeRestrictions, $request);
         } elseif ($the_way_of_deportation === 'optional') {
@@ -78,6 +82,7 @@ class TransferController extends Controller
     public function show(Request $request)
     {
         $accountingPeriod = AccountingPeriod::where('is_closed', false)->firstOrFail();
+
         $id = $request->main_account_id;
         $subAccountId = $request->sub_account_id;
         $TypeRestrictions = $request->TypeRestrictions;
@@ -123,8 +128,16 @@ class TransferController extends Controller
     
     private function fetchDailyEntries($accountingPeriodId, $subAccounts, $TypeRestrictions, $date)
     {
+        dd(55);
         $query = DB::table('daily_entries')
-        ->select('entrie_id', 'amount_debit', 'amount_credit', 'account_debit_id', 'account_credit_id', 'statement', 'daily_page_id', 'user_id', 'status', 'status_debit', 'created_at')
+        ->select('entrie_id',
+         'amount_debit',
+         'amount_credit',
+          'account_debit_id',
+           'account_credit_id',
+            'statement',
+             'daily_page_id', 
+             'user_id', 'status', 'status_debit', 'created_at')
         ->where('accounting_period_id', $accountingPeriodId);
     
     // إضافة الحسابات الفرعية إلى الاستعلام

@@ -17,6 +17,7 @@ class CategoryController extends Controller
 
         // $productName=Product::where('product_id',$id)->pluok('product_name');
         $cate=Category::where('product_id',$id)->get();
+
         $uniquePurchase = Purchase::where('product_id',$id)
         ->where('accounting_period_id', $accountingPeriod->accounting_period_id)
          ->whereIn('transaction_type', [6,7])->get();
@@ -30,9 +31,11 @@ class CategoryController extends Controller
     
 }
     public function store(Request $request){
+        // dd(55);
         if (Category::where('Categorie_name', $request->input('cate'))
         ->where('Categorie_name', $request->input('product_id'))
-    ->exists()) {
+    ->exists()) 
+    {
             return response()->json(['error' => 'الاسم موجود مسبقاً'], 422);
         }
         // dd($request->Categorieid);
@@ -79,7 +82,15 @@ class CategoryController extends Controller
     ]);
     }
     public function update(Request $request,$id){
-
+ dd(55);
+  if (Category::where('Categorie_name', $request->cate)
+    ->where('product_id',$prod->product_id)
+        ->where('categorie_id','!=', $id)
+    ->first())
+    {
+            return response()->json(['error' => 'الاسم موجود مسبقاً'], 422);
+        }
+        
         $product=Product::all();
         $prod=Category::where('categorie_id',$id)->first();
         $cate=Category::where('product_id',$prod->product_id)->get();
