@@ -178,7 +178,7 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>
-                                    {{ $doubleEntry->account_type == 'دائن' ? $dailyEntry->creditAccount->sub_name : $dailyEntry->debitAccount->sub_name }}
+                                    {{ $doubleEntry->account_type == 'دائن' ? $dailyEntry->debitAccount->sub_name : $dailyEntry->creditAccount->sub_name }}
                                 </td>
                                 <td>{{ number_format($dailyEntry->amount_debit) }}</td>
                                 <td>{{ $dailyEntry->currency_name }}</td>

@@ -77,6 +77,7 @@ class DoubleEntryController extends Controller
             [
                 'account_id' => $request->sub_account_debit_id,
                 'Statement' => $request->Statement,
+                'accounting_period_id' => $accountingPeriod->accounting_period_id,
                 'User_id' => Auth::user()->id,
                 'account_type' => $request->typeAccount,
             ]
@@ -160,10 +161,17 @@ class DoubleEntryController extends Controller
             }
         }
         // تحديد النوع الافتراضي
-        $defaultPaymentType = 'قيد مزدوج';
+        $defaultPaymentType = 'قيد';
         $Invoice_id = null;
         $Payment_type = $defaultPaymentType;
 
+        if ($request->sub_account_type == "دائن") {
+            $credit = (int)$request->sub_account_debit_id;
+            $debit = (int)$request->sub_account_Credit_id;
+        } else if ($request->sub_account_type == "مدين") {
+            $debit = (int)$request->sub_account_debit_id;
+            $credit = (int)$request->sub_account_Credit_id;
+        }
 
 
         // // إنشاء القيد اليومي
@@ -179,10 +187,10 @@ class DoubleEntryController extends Controller
                 'invoice_id' => $Invoice_id ?? null,
                 'daily_page_id' => $dailyPage->page_id ?? $dailyPageId->daily_page_id,
                 'daily_entries_type' => $invoice_type ?? $Payment_type,
-                'account_debit_id' => $request->sub_account_type == "دائن" ? $request->sub_account_debit_id : $request->sub_account_Credit_id,
+                'account_debit_id' => $debit,
                 'amount_credit' => $Amount_debit,
                 'amount_debit' =>  $Amount_debit,
-                'account_credit_id' => $request->sub_account_type == "مدين" ? $request->sub_account_debit_id : $request->sub_account_Credit_id,
+                'account_credit_id' => $credit,
                 'exchange_rate' => number_format($request->exchange_rate),
                 'statement' => $request->Statement  ?? "قيد يومي",
                 'invoice_type' => (int)$request->payment_type,
