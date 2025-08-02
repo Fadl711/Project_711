@@ -1,6 +1,5 @@
 @extends('layout')
 @section('conm')
-<<<<<<< HEAD
 <style>
     .alert-success {
         color: green;
@@ -53,15 +52,12 @@
         }
     </style>
 <x-navbar_accounts/>
-=======
     <style>
         .alert-success {
             color: green;
             font-weight: bold;
         }
     </style>
-    <x-navbar_accounts />
->>>>>>> 6221055c4340d16216740eb43b09f91961efc219
 
     <br>
     <div id="" class ="rounded-lg shadow-lg bg-white">
@@ -71,7 +67,6 @@
             @csrf
             <div id="successMessage" class="alert-success" style="display: none;"></div>
 
-<<<<<<< HEAD
         <div class="grid gap-4 mb-4 grid-cols-2">
            <div class="mb-2">
         <label class="labelSale" for="sub_name">اسم الحساب</label>
@@ -179,7 +174,6 @@ document.addEventListener('keydown', function(event) {
             <div class="mb-2">
                 <label class="labelSale" for="Main_id">الحساب الرئيسي</label>
                 <select dir="ltr" class="input-field select2 inputSale" id="Main_id" name="Main_id">
-=======
             <div class="grid gap-4 mb-4 grid-cols-2">
                 <div class="mb-2">
                     <label class="labelSale" for="sub_name">اسم الحساب</label>
@@ -189,7 +183,6 @@ document.addEventListener('keydown', function(event) {
                 <div class="mb-2">
                     <label class="labelSale" for="Main_id">الحساب الرئيسي</label>
                     <select dir="ltr" class="input-field select2 inputSale" id="Main_id" name="Main_id">
->>>>>>> 6221055c4340d16216740eb43b09f91961efc219
 
                         @foreach ($main_accounts as $main_account)
                             <option value="{{ $main_account->main_account_id }}">{{ $main_account->account_name }}</option>
@@ -252,7 +245,6 @@ document.addEventListener('keydown', function(event) {
                     <textarea class="inputSale" name="Statement" id="Statement" rows="3"></textarea>
                 </div>
 
-<<<<<<< HEAD
          
       
         @auth
@@ -278,9 +270,6 @@ document.addEventListener('keydown', function(event) {
 </div>
 
 <div id="errorMessage" style="display: none; color: red;"></div>
-=======
-            </div>
->>>>>>> 6221055c4340d16216740eb43b09f91961efc219
 
 
 
@@ -305,124 +294,6 @@ document.addEventListener('keydown', function(event) {
             </div>
         </form>
 
-<<<<<<< HEAD
-     $(document).ready(function() {
-    // تهيئة النموذج
-    initForm();
-    
-    // معالجة إرسال النموذج
-    $('#submitButton').on('click', handleFormSubmit);
-    
-    // منع إرسال النموذج عند الضغط على Enter
-    $('#ajaxForm').on('keypress', function(event) {
-        if (event.which === 13) {
-            event.preventDefault();
-        }
-    });
-       $(document).on('keydown', function(event) {
-        if (event.ctrlKey && event.shiftKey) {
-            event.preventDefault(); // منع السلوك الافتراضي
-            handleFormSubmit(event); // تنفيذ الدالة
-        }
-    });
-});
-
-function initForm() {
-    // تهيئة القيم الافتراضية
-    $('#debtor_amount').val($('#debtor_amount').val() || 0);
-    $('#creditor_amount').val($('#creditor_amount').val() || 0);
-    
-    // إضافة معالجة للأرقام (إزالة الفواصل)
-    $('#debtor_amount, #creditor_amount').on('blur', function() {
-        let value = $(this).val().replace(/,/g, '');
-        $(this).val(value);
-    });
-}
-
-function handleFormSubmit(event) {
-    event.preventDefault();
-    
-    // إخفاء الرسائل السابقة
-    $('#successMessage').hide();
-    
-    // تعطيل الزر وإظهار مؤشر التحميل
-    $('#submitButton').prop('disabled', true).text('جارٍ الحفظ...');
-    
-    // تنظيف قيم المدخلات الرقمية
-    cleanNumericInputs();
-    
-    // إرسال البيانات
-    sendFormData();
-}
-
-function cleanNumericInputs() {
-    // تنظيف المدخلات الرقمية من الفواصل
-    const cleanInput = (selector) => {
-        let value = $(selector).val().replace(/,/g, '');
-        $(selector).val(value);
-    };
-    
-    cleanInput('#debtor_amount');
-    cleanInput('#creditor_amount');
-}
-
-function sendFormData() {
-    const formData = $('#SubAccount').serialize();
-    const successMessage = $('#successMessage');
-    const submitButton = $('#submitButton');
-    
-    $.ajax({
-        url: '{{ route("Main_Account.storc") }}',
-        method: 'POST',
-        data: formData,
-        success: function(response) {
-            if (response.success) {
-                showSuccess(response.message);
-                resetForm();
-            } else {
-                showError(response.message || 'يوجد نفس هذا الاسم من قبل');
-            }
-        },
-        error: function(xhr) {
-            handleAjaxError(xhr);
-        }
-    });
-    
-    function showSuccess(message) {
-        successMessage.show().text(message).removeClass('error').addClass('success');
-        setTimeout(() => successMessage.hide(), 3000);
-    }
-    
-    function showError(message) {
-        successMessage.show().text(message).removeClass('success').addClass('error');
-        setTimeout(() => successMessage.hide(), 8000);
-        $('#sub_name').focus();
-    }
-    
-    function resetForm() {
-        // تفريغ الحقول المطلوبة
-        $('#sub_name, #debtor_amount, #creditor_amount, #Phone, #name_The_known').val('');
-        
-        // إعادة تعيين القيم الافتراضية
-        $('#debtor_amount').val(0);
-        $('#creditor_amount').val(0);
-        
-        // التركيز على حقل الاسم
-        $('#sub_name').focus();
-    }
-    
-    function handleAjaxError(xhr) {
-        let errorMessage = 'حدث خطأ ما. حاول مرة أخرى.';
-        if (xhr.status === 400 && xhr.responseJSON.message) {
-            errorMessage = xhr.responseJSON.message;
-        }
-        showError(errorMessage);
-    }
-    
-    // إعادة تمكين الزر بغض النظر عن النتيجة
-    submitButton.prop('disabled', false).text('حفظ');
-}
-=======
 
     </div>
 
@@ -543,7 +414,6 @@ function sendFormData() {
                 });
             });
 
->>>>>>> 6221055c4340d16216740eb43b09f91961efc219
 
             // وظيفة لإضافة البيانات إلى الجدول
 
